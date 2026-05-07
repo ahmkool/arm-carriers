@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3 uid="uid://c26esvsyb6ac2"]
+
+[ext_resource type="Script" uid="uid://bgiexfecs71qb" path="res://src/weapon/bazooka_bullet.gd" id="1_5gct0"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_tt0fj"]
+radius = 0.1
+height = 0.2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5gct0"]
+size = Vector3(0.3, 0.6, 0.3)
+
+[node name="BazookaBullet" type="Node3D"]
+script = ExtResource("1_5gct0")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_tt0fj")
+
+[node name="Area3D" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_5gct0")

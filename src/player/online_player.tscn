@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://c5x7j07tf2jjh"]
+
+[ext_resource type="Script" uid="uid://dq435dyl7s1hx" path="res://src/player/online_player.gd" id="1_2gxku"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_qnmj6"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_qnmj6"]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_qnmj6"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+
+[node name="OnlinePlayer" type="CharacterBody3D"]
+script = ExtResource("1_2gxku")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_qnmj6")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_qnmj6")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="."]
+replication_config = SubResource("SceneReplicationConfig_qnmj6")

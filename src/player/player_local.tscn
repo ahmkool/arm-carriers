@@ -1,0 +1,58 @@
+[gd_scene load_steps=11 format=3 uid="uid://b2d8v5hofa7a6"]
+
+[ext_resource type="PackedScene" uid="uid://djlqahjphg06r" path="res://src/player/mannequin_medium.tscn" id="1_q2fp3"]
+[ext_resource type="Script" uid="uid://dnxojpch253fl" path="res://src/player/player_local.gd" id="1_qib8p"]
+[ext_resource type="Script" uid="uid://bb0q26042lr7p" path="res://src/player/state/player_state_machine.gd" id="3_3qrfr"]
+[ext_resource type="Script" uid="uid://bru2sustmt8nd" path="res://src/player/state/idle.gd" id="4_lh2qi"]
+[ext_resource type="Script" uid="uid://ccnehos01hou" path="res://src/player/state/running.gd" id="5_lh2qi"]
+[ext_resource type="Script" uid="uid://yeo4owi2ngpt" path="res://src/player/state/falling.gd" id="6_5wdx7"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="7_rp8rm"]
+[ext_resource type="Script" uid="uid://714wfd5yluad" path="res://src/player/carrying_weapon_data.gd" id="8_xf7a6"]
+[ext_resource type="Script" path="res://src/player/state/dead.gd" id="9_y0fuh"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_q2fp3"]
+radius = 0.26171875
+height = 2.0701294
+
+[node name="PlayerLocal" type="CharacterBody3D"]
+script = ExtResource("1_qib8p")
+
+[node name="Mannequin_Medium" parent="." instance=ExtResource("1_q2fp3")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0310364, 0)
+shape = SubResource("CapsuleShape3D_q2fp3")
+
+[node name="PlayerStateMachine" type="Node" parent="."]
+script = ExtResource("3_3qrfr")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("4_lh2qi")
+
+[node name="Running" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("5_lh2qi")
+
+[node name="Falling" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("6_5wdx7")
+
+[node name="Dead" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("9_y0fuh")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="PanelContainer" type="PanelContainer" parent="UI"]
+offset_right = 40.0
+offset_bottom = 40.0
+theme = ExtResource("7_rp8rm")
+
+[node name="Label" type="Label" parent="UI/PanelContainer"]
+layout_mode = 2
+text = "Press triangle to carry"
+
+[node name="CarryingWeaponData" type="Node" parent="."]
+script = ExtResource("8_xf7a6")
+
+[node name="WeaponCarrierPinJoint" type="PinJoint3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78730226, 1.239912, 0)

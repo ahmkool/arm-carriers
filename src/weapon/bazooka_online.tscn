@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://cdhclmryc6fwx"]
+
+[ext_resource type="PackedScene" uid="uid://bfe1safwg6naj" path="res://assets/models/weapon/bazooka.glb" id="1_cmlmn"]
+[ext_resource type="Script" uid="uid://ckx6qynengb1n" path="res://src/weapon/bazooka_online.gd" id="2_b84ea"]
+
+[node name="bazooka_online" instance=ExtResource("1_cmlmn")]
+script = ExtResource("2_b84ea")
+
+[node name="bazooka" parent="." index="0"]
+transform = Transform3D(0.2, 0, 0, 0, 0.2, 0, 0, 0, 0.2, 0, 0, 0)
+
+[node name="Muzzle" type="Marker3D" parent="." index="1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.1795582)

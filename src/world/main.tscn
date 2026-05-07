@@ -1,0 +1,109 @@
+[gd_scene load_steps=12 format=3 uid="uid://i3hnpjq1oieh"]
+
+[ext_resource type="Script" uid="uid://brm24twjw2stn" path="res://src/world/main.gd" id="1_alckn"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="2_icct6"]
+[ext_resource type="PackedScene" uid="uid://cdhclmryc6fwx" path="res://src/weapon/bazooka_online.tscn" id="3_gjduy"]
+[ext_resource type="Script" uid="uid://b5r7bovqgxlmt" path="res://src/enemy/enemies.gd" id="4_5gjl3"]
+[ext_resource type="Script" uid="uid://h7d5eqohtm4i" path="res://src/world/game_state_manager.gd" id="5_5gjl3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7eti2"]
+albedo_color = Color(0.40784314, 0.8745098, 0.3529412, 1)
+metallic_specular = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_kueii"]
+material = SubResource("StandardMaterial3D_7eti2")
+size = Vector3(10, 0.5, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_1k4gi"]
+size = Vector3(10, 0.5, 10)
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_gjduy"]
+panorama = ExtResource("2_icct6")
+
+[sub_resource type="Sky" id="Sky_ka4mm"]
+sky_material = SubResource("PanoramaSkyMaterial_gjduy")
+
+[sub_resource type="Environment" id="Environment_5gjl3"]
+background_mode = 2
+sky = SubResource("Sky_ka4mm")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_alckn")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Floor"]
+mesh = SubResource("BoxMesh_kueii")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_1k4gi")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.24659298, 0.9691191, 0, -0.9691191, 0.246593, 0, 7, 2.5)
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+
+[node name="SpawnLocation" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7771058, 0)
+
+[node name="MultiplayerSpawner" type="MultiplayerSpawner" parent="."]
+_spawnable_scenes = PackedStringArray("uid://c5x7j07tf2jjh")
+spawn_path = NodePath("../SpawnLocation")
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="VBox" type="VBoxContainer" parent="UI"]
+offset_right = 44.0
+offset_bottom = 66.0
+
+[node name="HostButton" type="Button" parent="UI/VBox"]
+layout_mode = 2
+text = "Host"
+
+[node name="JoinButton" type="Button" parent="UI/VBox"]
+layout_mode = 2
+text = "Join"
+
+[node name="GameOverUI" type="MarginContainer" parent="UI"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/GameOverUI"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/GameOverUI/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/GameOverUI/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "GAME OVER"
+
+[node name="Restart" type="Button" parent="UI/GameOverUI/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Restart"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_5gjl3")
+
+[node name="bazooka" parent="." instance=ExtResource("3_gjduy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0657287, 0)
+
+[node name="Enemies" type="Node" parent="."]
+script = ExtResource("4_5gjl3")
+
+[node name="GameStateManager" type="Node" parent="."]
+script = ExtResource("5_5gjl3")
+
+[connection signal="pressed" from="UI/VBox/HostButton" to="." method="_on_host_button_pressed"]
+[connection signal="pressed" from="UI/VBox/JoinButton" to="." method="_on_join_button_pressed"]

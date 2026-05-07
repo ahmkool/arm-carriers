@@ -1,0 +1,152 @@
+[gd_scene load_steps=35 format=3 uid="uid://djlqahjphg06r"]
+
+[ext_resource type="PackedScene" uid="uid://mh4aljmqy3cb" path="res://assets/characters/Mannequin_Medium.glb" id="1_l2j3l"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="2_2xs3w"]
+[ext_resource type="Animation" uid="uid://bb6rh8o22vtqk" path="res://assets/animations_source/animations/Death_A_Pose.res" id="3_v15yf"]
+[ext_resource type="Animation" uid="uid://qr28d1kys3cu" path="res://assets/animations_source/animations/Death_B.res" id="4_d3cj3"]
+[ext_resource type="Animation" uid="uid://d4mqxy7yj4eeb" path="res://assets/animations_source/animations/Death_B_Pose.res" id="5_ucyen"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="6_ydibs"]
+[ext_resource type="Animation" uid="uid://dgye3dqqmpauj" path="res://assets/animations_source/animations/Hit_B.res" id="7_mjgtm"]
+[ext_resource type="Animation" uid="uid://c3ppuhivk30bj" path="res://assets/animations_source/animations/Idle_A.res" id="8_h5sng"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="9_26bsd"]
+[ext_resource type="Animation" uid="uid://bvdi208mt7bf3" path="res://assets/animations_source/animations/Interact.res" id="10_vks8i"]
+[ext_resource type="Animation" uid="uid://cvofd306jejsk" path="res://assets/animations_source/animations/Jump_Full_Long.res" id="11_llb8c"]
+[ext_resource type="Animation" uid="uid://ch1jryo7lq8ll" path="res://assets/animations_source/animations/Jump_Full_Short.res" id="12_k2j0q"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="13_kv13n"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="14_26568"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="15_wg1t0"]
+[ext_resource type="Animation" uid="uid://ckorprw785c6n" path="res://assets/animations_source/animations/PickUp.res" id="16_lutj4"]
+[ext_resource type="Animation" uid="uid://5o0p7x5ts3yq" path="res://assets/animations_source/animations/Running_A.res" id="17_8l87o"]
+[ext_resource type="Animation" uid="uid://h8eb8s8erx3o" path="res://assets/animations_source/animations/Running_B.res" id="18_4l5ds"]
+[ext_resource type="Animation" uid="uid://4ddywlnww1vh" path="res://assets/animations_source/animations/Spawn_Air.res" id="19_a6g08"]
+[ext_resource type="Animation" uid="uid://ce0wp8fauyjy7" path="res://assets/animations_source/animations/Spawn_Ground.res" id="20_203ru"]
+[ext_resource type="Animation" uid="uid://cyc51jqqiv405" path="res://assets/animations_source/animations/T-Pose.res" id="21_pwwhl"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="22_08gtj"]
+[ext_resource type="Animation" uid="uid://dmeewkkixxoei" path="res://assets/animations_source/animations/Use_Item.res" id="23_qcuag"]
+[ext_resource type="Animation" uid="uid://400p0viws1y" path="res://assets/animations_source/animations/Walking_A.res" id="24_j0nvj"]
+[ext_resource type="Animation" uid="uid://b66k543srtgf6" path="res://assets/animations_source/animations/Walking_B.res" id="25_x41mt"]
+[ext_resource type="Animation" uid="uid://blfigfpjocmqx" path="res://assets/animations_source/animations/Walking_C.res" id="26_rtk4p"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_txqxn"]
+_data = {
+&"Death_A": ExtResource("2_2xs3w"),
+&"Death_A_Pose": ExtResource("3_v15yf"),
+&"Death_B": ExtResource("4_d3cj3"),
+&"Death_B_Pose": ExtResource("5_ucyen"),
+&"Hit_A": ExtResource("6_ydibs"),
+&"Hit_B": ExtResource("7_mjgtm"),
+&"Idle_A": ExtResource("8_h5sng"),
+&"Idle_B": ExtResource("9_26bsd"),
+&"Interact": ExtResource("10_vks8i"),
+&"Jump_Full_Long": ExtResource("11_llb8c"),
+&"Jump_Full_Short": ExtResource("12_k2j0q"),
+&"Jump_Idle": ExtResource("13_kv13n"),
+&"Jump_Land": ExtResource("14_26568"),
+&"Jump_Start": ExtResource("15_wg1t0"),
+&"PickUp": ExtResource("16_lutj4"),
+&"Running_A": ExtResource("17_8l87o"),
+&"Running_B": ExtResource("18_4l5ds"),
+&"Spawn_Air": ExtResource("19_a6g08"),
+&"Spawn_Ground": ExtResource("20_203ru"),
+&"T-Pose": ExtResource("21_pwwhl"),
+&"Throw": ExtResource("22_08gtj"),
+&"Use_Item": ExtResource("23_qcuag"),
+&"Walking_A": ExtResource("24_j0nvj"),
+&"Walking_B": ExtResource("25_x41mt"),
+&"Walking_C": ExtResource("26_rtk4p")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_v15yf"]
+animation = &"Player/Death_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_d3cj3"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_uqpbf"]
+animation = &"Player/Idle_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_locomotion"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_ucyen"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2xs3w"]
+animation = &"Player/Running_A"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_locomotion"]
+graph_offset = Vector2(-59, 123)
+nodes/output/position = Vector2(1150, 330)
+nodes/IdleAnimation/node = SubResource("AnimationNodeAnimation_uqpbf")
+nodes/IdleAnimation/position = Vector2(40, 140)
+nodes/RunAnimation/node = SubResource("AnimationNodeAnimation_2xs3w")
+nodes/RunAnimation/position = Vector2(40, 340)
+nodes/LocomotionBlend/node = SubResource("AnimationNodeBlend2_locomotion")
+nodes/LocomotionBlend/position = Vector2(340, 240)
+nodes/DeadBlend/node = SubResource("AnimationNodeBlend2_d3cj3")
+nodes/DeadBlend/position = Vector2(690, 310)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_ucyen")
+nodes/OneShot/position = Vector2(520, 480)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_v15yf")
+nodes/Animation/position = Vector2(260.60983, 611.26184)
+node_connections = [&"output", 0, &"DeadBlend", &"LocomotionBlend", 0, &"IdleAnimation", &"LocomotionBlend", 1, &"RunAnimation", &"DeadBlend", 0, &"LocomotionBlend", &"DeadBlend", 1, &"OneShot", &"OneShot", 0, &"Animation"]
+
+[node name="Mannequin_Medium" instance=ExtResource("1_l2j3l")]
+
+[node name="Skeleton3D" parent="Rig_Medium" index="0"]
+bones/1/position = Vector3(0, 0.3914221, 0)
+bones/1/rotation = Quaternion(0.0004164016, 0.043157745, 1.7990391e-05, 0.99906826)
+bones/1/scale = Vector3(0.99999994, 1, 0.99999994)
+bones/2/position = Vector3(0.17094508, 0.1135872, 1.5994095e-08)
+bones/2/rotation = Quaternion(0.9921676, 0.058096297, 0.070506856, 0.08518881)
+bones/2/scale = Vector3(0.9999999, 0.9999997, 1.0000008)
+bones/3/rotation = Quaternion(0.26787367, 6.7015094e-08, -1.827437e-07, 0.9634541)
+bones/3/scale = Vector3(1.0000004, 0.99999994, 1.0000001)
+bones/4/rotation = Quaternion(-0.532874, -0.114232786, 0.04226376, 0.83738285)
+bones/4/scale = Vector3(1.0000004, 1.0000007, 0.9999993)
+bones/5/rotation = Quaternion(1.0764689e-05, 0.920253, -0.39132383, -2.3751945e-06)
+bones/5/scale = Vector3(1.0000001, 0.9999975, 1.0000027)
+bones/6/rotation = Quaternion(0.00085386576, 3.0206215e-09, 7.390872e-05, 0.99999964)
+bones/6/scale = Vector3(1.0000001, 1, 1.0000001)
+bones/7/rotation = Quaternion(0.0042538852, 2.5541822e-09, 0.00036820688, 0.99999094)
+bones/7/scale = Vector3(1, 0.9999999, 1)
+bones/8/position = Vector3(-0.21200736, 0.13413227, 8.62731e-08)
+bones/8/rotation = Quaternion(-0.5609858, 0.045905307, 0.73632795, 0.37551126)
+bones/8/scale = Vector3(0.9999992, 0.9999988, 0.9999998)
+bones/9/rotation = Quaternion(-1.6917001e-09, 5.3194356e-08, 0.37746632, 0.92602336)
+bones/9/scale = Vector3(1.0000004, 0.99999976, 1.0000001)
+bones/10/rotation = Quaternion(2.249753e-10, 6.8246844e-09, -0.026658092, 0.99964464)
+bones/10/scale = Vector3(0.99999994, 0.99999994, 1)
+bones/11/rotation = Quaternion(-0.21228224, 0.38376525, -0.13960527, 0.88778996)
+bones/11/scale = Vector3(0.9999995, 0.99999994, 1.0000005)
+bones/12/rotation = Quaternion(-0.004099581, -0.03134149, -0.00022568871, 0.99950033)
+bones/12/scale = Vector3(0.99999994, 1, 1)
+bones/13/position = Vector3(0.21200737, 0.13413215, 8.216504e-08)
+bones/13/rotation = Quaternion(-0.53401226, -0.115836084, -0.77117974, 0.32664183)
+bones/13/scale = Vector3(0.9999993, 0.99999905, 0.9999998)
+bones/14/rotation = Quaternion(2.738987e-09, -6.317417e-08, -0.35995093, 0.9329713)
+bones/14/scale = Vector3(1.0000004, 0.9999998, 1)
+bones/15/rotation = Quaternion(1.514567e-08, -7.3584383e-09, 0.0266581, 0.99964464)
+bones/15/scale = Vector3(1.0000001, 1, 1)
+bones/16/rotation = Quaternion(-0.221983, -0.34563607, 0.18417574, 0.89293826)
+bones/16/scale = Vector3(0.99999976, 1.0000001, 1.0000004)
+bones/17/position = Vector3(-0.17094508, 0.11358732, 1.557549e-08)
+bones/17/rotation = Quaternion(0.9971934, -0.029569639, 0.031489924, 0.061150506)
+bones/17/scale = Vector3(0.9999999, 0.99999976, 1.0000008)
+bones/18/rotation = Quaternion(0.2788961, -6.457668e-08, 1.9467952e-07, 0.96032137)
+bones/18/scale = Vector3(0.99999994, 0.99999976, 0.99999994)
+bones/19/rotation = Quaternion(-0.56171274, 0.11448151, -0.009040986, 0.81932354)
+bones/19/scale = Vector3(0.99999976, 1.0000006, 0.9999992)
+bones/20/rotation = Quaternion(-8.934892e-05, 0.9202217, -0.3913977, 2.0290998e-05)
+bones/20/scale = Vector3(1.0000002, 0.9999979, 1.0000024)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+libraries = {
+&"Player": SubResource("AnimationLibrary_txqxn")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="." index="2"]
+tree_root = SubResource("AnimationNodeBlendTree_locomotion")
+anim_player = NodePath("../AnimationPlayer")
+parameters/LocomotionBlend/blend_amount = 0.0
+parameters/DeadBlend/blend_amount = 0.0
+parameters/OneShot/active = false
+parameters/OneShot/internal_active = false
+parameters/OneShot/request = 0

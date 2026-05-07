@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://e4fut737hp5k"]
+
+[ext_resource type="PackedScene" uid="uid://byxu02kc6fw7t" path="res://assets/models/weapon/bullet.glb" id="1_tlok2"]
+[ext_resource type="Script" uid="uid://yjj2r26g3u46" path="res://src/weapon/bazooka_bullet_local.gd" id="2_u6gl8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tlok2"]
+radius = 0.8076172
+height = 2.4731445
+
+[node name="BazookaBulletLocal" instance=ExtResource("1_tlok2")]
+script = ExtResource("2_u6gl8")
+
+[node name="bullet" parent="." index="0"]
+transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
+
+[node name="HitArea" type="Area3D" parent="." index="1"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitArea" index="0"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -4.1086143e-09, 0.09399414)
+shape = SubResource("CapsuleShape3D_tlok2")
+
+[connection signal="body_entered" from="HitArea" to="." method="_on_hit_area_body_entered"]

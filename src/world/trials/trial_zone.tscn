@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://dodm6nfeuvc0j"]
+
+[ext_resource type="Script" uid="uid://chrjnxa3eg6sl" path="res://src/world/trials/trial_zone.gd" id="1_ebms6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_j6vr7"]
+size = Vector3(5, 3, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ebms6"]
+size = Vector3(1, 1, 20)
+
+[node name="TrialZone" type="Node3D"]
+script = ExtResource("1_ebms6")
+
+[node name="TriggerZone" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 4.5283146)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TriggerZone"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9.566532)
+shape = SubResource("BoxShape3D_j6vr7")
+
+[node name="SpawnZones" type="Node3D" parent="."]
+
+[node name="SpawnZone1" type="Area3D" parent="SpawnZones"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnZones/SpawnZone1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.514647, -0.3213365, 4.5649014)
+shape = SubResource("BoxShape3D_ebms6")
+
+[node name="SpawnZone2" type="Area3D" parent="SpawnZones"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SpawnZones/SpawnZone2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.013767, -0.3213365, 4.5649014)
+shape = SubResource("BoxShape3D_ebms6")
+
+[connection signal="body_entered" from="TriggerZone" to="." method="_on_trigger_zone_body_entered"]

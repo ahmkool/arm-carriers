@@ -1,0 +1,136 @@
+[gd_scene load_steps=35 format=3 uid="uid://d3g0lxqo4lnm"]
+
+[ext_resource type="PackedScene" uid="uid://bay5vk145b3pk" path="res://assets/characters/Skeleton_Warrior.glb" id="1_dl8mv"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="2_awda7"]
+[ext_resource type="Animation" uid="uid://bb6rh8o22vtqk" path="res://assets/animations_source/animations/Death_A_Pose.res" id="3_okfnn"]
+[ext_resource type="Animation" uid="uid://qr28d1kys3cu" path="res://assets/animations_source/animations/Death_B.res" id="4_df4md"]
+[ext_resource type="Animation" uid="uid://d4mqxy7yj4eeb" path="res://assets/animations_source/animations/Death_B_Pose.res" id="5_a1vpm"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="6_2yndo"]
+[ext_resource type="Animation" uid="uid://dgye3dqqmpauj" path="res://assets/animations_source/animations/Hit_B.res" id="7_otw6u"]
+[ext_resource type="Animation" uid="uid://c3ppuhivk30bj" path="res://assets/animations_source/animations/Idle_A.res" id="8_gv81y"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="9_7cdin"]
+[ext_resource type="Animation" uid="uid://bvdi208mt7bf3" path="res://assets/animations_source/animations/Interact.res" id="10_06tm1"]
+[ext_resource type="Animation" uid="uid://cvofd306jejsk" path="res://assets/animations_source/animations/Jump_Full_Long.res" id="11_begqk"]
+[ext_resource type="Animation" uid="uid://ch1jryo7lq8ll" path="res://assets/animations_source/animations/Jump_Full_Short.res" id="12_b83dd"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="13_qnwhu"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="14_mi3f7"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="15_dxr0a"]
+[ext_resource type="Animation" uid="uid://ckorprw785c6n" path="res://assets/animations_source/animations/PickUp.res" id="16_rr5fa"]
+[ext_resource type="Animation" uid="uid://5o0p7x5ts3yq" path="res://assets/animations_source/animations/Running_A.res" id="17_dcx5b"]
+[ext_resource type="Animation" uid="uid://h8eb8s8erx3o" path="res://assets/animations_source/animations/Running_B.res" id="18_fuvgu"]
+[ext_resource type="Animation" uid="uid://4ddywlnww1vh" path="res://assets/animations_source/animations/Spawn_Air.res" id="19_vckis"]
+[ext_resource type="Animation" uid="uid://ce0wp8fauyjy7" path="res://assets/animations_source/animations/Spawn_Ground.res" id="20_mp2jt"]
+[ext_resource type="Animation" uid="uid://cyc51jqqiv405" path="res://assets/animations_source/animations/T-Pose.res" id="21_4wf5k"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="22_wus6k"]
+[ext_resource type="Animation" uid="uid://dmeewkkixxoei" path="res://assets/animations_source/animations/Use_Item.res" id="23_ion7c"]
+[ext_resource type="Animation" uid="uid://400p0viws1y" path="res://assets/animations_source/animations/Walking_A.res" id="24_db0c2"]
+[ext_resource type="Animation" uid="uid://b66k543srtgf6" path="res://assets/animations_source/animations/Walking_B.res" id="25_1ld8g"]
+[ext_resource type="Animation" uid="uid://blfigfpjocmqx" path="res://assets/animations_source/animations/Walking_C.res" id="26_cjhe7"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m0mtg"]
+_data = {
+&"Death_A": ExtResource("2_awda7"),
+&"Death_A_Pose": ExtResource("3_okfnn"),
+&"Death_B": ExtResource("4_df4md"),
+&"Death_B_Pose": ExtResource("5_a1vpm"),
+&"Hit_A": ExtResource("6_2yndo"),
+&"Hit_B": ExtResource("7_otw6u"),
+&"Idle_A": ExtResource("8_gv81y"),
+&"Idle_B": ExtResource("9_7cdin"),
+&"Interact": ExtResource("10_06tm1"),
+&"Jump_Full_Long": ExtResource("11_begqk"),
+&"Jump_Full_Short": ExtResource("12_b83dd"),
+&"Jump_Idle": ExtResource("13_qnwhu"),
+&"Jump_Land": ExtResource("14_mi3f7"),
+&"Jump_Start": ExtResource("15_dxr0a"),
+&"PickUp": ExtResource("16_rr5fa"),
+&"Running_A": ExtResource("17_dcx5b"),
+&"Running_B": ExtResource("18_fuvgu"),
+&"Spawn_Air": ExtResource("19_vckis"),
+&"Spawn_Ground": ExtResource("20_mp2jt"),
+&"T-Pose": ExtResource("21_4wf5k"),
+&"Throw": ExtResource("22_wus6k"),
+&"Use_Item": ExtResource("23_ion7c"),
+&"Walking_A": ExtResource("24_db0c2"),
+&"Walking_B": ExtResource("25_1ld8g"),
+&"Walking_C": ExtResource("26_cjhe7")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dl8mv"]
+animation = &"skeleton_warrior/Idle_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_okfnn"]
+animation = &"skeleton_warrior/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_awda7"]
+animation = &"skeleton_warrior/Running_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_okfnn"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_df4md"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_a1vpm"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_df4md"]
+graph_offset = Vector2(-592.13654, 67.71213)
+nodes/output/position = Vector2(790, 180)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_awda7")
+nodes/Animation/position = Vector2(-380, 110)
+nodes/BlendIdleRun/node = SubResource("AnimationNodeBlend2_okfnn")
+nodes/BlendIdleRun/position = Vector2(40, 170)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_dl8mv")
+"nodes/Animation 2/position" = Vector2(-340, 290)
+nodes/DeadBlend/node = SubResource("AnimationNodeBlend2_df4md")
+nodes/DeadBlend/position = Vector2(390, 300)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_a1vpm")
+nodes/OneShot/position = Vector2(150, 430)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_okfnn")
+"nodes/Animation 3/position" = Vector2(-320, 510)
+node_connections = [&"output", 0, &"DeadBlend", &"BlendIdleRun", 0, &"Animation", &"BlendIdleRun", 1, &"Animation 2", &"DeadBlend", 0, &"BlendIdleRun", &"DeadBlend", 1, &"OneShot", &"OneShot", 0, &"Animation 3"]
+
+[node name="Skeleton_Warrior" instance=ExtResource("1_dl8mv")]
+
+[node name="Skeleton3D" parent="Rig_Medium" index="0"]
+bones/1/position = Vector3(1.953643e-18, 0.4295572, 4.657848e-25)
+bones/1/rotation = Quaternion(0.09959397, -1.1861658e-07, 1.1872524e-08, 0.99502814)
+bones/2/rotation = Quaternion(0.0007250528, 7.1054257e-15, -5.1517867e-18, 0.99999976)
+bones/3/rotation = Quaternion(-0.021733088, 0.002857263, 0.010922007, 0.9997001)
+bones/4/position = Vector3(-0.2115031, 0.124339394, -0.04894506)
+bones/4/rotation = Quaternion(-0.58018523, -0.10974212, 0.47080955, 0.6554999)
+bones/5/rotation = Quaternion(1.0243941e-08, 6.774327e-08, 0.50259066, 0.8645245)
+bones/7/rotation = Quaternion(-0.114774205, 0.40045363, 0.5363605, 0.73401713)
+bones/8/rotation = Quaternion(-0.054505423, -0.054505408, 0.5391622, 0.838667)
+bones/9/position = Vector3(0.18688163, 0.11201208, -0.042294383)
+bones/9/rotation = Quaternion(-0.56545657, -0.31424084, -0.70309037, 0.29525524)
+bones/10/rotation = Quaternion(4.6741555e-08, -4.085869e-08, -0.5230075, 0.8523282)
+bones/12/rotation = Quaternion(0.048684318, -0.43689117, 0.044022232, 0.89711654)
+bones/13/rotation = Quaternion(-0.054505434, 0.054505393, -0.5391622, 0.838667)
+bones/14/rotation = Quaternion(-0.03425397, 0.00087689597, -0.00018849502, 0.9994128)
+bones/15/position = Vector3(0.17094506, 0.11358725, -0.096064806)
+bones/15/rotation = Quaternion(0.958501, -1.8535846e-07, -4.2941792e-08, -0.2850895)
+bones/16/rotation = Quaternion(0.42003587, 6.2656895e-08, -2.9170025e-07, 0.9075076)
+bones/17/rotation = Quaternion(-0.46246403, -8.3982364e-08, 8.275787e-08, 0.88663805)
+bones/18/rotation = Quaternion(8.17531e-09, 0.9202452, -0.3913425, 7.345473e-08)
+bones/19/position = Vector3(-0.17094508, 0.113587305, 0.09606487)
+bones/19/rotation = Quaternion(0.91729164, 8.178266e-08, -5.5593787e-09, 0.39821622)
+bones/20/rotation = Quaternion(0.0491998, -6.895925e-08, 3.4167567e-08, 0.998789)
+bones/21/rotation = Quaternion(-0.51343435, 8.628489e-08, -9.297289e-09, 0.8581289)
+bones/22/rotation = Quaternion(3.4675896e-08, 0.9201787, -0.39149877, 6.299333e-08)
+
+[node name="head" parent="Rig_Medium/Skeleton3D" index="0"]
+transform = Transform3D(0.99974394, -0.021952141, 0.0054873424, 0.022352831, 0.99580073, -0.088776216, -0.003515471, 0.08887614, 0.9960364, -0.005903217, 1.2505703, 0.1550689)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="." index="1"]
+libraries = {
+&"skeleton_warrior": SubResource("AnimationLibrary_m0mtg")
+}
+autoplay = "skeleton_warrior/Walking_B"
+
+[node name="AnimationTree" type="AnimationTree" parent="." index="2"]
+tree_root = SubResource("AnimationNodeBlendTree_df4md")
+anim_player = NodePath("../AnimationPlayer")
+parameters/BlendIdleRun/blend_amount = 0.0
+parameters/DeadBlend/blend_amount = 0.0
+parameters/OneShot/active = false
+parameters/OneShot/internal_active = false
+parameters/OneShot/request = 0

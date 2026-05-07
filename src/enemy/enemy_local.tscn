@@ -1,0 +1,52 @@
+[gd_scene load_steps=10 format=3 uid="uid://cif7328pvepge"]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_rv3oy"]
+[ext_resource type="PackedScene" uid="uid://d3g0lxqo4lnm" path="res://src/enemy/skeleton_warrior.tscn" id="2_41ek6"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="3_6obaf"]
+[ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="4_nqpn3"]
+[ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="5_ovf15"]
+[ext_resource type="Script" uid="uid://bbgviimwhb8xd" path="res://src/enemy/state/falling.gd" id="6_2o1j5"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="7_4si6m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_65eof"]
+radius = 0.39160156
+height = 2.3062744
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p5r7q"]
+radius = 0.7792969
+height = 2.3674316
+
+[node name="EnemyLocal" type="CharacterBody3D"]
+collision_layer = 3
+script = ExtResource("1_rv3oy")
+
+[node name="Skeleton_Warrior" parent="." instance=ExtResource("2_41ek6")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
+shape = SubResource("CapsuleShape3D_65eof")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("3_6obaf")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("4_nqpn3")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("5_ovf15")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("6_2o1j5")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("7_4si6m")
+
+[node name="HitBox" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1779166, -0.77149844)
+shape = SubResource("CapsuleShape3D_p5r7q")
+
+[connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]
