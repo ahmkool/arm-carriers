@@ -44,17 +44,21 @@ func _process_not_carrying() -> bool:
 		return false
 	
 	var world_node = player_node.get_parent().get_parent()
-	var bazooka_node: Bazooka = world_node.get_node("Weapon/Bazooka")
+	var big_weapon_node: BigWeapon = world_node.get_node("Weapon").get_child(0) as BigWeapon
+	var pick_and_drop_handler: PickAndDropHandler = big_weapon_node.get_node("PickAndDropHandler")
+	if pick_and_drop_handler == null:
+		push_error("BigWeapon '%s' is missing a PickAndDropHandler child" % big_weapon_node.name)
+		return false
 	if can_carry_status == CanCarryStatus.CAN_CARRY_SHOOTER:
-		var player_position = bazooka_node.get_node("ShooterPosition").global_position
+		var player_position = pick_and_drop_handler.get_node("ShooterPosition").global_position
 		get_parent().global_position = player_position
 		can_carry_status = CanCarryStatus.CARRYING_SHOOTER
-		get_parent().weapon_carrier_pin_joint.set_node_b(bazooka_node.get_path())
+		get_parent().weapon_carrier_pin_joint.set_node_b(big_weapon_node.get_path())
 	elif can_carry_status == CanCarryStatus.CAN_CARRY_DIRECTION_SETTER:
-		var player_position = bazooka_node.get_node("DirectionSetterPosition").global_position
+		var player_position = pick_and_drop_handler.get_node("DirectionSetterPosition").global_position
 		get_parent().global_position = player_position
 		can_carry_status = CanCarryStatus.CARRYING_DIRECTION_SETTER
-		get_parent().weapon_carrier_pin_joint.set_node_b(bazooka_node.get_path())
+		get_parent().weapon_carrier_pin_joint.set_node_b(big_weapon_node.get_path())
 	return true
 
 func _process_carrying() -> bool:

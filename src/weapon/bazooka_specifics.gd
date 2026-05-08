@@ -1,9 +1,8 @@
-class_name Bazooka
-extends RigidBody3D
+class_name BazookaSpecifics
+extends Node3D
 
 @onready var players: Players = LevelNodes.get_players(self)
-@onready var shooter_position_marker: Marker3D = $ShooterPosition
-@onready var direction_setter_position_marker: Marker3D = $DirectionSetterPosition
+@export var pick_and_drop_handler: PickAndDropHandler
 @onready var muzzle: Marker3D = $Muzzle
 
 var _bazooka_bullet_scene: PackedScene = preload("res://src/weapon/bazooka_bullet_local.tscn")
@@ -31,40 +30,44 @@ func _process(delta):
 
 func _physics_process(delta):
 	_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
-	var carry_info = get_carry_info()
+	var carry_info = pick_and_drop_handler.get_carry_info()
 	_update_carrier_collision_exceptions(carry_info)
-	var has_shooter := is_instance_valid(carry_info.shooter_player)
-	var has_direction_setter := is_instance_valid(carry_info.direction_setter_player)
+	var has_shooter := is_instance_valid(carry_info.main_carrier)
+	var has_direction_setter := is_instance_valid(carry_info.secondary_carrier)
 	if not has_shooter and not has_direction_setter:
 		_clear_fixed_endpoints()
 		return
 
 	if has_shooter and has_direction_setter:
 		_clear_fixed_endpoints()
-		_enforce_carrier_distance(carry_info.shooter_player, carry_info.direction_setter_player)
-		var shooter_shoulder := _get_player_shoulder_position(carry_info.shooter_player)
-		var direction_setter_shoulder := _get_player_shoulder_position(carry_info.direction_setter_player)
+		_enforce_carrier_distance(carry_info.main_carrier, carry_info.secondary_carrier)
+		var shooter_shoulder := _get_player_shoulder_position(carry_info.main_carrier)
+		var direction_setter_shoulder := _get_player_shoulder_position(carry_info.secondary_carrier)
 		_apply_pose_from_ends(shooter_shoulder, direction_setter_shoulder)
 		_check_firing_bullet(carry_info)
 		return
+	
+	var direction_setter_position_marker = pick_and_drop_handler.direction_setter_position_marker
 
 	if has_shooter:
 		if not _has_fixed_direction_setter_end:
 			_fixed_direction_setter_end_world = direction_setter_position_marker.global_position
 			_has_fixed_direction_setter_end = true
-		var shooter_shoulder := _get_player_shoulder_position(carry_info.shooter_player)
+		var shooter_shoulder := _get_player_shoulder_position(carry_info.main_carrier)
 		_apply_pose_from_ends(shooter_shoulder, _fixed_direction_setter_end_world)
 		return
+	
+	var shooter_position_marker = pick_and_drop_handler.shooter_position_marker
 
 	if has_direction_setter:
 		if not _has_fixed_shooter_end:
 			_fixed_shooter_end_world = shooter_position_marker.global_position
 			_has_fixed_shooter_end = true
-		var direction_setter_shoulder := _get_player_shoulder_position(carry_info.direction_setter_player)
+		var direction_setter_shoulder := _get_player_shoulder_position(carry_info.secondary_carrier)
 		_apply_pose_from_ends(_fixed_shooter_end_world, direction_setter_shoulder)
 
 func _check_firing_bullet(carry_info: CarryInfo) -> void:
-	if not Input.is_action_just_pressed(carry_info.shooter_player.action_shoot):
+	if not Input.is_action_just_pressed(carry_info.main_carrier.action_shoot):
 		return
 	if _fire_cooldown_remaining > 0.0:
 		return
@@ -89,113 +92,53 @@ func _apply_pose_from_ends(shooter_end_world: Vector3, direction_setter_end_worl
 
 	var forward := carry_direction.normalized()
 	var up := Vector3.UP
+	
+	var weapon: BigWeapon = get_parent() as BigWeapon
+	
 	# Prevent invalid basis when aiming almost straight up/down.
 	if absf(forward.dot(up)) > 0.98:
-		up = Vector3.FORWARD
+		weapon.up = Vector3.FORWARD
 	var right := up.cross(forward).normalized()
 	var corrected_up := forward.cross(right).normalized()
 	var target_basis := Basis(right, corrected_up, forward).orthonormalized()
 
-	var shooter_local_offset := shooter_position_marker.position
-	var target_origin := shooter_end_world - (target_basis * shooter_local_offset)
-	global_transform = Transform3D(target_basis, target_origin)
+	var shooter_position_marker = pick_and_drop_handler.shooter_position_marker
+	var shooter_local_offset = shooter_position_marker.position
+	var target_origin = shooter_end_world - (target_basis * shooter_local_offset)
+	weapon.global_transform = Transform3D(target_basis, target_origin)
 
 	# Keep physics stable while we drive the transform directly.
-	linear_velocity = Vector3.ZERO
-	angular_velocity = Vector3.ZERO
+	weapon.linear_velocity = Vector3.ZERO
+	weapon.angular_velocity = Vector3.ZERO
 
 
 func _clear_fixed_endpoints() -> void:
 	_has_fixed_shooter_end = false
 	_has_fixed_direction_setter_end = false
 
-class CarryInfo:
-	var shooter_player: PlayerLocal = null
-	var direction_setter_player: PlayerLocal = null
-	
-func get_carry_info():
-	var carry_info: CarryInfo = CarryInfo.new()
-	if players == null:
-		return carry_info
-	for player in players.get_children():
-		if player is PlayerLocal:
-			if player.carrying_weapon_data.can_carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_SHOOTER:
-				carry_info.shooter_player = player
-			elif player.carrying_weapon_data.can_carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_DIRECTION_SETTER:
-				carry_info.direction_setter_player = player
-	return carry_info
-	
-func on_body_entered_shooter_zone(body: Node3D):
-	if body is not PlayerLocal:
-		return
-	var player = body as PlayerLocal
-	if _check_not_already_carrying(player):
-		return
-	player.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.CAN_CARRY_SHOOTER
-
-func on_body_entered_direction_setter_zone(body: Node3D):
-	if body is not PlayerLocal:
-		return
-	var player = body as PlayerLocal
-	if _check_not_already_carrying(player):
-		return
-	player.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.CAN_CARRY_DIRECTION_SETTER
-
-func on_body_exited_shooter_zone(body: Node3D):
-	if body is not PlayerLocal:
-		return
-	var player = body as PlayerLocal
-	if _check_not_already_carrying(player):
-		return
-	player.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
-
-func on_body_exited_direction_setter_zone(body: Node3D):
-	if body is not PlayerLocal:
-		return
-	var player = body as PlayerLocal
-	if _check_not_already_carrying(player):
-		return
-	player.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
-
-func _check_not_already_carrying(player: PlayerLocal):
-	var carry_info = get_carry_info()
-	if carry_info.shooter_player == player:
-		return true
-	if carry_info.direction_setter_player == player:
-		return true
-	return false
-
-
 func _get_player_shoulder_position(player: PlayerLocal) -> Vector3:
 	return player.global_position + Vector3.UP * SHOULDER_HEIGHT
 
 
-func get_carry_direction_flat() -> Vector3:
-	var direction := direction_setter_position_marker.global_position - shooter_position_marker.global_position
-	direction.y = 0.0
-	if direction.length_squared() < 0.0001:
-		return Vector3.ZERO
-	return direction.normalized()
-
-
 func _update_carrier_collision_exceptions(carry_info: CarryInfo) -> void:
 	var desired_exceptions: Array[PlayerLocal] = []
-	if is_instance_valid(carry_info.shooter_player):
-		desired_exceptions.append(carry_info.shooter_player)
-	if is_instance_valid(carry_info.direction_setter_player):
-		desired_exceptions.append(carry_info.direction_setter_player)
+	if is_instance_valid(carry_info.main_carrier):
+		desired_exceptions.append(carry_info.main_carrier)
+	if is_instance_valid(carry_info.secondary_carrier):
+		desired_exceptions.append(carry_info.secondary_carrier)
 
+	var weapon: BigWeapon = get_parent() as BigWeapon
 	for player in _carrier_collision_exceptions:
 		if not is_instance_valid(player):
 			continue
 		if desired_exceptions.has(player):
 			continue
-		remove_collision_exception_with(player)
+		weapon.remove_collision_exception_with(player)
 
 	for player in desired_exceptions:
 		if _carrier_collision_exceptions.has(player):
 			continue
-		add_collision_exception_with(player)
+		weapon.add_collision_exception_with(player)
 
 	_carrier_collision_exceptions = desired_exceptions
 

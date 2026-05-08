@@ -1,0 +1,65 @@
+[gd_scene load_steps=9 format=3 uid="uid://bgdgrubg87row"]
+
+[ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_q1t8x"]
+[ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="4_ptwm4"]
+[ext_resource type="Script" uid="uid://dbijqxrfnj5se" path="res://src/weapon/sword_specifics.gd" id="4_q1t8x"]
+[ext_resource type="PackedScene" uid="uid://cs4yecqsvv1un" path="res://assets/models/weapon/sword.glb" id="5_dc8ne"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ab1mk"]
+size = Vector3(2.0615234, 1.7197266, 2.1870117)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_q1t8x"]
+size = Vector3(2.038086, 1.7212677, 2.3986816)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_dc8ne"]
+size = Vector3(1, 1, 5.2983704)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ywwcy"]
+size = Vector3(1.5742188, 0.5605469, 7.5764465)
+
+[node name="Sword" type="RigidBody3D"]
+script = ExtResource("1_q1t8x")
+
+[node name="PickAndDropHandler" type="Node3D" parent="."]
+script = ExtResource("4_ptwm4")
+
+[node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/ShooterPickArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5627441)
+shape = SubResource("BoxShape3D_ab1mk")
+
+[node name="DirectionSetterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/DirectionSetterPickArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.006706238, 0.85095215)
+shape = SubResource("BoxShape3D_q1t8x")
+
+[node name="ShooterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9530213, 0, -2.0202596)
+
+[node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.1775323)
+
+[node name="WeaponSpecifics" parent="." instance=ExtResource("5_dc8ne")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2.3491564)
+script = ExtResource("4_q1t8x")
+
+[node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
+transform = Transform3D(-0.5, 0, 4.371139e-08, 0, 0.5, 0, -4.371139e-08, 0, -0.5, -2.0536977e-07, 0, 2.3491564)
+
+[node name="CameraAddon1" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15.749691)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6676483)
+shape = SubResource("BoxShape3D_dc8ne")
+
+[node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.8256073)
+shape = SubResource("BoxShape3D_ywwcy")
+
+[connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]
+[connection signal="body_entered" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_entered_direction_setter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_exited_direction_setter_zone"]

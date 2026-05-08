@@ -1,0 +1,8 @@
+[gd_scene load_steps=3 format=3 uid="uid://dasmcboxynacg"]
+
+[ext_resource type="Script" uid="uid://dsccev6ws54tf" path="res://src/world/levels/world_router_test.gd" id="1_jqxx6"]
+[ext_resource type="PackedScene" uid="uid://dj2pg5uao6elb" path="res://src/world/levels/world_local.tscn" id="2_gandb"]
+
+[node name="WorldRouterTest" type="Node3D"]
+script = ExtResource("1_jqxx6")
+level = ExtResource("2_gandb")

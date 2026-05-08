@@ -7,28 +7,28 @@ extends Camera3D
 @export var aim_target_distance: float = 9.0
 
 var players: Node
-var bazooka: Bazooka
+var big_weapon: BigWeapon
 
 
 func _ready():
 	# Camera starts with the desired tilt from the scene transform,
 	# then only follows translation.
 	_find_players_node()
-	_find_bazooka_node()
+	_find_big_weapon_node()
 
 
 func _process(delta):
 	if not is_instance_valid(players):
 		_find_players_node()
 		return
-	if not is_instance_valid(bazooka):
-		_find_bazooka_node()
+	if not is_instance_valid(big_weapon):
+		_find_big_weapon_node()
 
 	var player_positions := _get_player_positions()
 	if player_positions.is_empty():
 		return
-	if _is_jointly_carrying_bazooka():
-		player_positions.append(_get_aim_target_position())
+	if _is_jointly_carrying_big_weapon():
+		player_positions.append_array(_get_aim_target_positions())
 
 	var midpoint = _get_midpoint(player_positions)
 	var spread = _get_max_distance_from(midpoint, player_positions)
@@ -44,11 +44,11 @@ func _find_players_node() -> void:
 	players = found_players
 
 
-func _find_bazooka_node() -> void:
-	var found_bazooka := get_node_or_null("../Weapon/Bazooka")
-	if found_bazooka == null:
+func _find_big_weapon_node() -> void:
+	var found_big_weapon := get_node_or_null("../Weapon").get_child(0) as BigWeapon
+	if found_big_weapon == null:
 		return
-	bazooka = found_bazooka as Bazooka
+	big_weapon = found_big_weapon
 
 
 func _get_player_positions() -> Array[Vector3]:
@@ -59,21 +59,27 @@ func _get_player_positions() -> Array[Vector3]:
 	return positions
 
 
-func _is_jointly_carrying_bazooka() -> bool:
-	if not is_instance_valid(bazooka):
+func _is_jointly_carrying_big_weapon() -> bool:
+	if not is_instance_valid(big_weapon):
 		return false
-	var carry_info = bazooka.get_carry_info()
-	return is_instance_valid(carry_info.shooter_player) and is_instance_valid(carry_info.direction_setter_player)
+	var pick_and_drop_handler: PickAndDropHandler = big_weapon.get_node("PickAndDropHandler")
+	var carry_info = pick_and_drop_handler.get_carry_info()
+	if pick_and_drop_handler == null:
+		return false
+	return is_instance_valid(carry_info.main_carrier) and is_instance_valid(carry_info.secondary_carrier)
 
 
-func _get_aim_target_position() -> Vector3:
-	if not is_instance_valid(bazooka):
-		return Vector3.ZERO
-	var muzzle := bazooka.get_node_or_null("Muzzle") as Marker3D
-	if muzzle == null:
-		return bazooka.global_position
-	var forward := muzzle.global_transform.basis.z.normalized()
-	return muzzle.global_position + (forward * aim_target_distance)
+func _get_aim_target_positions() -> Array[Vector3]:
+	if not is_instance_valid(big_weapon):
+		return []
+	var camera_addons: Node3D = big_weapon.get_node("WeaponSpecifics/CameraAddons")
+	if camera_addons == null:
+		return []
+	var positions: Array[Vector3] = []
+	for child in camera_addons.get_children():
+		if child is Marker3D:
+			positions.append(child.global_position)
+	return positions
 
 
 func _get_midpoint(positions: Array[Vector3]) -> Vector3:

@@ -1,0 +1,234 @@
+[gd_scene load_steps=32 format=3 uid="uid://dj2pg5uao6elb"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_3d.gd" id="2_ile7a"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="2_j5fge"]
+[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="3_msrya"]
+[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="4_wi560"]
+[ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_y67nd"]
+[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="5_wi560"]
+[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="6_qi7jy"]
+[ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="8_elo5k"]
+[ext_resource type="PackedScene" uid="uid://clba83xuwhyxj" path="res://assets/models/Kaykit/Forest/Bush_1_A_Color1.gltf" id="10_56lv5"]
+[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_65eof"]
+[ext_resource type="PackedScene" uid="uid://dgjdpf062r5i1" path="res://assets/models/Kaykit/Forest/Grass_1_A_Color1.gltf" id="11_ile7a"]
+[ext_resource type="PackedScene" uid="uid://lqgry7wel2gw" path="res://assets/models/Kaykit/Forest/Grass_1_B_Color1.gltf" id="12_y67nd"]
+[ext_resource type="PackedScene" uid="uid://dxuiiglq71emu" path="res://assets/models/Kaykit/Forest/Grass_1_D_Color1.gltf" id="13_hfrl6"]
+[ext_resource type="PackedScene" uid="uid://dodm6nfeuvc0j" path="res://src/world/trials/trial_zone.tscn" id="17_65eof"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
+[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_kj30a"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="20_n7rb1"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
+panorama = ExtResource("2_j5fge")
+
+[sub_resource type="Sky" id="Sky_8eeh1"]
+sky_material = SubResource("PanoramaSkyMaterial_j5fge")
+
+[sub_resource type="Environment" id="Environment_msrya"]
+background_mode = 2
+sky = SubResource("Sky_8eeh1")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
+size = Vector3(4, 4, 4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u08rt"]
+albedo_color = Color(0.40784314, 0.8745098, 0.3529412, 1)
+metallic_specular = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_u08rt"]
+material = SubResource("StandardMaterial3D_u08rt")
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_56gt1"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hfrl6"]
+albedo_color = Color(0.43, 0.21557334, 0.1376, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_65eof"]
+material = SubResource("StandardMaterial3D_hfrl6")
+size = Vector3(3, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oc40d"]
+size = Vector3(3, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
+size = Vector3(56.4718, 1, 76.77945)
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("1_1chlw")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("2_ile7a")
+follow_offset = Vector3(0, 7, 3)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InfoMessage" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("1_56gt1")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessage"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessage/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="UI/InfoMessage/PanelContainer/MarginContainer"]
+layout_mode = 2
+text = "Press any button to join the game"
+
+[node name="DebugInfo" type="MarginContainer" parent="UI"]
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -163.0
+offset_bottom = 108.0
+grow_horizontal = 0
+theme = ExtResource("1_56gt1")
+script = ExtResource("4_y67nd")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/DebugInfo"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugInfo/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug info:"
+
+[node name="CarryingStatusP0" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_msrya")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+
+[node name="GameStateMachine" type="Node" parent="."]
+script = ExtResource("3_msrya")
+initial_state_path = NodePath("WaitingForPlayers")
+
+[node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
+script = ExtResource("4_wi560")
+
+[node name="Playing" type="Node" parent="GameStateMachine"]
+script = ExtResource("5_wi560")
+
+[node name="WaitingForGameToStart" type="Node" parent="GameStateMachine"]
+script = ExtResource("6_qi7jy")
+
+[node name="GameOverLost" type="Node" parent="GameStateMachine"]
+script = ExtResource("10_65eof")
+
+[node name="Players" type="Node" parent="."]
+script = ExtResource("8_elo5k")
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="TrialZone" parent="Enemies" instance=ExtResource("17_65eof")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.607292)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("19_yghaq")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.245598)
+script = ExtResource("20_n7rb1")
+
+[node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CheckpointManager/Checkpoint/TriggerArea"]
+shape = SubResource("BoxShape3D_lpgms")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D"]
+mesh = SubResource("BoxMesh_u08rt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D"]
+shape = SubResource("BoxShape3D_56gt1")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -29.905085)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D2"]
+mesh = SubResource("BoxMesh_u08rt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D2"]
+shape = SubResource("BoxShape3D_56gt1")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -14.9579115)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D3"]
+mesh = SubResource("BoxMesh_65eof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D3"]
+shape = SubResource("BoxShape3D_oc40d")
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
+script = ExtResource("18_oc40d")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
+shape = SubResource("BoxShape3D_65eof")
+
+[node name="Decoration" type="Node" parent="Level"]
+
+[node name="Bush_1_A_Color12" parent="Level/Decoration" instance=ExtResource("10_56lv5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2514763, -1.2752995, 3.813552)
+
+[node name="Grass_1_A_Color12" parent="Level/Decoration" instance=ExtResource("11_ile7a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.372755, -1.2582307, 7.712339)
+
+[node name="Grass_1_B_Color12" parent="Level/Decoration" instance=ExtResource("12_y67nd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.345448, -1.2219411, 1.6715336)
+
+[node name="Grass_1_D_Color12" parent="Level/Decoration" instance=ExtResource("13_hfrl6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5355577, -1.2360604, -1.8698006)
+
+[node name="Grass_1_D_Color13" parent="Level/Decoration" instance=ExtResource("13_hfrl6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5102062, -1.2360604, 8.175602)
+
+[node name="Weapon" type="Node" parent="."]
+
+[node name="Bazooka" parent="Weapon" instance=ExtResource("20_kj30a")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0, 0)
+
+[connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]

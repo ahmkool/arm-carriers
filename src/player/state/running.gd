@@ -19,9 +19,10 @@ func physics_update(_delta: float) -> void:
 	var carry_status := player.carrying_weapon_data.can_carry_status
 	if carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_SHOOTER or carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_DIRECTION_SETTER:
 		var world_node := player.get_parent().get_parent()
-		var bazooka := world_node.get_node_or_null("Bazooka") as Bazooka
-		if is_instance_valid(bazooka):
-			var bazooka_direction := bazooka.get_carry_direction_flat()
-			if bazooka_direction.length_squared() > 0.0001:
-				look_direction = bazooka_direction
+		var big_weapon_node: BigWeapon = world_node.get_node("Weapon").get_child(0) as BigWeapon
+		var pick_and_drop_handler: PickAndDropHandler = big_weapon_node.get_node("PickAndDropHandler")
+		if is_instance_valid(pick_and_drop_handler):
+			var carry_direction := pick_and_drop_handler.get_carry_direction_flat()
+			if carry_direction.length_squared() > 0.0001:
+				look_direction = carry_direction
 	player.look_at(player.global_position + look_direction, Vector3.UP)

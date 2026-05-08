@@ -1,0 +1,27 @@
+---
+description: Arm Carriers game vision, coop rules, and iteration-1 weapon design for agents
+alwaysApply: true
+---
+
+# Arm Carriers — Project context
+
+## Stack
+
+- **Engine**: Godot 4.x (GDScript). Project name is **Arm Carriers**.
+
+## High-level pitch
+
+Two-player **cooperative** action: players carry **large, heavy weapons together**, fight **enemy hordes**, and **reach the end of each level**. Cooperation and shared control of oversized gear are central to pacing, combat, and level design—not optional flavor.
+
+When implementing features, prefer mechanics that reinforce **paired movement**, **shared aiming or timing**, or **risk/reward tied to formation** rather than treating weapons as ordinary single-player tools.
+
+## First iteration — weapons & intended feel
+
+Treat these as the **baseline roster** unless the codebase or conversation says otherwise:
+
+1. **Big bazooka** — heavyweight explosive option; pacing should feel deliberate and chunky (two-player carry implication).
+2. **Big sword** — melee; **one player must dash** to land a sword hit (asymmetric cue: striker vs support).
+3. **Big grenade launcher** — **launch distance scales with how far the front-carrying player is** relative to formation (distance as a deliberate aim mechanic, not cosmetic).
+4. **Two-sided extendable spear** — each side can attack independently; **each player can dash on their own side** to perform a spear attack (symmetric but coordinated positioning).
+
+Use this section when proposing defaults (controls, HUD, animations, tuning) so new systems stay aligned with coop carry fantasy and these weapon fantasies.

@@ -1,7 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://2ikxna561co1"]
+[gd_scene load_steps=7 format=3 uid="uid://cq5v348mrgy7q"]
 
-[ext_resource type="PackedScene" uid="uid://bfe1safwg6naj" path="res://assets/models/weapon/bazooka.glb" id="1_cmlmn"]
-[ext_resource type="Script" uid="uid://dvw83kdn7iel2" path="res://src/weapon/bazooka.gd" id="2_b84ea"]
+[ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_th40a"]
+[ext_resource type="PackedScene" uid="uid://bfe1safwg6naj" path="res://assets/models/weapon/bazooka.glb" id="2_8k35n"]
+[ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="3_8k35n"]
+[ext_resource type="Script" uid="uid://dvw83kdn7iel2" path="res://src/weapon/bazooka_specifics.gd" id="3_hpcti"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_cmlmn"]
 size = Vector3(1.4, 1.4, 6.3)
@@ -11,37 +13,42 @@ radius = 1.5991211
 height = 4.1621094
 
 [node name="Bazooka" type="RigidBody3D"]
-script = ExtResource("2_b84ea")
+script = ExtResource("1_th40a")
 
-[node name="bazooka2" parent="." instance=ExtResource("1_cmlmn")]
+[node name="WeaponSpecifics" parent="." node_paths=PackedStringArray("pick_and_drop_handler") instance=ExtResource("2_8k35n")]
 transform = Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0)
+script = ExtResource("3_hpcti")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+
+[node name="Muzzle" type="Marker3D" parent="WeaponSpecifics"]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 5.546406)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.054214478, 0.1071167, -0.06695557)
 shape = SubResource("BoxShape3D_cmlmn")
 
-[node name="ShooterPickArea" type="Area3D" parent="."]
+[node name="PickAndDropHandler" type="Node3D" parent="."]
+script = ExtResource("3_8k35n")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="ShooterPickArea"]
+[node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/ShooterPickArea"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.005828616, -2.3244474)
 shape = SubResource("CapsuleShape3D_cmlmn")
 
-[node name="DirectionSetterPickArea" type="Area3D" parent="."]
+[node name="DirectionSetterPickArea" type="Area3D" parent="PickAndDropHandler"]
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="DirectionSetterPickArea"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/DirectionSetterPickArea"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.005828616, 1.954129)
 shape = SubResource("CapsuleShape3D_cmlmn")
 
-[node name="ShooterPosition" type="Marker3D" parent="."]
+[node name="ShooterPosition" type="Marker3D" parent="PickAndDropHandler"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9530213, 0, -2.0202596)
 
-[node name="DirectionSetterPosition" type="Marker3D" parent="."]
+[node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.1775323)
 
-[node name="Muzzle" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.773203)
-
-[connection signal="body_entered" from="ShooterPickArea" to="." method="on_body_entered_shooter_zone"]
-[connection signal="body_exited" from="ShooterPickArea" to="." method="on_body_exited_shooter_zone"]
-[connection signal="body_entered" from="DirectionSetterPickArea" to="." method="on_body_entered_direction_setter_zone"]
-[connection signal="body_exited" from="DirectionSetterPickArea" to="." method="on_body_exited_direction_setter_zone"]
+[connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]
+[connection signal="body_entered" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_entered_direction_setter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_exited_direction_setter_zone"]
