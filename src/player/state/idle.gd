@@ -5,6 +5,9 @@ func physics_update(delta: float) -> void:
 	if not player.is_on_floor():
 		player_state_machine.transition_to("falling")
 		return
+	if Input.is_action_just_pressed(player.action_dash):
+		player_state_machine.transition_to("dashing")
+		return
 	if Input.is_action_just_pressed(player.action_accept):
 		player.velocity.y = player.JUMP_VELOCITY
 		player_state_machine.transition_to("falling")

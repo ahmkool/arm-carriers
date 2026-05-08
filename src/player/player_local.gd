@@ -23,6 +23,7 @@ var action_jump: String
 var action_accept: String
 var action_action: String
 var action_shoot: String
+var action_dash: String
 var is_dead := false
 
 @onready var player_state_machine: PlayerStateMachine = $PlayerStateMachine
@@ -40,6 +41,7 @@ func _ready():
 	action_accept = "p%s_accept" % device_id
 	action_action = "p%s_action" % device_id
 	action_shoot = "p%s_shoot" % device_id
+	action_dash = "p%s_dash" % device_id
 	player_id = device_id
 
 

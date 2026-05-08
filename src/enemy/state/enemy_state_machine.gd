@@ -29,6 +29,7 @@ func transition_to(state_name: String) -> void:
 	if current_state:
 		current_state.exit()
 	current_state = states[key]
+	#print("Transitioning to enemy state: ", state_name)
 	current_state.enter()
 
 func _process(delta: float) -> void:
@@ -39,3 +40,4 @@ func _physics_process(delta: float) -> void:
 	if current_state:
 		current_state.physics_update(delta)
 	enemy.move_and_slide()
+	enemy.update_locomotion_blend()

@@ -2,6 +2,9 @@ extends PlayerState
 
 
 func physics_update(delta: float) -> void:
+	if Input.is_action_just_pressed(player.action_dash):
+		player_state_machine.transition_to("dashing")
+		return
 	if player.is_on_floor():
 		var direction := player.get_move_direction()
 		if direction.length_squared() > 0.0001:

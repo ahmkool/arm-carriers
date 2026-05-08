@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=33 format=3 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_65eof"]
 [ext_resource type="PackedScene" uid="uid://dgjdpf062r5i1" path="res://assets/models/Kaykit/Forest/Grass_1_A_Color1.gltf" id="11_ile7a"]
 [ext_resource type="PackedScene" uid="uid://lqgry7wel2gw" path="res://assets/models/Kaykit/Forest/Grass_1_B_Color1.gltf" id="12_y67nd"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="13_dvbv8"]
 [ext_resource type="PackedScene" uid="uid://dxuiiglq71emu" path="res://assets/models/Kaykit/Forest/Grass_1_D_Color1.gltf" id="13_hfrl6"]
 [ext_resource type="PackedScene" uid="uid://dodm6nfeuvc0j" path="res://src/world/trials/trial_zone.tscn" id="17_65eof"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
@@ -152,6 +153,11 @@ script = ExtResource("8_elo5k")
 
 [node name="TrialZone" parent="Enemies" instance=ExtResource("17_65eof")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.607292)
+
+[node name="TestEnemies" type="Node" parent="."]
+
+[node name="EnemyLocal" parent="TestEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.9946446, 0, -7.7098083)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("19_yghaq")

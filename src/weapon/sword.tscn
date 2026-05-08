@@ -41,15 +41,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9530213, 0, -2.0202596)
 [node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.1775323)
 
-[node name="WeaponSpecifics" parent="." instance=ExtResource("5_dc8ne")]
+[node name="WeaponSpecifics" parent="." node_paths=PackedStringArray("pick_and_drop_handler") instance=ExtResource("5_dc8ne")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2.3491564)
 script = ExtResource("4_q1t8x")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
 
 [node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
 transform = Transform3D(-0.5, 0, 4.371139e-08, 0, 0.5, 0, -4.371139e-08, 0, -0.5, -2.0536977e-07, 0, 2.3491564)
 
 [node name="CameraAddon1" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 15.749691)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 31.74218)
+
+[node name="CameraAddon2" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22.003174)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6676483)

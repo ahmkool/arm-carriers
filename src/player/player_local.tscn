@@ -1,21 +1,22 @@
-[gd_scene load_steps=11 format=3 uid="uid://b2d8v5hofa7a6"]
+[gd_scene load_steps=12 format=3 uid="uid://b2d8v5hofa7a6"]
 
 [ext_resource type="PackedScene" uid="uid://djlqahjphg06r" path="res://src/player/mannequin_medium.tscn" id="1_q2fp3"]
-[ext_resource type="Script" uid="uid://dnxojpch253fl" path="res://src/player/player_local.gd" id="1_qib8p"]
+[ext_resource type="Script" uid="uid://dnxojpch253fl" path="res://src/player/player_local.gd" id="2_plocal"]
 [ext_resource type="Script" uid="uid://bb0q26042lr7p" path="res://src/player/state/player_state_machine.gd" id="3_3qrfr"]
 [ext_resource type="Script" uid="uid://bru2sustmt8nd" path="res://src/player/state/idle.gd" id="4_lh2qi"]
 [ext_resource type="Script" uid="uid://ccnehos01hou" path="res://src/player/state/running.gd" id="5_lh2qi"]
 [ext_resource type="Script" uid="uid://yeo4owi2ngpt" path="res://src/player/state/falling.gd" id="6_5wdx7"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="7_rp8rm"]
+[ext_resource type="Script" uid="uid://b38q225msyjxt" path="res://src/player/state/dashing.gd" id="7_xccgs"]
 [ext_resource type="Script" uid="uid://714wfd5yluad" path="res://src/player/carrying_weapon_data.gd" id="8_xf7a6"]
-[ext_resource type="Script" path="res://src/player/state/dead.gd" id="9_y0fuh"]
+[ext_resource type="Script" uid="uid://hwuw1ykmhuoy" path="res://src/player/state/dead.gd" id="9_y0fuh"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_q2fp3"]
 radius = 0.26171875
 height = 2.0701294
 
 [node name="PlayerLocal" type="CharacterBody3D"]
-script = ExtResource("1_qib8p")
+script = ExtResource("2_plocal")
 
 [node name="Mannequin_Medium" parent="." instance=ExtResource("1_q2fp3")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
@@ -39,6 +40,9 @@ script = ExtResource("6_5wdx7")
 
 [node name="Dead" type="Node" parent="PlayerStateMachine"]
 script = ExtResource("9_y0fuh")
+
+[node name="Dashing" type="Node" parent="PlayerStateMachine"]
+script = ExtResource("7_xccgs")
 
 [node name="UI" type="CanvasLayer" parent="."]
 
