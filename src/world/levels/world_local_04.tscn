@@ -1,0 +1,257 @@
+[gd_scene load_steps=37 format=3 uid="uid://b65khrk30h37k"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_hh68c"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_3d.gd" id="2_gxwti"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="3_k38we"]
+[ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_n6uwp"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_r2hyc"]
+[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="6_7h688"]
+[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="7_b4kx1"]
+[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="8_kcv7o"]
+[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="9_ntpln"]
+[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_e8lpr"]
+[ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="11_pk2s0"]
+[ext_resource type="PackedScene" uid="uid://dodm6nfeuvc0j" path="res://src/world/trials/trial_zone.tscn" id="12_7i482"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_lrvbg"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_i7kjq"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_wnw8a"]
+[ext_resource type="PackedScene" uid="uid://clba83xuwhyxj" path="res://assets/models/Kaykit/Forest/Bush_1_A_Color1.gltf" id="16_8b0ie"]
+[ext_resource type="PackedScene" uid="uid://dgjdpf062r5i1" path="res://assets/models/Kaykit/Forest/Grass_1_A_Color1.gltf" id="17_jopjy"]
+[ext_resource type="PackedScene" uid="uid://lqgry7wel2gw" path="res://assets/models/Kaykit/Forest/Grass_1_B_Color1.gltf" id="18_ekkch"]
+[ext_resource type="PackedScene" uid="uid://dxuiiglq71emu" path="res://assets/models/Kaykit/Forest/Grass_1_D_Color1.gltf" id="19_2a8sk"]
+[ext_resource type="Script" uid="uid://dvw83kdn7iel2" path="res://src/weapon/bazooka_specifics.gd" id="20_lmyfm"]
+[ext_resource type="PackedScene" uid="uid://bfe1safwg6naj" path="res://assets/models/weapon/bazooka.glb" id="21_ukwea"]
+[ext_resource type="PackedScene" path="" id="22_h8vse"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
+panorama = ExtResource("5_r2hyc")
+
+[sub_resource type="Sky" id="Sky_8eeh1"]
+sky_material = SubResource("PanoramaSkyMaterial_j5fge")
+
+[sub_resource type="Environment" id="Environment_msrya"]
+background_mode = 2
+sky = SubResource("Sky_8eeh1")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
+size = Vector3(4, 4, 4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u08rt"]
+albedo_color = Color(0.9909925, 0.6173674, 0.7973749, 1)
+metallic_specular = 0.2
+
+[sub_resource type="BoxMesh" id="BoxMesh_u08rt"]
+material = SubResource("StandardMaterial3D_u08rt")
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_56gt1"]
+size = Vector3(20, 1, 20)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hfrl6"]
+albedo_color = Color(0.43, 0.21557334, 0.1376, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_65eof"]
+material = SubResource("StandardMaterial3D_hfrl6")
+size = Vector3(3, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_oc40d"]
+size = Vector3(3, 1, 10)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
+size = Vector3(56.4718, 1, 76.77945)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_cmlmn"]
+size = Vector3(1.4, 1.4, 6.3)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_cmlmn"]
+radius = 1.5991211
+height = 4.1621094
+
+[sub_resource type="PackedScene" id="PackedScene_efkmp"]
+_bundled = {
+"conn_count": 4,
+"conns": PackedInt32Array(1073741833, 1073741834, 30, 31, 2, 0, 0, 1073741835, 1073741836, 32, 33, 2, 0, 0, 1073741837, 1073741838, 34, 35, 2, 0, 0, 1073741839, 1073741840, 36, 37, 2, 0, 0),
+"editable_instances": [],
+"names": PackedStringArray("Bazooka", "RigidBody3D", "script", "bazooka2", "transform", "CollisionShape3D", "CollisionShape3D", "transform", "shape", "ShooterPickArea", "Area3D", "CollisionShape3D", "CollisionShape3D", "transform", "shape", "DirectionSetterPickArea", "Area3D", "CollisionShape3D", "CollisionShape3D", "transform", "shape", "ShooterPosition", "Marker3D", "transform", "DirectionSetterPosition", "Marker3D", "transform", "Muzzle", "Marker3D", "transform", "body_entered", "on_body_entered_shooter_zone", "body_exited", "on_body_exited_shooter_zone", "body_entered", "on_body_entered_direction_setter_zone", "body_exited", "on_body_exited_direction_setter_zone"),
+"node_count": 10,
+"node_paths": [NodePath("."), NodePath("."), NodePath("."), NodePath("./ShooterPickArea"), NodePath("."), NodePath("./DirectionSetterPickArea"), NodePath("."), NodePath("."), NodePath("."), NodePath("ShooterPickArea"), NodePath("."), NodePath("ShooterPickArea"), NodePath("."), NodePath("DirectionSetterPickArea"), NodePath("."), NodePath("DirectionSetterPickArea"), NodePath(".")],
+"nodes": PackedInt32Array(-1, -1, 1, 0, -1, 1, 2, 0, 0, 1073741824, 0, 2147483647, 3, 1, 1, 4, 2, 0, 1073741825, 0, 6, 5, -1, 2, 7, 3, 8, 4, 0, 1073741826, 0, 10, 9, -1, 0, 0, 1073741827, 0, 12, 11, -1, 2, 13, 5, 14, 6, 0, 1073741828, 0, 16, 15, -1, 0, 0, 1073741829, 0, 18, 17, -1, 2, 19, 7, 20, 8, 0, 1073741830, 0, 22, 21, -1, 1, 23, 9, 0, 1073741831, 0, 25, 24, -1, 1, 26, 10, 0, 1073741832, 0, 28, 27, -1, 1, 29, 11, 0),
+"variants": [ExtResource("20_lmyfm"), ExtResource("21_ukwea"), Transform3D(0.5, 0, 0, 0, 0.5, 0, 0, 0, 0.5, 0, 0, 0), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.054214478, 0.1071167, -0.06695557), SubResource("BoxShape3D_cmlmn"), Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.005828616, -2.3244474), SubResource("CapsuleShape3D_cmlmn"), Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -0.005828616, 1.954129), SubResource("CapsuleShape3D_cmlmn"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9530213, 0, -2.0202596), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.1775323), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.773203)],
+"version": 3
+}
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("1_hh68c")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("2_gxwti")
+follow_offset = Vector3(0, 7, 3)
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InfoMessage" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("3_k38we")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessage"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessage/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="UI/InfoMessage/PanelContainer/MarginContainer"]
+layout_mode = 2
+text = "Press any button to join the game"
+
+[node name="DebugInfo" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -163.0
+offset_bottom = 108.0
+grow_horizontal = 0
+theme = ExtResource("3_k38we")
+script = ExtResource("4_n6uwp")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/DebugInfo"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugInfo/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug info:"
+
+[node name="CarryingStatusP0" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_msrya")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+
+[node name="GameStateMachine" type="Node" parent="."]
+script = ExtResource("6_7h688")
+initial_state_path = NodePath("WaitingForPlayers")
+
+[node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
+script = ExtResource("7_b4kx1")
+
+[node name="Playing" type="Node" parent="GameStateMachine"]
+script = ExtResource("8_kcv7o")
+
+[node name="WaitingForGameToStart" type="Node" parent="GameStateMachine"]
+script = ExtResource("9_ntpln")
+
+[node name="GameOverLost" type="Node" parent="GameStateMachine"]
+script = ExtResource("10_e8lpr")
+
+[node name="Players" type="Node" parent="."]
+script = ExtResource("11_pk2s0")
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="TrialZone" parent="Enemies" instance=ExtResource("12_7i482")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.607292)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("13_lrvbg")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.245598)
+script = ExtResource("14_i7kjq")
+
+[node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CheckpointManager/Checkpoint/TriggerArea"]
+shape = SubResource("BoxShape3D_lpgms")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="StaticBody3D" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D"]
+mesh = SubResource("BoxMesh_u08rt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D"]
+shape = SubResource("BoxShape3D_56gt1")
+
+[node name="StaticBody3D2" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -29.905085)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D2"]
+mesh = SubResource("BoxMesh_u08rt")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D2"]
+shape = SubResource("BoxShape3D_56gt1")
+
+[node name="StaticBody3D3" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -14.9579115)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D3"]
+mesh = SubResource("BoxMesh_65eof")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D3"]
+shape = SubResource("BoxShape3D_oc40d")
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
+script = ExtResource("15_wnw8a")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
+shape = SubResource("BoxShape3D_65eof")
+
+[node name="Decoration" type="Node" parent="Level"]
+
+[node name="Bush_1_A_Color12" parent="Level/Decoration" instance=ExtResource("16_8b0ie")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2514763, -1.2752995, 3.813552)
+
+[node name="Grass_1_A_Color12" parent="Level/Decoration" instance=ExtResource("17_jopjy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.372755, -1.2582307, 7.712339)
+
+[node name="Grass_1_B_Color12" parent="Level/Decoration" instance=ExtResource("18_ekkch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.345448, -1.2219411, 1.6715336)
+
+[node name="Grass_1_D_Color12" parent="Level/Decoration" instance=ExtResource("19_2a8sk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5355577, -1.2360604, -1.8698006)
+
+[node name="Grass_1_D_Color13" parent="Level/Decoration" instance=ExtResource("19_2a8sk")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5102062, -1.2360604, 8.175602)
+
+[node name="Weapon" type="Node" parent="."]
+
+[node name="Bazooka" parent="Weapon" instance=ExtResource("22_h8vse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, 0)
+
+[connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]

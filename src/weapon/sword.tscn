@@ -1,15 +1,19 @@
-[gd_scene load_steps=9 format=3 uid="uid://bgdgrubg87row"]
+[gd_scene load_steps=11 format=3 uid="uid://bgdgrubg87row"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_q1t8x"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="4_ptwm4"]
 [ext_resource type="Script" uid="uid://dbijqxrfnj5se" path="res://src/weapon/sword_specifics.gd" id="4_q1t8x"]
 [ext_resource type="PackedScene" uid="uid://cs4yecqsvv1un" path="res://assets/models/weapon/sword.glb" id="5_dc8ne"]
+[ext_resource type="Script" uid="uid://b1sdupmemvn3g" path="res://src/weapon/sword/hit_area.gd" id="5_ywwcy"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ab1mk"]
 size = Vector3(2.0615234, 1.7197266, 2.1870117)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_q1t8x"]
 size = Vector3(2.038086, 1.7212677, 2.3986816)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ptwm4"]
+size = Vector3(2.4160156, 1, 7.058441)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_dc8ne"]
 size = Vector3(1, 1, 5.2983704)
@@ -55,6 +59,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 31.74218)
 [node name="CameraAddon2" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22.003174)
 
+[node name="HitArea" type="Area3D" parent="WeaponSpecifics"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("5_ywwcy")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/HitArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4210855e-14, 0, -3.9787445)
+shape = SubResource("BoxShape3D_ptwm4")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.6676483)
 shape = SubResource("BoxShape3D_dc8ne")
@@ -67,3 +80,4 @@ shape = SubResource("BoxShape3D_ywwcy")
 [connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]
 [connection signal="body_entered" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_entered_direction_setter_zone"]
 [connection signal="body_exited" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_exited_direction_setter_zone"]
+[connection signal="body_entered" from="WeaponSpecifics/HitArea" to="WeaponSpecifics/HitArea" method="_on_hit_area_body_entered"]

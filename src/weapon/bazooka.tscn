@@ -23,6 +23,11 @@ pick_and_drop_handler = NodePath("../PickAndDropHandler")
 [node name="Muzzle" type="Marker3D" parent="WeaponSpecifics"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 5.546406)
 
+[node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
+
+[node name="Marker3D" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.1723585)
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.054214478, 0.1071167, -0.06695557)
 shape = SubResource("BoxShape3D_cmlmn")

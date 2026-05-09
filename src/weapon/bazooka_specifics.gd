@@ -10,7 +10,7 @@ var _bazooka_bullet_scene: PackedScene = preload("res://src/weapon/bazooka_bulle
 
 const SHOULDER_HEIGHT := 1.35
 const MIN_CARRIER_DISTANCE := 1.6
-const MAX_CARRIER_DISTANCE := 3.2
+const MAX_CARRIER_DISTANCE := 4.2
 const FIRE_COOLDOWN_SEC := 0.75
 var _carrier_collision_exceptions: Array[PlayerLocal] = []
 var _fixed_shooter_end_world := Vector3.ZERO

@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://da5h1xiphyi5d"]
+[gd_scene load_steps=26 format=3 uid="uid://da5h1xiphyi5d"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_i8gtj"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_3d.gd" id="2_2s0mp"]
@@ -19,7 +19,7 @@
 [ext_resource type="PackedScene" uid="uid://dgjdpf062r5i1" path="res://assets/models/Kaykit/Forest/Grass_1_A_Color1.gltf" id="17_ptwx7"]
 [ext_resource type="PackedScene" uid="uid://lqgry7wel2gw" path="res://assets/models/Kaykit/Forest/Grass_1_B_Color1.gltf" id="18_r83dm"]
 [ext_resource type="PackedScene" uid="uid://dxuiiglq71emu" path="res://assets/models/Kaykit/Forest/Grass_1_D_Color1.gltf" id="19_m0afw"]
-[ext_resource type="PackedScene" uid="uid://2ikxna561co1" path="res://src/weapon/bazooka.tscn" id="20_swecs"]
+[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_swecs"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_n1pwe")
@@ -35,27 +35,6 @@ ambient_light_energy = 0.3
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
 size = Vector3(4, 4, 4)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u08rt"]
-albedo_color = Color(0.9909925, 0.6173674, 0.7973749, 1)
-metallic_specular = 0.2
-
-[sub_resource type="BoxMesh" id="BoxMesh_u08rt"]
-material = SubResource("StandardMaterial3D_u08rt")
-size = Vector3(20, 1, 20)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_56gt1"]
-size = Vector3(20, 1, 20)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hfrl6"]
-albedo_color = Color(0.43, 0.21557334, 0.1376, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_65eof"]
-material = SubResource("StandardMaterial3D_hfrl6")
-size = Vector3(3, 1, 10)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_oc40d"]
-size = Vector3(3, 1, 10)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
 size = Vector3(56.4718, 1, 76.77945)
@@ -175,33 +154,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 
 [node name="Level" type="Node" parent="."]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D"]
-mesh = SubResource("BoxMesh_u08rt")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D"]
-shape = SubResource("BoxShape3D_56gt1")
-
-[node name="StaticBody3D2" type="StaticBody3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -29.905085)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D2"]
-mesh = SubResource("BoxMesh_u08rt")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D2"]
-shape = SubResource("BoxShape3D_56gt1")
-
-[node name="StaticBody3D3" type="StaticBody3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -14.9579115)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D3"]
-mesh = SubResource("BoxMesh_65eof")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D3"]
-shape = SubResource("BoxShape3D_oc40d")
-
 [node name="FallArea" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
 script = ExtResource("15_dpu70")
@@ -226,6 +178,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5355577, -1.2360604, -1.869
 
 [node name="Grass_1_D_Color13" parent="Level/Decoration" instance=ExtResource("19_m0afw")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5102062, -1.2360604, 8.175602)
+
+[node name="GridMap" type="GridMap" parent="Level"]
+cell_size = Vector3(3, 2, 3)
+data = {
+"cells": PackedInt32Array(3, 7, 95, 3, 6, 90, 3, 5, 90, 4, 5, 92, 4, 6, 92, 3, 4, 86, 4, 4, 87, 5, 4, 87, 6, 4, 89, 6, 5, 93, 6, 6, 93, 6, 7, 98, 4, 7, 96, 5, 7, 96, 5, 5, 92, 5, 6, 92, -65531, 7, 69, -65532, 7, 69, -65530, 7, 71, -65530, 6, 66, -65530, 5, 66, -65533, 7, 68, -65532, 4, 61, -65531, 4, 61, -65530, 4, 63, -65533, 6, 64, -65533, 5, 64, -65533, 4, 60)
+}
+metadata/_editor_floor_ = Vector3(0, 0, 0)
 
 [node name="Weapon" type="Node" parent="."]
 

@@ -62,6 +62,14 @@ func get_move_direction() -> Vector3:
 	return Vector3.ZERO
 
 
+func is_dashing() -> bool:
+	if player_state_machine == null:
+		return false
+	if player_state_machine.current_state == null:
+		return false
+	return player_state_machine.current_state.name.to_lower() == "dashing"
+
+
 func die() -> void:
 	if is_dead:
 		return

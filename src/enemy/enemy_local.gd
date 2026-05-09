@@ -12,11 +12,14 @@ var is_dead := false
 
 @onready var animation_tree: AnimationTree = $Skeleton_Warrior/AnimationTree
 @onready var enemy_state_machine: EnemyStateMachine = $EnemyStateMachine
+@onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 
 func _ready() -> void:
 	if animation_tree:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
+	if navigation_agent:
+		navigation_agent.target_position = global_position
 	if not is_offensive:
 		var hit_box := get_node_or_null("HitBox") as Area3D
 		if hit_box != null:
@@ -59,6 +62,18 @@ func get_target_direction() -> Vector3:
 		_update_target_player()
 	if not is_instance_valid(target_player):
 		return Vector3.ZERO
+	if navigation_agent == null:
+		return _get_direct_target_direction()
+	navigation_agent.target_position = target_player.global_position
+	if navigation_agent.is_navigation_finished():
+		return _get_direct_target_direction()
+	var next_pos := navigation_agent.get_next_path_position()
+	var direction := Vector3(next_pos.x - global_position.x, 0.0, next_pos.z - global_position.z)
+	if direction.length_squared() > 0.0001:
+		return direction.normalized()
+	return _get_direct_target_direction()
+
+func _get_direct_target_direction() -> Vector3:
 	var to_target := target_player.global_position - global_position
 	var direction := Vector3(to_target.x, 0.0, to_target.z)
 	if direction.length_squared() > 0.0001:
