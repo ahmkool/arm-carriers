@@ -13,6 +13,7 @@ var is_dead := false
 @onready var animation_tree: AnimationTree = $Skeleton_Warrior/AnimationTree
 @onready var enemy_state_machine: EnemyStateMachine = $EnemyStateMachine
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
+@onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
 
 func _ready() -> void:
 	if animation_tree:

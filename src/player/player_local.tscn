@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://b2d8v5hofa7a6"]
+[gd_scene load_steps=20 format=3 uid="uid://b2d8v5hofa7a6"]
 
 [ext_resource type="PackedScene" uid="uid://djlqahjphg06r" path="res://src/player/mannequin_medium.tscn" id="1_q2fp3"]
 [ext_resource type="Script" uid="uid://dnxojpch253fl" path="res://src/player/player_local.gd" id="2_plocal"]
@@ -14,6 +14,72 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_q2fp3"]
 radius = 0.26171875
 height = 2.0701294
+
+[sub_resource type="Curve" id="Curve_fs_scale"]
+_data = [Vector2(0, 0.35), 0.0, 2.5, 0, 0, Vector2(0.12, 1), 0.0, 0.0, 0, 0, Vector2(0.55, 0.85), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_fs_scale"]
+curve = SubResource("Curve_fs_scale")
+
+[sub_resource type="Gradient" id="Gradient_fs_color"]
+offsets = PackedFloat32Array(0, 0.35, 1)
+colors = PackedColorArray(0.92, 0.82, 0.62, 0.75, 0.76, 0.66, 0.52, 0.45, 0.48, 0.42, 0.36, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture_fs_color"]
+gradient = SubResource("Gradient_fs_color")
+
+[sub_resource type="Gradient" id="Gradient_fs_quad"]
+offsets = PackedFloat32Array(0, 0.48, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.92, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_fs_quad"]
+gradient = SubResource("Gradient_fs_quad")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_mss65"]
+lifetime_randomness = 0.45
+emission_shape = 3
+emission_box_extents = Vector3(0.28, 0.05, 0.36)
+inherit_velocity_ratio = 0.22
+direction = Vector3(0, 1, 0)
+spread = 78.0
+flatness = 0.55
+initial_velocity_min = 0.35
+initial_velocity_max = 2.2
+angular_velocity_min = -5.0
+angular_velocity_max = 5.0
+radial_accel_min = -0.4
+radial_accel_max = 0.8
+tangential_accel_min = -0.6
+tangential_accel_max = 0.6
+damping_min = 0.8
+damping_max = 2.4
+hue_variation_min = -0.045
+hue_variation_max = 0.045
+gravity = Vector3(0, -3.2, 0)
+scale_min = 0.12
+scale_max = 0.62
+scale_curve = SubResource("CurveTexture_fs_scale")
+color_ramp = SubResource("GradientTexture_fs_color")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fs"]
+transparency = 1
+blend_mode = 0
+cull_mode = 2
+no_depth_test = false
+vertex_color_use_as_albedo = true
+billboard_mode = 3
+albedo_texture = SubResource("GradientTexture2D_fs_quad")
+albedo_color = Color(1, 1, 1, 1)
+
+[sub_resource type="QuadMesh" id="QuadMesh_fs"]
+material = SubResource("StandardMaterial3D_fs")
+size = Vector2(0.28, 0.28)
 
 [node name="PlayerLocal" type="CharacterBody3D"]
 script = ExtResource("2_plocal")
@@ -60,3 +126,14 @@ script = ExtResource("8_xf7a6")
 
 [node name="WeaponCarrierPinJoint" type="PinJoint3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78730226, 1.239912, 0)
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+emitting = false
+amount = 36
+lifetime = 0.42
+explosiveness = 0.14
+randomness = 0.55
+fixed_fps = 0
+process_material = SubResource("ParticleProcessMaterial_mss65")
+draw_pass_1 = SubResource("QuadMesh_fs")

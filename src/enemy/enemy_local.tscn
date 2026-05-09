@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://cif7328pvepge"]
+[gd_scene load_steps=14 format=3 uid="uid://cif7328pvepge"]
 
 [ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_rv3oy"]
 [ext_resource type="PackedScene" uid="uid://d3g0lxqo4lnm" path="res://src/enemy/skeleton_warrior.tscn" id="2_41ek6"]
@@ -15,6 +15,21 @@ height = 2.3062744
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p5r7q"]
 radius = 0.7792969
 height = 2.3674316
+
+[sub_resource type="Curve" id="Curve_enemy_fs"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_enemy_fs"]
+curve = SubResource("Curve_enemy_fs")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_enemy_fs"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_enemy_fs")
+
+[sub_resource type="SphereMesh" id="SphereMesh_enemy_fs"]
 
 [node name="EnemyLocal" type="CharacterBody3D"]
 collision_layer = 3
@@ -52,5 +67,10 @@ shape = SubResource("CapsuleShape3D_p5r7q")
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.5
 target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("ParticleProcessMaterial_enemy_fs")
+draw_pass_1 = SubResource("SphereMesh_enemy_fs")
 
 [connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]
