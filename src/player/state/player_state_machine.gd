@@ -29,7 +29,7 @@ func transition_to(state_name: String):
 		return
 	if current_state:
 		current_state.exit()
-	print("Transitioning to player state: ", state_name)
+	#print("Transitioning to player state: ", state_name)
 	current_state = states[state_name.to_lower()]
 	current_state.enter()
 

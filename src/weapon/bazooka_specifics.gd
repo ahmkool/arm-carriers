@@ -83,6 +83,7 @@ func _request_fire_bullet() -> void:
 	bullet.global_rotation = global_rotation
 	bullet.velocity = muzzle.global_transform.basis.z * 5.0
 	_fire_cooldown_remaining = FIRE_COOLDOWN_SEC
+	CameraFeedback.add_trauma_shot()
 
 
 func _apply_pose_from_ends(shooter_end_world: Vector3, direction_setter_end_world: Vector3) -> void:

@@ -8,6 +8,7 @@ var _dash_direction := Vector3.ZERO
 
 
 func enter() -> void:
+	CameraFeedback.add_trauma_dash()
 	_dash_time_remaining = DASH_DURATION_SEC
 	_dash_direction = _get_dash_direction()
 	player.velocity.y = 0.0

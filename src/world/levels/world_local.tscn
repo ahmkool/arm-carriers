@@ -1,8 +1,8 @@
-[gd_scene load_steps=29 format=3 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=30 format=3 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
-[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_3d.gd" id="2_ile7a"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_dvbv8"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="2_j5fge"]
 [ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="3_msrya"]
 [ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="4_wi560"]
@@ -20,6 +20,7 @@
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_kj30a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="20_n7rb1"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("2_j5fge")
@@ -53,13 +54,17 @@ shader_parameter/foam_color = Color(0.8, 0.9, 1, 1)
 material = SubResource("ShaderMaterial_dvbv8")
 size = Vector2(100, 100)
 
-[node name="WorldLocal" type="Node3D"]
+[node name="WorldLocal3" type="Node3D"]
 script = ExtResource("1_1chlw")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="CameraFollowRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
-script = ExtResource("2_ile7a")
-follow_offset = Vector3(0, 7, 3)
+script = ExtResource("2_dvbv8")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("23_shkpiv")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
 
 [node name="UI" type="CanvasLayer" parent="."]
 

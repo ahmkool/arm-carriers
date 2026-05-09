@@ -1,6 +1,6 @@
-extends Camera3D
+extends Node3D
 
-@export var follow_offset: Vector3 = Vector3(0.0, 7.0, 9.0)
+@export var follow_offset: Vector3 = Vector3(0.0, 7.0, 3.0)
 @export var follow_smooth_speed: float = 8.0
 @export var zoom_per_unit: float = 0.6
 @export var max_zoom_out: float = 14.0
@@ -11,8 +11,6 @@ var big_weapon: BigWeapon
 
 
 func _ready():
-	# Camera starts with the desired tilt from the scene transform,
-	# then only follows translation.
 	_find_players_node()
 	_find_big_weapon_node()
 

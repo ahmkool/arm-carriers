@@ -1,7 +1,8 @@
-[gd_scene load_steps=37 format=3 uid="uid://b65khrk30h37k"]
+[gd_scene load_steps=38 format=3 uid="uid://b65khrk30h37k"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_hh68c"]
-[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_3d.gd" id="2_gxwti"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_gxwti"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="3_k38we"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_n6uwp"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_r2hyc"]
@@ -85,10 +86,15 @@ _bundled = {
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("1_hh68c")
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="CameraFollowRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
 script = ExtResource("2_gxwti")
 follow_offset = Vector3(0, 7, 3)
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("23_shkpiv")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
 
 [node name="UI" type="CanvasLayer" parent="."]
 

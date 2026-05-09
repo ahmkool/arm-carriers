@@ -102,6 +102,7 @@ func _on_hit_box_body_entered(body):
 	var player := body as PlayerLocal
 	if player == null:
 		return
+	CameraFeedback.add_trauma_hurt()
 	player.die()
 
 
