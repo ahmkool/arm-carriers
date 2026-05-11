@@ -22,6 +22,8 @@ size = Vector3(1, 1, 5.2983704)
 size = Vector3(1.5742188, 0.5605469, 7.5764465)
 
 [node name="Sword" type="RigidBody3D"]
+collision_layer = 8
+collision_mask = 4
 script = ExtResource("1_q1t8x")
 
 [node name="PickAndDropHandler" type="Node3D" parent="."]
@@ -44,6 +46,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9530213, 0, -2.0202596)
 
 [node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.1775323)
+
+[node name="LookVector" type="Node3D" parent="PickAndDropHandler"]
+
+[node name="Source" type="Marker3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8539495)
+
+[node name="Target" type="Marker3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.0905557)
 
 [node name="WeaponSpecifics" parent="." node_paths=PackedStringArray("pick_and_drop_handler") instance=ExtResource("5_dc8ne")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2.3491564)

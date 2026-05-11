@@ -2,7 +2,7 @@ extends PlayerState
 
 
 func physics_update(delta: float) -> void:
-	if Input.is_action_just_pressed(player.action_dash):
+	if not GameplayInput.is_locked() and Input.is_action_just_pressed(player.action_dash):
 		player_state_machine.transition_to("dashing")
 		return
 	if player.is_on_floor():

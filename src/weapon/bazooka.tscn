@@ -56,6 +56,8 @@ radius = 1.5991211
 height = 4.1621094
 
 [node name="Bazooka" type="RigidBody3D"]
+collision_layer = 8
+collision_mask = 4
 script = ExtResource("1_th40a")
 
 [node name="WeaponSpecifics" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
@@ -100,6 +102,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9530213, 0, -2.0202596)
 
 [node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.1775323)
+
+[node name="LookVector" type="Node3D" parent="PickAndDropHandler"]
+
+[node name="Source" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8539495)
+
+[node name="Target" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.0905557)
 
 [connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
 [connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]

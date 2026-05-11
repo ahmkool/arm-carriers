@@ -45,6 +45,7 @@ func _physics_process(delta):
 		var direction_setter_shoulder := _get_player_shoulder_position(carry_info.secondary_carrier)
 		_apply_pose_from_ends(shooter_shoulder, direction_setter_shoulder)
 		_check_firing_bullet(carry_info)
+		_set_look_direction()
 		return
 	
 	var direction_setter_position_marker = pick_and_drop_handler.direction_setter_position_marker
@@ -55,6 +56,7 @@ func _physics_process(delta):
 			_has_fixed_direction_setter_end = true
 		var shooter_shoulder := _get_player_shoulder_position(carry_info.main_carrier)
 		_apply_pose_from_ends(shooter_shoulder, _fixed_direction_setter_end_world)
+		_set_look_direction()
 		return
 	
 	var shooter_position_marker = pick_and_drop_handler.shooter_position_marker
@@ -65,8 +67,18 @@ func _physics_process(delta):
 			_has_fixed_shooter_end = true
 		var direction_setter_shoulder := _get_player_shoulder_position(carry_info.secondary_carrier)
 		_apply_pose_from_ends(_fixed_shooter_end_world, direction_setter_shoulder)
+		_set_look_direction()
+
+func _set_look_direction() -> void:
+	var src := pick_and_drop_handler.look_vector_source
+	var tgt := pick_and_drop_handler.look_vector_target
+	var direction := tgt.global_position - src.global_position
+	DebugDraw3D.draw_arrow(src.global_position, tgt.global_position)
+	pick_and_drop_handler.look_direction = direction.normalized()
 
 func _check_firing_bullet(carry_info: CarryInfo) -> void:
+	if GameplayInput.is_locked():
+		return
 	if not Input.is_action_just_pressed(carry_info.main_carrier.action_shoot):
 		return
 	if _fire_cooldown_remaining > 0.0:

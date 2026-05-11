@@ -36,7 +36,15 @@ func _process(delta):
 
 func _physics_process(_delta: float) -> void:
 	_update_pose()
+	_set_look_direction()
 	_update_strike_active()
+
+
+func _set_look_direction() -> void:
+	var src := pick_and_drop_handler.look_vector_source
+	var tgt := pick_and_drop_handler.look_vector_target
+	var direction := tgt.global_position - src.global_position
+	pick_and_drop_handler.look_direction = direction.normalized()
 
 
 func _update_pose() -> void:

@@ -40,7 +40,7 @@ func _process_not_carrying() -> bool:
 	label.text = "Press triangle to carry"
 	$"../UI".show()
 		
-	if not Input.is_action_just_pressed(player_node.action_action):
+	if GameplayInput.is_locked() or not Input.is_action_just_pressed(player_node.action_action):
 		return false
 	
 	var world_node = player_node.get_parent().get_parent()
@@ -69,7 +69,7 @@ func _process_carrying() -> bool:
 	label.text = "Press triangle to drop weapon"
 	$"../UI".show()
 		
-	if not Input.is_action_just_pressed(player_node.action_action):
+	if GameplayInput.is_locked() or not Input.is_action_just_pressed(player_node.action_action):
 		return false
 	
 	var world_node = player_node.get_parent().get_parent()

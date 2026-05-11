@@ -1,8 +1,7 @@
-[gd_scene load_steps=27 format=3 uid="uid://da5h1xiphyi5d"]
+[gd_scene load_steps=26 format=3 uid="uid://da5h1xiphyi5d"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_i8gtj"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_2s0mp"]
-[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="3_0pise"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_uv4m7"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_n1pwe"]
@@ -12,15 +11,15 @@
 [ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="9_2nr37"]
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_yt2c5"]
 [ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="11_x4m5b"]
-[ext_resource type="PackedScene" uid="uid://dodm6nfeuvc0j" path="res://src/world/trials/trial_zone.tscn" id="12_t1nrr"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_cp7ye"]
+[ext_resource type="Script" uid="uid://c1vscwhim84wl" path="res://src/enemy/enemy_group.gd" id="13_o1f2a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_cwww3"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="14_i8gtj"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_dpu70"]
-[ext_resource type="PackedScene" uid="uid://clba83xuwhyxj" path="res://assets/models/Kaykit/Forest/Bush_1_A_Color1.gltf" id="16_asodt"]
-[ext_resource type="PackedScene" uid="uid://dgjdpf062r5i1" path="res://assets/models/Kaykit/Forest/Grass_1_A_Color1.gltf" id="17_ptwx7"]
-[ext_resource type="PackedScene" uid="uid://lqgry7wel2gw" path="res://assets/models/Kaykit/Forest/Grass_1_B_Color1.gltf" id="18_r83dm"]
-[ext_resource type="PackedScene" uid="uid://dxuiiglq71emu" path="res://assets/models/Kaykit/Forest/Grass_1_D_Color1.gltf" id="19_m0afw"]
-[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_swecs"]
+[ext_resource type="MeshLibrary" uid="uid://ks8qrxijs45o" path="res://assets/mesh_library/mesh_library_all.tres" id="17_o1f2a"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_i8gtj"]
+[ext_resource type="PackedScene" uid="uid://lilxckjevvd5" path="res://src/weapon/saw.tscn" id="19_2s0mp"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_n1pwe")
@@ -46,7 +45,6 @@ script = ExtResource("1_i8gtj")
 [node name="CameraFollowRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
 script = ExtResource("2_2s0mp")
-follow_offset = Vector3(0, 7, 3)
 
 [node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
 script = ExtResource("23_shkpiv")
@@ -131,20 +129,36 @@ script = ExtResource("9_2nr37")
 [node name="GameOverLost" type="Node" parent="GameStateMachine"]
 script = ExtResource("10_yt2c5")
 
-[node name="Players" type="Node" parent="."]
+[node name="Players" type="Node3D" parent="."]
 script = ExtResource("11_x4m5b")
 
 [node name="Enemies" type="Node" parent="."]
 
-[node name="TrialZone" parent="Enemies" instance=ExtResource("12_t1nrr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.607292)
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.736244, 3.012045, -29.251385)
+script = ExtResource("13_o1f2a")
+
+[node name="EnemyLocal" parent="Enemies/EnemyGroup" instance=ExtResource("14_i8gtj")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.851555, 0, -5.5580826)
+
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup" instance=ExtResource("14_i8gtj")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.05615, 0, -5.5580826)
+
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup" instance=ExtResource("14_i8gtj")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.460549, 0, -5.5580826)
+
+[node name="EnemyLocal4" parent="Enemies/EnemyGroup" instance=ExtResource("14_i8gtj")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.89029, 0, 1.3649864)
+
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup" instance=ExtResource("14_i8gtj")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.207027, 0, 0.28055573)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("13_cp7ye")
 current_checkpoint = NodePath("Checkpoint")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.245598)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 2.7544022)
 script = ExtResource("14_cwww3")
 
 [node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
@@ -168,33 +182,28 @@ script = ExtResource("15_dpu70")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
 shape = SubResource("BoxShape3D_65eof")
 
-[node name="Decoration" type="Node" parent="Level"]
-
-[node name="Bush_1_A_Color12" parent="Level/Decoration" instance=ExtResource("16_asodt")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2514763, -1.2752995, 3.813552)
-
-[node name="Grass_1_A_Color12" parent="Level/Decoration" instance=ExtResource("17_ptwx7")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.372755, -1.2582307, 7.712339)
-
-[node name="Grass_1_B_Color12" parent="Level/Decoration" instance=ExtResource("18_r83dm")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.345448, -1.2219411, 1.6715336)
-
-[node name="Grass_1_D_Color12" parent="Level/Decoration" instance=ExtResource("19_m0afw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5355577, -1.2360604, -1.8698006)
-
-[node name="Grass_1_D_Color13" parent="Level/Decoration" instance=ExtResource("19_m0afw")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5102062, -1.2360604, 8.175602)
-
 [node name="GridMap" type="GridMap" parent="Level"]
-cell_size = Vector3(3, 2, 3)
+mesh_library = ExtResource("17_o1f2a")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
 data = {
-"cells": PackedInt32Array(3, 7, 95, 3, 6, 90, 3, 5, 90, 4, 5, 92, 4, 6, 92, 3, 4, 86, 4, 4, 87, 5, 4, 87, 6, 4, 89, 6, 5, 93, 6, 6, 93, 6, 7, 98, 4, 7, 96, 5, 7, 96, 5, 5, 92, 5, 6, 92, -65531, 7, 69, -65532, 7, 69, -65530, 7, 71, -65530, 6, 66, -65530, 5, 66, -65533, 7, 68, -65532, 4, 61, -65531, 4, 61, -65530, 4, 63, -65533, 6, 64, -65533, 5, 64, -65533, 4, 60)
+"cells": PackedInt32Array(65533, 65534, 1049628, 65534, 65534, 1049628, 65535, 65534, 1049628, 0, 65534, 1049628, 1, 65534, 1049628, 2, 65534, 1049628, 2, 65535, 1049628, 2, 0, 1049628, 2, 1, 1049628, 2, 2, 1049628, 1, 2, 1049628, 0, 2, 1049628, 65535, 2, 1049628, 65534, 2, 1049628, 65533, 2, 1049628, 65533, 1, 1049628, 65533, 0, 1049628, 65533, 65535, 1049628, 65534, 65535, 1049628, 65535, 65535, 1049628, 0, 65535, 1049628, 1, 65535, 1049628, 1, 0, 1049628, 1, 1, 1049628, 0, 1, 1049628, 65535, 1, 1049628, 65534, 1, 1049628, 65534, 0, 1049628, 65535, 0, 1049628, 0, 0, 1049628, 3, 2, 1033, 3, 1, 1033, 3, 0, 1033, 3, 65535, 1033, 3, 65534, 1033, 2, 3, 1442825, 1, 3, 1442825, 0, 3, 1442825, 65535, 3, 1442825, 65534, 3, 1442825, 65533, 3, 1442825, 65532, 2, 656393, 65532, 1, 656393, 65532, 0, 656393, 65532, 65535, 656393, 65532, 65534, 656393, 65533, 65533, 1049609, 65534, 65533, 1049609, 65535, 65533, 1049609, 0, 65533, 1049609, 1, 65533, 1049627, 2, 65533, 1052, 65532, 3, 1034, 65532, 65533, 1442826, 3, 65533, 1033, 3, 3, 1049610, -131069, 3, 1049, -65540, 3, 1442841, -65540, 65533, 656409, -131069, 65534, 1049623, -131069, 65535, 1049623, -131069, 0, 1049623, -131069, 1, 1049623, -131069, 2, 1049623, -131070, 3, 1047, -131071, 3, 1047, -131072, 3, 1047, -65537, 3, 1047, -65538, 3, 1047, -65539, 3, 1047, -65540, 2, 1442839, -65540, 1, 1442839, -65540, 0, 1442839, -65540, 65535, 1442839, -65540, 65534, 1442839, -65539, 65533, 656407, -131072, 65533, 656407, -65537, 65533, 656407, -65538, 65533, 656407, 2, 65529, 656412, 1, 65529, 656393, 2, 65530, 656412, 2, 65531, 656412, 2, 65532, 656412, 1, 65530, 656393, 1, 65531, 656393, 1, 65532, 656393, 1, 65528, 656411, 0, 65528, 1442825, 65535, 65528, 1442825, 65534, 65528, 1442825, 65533, 65528, 656390, 65533, 65527, 656393, 65533, 65526, 656393, 65533, 65525, 656393, 65533, 65524, 656393, 65533, 65523, 656393, 65533, 65522, 1049606, 65534, 65522, 1049609, 65535, 65522, 1049609, 0, 65522, 1049609, 1, 65522, 1049609, 2, 65522, 1049627, 3, 65522, 656412, 4, 65522, 656412, 5, 65522, 656412, 6, 65522, 1033, 6, 65521, 1030, 6, 65523, 1033, 6, 65524, 1033, 6, 65525, 1033, 6, 65526, 1033, 6, 65527, 1033, 6, 65528, 1442822, 5, 65528, 1442825, 4, 65528, 1442825, 3, 65528, 1442843, 2, 65528, 656412, 5, 65521, 1049609, 4, 65521, 1049609, 3, 65521, 1049609, 2, 65521, 1049606, 65534, 65523, 656412, 65535, 65523, 656412, 0, 65523, 656412, 1, 65523, 656412, 5, 65523, 656412, 4, 65523, 656412, 3, 65523, 656412, 2, 65523, 656412, 5, 65524, 656412, 5, 65525, 656412, 5, 65526, 656412, 5, 65527, 656412, 4, 65527, 656412, 3, 65527, 656412, 2, 65527, 656412, 1, 65527, 656412, 0, 65527, 656412, 65535, 65527, 656412, 65534, 65527, 656412, 65534, 65526, 656412, 65534, 65525, 656412, 65534, 65524, 656412, 65535, 65524, 656412, 0, 65524, 656412, 1, 65524, 656412, 2, 65524, 656412, 3, 65524, 656412, 4, 65524, 656412, 4, 65525, 656412, 4, 65526, 656412, 3, 65526, 656412, 2, 65526, 656412, 1, 65526, 656412, 0, 65526, 656412, 65535, 65526, 656412, 65535, 65525, 656412, 0, 65525, 656412, 1, 65525, 656412, 2, 65525, 656412, 3, 65525, 656412, 3, 65529, 1033, 3, 65530, 1033, 3, 65531, 1033, 3, 65532, 1033, -131069, 65532, 1049623, -131069, 65531, 1049623, -131069, 65530, 1049623, -131069, 65529, 1049623, -131066, 65522, 1049623, -131066, 65523, 1049623, -131066, 65524, 1049623, -131066, 65525, 1049623, -131066, 65526, 1049623, -131066, 65527, 1049623, -131067, 65528, 1047, -131068, 65528, 1047, -131072, 65528, 1047, -65537, 65528, 1047, -65538, 65528, 1047, -65539, 65527, 1442839, -65539, 65526, 1442839, -65539, 65525, 1442839, -65539, 65524, 1442839, -65539, 65523, 1442839, -65538, 65522, 656407, -65537, 65522, 656407, -131072, 65522, 656407, -131071, 65522, 656407, -131069, 65521, 656407, -131068, 65521, 656407, -131067, 65521, 656407, -131070, 65521, 656409, -65539, 65522, 656409, -131066, 65521, 1049625, -131066, 65528, 1049, -65539, 65528, 1442841, -131071, 65528, 1442840, -131071, 65533, 656408, -131069, 65528, 1048, -131070, 65522, 656408, -131069, 65533, 1049623)
 }
-metadata/_editor_floor_ = Vector3(0, 0, 0)
+metadata/_editor_floor_ = Vector3(0, -2, 0)
 
-[node name="Weapon" type="Node" parent="."]
+[node name="Water" parent="Level" instance=ExtResource("18_i8gtj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.9833627, 0)
 
-[node name="Bazooka" parent="Weapon" instance=ExtResource("20_swecs")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7, 5, 0)
+[node name="DecorationGridMap" type="GridMap" parent="Level"]
+mesh_library = ExtResource("17_o1f2a")
+data = {
+"cells": PackedInt32Array(2, 65529, 1049574, 65534, 65518, 998, 65531, 4, 1442790, 4, 65534, 656358, 65533, 65532, 656423, 0, 4, 656423, 2, 3, 656356, 65535, 65521, 656356, 3, 0, 656532, 0, 2, 656532, 4, 65526, 656417, 65535, 3, 656477, 3, 4, 1049693, 65532, 65522, 1049693, 9, 65523, 1049695)
+}
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="Saw" parent="Weapon" instance=ExtResource("19_2s0mp")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 1.3936062, 1.8726845, 0)
 
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]

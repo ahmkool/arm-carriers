@@ -8,12 +8,13 @@ const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/BlendIdleRun/blend_amount"
 const ANIM_PARAM_DEAD_BLEND := &"parameters/DeadBlend/blend_amount"
 
 var target_player: PlayerLocal
-var is_dead := false
 
 @onready var animation_tree: AnimationTree = $Skeleton_Warrior/AnimationTree
 @onready var enemy_state_machine: EnemyStateMachine = $EnemyStateMachine
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
+
+signal died
 
 func _ready() -> void:
 	if animation_tree:
@@ -86,13 +87,16 @@ func play_dead_animation() -> void:
 		return
 	animation_tree.set(ANIM_PARAM_DEAD_BLEND, 1.0)
 
+func is_alive() -> bool:
+	if enemy_state_machine == null:
+		return false
+	return not enemy_state_machine.is_in_state("dead")
+
 func die() -> void:
-	if is_dead:
+	if not is_alive():
 		return
-	is_dead = true
 	velocity = Vector3.ZERO
 	enemy_state_machine.transition_to("dead")
-
 
 func _on_hit_box_body_entered(body):
 	if not is_offensive:

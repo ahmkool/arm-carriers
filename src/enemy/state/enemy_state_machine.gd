@@ -19,6 +19,12 @@ func _ready() -> void:
 	if current_state:
 		current_state.enter()
 
+func is_in_state(state_name: String) -> bool:
+	var key := state_name.to_lower()
+	if current_state == null or not states.has(key):
+		return false
+	return current_state == states[key]
+
 func transition_to(state_name: String) -> void:
 	var key := state_name.to_lower()
 	if not states.has(key):

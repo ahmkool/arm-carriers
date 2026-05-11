@@ -20,8 +20,8 @@ float voronoi(vec2 uv) {
 void fragment() {
     float time = TIME * 0.2;
     // Layer two voronoi patterns for "moving" water effect
-    float v1 = voronoi(UV * 50.0 + time);
-    float v2 = voronoi(UV * 75.0 - time * 0.5);
+    float v1 = voronoi(UV * 100.0 + time);
+    float v2 = voronoi(UV * 150.0 - time * 0.5);
     
     float final_v = smoothstep(0.4, 0.45, v1 * v2);
 	vec3 normal_offset = vec3(v1 - 0.5, 0.0, v2 - 0.5) * 0.2;

@@ -32,7 +32,8 @@ scale_curve = SubResource("CurveTexture_enemy_fs")
 [sub_resource type="SphereMesh" id="SphereMesh_enemy_fs"]
 
 [node name="EnemyLocal" type="CharacterBody3D"]
-collision_layer = 3
+collision_layer = 2
+collision_mask = 4
 script = ExtResource("1_rv3oy")
 
 [node name="Skeleton_Warrior" parent="." instance=ExtResource("2_41ek6")]

@@ -11,13 +11,18 @@ config_version=5
 [application]
 
 config/name="ArmCarriers"
-run/main_scene="uid://dasmcboxynacg"
+run/main_scene="uid://bf0gdkwg6xy2g"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
 
 CameraFeedback="*res://src/autoload/camera_feedback.gd"
+GameplayInput="*res://src/autoload/gameplay_input.gd"
+
+[debug_draw_3d]
+
+settings/addon_root_folder="res://addons/debug_draw_3d"
 
 [display]
 
@@ -143,7 +148,10 @@ p1_dash={
 
 [layer_names]
 
+3d_physics/layer_1="player"
 3d_physics/layer_2="enemy"
+3d_physics/layer_3="level"
+3d_physics/layer_4="weapons"
 
 [rendering]
 

@@ -56,6 +56,8 @@ func update_locomotion_blend() -> void:
 
 
 func get_move_direction() -> Vector3:
+	if GameplayInput.is_locked():
+		return Vector3.ZERO
 	var input_dir = Input.get_vector(action_left, action_right, action_up, action_down)
 	var direction := Vector3(input_dir.x, 0.0, input_dir.y)
 	if direction.length_squared() > 0.0001:

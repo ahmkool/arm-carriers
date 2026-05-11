@@ -1,8 +1,7 @@
-[gd_scene load_steps=34 format=3 uid="uid://b63pyb1sthxyn"]
+[gd_scene load_steps=24 format=3 uid="uid://b63pyb1sthxyn"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
-[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="3_tak01"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_khskr"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_g7rls"]
@@ -12,16 +11,13 @@
 [ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="9_anmvo"]
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_etu2i"]
 [ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="11_ud8jr"]
-[ext_resource type="PackedScene" uid="uid://dodm6nfeuvc0j" path="res://src/world/trials/trial_zone.tscn" id="12_4hvay"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_f7b5o"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_lj4gk"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_xb4ls"]
-[ext_resource type="PackedScene" uid="uid://clba83xuwhyxj" path="res://assets/models/Kaykit/Forest/Bush_1_A_Color1.gltf" id="16_ic2ll"]
-[ext_resource type="PackedScene" uid="uid://dgjdpf062r5i1" path="res://assets/models/Kaykit/Forest/Grass_1_A_Color1.gltf" id="17_n2jad"]
-[ext_resource type="PackedScene" uid="uid://lqgry7wel2gw" path="res://assets/models/Kaykit/Forest/Grass_1_B_Color1.gltf" id="18_3gqxa"]
-[ext_resource type="PackedScene" uid="uid://dxuiiglq71emu" path="res://assets/models/Kaykit/Forest/Grass_1_D_Color1.gltf" id="19_wf18h"]
+[ext_resource type="MeshLibrary" uid="uid://ks8qrxijs45o" path="res://assets/mesh_library/mesh_library_all.tres" id="17_bl758"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_iifxy"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
-[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="21_nixuq"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_g7rls")
@@ -38,27 +34,6 @@ ambient_light_energy = 0.3
 [sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
 size = Vector3(4, 4, 4)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u08rt"]
-albedo_color = Color(0.40784314, 0.8745098, 0.3529412, 1)
-metallic_specular = 0.2
-
-[sub_resource type="BoxMesh" id="BoxMesh_u08rt"]
-material = SubResource("StandardMaterial3D_u08rt")
-size = Vector3(20, 1, 20)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_56gt1"]
-size = Vector3(20, 1, 20)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_hfrl6"]
-albedo_color = Color(0.43, 0.21557334, 0.1376, 1)
-
-[sub_resource type="BoxMesh" id="BoxMesh_65eof"]
-material = SubResource("StandardMaterial3D_hfrl6")
-size = Vector3(3, 1, 10)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_oc40d"]
-size = Vector3(3, 1, 10)
-
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
 size = Vector3(56.4718, 1, 76.77945)
 
@@ -68,7 +43,6 @@ script = ExtResource("1_iifxy")
 [node name="CameraFollowRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
 script = ExtResource("2_nixuq")
-follow_offset = Vector3(0, 7, 3)
 
 [node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
 script = ExtResource("22_shkpiv")
@@ -158,15 +132,12 @@ script = ExtResource("11_ud8jr")
 
 [node name="Enemies" type="Node" parent="."]
 
-[node name="TrialZone" parent="Enemies" instance=ExtResource("12_4hvay")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.607292)
-
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("13_f7b5o")
 current_checkpoint = NodePath("Checkpoint")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.245598)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 8.754402)
 script = ExtResource("14_lj4gk")
 
 [node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
@@ -182,33 +153,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 
 [node name="Level" type="Node" parent="."]
 
-[node name="StaticBody3D" type="StaticBody3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, 0)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D"]
-mesh = SubResource("BoxMesh_u08rt")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D"]
-shape = SubResource("BoxShape3D_56gt1")
-
-[node name="StaticBody3D2" type="StaticBody3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -29.905085)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D2"]
-mesh = SubResource("BoxMesh_u08rt")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D2"]
-shape = SubResource("BoxShape3D_56gt1")
-
-[node name="StaticBody3D3" type="StaticBody3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.7782307, -14.9579115)
-
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Level/StaticBody3D3"]
-mesh = SubResource("BoxMesh_65eof")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/StaticBody3D3"]
-shape = SubResource("BoxShape3D_oc40d")
-
 [node name="FallArea" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
 script = ExtResource("15_xb4ls")
@@ -217,22 +161,28 @@ script = ExtResource("15_xb4ls")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
 shape = SubResource("BoxShape3D_65eof")
 
-[node name="Decoration" type="Node" parent="Level"]
+[node name="FloorGridMap" type="GridMap" parent="Level"]
+mesh_library = ExtResource("17_bl758")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 3, 656610, -4, 3, 656609, -3, 4, 1252, -4, 4, 656588, -4, 65533, 1443024, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1249, -65536, 65535, 656610, -65535, 65535, 1249, -65535, 65534, 1228, -65534, 65535, 1228, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 1443020, -65536, 5, 1443020, -1, 5, 1252, -2, 5, 656588, -2, 4, 656609, -2, 3, 656610, -5, 65534, 1443024, -5, 65535, 1049825, -5, 0, 656610, -5, 1, 656610, -5, 2, 656610, -5, 3, 1252, -6, 65535, 1443024, -6, 0, 1049825, -6, 1, 656610, -6, 2, 656610, -6, 3, 1252, -7, 0, 1443024, -7, 1, 1049825, -7, 2, 656610, -7, 3, 1252, -8, 1, 656612, -9, 1, 656612, -9, 2, 656610, -9, 3, 1252, -8, 3, 1252, -8, 2, 656610, -4, 65534, 1049825, -3, 65534, 656610, -2, 65534, 656610, -1, 65534, 656610, -1, 65535, 656610, -3, 65535, 656610, -4, 65535, 656610, -4, 0, 656610, -4, 1, 656610, -4, 2, 656610, -3, 2, 656610, -2, 2, 656610, -2, 1, 656610, -2, 0, 656610, -2, 65535, 656610, -3, 0, 656610, -3, 1, 656610, -1, 1, 656610, -1, 0, 656610, -65536, 0, 656610, -65535, 0, 656610, -65534, 0, 1249, -65534, 1, 656610, -65535, 1, 656610, -65536, 1, 656610, -65536, 2, 656610, -1, 2, 656610, -65535, 2, 656610, -65534, 2, 1443041, -65535, 3, 1443041, -65536, 3, 656610, -1, 3, 656610, -1, 4, 656610, -65536, 4, 1443041, -10, 3, 656588, -10, 2, 656591, -10, 1, 1443024, -196608, 5, 1247, -196607, 4, 1247, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 1443039, -131076, 4, 1443039, -131082, 3, 1443039, -131082, 1, 656607, -131079, 0, 656607, -131078, 65535, 656607, -131077, 65534, 656607, -131076, 65533, 656607, -196608, 65533, 1049823, -196607, 65534, 1049823, -196606, 65535, 1049823, -196605, 0, 1049823, -196608, 65534, 1049822, -196607, 65535, 1049822, -196606, 0, 1049822, -196606, 2, 1246, -196607, 3, 1246, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 656606, -131078, 0, 656606, -131077, 65535, 656606, -131076, 65534, 656606, -131081, 3, 1245, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 1245, -131082, 2, 1443037, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131081, 1, 656605, -131080, 1, 656605)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
 
-[node name="Bush_1_A_Color12" parent="Level/Decoration" instance=ExtResource("16_ic2ll")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2514763, -1.2752995, 3.813552)
+[node name="GridMap" type="GridMap" parent="Level"]
+mesh_library = ExtResource("17_bl758")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-8, 2, 656654, -65535, 2, 1049870, -5, 0, 1049773, -9, 1, 1049773, -65535, 65535, 1049858)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
 
-[node name="Grass_1_A_Color12" parent="Level/Decoration" instance=ExtResource("17_n2jad")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.372755, -1.2582307, 7.712339)
-
-[node name="Grass_1_B_Color12" parent="Level/Decoration" instance=ExtResource("18_3gqxa")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.345448, -1.2219411, 1.6715336)
-
-[node name="Grass_1_D_Color12" parent="Level/Decoration" instance=ExtResource("19_wf18h")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.5355577, -1.2360604, -1.8698006)
-
-[node name="Grass_1_D_Color13" parent="Level/Decoration" instance=ExtResource("19_wf18h")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5102062, -1.2360604, 8.175602)
+[node name="Water" parent="Level" instance=ExtResource("18_iifxy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
 
 [node name="Weapon" type="Node" parent="."]
 
@@ -240,25 +190,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.5102062, -1.2360604, 8.175
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6896334, 0, 0)
 
 [node name="TestEnemies" type="Node" parent="."]
-
-[node name="EnemyLocal" parent="TestEnemies" instance=ExtResource("21_nixuq")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.851555, 0, -38.10437)
-is_offensive = false
-
-[node name="EnemyLocal2" parent="TestEnemies" instance=ExtResource("21_nixuq")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.05615, 0, -38.10437)
-is_offensive = false
-
-[node name="EnemyLocal3" parent="TestEnemies" instance=ExtResource("21_nixuq")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.460549, 0, -38.10437)
-is_offensive = false
-
-[node name="EnemyLocal4" parent="TestEnemies" instance=ExtResource("21_nixuq")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.89029, 0, -32.26573)
-is_offensive = false
-
-[node name="EnemyLocal5" parent="TestEnemies" instance=ExtResource("21_nixuq")]
-transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.207027, 0, -32.26573)
-is_offensive = false
 
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
