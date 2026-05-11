@@ -25,6 +25,14 @@ func _trigger_event() -> void:
 		)
 
 	GameplayInput.unlock()
+	
+func _complete_event() -> void:
+	for platform in platforms:
+		if not is_instance_valid(platform):
+			continue
+		var animation_player := platform.get_node_or_null("AnimationPlayer") as AnimationPlayer
+		if animation_player:
+			animation_player.play(&"complete")
 
 
 func _compute_platforms_focal_point() -> Vector3:

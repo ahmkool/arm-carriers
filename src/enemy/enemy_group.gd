@@ -1,3 +1,4 @@
+class_name EnemyGroup
 extends Node3D
 
 signal enemies_defeated
@@ -13,3 +14,8 @@ func _physics_process(delta):
 		signal_emitted = true
 		print("EnemyGroup: All enemies defeated")
 		enemies_defeated.emit()
+
+func mark_as_defeated():
+	for enemy in get_children():
+		enemy.queue_free()
+	signal_emitted = true

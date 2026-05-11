@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=4 uid="uid://chaj7v8uajl4q"]
+[gd_scene load_steps=12 format=4 uid="uid://chaj7v8uajl4q"]
 
 [ext_resource type="Script" uid="uid://cm5cxva7k4xex" path="res://src/world/elements/bridge_platform.gd" id="1_32cxk"]
 [ext_resource type="Texture2D" uid="uid://nk54byjq8d1t" path="res://assets/models/weapon/Wooden_Platform_Top_2_forest_texture.png" id="1_v8ulg"]
@@ -92,11 +92,28 @@ tracks/0/keys = {
 "values": [Vector3(0, -2, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_1rnen"]
+resource_name = "complete"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 3, 0)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_h2fuj"]
 _data = {
 &"RESET": SubResource("Animation_ykjll"),
 &"animate": SubResource("Animation_32cxk"),
-&"bottom": SubResource("Animation_v2bv6")
+&"bottom": SubResource("Animation_v2bv6"),
+&"complete": SubResource("Animation_1rnen")
 }
 
 [node name="BridgePlatform" type="Node3D"]

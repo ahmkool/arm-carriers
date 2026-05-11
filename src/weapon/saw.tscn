@@ -143,6 +143,7 @@ script = ExtResource("1_b3w3s")
 
 [node name="PickAndDropHandler" type="Node3D" parent="."]
 script = ExtResource("2_tui83")
+hide_arms_type = 3
 
 [node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
 

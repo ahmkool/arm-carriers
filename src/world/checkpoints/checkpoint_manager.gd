@@ -1,3 +1,4 @@
+class_name CheckpointManager
 extends Node
 
 @export var current_checkpoint: Checkpoint

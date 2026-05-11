@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://b65khrk30h37k"]
+[gd_scene load_steps=39 format=3 uid="uid://b65khrk30h37k"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_hh68c"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_gxwti"]
@@ -23,6 +23,7 @@
 [ext_resource type="Script" uid="uid://dvw83kdn7iel2" path="res://src/weapon/bazooka_specifics.gd" id="20_lmyfm"]
 [ext_resource type="PackedScene" uid="uid://bfe1safwg6naj" path="res://assets/models/weapon/bazooka.glb" id="21_ukwea"]
 [ext_resource type="PackedScene" path="" id="22_h8vse"]
+[ext_resource type="Script" path="res://src/game/states/local/await_world_local_ready.gd" id="23_awaitwl"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_r2hyc")
@@ -160,7 +161,10 @@ shadow_enabled = true
 
 [node name="GameStateMachine" type="Node" parent="."]
 script = ExtResource("6_7h688")
-initial_state_path = NodePath("WaitingForPlayers")
+initial_state_path = NodePath("AwaitWorldLocalReady")
+
+[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
+script = ExtResource("23_awaitwl")
 
 [node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
 script = ExtResource("7_b4kx1")

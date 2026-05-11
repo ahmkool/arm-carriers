@@ -7,6 +7,15 @@ extends Node3D
 @onready var look_vector_source: Node3D = $LookVector/Source
 @onready var look_vector_target: Node3D = $LookVector/Target
 
+
+enum HideArmsType {
+	ARMS_VISIBLE,
+	LEFT_ARM_HIDDEN,
+	RIGHT_ARM_HIDDEN,
+	BOTH_ARMS_HIDDEN,
+}
+@export var hide_arms_type: HideArmsType = HideArmsType.ARMS_VISIBLE
+
 var look_direction: Vector3 = Vector3.ZERO
 
 

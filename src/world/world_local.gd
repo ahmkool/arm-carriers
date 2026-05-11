@@ -25,6 +25,11 @@ func restart_game() -> void:
 	var weapon := _get_active_weapon()
 	_place_weapon_and_carriers_at_checkpoint(weapon)
 
+	# set world at checkpoint state
+	var current_checkpoint = checkpoint_manager.current_checkpoint
+	if current_checkpoint != null:
+		current_checkpoint.set_world_at_checkpoint_state()
+
 	# reset trial zones:
 	for trial_zone in $Enemies.get_children():
 		var trial_zone_node = trial_zone as TrialZone

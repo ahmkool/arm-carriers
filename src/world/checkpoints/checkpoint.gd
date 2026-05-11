@@ -6,6 +6,9 @@ extends Node3D
 
 @onready var _trigger_area: Area3D = $TriggerArea
 
+@export var events_completed: Array[LevelEvent]
+@export var enemy_groups_defeated: Array[EnemyGroup]
+
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	var manager := get_parent() as Node
@@ -25,8 +28,18 @@ func get_spawn_transform() -> Transform3D:
 		return (position_direction_setter as Node3D).global_transform
 	return global_transform
 
+func set_world_at_checkpoint_state():
+	for event in events_completed:
+		event._complete_event()
+	for enemy_group in enemy_groups_defeated:
+		enemy_group.mark_as_defeated()
+
 
 func get_shooter_transform() -> Transform3D:
 	if is_instance_valid(position_shooter) and position_shooter is Node3D:
 		return (position_shooter as Node3D).global_transform
 	return global_transform
+	
+func _trigger_checkpoint() -> void:
+	var checkpoint_manager: CheckpointManager = get_parent() as CheckpointManager
+	checkpoint_manager.set_current_checkpoint(self)

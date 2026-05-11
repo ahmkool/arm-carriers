@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://da5h1xiphyi5d"]
+[gd_scene load_steps=27 format=3 uid="uid://da5h1xiphyi5d"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_i8gtj"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_2s0mp"]
@@ -16,10 +16,11 @@
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_cwww3"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="14_i8gtj"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_dpu70"]
-[ext_resource type="MeshLibrary" uid="uid://ks8qrxijs45o" path="res://assets/mesh_library/mesh_library_all.tres" id="17_o1f2a"]
+[ext_resource type="MeshLibrary" uid="uid://bgx3parunbk2e" path="res://assets/mesh_library/tiles_all.tres" id="18_2s0mp"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_i8gtj"]
 [ext_resource type="PackedScene" uid="uid://lilxckjevvd5" path="res://src/weapon/saw.tscn" id="19_2s0mp"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
+[ext_resource type="Script" path="res://src/game/states/local/await_world_local_ready.gd" id="24_awaitwl"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_n1pwe")
@@ -115,7 +116,10 @@ shadow_enabled = true
 
 [node name="GameStateMachine" type="Node" parent="."]
 script = ExtResource("6_xjdqa")
-initial_state_path = NodePath("WaitingForPlayers")
+initial_state_path = NodePath("AwaitWorldLocalReady")
+
+[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
+script = ExtResource("24_awaitwl")
 
 [node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
 script = ExtResource("7_jhlcr")
@@ -183,7 +187,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.9
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="GridMap" type="GridMap" parent="Level"]
-mesh_library = ExtResource("17_o1f2a")
+mesh_library = ExtResource("18_2s0mp")
 cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 4
 collision_mask = 0
@@ -196,7 +200,7 @@ metadata/_editor_floor_ = Vector3(0, -2, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.9833627, 0)
 
 [node name="DecorationGridMap" type="GridMap" parent="Level"]
-mesh_library = ExtResource("17_o1f2a")
+mesh_library = ExtResource("18_2s0mp")
 data = {
 "cells": PackedInt32Array(2, 65529, 1049574, 65534, 65518, 998, 65531, 4, 1442790, 4, 65534, 656358, 65533, 65532, 656423, 0, 4, 656423, 2, 3, 656356, 65535, 65521, 656356, 3, 0, 656532, 0, 2, 656532, 4, 65526, 656417, 65535, 3, 656477, 3, 4, 1049693, 65532, 65522, 1049693, 9, 65523, 1049695)
 }

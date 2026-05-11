@@ -9,21 +9,21 @@
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_y67nd"]
 [ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="5_wi560"]
 [ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="6_qi7jy"]
-[ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="8_elo5k"]
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_65eof"]
+[ext_resource type="Script" uid="uid://q7qye2hb65af" path="res://src/game/states/local/resetting_checkpoint.gd" id="12_h2fuj"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="12_ykjll"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="13_dvbv8"]
 [ext_resource type="Script" uid="uid://c1vscwhim84wl" path="res://src/enemy/enemy_group.gd" id="14_h2fuj"]
-[ext_resource type="PackedScene" uid="uid://dodm6nfeuvc0j" path="res://src/world/trials/trial_zone.tscn" id="17_65eof"]
-[ext_resource type="MeshLibrary" uid="uid://p8bu00hpm2sn" path="res://assets/mesh_library/mesh_library_green_fixed_2.tres" id="17_bb0aq"]
-[ext_resource type="MeshLibrary" uid="uid://d2880h5hc2fp5" path="res://assets/mesh_library/mesh_library_green_6.tres" id="17_gudwi"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
+[ext_resource type="MeshLibrary" uid="uid://bgx3parunbk2e" path="res://assets/mesh_library/tiles_all.tres" id="20_iv26f"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_kj30a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="20_n7rb1"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="21_h2fuj"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="22_h2fuj"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/open_bridge_event.gd" id="23_iv26f"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
+[ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="24_awaitwl"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("2_j5fge")
@@ -124,7 +124,11 @@ shadow_blur = 2.0
 
 [node name="GameStateMachine" type="Node" parent="."]
 script = ExtResource("3_msrya")
-initial_state_path = NodePath("WaitingForPlayers")
+initial_state_path = NodePath("AwaitWorldLocalReady")
+
+[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
+script = ExtResource("24_awaitwl")
+next_state_name = "ResettingCheckpoint"
 
 [node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
 script = ExtResource("4_wi560")
@@ -138,13 +142,12 @@ script = ExtResource("6_qi7jy")
 [node name="GameOverLost" type="Node" parent="GameStateMachine"]
 script = ExtResource("10_65eof")
 
-[node name="Players" type="Node3D" parent="."]
-script = ExtResource("8_elo5k")
+[node name="ResettingCheckpoint" type="Node" parent="GameStateMachine"]
+script = ExtResource("12_h2fuj")
+
+[node name="Players" parent="." instance=ExtResource("12_ykjll")]
 
 [node name="Enemies" type="Node" parent="."]
-
-[node name="TrialZone" parent="Enemies" instance=ExtResource("17_65eof")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.607292)
 
 [node name="TestEnemies" type="Node" parent="."]
 
@@ -172,7 +175,7 @@ script = ExtResource("19_yghaq")
 current_checkpoint = NodePath("Checkpoint")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.245598)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.67946243)
 script = ExtResource("20_n7rb1")
 
 [node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
@@ -186,6 +189,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -34.245598)
+script = ExtResource("20_n7rb1")
+events_completed = [NodePath("../../Level/Events/OpenBridgeEvent")]
+enemy_groups_defeated = [NodePath("../../TestEnemies/EnemyGroup")]
+
+[node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint2"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CheckpointManager/Checkpoint2/TriggerArea"]
+shape = SubResource("BoxShape3D_lpgms")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
 [node name="Level" type="Node" parent="."]
 
 [node name="FallArea" type="Area3D" parent="Level"]
@@ -197,7 +217,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -21.8
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="GridMapDecoration" type="GridMap" parent="Level"]
-mesh_library = ExtResource("17_bb0aq")
+mesh_library = ExtResource("20_iv26f")
 collision_layer = 4
 collision_mask = 0
 data = {
@@ -209,7 +229,7 @@ metadata/_editor_floor_ = Vector3(0, -1, 0)
 navigation_mesh = SubResource("NavigationMesh_gudwi")
 
 [node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
-mesh_library = ExtResource("17_gudwi")
+mesh_library = ExtResource("20_iv26f")
 cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 4
 collision_mask = 0
@@ -240,5 +260,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5060863, -3.9927697, -43.4
 [node name="Bazooka" parent="Weapon" instance=ExtResource("20_kj30a")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0, 0)
 
+[connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="Level/Events/OpenBridgeEvent" method="_trigger_event"]
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
+[connection signal="body_entered" from="CheckpointManager/Checkpoint2/TriggerArea" to="CheckpointManager/Checkpoint2" method="on_checkpoint_entered"]
