@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://cil1xwaiw037u"]
+
+[sub_resource type="Curve" id="Curve_2jfst"]
+_data = [Vector2(0, 0.6349521), 0.0, 0.0, 0, 0, Vector2(0.052734368, 1), 0.0, 0.0, 0, 0, Vector2(0.9999999, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_r0in6"]
+curve = SubResource("Curve_2jfst")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_d1rca"]
+spread = 180.0
+flatness = 0.8
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, 0.3, 0)
+damping_min = 2.0
+damping_max = 4.0
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_r0in6")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_exa8f"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_1v26w"]
+material = SubResource("StandardMaterial3D_exa8f")
+
+[node name="DashParticles" type="GPUParticles3D"]
+emitting = false
+lifetime = 0.8
+one_shot = true
+explosiveness = 0.85
+randomness = 0.6
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_d1rca")
+draw_pass_1 = SubResource("SphereMesh_1v26w")
+
+[node name="Timer" type="Timer" parent="."]
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="queue_free"]

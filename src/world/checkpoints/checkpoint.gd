@@ -4,6 +4,7 @@ extends Node3D
 @onready var position_direction_setter = $PositionDirectionSetter
 @onready var position_shooter = $PositionShooter
 
+@export var is_carrying_weapon: bool = true
 @export var events_completed: Array[LevelEvent]
 @export var enemy_groups_reset: Array[EnemyGroup]
 @export var enemy_groups_defeated: Array[EnemyGroup]
@@ -32,8 +33,14 @@ func set_world_at_checkpoint_state():
 		area.set_deferred("monitoring", true)
 		area.set_deferred("monitorable", true)
 	for area in areas_already_activated:
-		area.set_deferred("monitoring", false)
-		area.set_deferred("monitorable", false)
+		area._reset()
+	if not is_carrying_weapon:
+		var players: Node = get_parent().get_parent().get_node("Players")
+		if players != null:
+			for player in players.get_children():
+				var player_local: PlayerLocal = player as PlayerLocal
+				if player_local != null:
+					player_local.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 
 func get_shooter_transform() -> Transform3D:
 	if is_instance_valid(position_shooter) and position_shooter is Node3D:

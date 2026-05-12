@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://b63pyb1sthxyn"]
+[gd_scene load_steps=29 format=3 uid="uid://b63pyb1sthxyn"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
@@ -12,13 +12,17 @@
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_etu2i"]
 [ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="11_ud8jr"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_f7b5o"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="14_khskr"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_lj4gk"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="15_g7rls"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_xb4ls"]
 [ext_resource type="MeshLibrary" uid="uid://bgx3parunbk2e" path="res://assets/mesh_library/tiles_all.tres" id="16_b3avm"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_iifxy"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_jq7lx"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
-[ext_resource type="Script" path="res://src/game/states/local/await_world_local_ready.gd" id="23_awaitwl"]
+[ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="23_awaitwl"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_g7rls")
@@ -136,6 +140,32 @@ script = ExtResource("11_ud8jr")
 
 [node name="Enemies" type="Node" parent="."]
 
+[node name="EnemyGroup1" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, 0, -4)
+script = ExtResource("14_khskr")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup1"]
+
+[node name="EnemyLocal" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("15_g7rls")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.851555, 0, -5.5580826)
+is_offensive = false
+
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("15_g7rls")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.05615, 0, -5.5580826)
+is_offensive = false
+
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("15_g7rls")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.460549, 0, -5.5580826)
+is_offensive = false
+
+[node name="EnemyLocal4" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("15_g7rls")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.89029, 0, 1.3649864)
+is_offensive = false
+
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("15_g7rls")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.207027, 0, 0.28055573)
+is_offensive = false
+
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("13_f7b5o")
 current_checkpoint = NodePath("Checkpoint")
@@ -171,7 +201,7 @@ cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 4
 collision_mask = 0
 data = {
-"cells": PackedInt32Array(-3, 3, 656610, -4, 3, 656609, -3, 4, 1252, -4, 4, 656588, -4, 65533, 1443024, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1249, -65536, 65535, 656610, -65535, 65535, 1249, -65535, 65534, 1228, -65534, 65535, 1228, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 1443020, -65536, 5, 1443020, -1, 5, 1252, -2, 5, 656588, -2, 4, 656609, -2, 3, 656610, -5, 65534, 1443024, -5, 65535, 1049825, -5, 0, 656610, -5, 1, 656610, -5, 2, 656610, -5, 3, 1252, -6, 65535, 1443024, -6, 0, 1049825, -6, 1, 656610, -6, 2, 656610, -6, 3, 1252, -7, 0, 1443024, -7, 1, 1049825, -7, 2, 656610, -7, 3, 1252, -8, 1, 656612, -9, 1, 656612, -9, 2, 656610, -9, 3, 1252, -8, 3, 1252, -8, 2, 656610, -4, 65534, 1049825, -3, 65534, 656610, -2, 65534, 656610, -1, 65534, 656610, -1, 65535, 656610, -3, 65535, 656610, -4, 65535, 656610, -4, 0, 656610, -4, 1, 656610, -4, 2, 656610, -3, 2, 656610, -2, 2, 656610, -2, 1, 656610, -2, 0, 656610, -2, 65535, 656610, -3, 0, 656610, -3, 1, 656610, -1, 1, 656610, -1, 0, 656610, -65536, 0, 656610, -65535, 0, 656610, -65534, 0, 1249, -65534, 1, 656610, -65535, 1, 656610, -65536, 1, 656610, -65536, 2, 656610, -1, 2, 656610, -65535, 2, 656610, -65534, 2, 1443041, -65535, 3, 1443041, -65536, 3, 656610, -1, 3, 656610, -1, 4, 656610, -65536, 4, 1443041, -10, 3, 656588, -10, 2, 656591, -10, 1, 1443024, -196608, 5, 1247, -196607, 4, 1247, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 1443039, -131076, 4, 1443039, -131082, 3, 1443039, -131082, 1, 656607, -131079, 0, 656607, -131078, 65535, 656607, -131077, 65534, 656607, -131076, 65533, 656607, -196608, 65533, 1049823, -196607, 65534, 1049823, -196606, 65535, 1049823, -196605, 0, 1049823, -196608, 65534, 1049822, -196607, 65535, 1049822, -196606, 0, 1049822, -196606, 2, 1246, -196607, 3, 1246, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 656606, -131078, 0, 656606, -131077, 65535, 656606, -131076, 65534, 656606, -131081, 3, 1245, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 1245, -131082, 2, 1443037, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131081, 1, 656605, -131080, 1, 656605)
+"cells": PackedInt32Array(-3, 3, 656610, -4, 3, 656609, -3, 4, 1252, -4, 4, 656588, -4, 65533, 1443024, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1249, -65536, 65535, 656610, -65535, 65535, 1249, -65535, 65534, 1228, -65534, 65535, 1228, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 1443020, -65536, 5, 1443020, -1, 5, 1252, -2, 5, 656588, -2, 4, 656609, -2, 3, 656610, -5, 65534, 1443024, -5, 65535, 1049825, -5, 0, 656610, -5, 1, 656610, -5, 2, 656610, -5, 3, 1252, -6, 65535, 1443024, -6, 0, 1049825, -6, 1, 656610, -6, 2, 656610, -6, 3, 1252, -7, 0, 1443024, -7, 1, 1049825, -7, 2, 656610, -7, 3, 1252, -8, 1, 656612, -9, 1, 656612, -9, 2, 656610, -9, 3, 1252, -8, 3, 1252, -8, 2, 656610, -4, 65534, 1049825, -3, 65534, 656610, -2, 65534, 656610, -1, 65534, 656610, -1, 65535, 656610, -3, 65535, 656610, -4, 65535, 656610, -4, 0, 656610, -4, 1, 656610, -4, 2, 656610, -3, 2, 656610, -2, 2, 656610, -2, 1, 656610, -2, 0, 656610, -2, 65535, 656610, -3, 0, 656610, -3, 1, 656610, -1, 1, 656610, -1, 0, 656610, -65536, 0, 656610, -65535, 0, 656610, -65534, 0, 1249, -65534, 1, 656610, -65535, 1, 656610, -65536, 1, 656610, -65536, 2, 656610, -1, 2, 656610, -65535, 2, 656610, -65534, 2, 1443041, -65535, 3, 1443041, -65536, 3, 656610, -1, 3, 656610, -1, 4, 656610, -65536, 4, 1443041, -10, 3, 656588, -10, 2, 1251, -10, 1, 656611, -196608, 5, 1247, -196607, 4, 1247, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 1443039, -131076, 4, 1443039, -131082, 3, 1443039, -131079, 0, 656607, -131078, 65535, 656607, -131077, 65534, 656607, -131076, 65533, 656607, -196608, 65533, 1049823, -196607, 65534, 1049823, -196606, 65535, 1049823, -196605, 0, 1049823, -196608, 65534, 1049822, -196607, 65535, 1049822, -196606, 0, 1049822, -196606, 2, 1246, -196607, 3, 1246, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 656606, -131078, 0, 656606, -131077, 65535, 656606, -131076, 65534, 656606, -131081, 3, 1245, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 1245, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131080, 1, 656605, -10, 0, 1231, -10, 65535, 1231, -11, 1, 656591, -11, 0, 1251, -11, 65535, 1049826, -13, 0, 1443023, -12, 0, 1443023, -12, 65535, 1049826, -13, 65535, 1049826, -10, 65534, 1231, -11, 65534, 1049826, -11, 65533, 1049826, -10, 65533, 1231, -12, 65533, 1049826, -13, 65533, 1049826, -13, 65534, 1049826, -12, 65534, 1049826, -10, 65532, 656592, -11, 65532, 1049807, -12, 65532, 656611, -12, 65531, 656592, -13, 65531, 656610, -14, 65531, 1443024, -14, 65532, 1443043, -13, 65532, 1049826, -15, 65532, 1443024, -15, 65533, 656591, -15, 65534, 656591, -14, 65534, 1049826, -14, 65535, 1049826, -14, 0, 1443023, -15, 0, 1232, -15, 65535, 656591, -14, 65533, 1049826, -11, 2, 1232, -131083, 2, 1443039, -131087, 0, 1443039, -131087, 65532, 656607, -131086, 65531, 656607, -131084, 65531, 1049823, -131082, 65532, 1049823, -131082, 1, 1049822, -131084, 65532, 1049822, -131086, 65532, 656606, -131083, 0, 1443038, -131082, 2, 1443038, -131083, 1, 1443037, -131084, 0, 1245, -131085, 0, 1245, -131086, 0, 1245, -131087, 65535, 1443037, -131087, 65534, 1443037, -131087, 65533, 1443037, -131085, 65531, 656605, -131083, 65532, 656605, -131082, 65533, 1049821, -131082, 65534, 1049821, -131082, 65535, 1049821, -131082, 0, 1049821, -131081, 1, 656605)
 }
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
@@ -188,6 +218,20 @@ metadata/_editor_floor_ = Vector3(0, -1, 0)
 [node name="Water" parent="Level" instance=ExtResource("18_iifxy")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
 
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform" parent="Level/Bridges" instance=ExtResource("21_dvkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -16.493908)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("21_dvkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -19.493908)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/BridgePlatform2")]
+
 [node name="Weapon" type="Node" parent="."]
 
 [node name="Sword" parent="Weapon" instance=ExtResource("20_iifxy")]
@@ -195,4 +239,5 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6896334, 0, 0)
 
 [node name="TestEnemies" type="Node" parent="."]
 
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup1" to="Level/Events/OpenBridge1" method="trigger"]
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]

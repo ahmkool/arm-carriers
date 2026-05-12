@@ -10,6 +10,11 @@ signal all_players_inside
 var _inside_ids: Dictionary = {}
 var _emitted_for_current_overlap := false
 
+func _reset() -> void:
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+	_inside_ids.clear()
+	_emitted_for_current_overlap = false
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)

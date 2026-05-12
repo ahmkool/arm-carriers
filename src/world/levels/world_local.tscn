@@ -146,6 +146,7 @@ layout_mode = 2
 text = "Press any button to join the game"
 
 [node name="DebugInfo" type="MarginContainer" parent="UI"]
+visible = false
 anchors_preset = 1
 anchor_left = 1.0
 anchor_right = 1.0
@@ -486,11 +487,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.358948, 0, 6.0236473)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("19_yghaq")
-current_checkpoint = NodePath("Checkpoint7")
+current_checkpoint = NodePath("Checkpoint")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.67946243)
 script = ExtResource("20_n7rb1")
+is_carrying_weapon = false
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
@@ -951,10 +953,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0, 0)
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup3" to="Level/Events/OpenBridge5" method="trigger"]
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup4" to="CheckpointManager/Checkpoint7" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup4" to="Level/Events/OpenBridge6" method="trigger"]
-[connection signal="enemies_defeated" from="TestEnemies/EnemyGroup5" to="Level/Events/OpenBridge7" method="trigger"]
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup5" to="CheckpointManager/Checkpoint8" method="_trigger_checkpoint"]
-[connection signal="enemies_defeated" from="TestEnemies/SurvivalEnemyGroup3" to="Level/Events/OpenBridge8" method="trigger"]
+[connection signal="enemies_defeated" from="TestEnemies/EnemyGroup5" to="Level/Events/OpenBridge7" method="trigger"]
 [connection signal="enemies_defeated" from="TestEnemies/SurvivalEnemyGroup3" to="CheckpointManager/Checkpoint9" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="TestEnemies/SurvivalEnemyGroup3" to="Level/Events/OpenBridge8" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger2" to="Level/Events/CloseBridge2" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger3" to="Level/Events/CloseBridge3" method="trigger"]
