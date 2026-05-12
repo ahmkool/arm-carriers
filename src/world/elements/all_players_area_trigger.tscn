@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3 uid="uid://s7psajblotsb"]
+
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="1_uwsrl"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qrvdl"]
+size = Vector3(4, 3, 4)
+
+[node name="AllPlayersAreaTrigger" type="Area3D"]
+script = ExtResource("1_uwsrl")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+shape = SubResource("BoxShape3D_qrvdl")

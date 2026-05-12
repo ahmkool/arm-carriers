@@ -15,6 +15,7 @@ func _ready() -> void:
 	smoke.emitting = true
 	_sync_hitbox_sphere_radius()
 	call_deferred("_hurt_initial_overlaps")
+	get_tree().create_timer(0.2).timeout.connect(_queue_free_hitbox)
 	await get_tree().create_timer(2.0).timeout
 	queue_free()
 
@@ -26,6 +27,11 @@ func _sync_hitbox_sphere_radius() -> void:
 	var sphere := cs.shape as SphereShape3D
 	if sphere != null:
 		sphere.radius = damage_radius
+
+
+func _queue_free_hitbox() -> void:
+	if is_instance_valid(hitbox):
+		hitbox.queue_free()
 
 
 func _hurt_initial_overlaps() -> void:

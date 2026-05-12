@@ -12,7 +12,7 @@
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_yt2c5"]
 [ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="11_x4m5b"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_cp7ye"]
-[ext_resource type="Script" uid="uid://c1vscwhim84wl" path="res://src/enemy/enemy_group.gd" id="13_o1f2a"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="13_o1f2a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_cwww3"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="14_i8gtj"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_dpu70"]
