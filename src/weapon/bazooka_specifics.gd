@@ -104,14 +104,14 @@ func _apply_pose_from_ends(shooter_end_world: Vector3, direction_setter_end_worl
 		return
 
 	var forward := carry_direction.normalized()
-	var up := Vector3.UP
-	
+	# When forward ~ world up, cross(up, forward) degenerates; use another reference axis.
+	var ref_up := Vector3.UP
+	if absf(forward.dot(ref_up)) > 0.98:
+		ref_up = Vector3.FORWARD
+
 	var weapon: BigWeapon = get_parent() as BigWeapon
-	
-	# Prevent invalid basis when aiming almost straight up/down.
-	if absf(forward.dot(up)) > 0.98:
-		weapon.up = Vector3.FORWARD
-	var right := up.cross(forward).normalized()
+
+	var right := ref_up.cross(forward).normalized()
 	var corrected_up := forward.cross(right).normalized()
 	var target_basis := Basis(right, corrected_up, forward).orthonormalized()
 
