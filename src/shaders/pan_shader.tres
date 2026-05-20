@@ -1,0 +1,71 @@
+[gd_resource type="VisualShader" load_steps=6 format=3 uid="uid://cv47m7ybgxnhx"]
+
+[sub_resource type="VisualShaderNodeTexture2DParameter" id="VisualShaderNodeTexture2DParameter_rhpoh"]
+parameter_name = "MainTex"
+
+[sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_b1yrf"]
+source = 5
+
+[sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_yoqqn"]
+output_port_for_preview = 0
+input_name = "color"
+
+[sub_resource type="VisualShaderNodeVectorOp" id="VisualShaderNodeVectorOp_io0ig"]
+output_port_for_preview = 0
+default_input_values = [0, Quaternion(0, 0, 0, 0), 1, Quaternion(0, 0, 0, 0)]
+op_type = 2
+operator = 2
+
+[sub_resource type="VisualShaderNodeVectorDecompose" id="VisualShaderNodeVectorDecompose_ic0gt"]
+default_input_values = [0, Quaternion(0, 0, 0, 0)]
+op_type = 2
+
+[resource]
+code = "shader_type spatial;
+render_mode blend_mix, depth_draw_opaque, depth_test_default, cull_back, diffuse_lambert, specular_schlick_ggx;
+
+uniform sampler2D MainTex;
+
+
+
+void vertex() {
+// Input:4
+	vec4 n_out4p0 = COLOR;
+
+
+	vec4 n_out3p0;
+// Texture2D:3
+	n_out3p0 = texture(MainTex, UV);
+
+
+// VectorOp:5
+	vec4 n_out5p0 = n_out4p0 * n_out3p0;
+
+
+// VectorDecompose:6
+	float n_out6p0 = n_out5p0.x;
+	float n_out6p1 = n_out5p0.y;
+	float n_out6p2 = n_out5p0.z;
+	float n_out6p3 = n_out5p0.w;
+
+
+// Output:0
+	UV2 = vec2(n_out6p2);
+	COLOR.a = n_out6p2;
+
+
+}
+"
+preview_params/MainTex = "Resource(\"uid://vbykkfhy2wij\", \"res://assets/material/voronoi_1_voronoi.png\")"
+nodes/vertex/0/position = Vector2(1740, -640)
+nodes/vertex/2/node = SubResource("VisualShaderNodeTexture2DParameter_rhpoh")
+nodes/vertex/2/position = Vector2(-1520, -220)
+nodes/vertex/3/node = SubResource("VisualShaderNodeTexture_b1yrf")
+nodes/vertex/3/position = Vector2(-680, 80)
+nodes/vertex/4/node = SubResource("VisualShaderNodeInput_yoqqn")
+nodes/vertex/4/position = Vector2(-1400, -760)
+nodes/vertex/5/node = SubResource("VisualShaderNodeVectorOp_io0ig")
+nodes/vertex/5/position = Vector2(20, -380)
+nodes/vertex/6/node = SubResource("VisualShaderNodeVectorDecompose_ic0gt")
+nodes/vertex/6/position = Vector2(500, -340)
+nodes/vertex/connections = PackedInt32Array(2, 0, 3, 2, 4, 0, 5, 0, 3, 0, 5, 1, 5, 0, 6, 0, 6, 2, 0, 7, 6, 2, 0, 5)

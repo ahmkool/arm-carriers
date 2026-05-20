@@ -2,7 +2,7 @@ extends EnemyState
 
 func physics_update(delta: float) -> void:
 	if enemy.is_on_floor():
-		var grounded_direction := enemy.get_target_direction()
+		var grounded_direction: Vector3 = enemy.get_move_direction()
 		if grounded_direction.length_squared() > 0.0001:
 			enemy_state_machine.transition_to("running")
 		else:
@@ -11,7 +11,7 @@ func physics_update(delta: float) -> void:
 
 	enemy.velocity += enemy.get_gravity() * delta
 
-	var direction := enemy.get_target_direction()
+	var direction: Vector3 = enemy.get_move_direction()
 	if direction.length_squared() > 0.0001:
 		enemy.velocity.x = direction.x * enemy.speed
 		enemy.velocity.z = direction.z * enemy.speed

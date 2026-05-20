@@ -43,7 +43,22 @@ func _process(delta: float) -> void:
 		current_state.update(delta)
 
 func _physics_process(delta: float) -> void:
+	if enemy.behavior:
+		enemy.behavior.tick(delta)
+		_apply_behavior_locomotion_request()
 	if current_state:
 		current_state.physics_update(delta)
 	enemy.move_and_slide()
 	enemy.update_locomotion_blend()
+
+
+func _apply_behavior_locomotion_request() -> void:
+	var requested: StringName = enemy.behavior.intent.requested_locomotion
+	if requested.is_empty():
+		return
+	if is_in_state("dead") or is_in_state("casting"):
+		return
+	var requested_name := String(requested).to_lower()
+	if current_state != null and current_state.name.to_lower() == requested_name:
+		return
+	transition_to(requested_name)

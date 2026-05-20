@@ -1,0 +1,65 @@
+{
+	"connections": [],
+	"label": "Graph",
+	"longdesc": "",
+	"name": "@Node@698",
+	"node_position": {
+		"x": 0.0,
+		"y": 0.0
+	},
+	"nodes": [
+		{
+			"export_paths": {
+
+			},
+			"name": "Material",
+			"node_position": {
+				"x": 198.0,
+				"y": -12.0
+			},
+			"parameters": {
+				"albedo_color": {
+					"a": 1.0,
+					"b": 1.0,
+					"g": 1.0,
+					"r": 1.0,
+					"type": "Color"
+				},
+				"ao": 1.0,
+				"depth_scale": 0.5,
+				"emission_energy": 1.0,
+				"flags_transparent": true,
+				"metallic": 0.0,
+				"normal": 1.0,
+				"roughness": 1.0,
+				"size": 11,
+				"sss": 1.0
+			},
+			"seed_int": 0,
+			"type": "material"
+		},
+		{
+			"name": "voronoi2",
+			"node_position": {
+				"x": -172.5,
+				"y": 53.0
+			},
+			"parameters": {
+				"intensity": 1.1,
+				"randomness": 1.0,
+				"scale_x": 4.0,
+				"scale_y": 4.0,
+				"stretch_x": 1.0,
+				"stretch_y": 1.0
+			},
+			"seed_int": 0,
+			"type": "voronoi2"
+		}
+	],
+	"parameters": {
+
+	},
+	"seed_int": 0,
+	"shortdesc": "",
+	"type": "graph"
+}

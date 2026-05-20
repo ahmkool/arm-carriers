@@ -1,0 +1,100 @@
+[gd_scene load_steps=13 format=3 uid="uid://cm4mxhbh52ywr"]
+
+[ext_resource type="Script" uid="uid://64pji2ifyp0g" path="res://src/vfx/fireball.gd" id="1_1qcgn"]
+[ext_resource type="Shader" uid="uid://cv47m7ybgxnhx" path="res://src/shaders/pan_shader.tres" id="1_bn7c4"]
+[ext_resource type="Texture2D" uid="uid://vbykkfhy2wij" path="res://assets/material/voronoi_1_voronoi.png" id="2_1qcgn"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1qcgn"]
+radius = 0.5439705
+
+[sub_resource type="Animation" id="Animation_bq0j5"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_1qcgn"]
+resource_name = "spawn"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ndwbl"]
+_data = {
+&"RESET": SubResource("Animation_bq0j5"),
+&"spawn": SubResource("Animation_1qcgn")
+}
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bq0j5"]
+render_priority = 0
+shader = ExtResource("1_bn7c4")
+shader_parameter/MainTex = ExtResource("2_1qcgn")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ndwbl"]
+gravity = Vector3(0, 0, 0)
+scale_min = 0.7
+scale_max = 0.7
+color = Color(1, 0.01999998, 0.01999998, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_5vuet"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bn7c4"]
+albedo_color = Color(0.9014828, 0.43954647, 0.05644928, 1)
+emission_enabled = true
+emission = Color(0.7440312, 0.45545077, 0.020425344, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_1qcgn"]
+material = SubResource("StandardMaterial3D_bn7c4")
+
+[node name="Fireball" type="Node3D"]
+script = ExtResource("1_1qcgn")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 0
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_1qcgn")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_ndwbl")
+}
+autoplay = "spawn"
+
+[node name="Visuals" type="Node3D" parent="."]
+transform = Transform3D(0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="Visuals"]
+material_override = SubResource("ShaderMaterial_bq0j5")
+amount = 1
+fixed_fps = 60
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_ndwbl")
+draw_pass_1 = SubResource("SphereMesh_5vuet")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Visuals"]
+mesh = SubResource("SphereMesh_1qcgn")
+skeleton = NodePath("../..")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_body_collision"]

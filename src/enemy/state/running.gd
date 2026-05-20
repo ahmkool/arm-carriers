@@ -16,13 +16,16 @@ func physics_update(_delta: float) -> void:
 		enemy_state_machine.transition_to("falling")
 		return
 
-	var direction := enemy.get_target_direction()
+	var direction: Vector3 = enemy.get_move_direction()
 	if direction.length_squared() < 0.0001:
 		enemy_state_machine.transition_to("idle")
 		return
 
 	enemy.velocity.x = direction.x * enemy.speed
 	enemy.velocity.z = direction.z * enemy.speed
-	var target_basis := Basis.looking_at(direction.normalized(), Vector3.UP)
+	var face_direction: Vector3 = enemy.get_face_direction()
+	if face_direction.length_squared() < 0.0001:
+		face_direction = direction
+	var target_basis := Basis.looking_at(face_direction.normalized(), Vector3.UP)
 	var w := 1.0 - exp(-ROTATION_SMOOTH_LAMBDA * _delta)
 	enemy.global_basis = enemy.global_basis.slerp(target_basis, w).orthonormalized()

@@ -5,7 +5,7 @@ func physics_update(_delta: float) -> void:
 		enemy_state_machine.transition_to("falling")
 		return
 
-	var direction := enemy.get_target_direction()
+	var direction: Vector3 = enemy.get_move_direction()
 	if direction.length_squared() > 0.0001:
 		enemy_state_machine.transition_to("running")
 		return

@@ -17,30 +17,37 @@ var _is_offensive := true
 const DEATH_FREE_DELAY_SECONDS := 10.0
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/BlendIdleRun/blend_amount"
 const ANIM_PARAM_DEAD_BLEND := &"parameters/DeadBlend/blend_amount"
+const ANIM_PARAM_CASTING_BLEND := &"parameters/ThrowBlend/blend_amount"
+const ANIM_PARAM_CAST_ONESHOT := &"parameters/OneShot 2/request"
+const ANIM_PARAM_CAST_ONESHOT_ACTIVE := &"parameters/OneShot 2/internal_active"
 
 var target_player: PlayerLocal
 
-@onready var animation_tree: AnimationTree = $Skeleton_Warrior/AnimationTree
 @onready var enemy_state_machine: EnemyStateMachine = $EnemyStateMachine
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
 
+var behavior: EnemyBehavior
+var animation_tree: AnimationTree
+
 signal died
 
 func _ready() -> void:
+	behavior = _find_behavior()
+	animation_tree = _find_animation_tree()
 	if animation_tree:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
 	if navigation_agent:
 		navigation_agent.target_position = global_position
 	_sync_hit_box_to_offensive_state()
-	_update_target_player()
+	update_target_player()
 
 func _process(_delta: float) -> void:
 	if not is_offensive:
 		return
 	if not is_instance_valid(target_player):
-		_update_target_player()
+		update_target_player()
 
 func _get_players_node() -> Node:
 	var n: Node = get_parent()
@@ -52,7 +59,32 @@ func _get_players_node() -> Node:
 	return null
 
 
-func _update_target_player() -> void:
+func _find_behavior() -> EnemyBehavior:
+	for child in get_children():
+		if child is EnemyBehavior:
+			return child as EnemyBehavior
+	return null
+
+
+func _find_animation_tree() -> AnimationTree:
+	for node in find_children("*", "AnimationTree", true, false):
+		return node as AnimationTree
+	return null
+
+
+func get_move_direction() -> Vector3:
+	if behavior == null:
+		return Vector3.ZERO
+	return behavior.get_move_direction()
+
+
+func get_face_direction() -> Vector3:
+	if behavior == null:
+		return Vector3.ZERO
+	return behavior.get_face_direction()
+
+
+func update_target_player() -> void:
 	var players_node := _get_players_node()
 	if players_node == null:
 		target_player = null
@@ -72,28 +104,21 @@ func _update_target_player() -> void:
 			closest_player = player
 	target_player = closest_player
 
-func get_target_direction() -> Vector3:
-	if not is_offensive:
-		return Vector3.ZERO
-	if not is_instance_valid(target_player):
-		_update_target_player()
-	if is_instance_valid(target_player) and target_player.is_dead:
-		_update_target_player()
-	if not is_instance_valid(target_player):
-		return Vector3.ZERO
+func get_path_direction_to(target_global_position: Vector3) -> Vector3:
 	if navigation_agent == null:
-		return _get_direct_target_direction()
-	navigation_agent.target_position = target_player.global_position
+		return _get_direct_path_direction_to(target_global_position)
+	navigation_agent.target_position = target_global_position
 	if navigation_agent.is_navigation_finished():
-		return _get_direct_target_direction()
+		return _get_direct_path_direction_to(target_global_position)
 	var next_pos := navigation_agent.get_next_path_position()
 	var direction := Vector3(next_pos.x - global_position.x, 0.0, next_pos.z - global_position.z)
 	if direction.length_squared() > 0.0001:
 		return direction.normalized()
-	return _get_direct_target_direction()
+	return _get_direct_path_direction_to(target_global_position)
 
-func _get_direct_target_direction() -> Vector3:
-	var to_target := target_player.global_position - global_position
+
+func _get_direct_path_direction_to(target_global_position: Vector3) -> Vector3:
+	var to_target := target_global_position - global_position
 	var direction := Vector3(to_target.x, 0.0, to_target.z)
 	if direction.length_squared() > 0.0001:
 		return direction.normalized()
@@ -103,6 +128,19 @@ func play_dead_animation() -> void:
 	if not animation_tree:
 		return
 	animation_tree.set(ANIM_PARAM_DEAD_BLEND, 1.0)
+
+
+func play_cast_animation() -> void:
+	if not animation_tree:
+		return
+	animation_tree.set(ANIM_PARAM_CAST_ONESHOT, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+
+func is_cast_animation_playing() -> bool:
+	if not animation_tree:
+		return false
+	return animation_tree.get(ANIM_PARAM_CAST_ONESHOT_ACTIVE)
+
 
 func is_alive() -> bool:
 	if enemy_state_machine == null:
@@ -140,6 +178,8 @@ func _on_hit_box_body_entered(body):
 
 
 func update_locomotion_blend() -> void:
+	if enemy_state_machine != null and enemy_state_machine.is_in_state("casting"):
+		return
 	if not animation_tree or not animation_tree.active:
 		return
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()

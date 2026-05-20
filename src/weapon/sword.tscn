@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://bgdgrubg87row"]
+[gd_scene load_steps=17 format=4 uid="uid://bgdgrubg87row"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_q1t8x"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="4_ptwm4"]
@@ -90,6 +90,10 @@ size = Vector3(1, 1, 4.638443)
 [sub_resource type="BoxShape3D" id="BoxShape3D_ywwcy"]
 size = Vector3(1.5742188, 0.5605469, 7.5764465)
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dc8ne"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ywwcy"]
+
 [node name="Sword" type="RigidBody3D"]
 collision_layer = 8
 collision_mask = 4
@@ -159,6 +163,13 @@ shape = SubResource("BoxShape3D_dc8ne")
 [node name="CollisionShape3D2" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5.8256073)
 shape = SubResource("BoxShape3D_ywwcy")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.1057014, 0, 0)
+visible = false
+trail_enabled = true
+process_material = SubResource("ParticleProcessMaterial_dc8ne")
+draw_pass_1 = SubResource("PlaneMesh_ywwcy")
 
 [connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
 [connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]

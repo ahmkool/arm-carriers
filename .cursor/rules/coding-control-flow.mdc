@@ -1,0 +1,54 @@
+---
+description: Control-flow style — guard clauses, no nested ifs, happy path last, avoid else
+alwaysApply: true
+---
+
+# Control flow
+
+Apply to all new and edited code (GDScript and otherwise).
+
+## Rules
+
+1. **No nested `if` branches** — at most one level of `if` per function body. Deeper conditions belong in a **named helper** with a clear name (`_can_cast`, `_resolve_target`, etc.).
+2. **Avoid `else`** — prefer guard clauses and early `return`/`continue`/`break`. Use `else` only when both branches are equally important and inversion would hurt readability (rare).
+3. **Happy path last** — handle invalid input, preconditions, and edge cases first; leave the main success logic at the **bottom** of the function with minimal indentation.
+4. **Extract helpers** — repeated or compound checks become small functions that return a bool or optional value instead of nesting.
+
+## Examples (GDScript)
+
+```gdscript
+# ❌ Nested ifs + else
+func cast_at(target: Node) -> void:
+	if target != null:
+		if _in_range(target):
+			_emitter.fire(target)
+		else:
+			_state.request_chase()
+	else:
+		return
+
+# ✅ Guards + happy path at end
+func cast_at(target: Node) -> void:
+	if target == null:
+		return
+	if not _in_range(target):
+		_state.request_chase()
+		return
+	_emitter.fire(target)
+
+# ✅ Compound logic in a helper (still flat in caller)
+func cast_at(target: Node) -> void:
+	if not _can_cast_at(target):
+		return
+	_emitter.fire(target)
+
+func _can_cast_at(target: Node) -> bool:
+	if target == null:
+		return false
+	if not _in_range(target):
+		_state.request_chase()
+		return false
+	return true
+```
+
+When refactoring existing code, flatten nested conditionals in the same pass unless the change scope is explicitly larger.
