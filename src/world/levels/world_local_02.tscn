@@ -18,7 +18,7 @@
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_xb4ls"]
 [ext_resource type="MeshLibrary" uid="uid://bgx3parunbk2e" path="res://assets/mesh_library/tiles_all.tres" id="16_b3avm"]
 [ext_resource type="PackedScene" uid="uid://bu7ghcfraaja" path="res://src/enemy/enemy_mage.tscn" id="16_g7rls"]
-[ext_resource type="Script" uid="uid://2q5atmew8usu" path="res://src/enemy/debug/enemy_debugger.gd" id="17_dvkoh"]
+[ext_resource type="PackedScene" uid="uid://cje8utfev8m5t" path="res://src/enemy/enemy_flying_skull.tscn" id="17_dvkoh"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_iifxy"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
@@ -175,8 +175,8 @@ is_offensive = false
 [node name="EnemyMage" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("16_g7rls")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22, 0, 7)
 
-[node name="Node" type="Node" parent="Enemies/EnemyGroup1/InstancedEnemies/EnemyMage"]
-script = ExtResource("17_dvkoh")
+[node name="EnemyFlyingSkull" parent="Enemies/EnemyGroup1/InstancedEnemies" instance=ExtResource("17_dvkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43, 0, 0)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("13_f7b5o")

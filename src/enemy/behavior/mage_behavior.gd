@@ -2,6 +2,7 @@ class_name MageBehavior
 extends EnemyBehavior
 
 @export var flee_distance := 3.0
+@export var flee_retreat_distance := 4.0
 @export var cast_min_distance := 5.0
 @export var cast_max_distance := 12.0
 @export var cast_cooldown := 2.5
@@ -36,14 +37,11 @@ func _think(delta: float) -> void:
 	var distance_sq := distance * distance
 
 	if distance_sq < flee_distance_sq:
-		intent.move_direction = -direction
-		intent.face_direction = -direction
+		_set_flee_intent(direction)
 		return
 
-	if distance >= cast_min_distance and distance <= cast_max_distance and _cast_cooldown_remaining <= 0.0:
-		intent.requested_locomotion = &"casting"
-		intent.face_direction = direction
-		_cast_cooldown_remaining = cast_cooldown
+	if distance >= cast_min_distance and distance <= cast_max_distance:
+		_apply_cast_band_intent(direction)
 		return
 
 	if distance > cast_max_distance:
@@ -51,5 +49,21 @@ func _think(delta: float) -> void:
 		return
 
 	if distance < cast_min_distance:
-		intent.move_direction = -direction
-		intent.face_direction = -direction
+		_set_flee_intent(direction)
+		return
+
+
+func _apply_cast_band_intent(toward_player: Vector3) -> void:
+	intent.face_direction = toward_player
+	if _cast_cooldown_remaining > 0.0:
+		return
+	intent.requested_locomotion = &"casting"
+	_cast_cooldown_remaining = cast_cooldown
+
+
+func _set_flee_intent(toward_player: Vector3) -> void:
+	intent.move_direction = enemy.get_flee_path_direction_from(
+		enemy.target_player.global_position,
+		flee_retreat_distance
+	)
+	intent.face_direction = toward_player

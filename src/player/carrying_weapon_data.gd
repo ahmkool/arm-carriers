@@ -3,6 +3,9 @@ extends Node
 
 @onready var player_node = $".."
 
+signal weapon_picked_up()
+signal weapon_dropped()
+
 enum CanCarryStatus {
 	CAN_CARRY_SHOOTER,
 	CAN_CARRY_DIRECTION_SETTER,

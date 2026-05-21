@@ -12,3 +12,7 @@ func physics_update(_delta: float) -> void:
 
 	enemy.velocity.x = move_toward(enemy.velocity.x, 0.0, enemy.speed)
 	enemy.velocity.z = move_toward(enemy.velocity.z, 0.0, enemy.speed)
+
+	var face_direction: Vector3 = enemy.get_face_direction()
+	if face_direction.length_squared() > 0.0001:
+		enemy.smooth_rotate_toward(face_direction, _delta)

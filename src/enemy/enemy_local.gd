@@ -15,6 +15,8 @@ var _is_offensive := true
 		_sync_hit_box_to_offensive_state()
 
 const DEATH_FREE_DELAY_SECONDS := 10.0
+## Higher = faster turn toward a facing direction (roughly “how many times per second” to ease toward the target).
+const ROTATION_SMOOTH_LAMBDA := 12.0
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/BlendIdleRun/blend_amount"
 const ANIM_PARAM_DEAD_BLEND := &"parameters/DeadBlend/blend_amount"
 const ANIM_PARAM_CASTING_BLEND := &"parameters/ThrowBlend/blend_amount"
@@ -29,12 +31,14 @@ var target_player: PlayerLocal
 
 var behavior: EnemyBehavior
 var animation_tree: AnimationTree
+var animation_player: AnimationPlayer
 
 signal died
 
 func _ready() -> void:
 	behavior = _find_behavior()
 	animation_tree = _find_animation_tree()
+	animation_player = _find_animation_player()
 	if animation_tree:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
@@ -72,6 +76,12 @@ func _find_animation_tree() -> AnimationTree:
 	return null
 
 
+func _find_animation_player() -> AnimationPlayer:
+	for node in find_children("*", "AnimationPlayer", true, false):
+		return node as AnimationPlayer
+	return null
+
+
 func get_move_direction() -> Vector3:
 	if behavior == null:
 		return Vector3.ZERO
@@ -82,6 +92,14 @@ func get_face_direction() -> Vector3:
 	if behavior == null:
 		return Vector3.ZERO
 	return behavior.get_face_direction()
+
+
+func smooth_rotate_toward(flat_direction: Vector3, delta: float) -> void:
+	if flat_direction.length_squared() < 0.0001:
+		return
+	var target_basis := Basis.looking_at(flat_direction.normalized(), Vector3.UP)
+	var w := 1.0 - exp(-ROTATION_SMOOTH_LAMBDA * delta)
+	global_basis = global_basis.slerp(target_basis, w).orthonormalized()
 
 
 func update_target_player() -> void:
@@ -117,6 +135,18 @@ func get_path_direction_to(target_global_position: Vector3) -> Vector3:
 	return _get_direct_path_direction_to(target_global_position)
 
 
+func get_flee_path_direction_from(threat_global_position: Vector3, retreat_distance: float) -> Vector3:
+	var away := global_position - threat_global_position
+	var flat := Vector3(away.x, 0.0, away.z)
+	if flat.length_squared() < 0.0001:
+		return Vector3.ZERO
+	var flee_target := global_position + flat.normalized() * retreat_distance
+	if navigation_agent != null:
+		var map_rid := navigation_agent.get_navigation_map()
+		flee_target = NavigationServer3D.map_get_closest_point(map_rid, flee_target)
+	return get_path_direction_to(flee_target)
+
+
 func _get_direct_path_direction_to(target_global_position: Vector3) -> Vector3:
 	var to_target := target_global_position - global_position
 	var direction := Vector3(to_target.x, 0.0, to_target.z)
@@ -125,9 +155,11 @@ func _get_direct_path_direction_to(target_global_position: Vector3) -> Vector3:
 	return Vector3.ZERO
 
 func play_dead_animation() -> void:
-	if not animation_tree:
+	if animation_tree:
+		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 1.0)
 		return
-	animation_tree.set(ANIM_PARAM_DEAD_BLEND, 1.0)
+	if animation_player and animation_player.has_animation(&"dead"):
+		animation_player.play(&"dead")
 
 
 func play_cast_animation() -> void:

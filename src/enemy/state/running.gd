@@ -1,8 +1,5 @@
 extends EnemyState
 
-## Higher = faster turn toward move direction (roughly “how many times per second” to ease toward the target).
-const ROTATION_SMOOTH_LAMBDA := 12.0
-
 func enter() -> void:
 	if enemy.footsteps_particles:
 		enemy.footsteps_particles.emitting = true
@@ -26,6 +23,4 @@ func physics_update(_delta: float) -> void:
 	var face_direction: Vector3 = enemy.get_face_direction()
 	if face_direction.length_squared() < 0.0001:
 		face_direction = direction
-	var target_basis := Basis.looking_at(face_direction.normalized(), Vector3.UP)
-	var w := 1.0 - exp(-ROTATION_SMOOTH_LAMBDA * _delta)
-	enemy.global_basis = enemy.global_basis.slerp(target_basis, w).orthonormalized()
+	enemy.smooth_rotate_toward(face_direction, _delta)
