@@ -58,3 +58,10 @@ theme_override_font_sizes/font_size = 40
 text = "Level 3"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_03.tscn"
+
+[node name="EnemyTestLevel" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Enemy test level"
+script = ExtResource("2_56xr1")
+level_scene_path = "uid://cy6nsntcg6gho"

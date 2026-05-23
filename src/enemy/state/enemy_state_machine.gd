@@ -15,9 +15,14 @@ func _ready() -> void:
 			state.enemy_state_machine = self
 			states[state.name.to_lower()] = state
 
+	call_deferred("_enter_initial_state")
+
+
+func _enter_initial_state() -> void:
 	current_state = get_node(initial_state_path) as EnemyState
-	if current_state:
-		current_state.enter()
+	if current_state == null:
+		return
+	current_state.enter()
 
 func is_in_state(state_name: String) -> bool:
 	var key := state_name.to_lower()
@@ -56,7 +61,7 @@ func _apply_behavior_locomotion_request() -> void:
 	var requested: StringName = enemy.behavior.intent.requested_locomotion
 	if requested.is_empty():
 		return
-	if is_in_state("dead") or is_in_state("casting"):
+	if is_in_state("dead") or is_in_state("casting") or is_in_state("spawning"):
 		return
 	var requested_name := String(requested).to_lower()
 	if current_state != null and current_state.name.to_lower() == requested_name:

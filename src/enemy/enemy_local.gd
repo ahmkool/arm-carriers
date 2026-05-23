@@ -22,6 +22,8 @@ const ANIM_PARAM_DEAD_BLEND := &"parameters/DeadBlend/blend_amount"
 const ANIM_PARAM_CASTING_BLEND := &"parameters/ThrowBlend/blend_amount"
 const ANIM_PARAM_CAST_ONESHOT := &"parameters/OneShot 2/request"
 const ANIM_PARAM_CAST_ONESHOT_ACTIVE := &"parameters/OneShot 2/internal_active"
+const ANIM_PARAM_SPAWN_ONESHOT := &"parameters/OneShotSpawn/request"
+const ANIM_PARAM_SPAWN_ONESHOT_ACTIVE := &"parameters/OneShotSpawn/internal_active"
 
 var target_player: PlayerLocal
 
@@ -30,15 +32,13 @@ var target_player: PlayerLocal
 @onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
 
 var behavior: EnemyBehavior
-var animation_tree: AnimationTree
-var animation_player: AnimationPlayer
+@onready var animation_tree: AnimationTree = _find_animation_tree()
+@onready var animation_player: AnimationPlayer = _find_animation_player()
 
 signal died
 
 func _ready() -> void:
 	behavior = _find_behavior()
-	animation_tree = _find_animation_tree()
-	animation_player = _find_animation_player()
 	if animation_tree:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
@@ -174,6 +174,18 @@ func is_cast_animation_playing() -> bool:
 	return animation_tree.get(ANIM_PARAM_CAST_ONESHOT_ACTIVE)
 
 
+func play_spawn_animation() -> void:
+	if not animation_tree:
+		return
+	animation_tree.set(ANIM_PARAM_SPAWN_ONESHOT, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+
+
+func is_spawn_animation_playing() -> bool:
+	if not animation_tree:
+		return false
+	return animation_tree.get(ANIM_PARAM_SPAWN_ONESHOT_ACTIVE)
+
+
 func is_alive() -> bool:
 	if enemy_state_machine == null:
 		return false
@@ -211,6 +223,8 @@ func _on_hit_box_body_entered(body):
 
 func update_locomotion_blend() -> void:
 	if enemy_state_machine != null and enemy_state_machine.is_in_state("casting"):
+		return
+	if enemy_state_machine != null and enemy_state_machine.is_in_state("spawning"):
 		return
 	if not animation_tree or not animation_tree.active:
 		return

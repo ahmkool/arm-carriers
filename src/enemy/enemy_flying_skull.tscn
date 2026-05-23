@@ -235,6 +235,7 @@ collision_mask = 4
 motion_mode = 1
 script = ExtResource("1_qhfi4")
 speed = 3.0
+is_offensive = null
 
 [node name="skeleton_flying_head" type="Node3D" parent="."]
 transform = Transform3D(0.6, 0, 0, 0, 0.59881604, -0.037674315, 0, 0.037674315, 0.59881604, 0, 0, 0)

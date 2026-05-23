@@ -1,0 +1,36 @@
+[gd_scene load_steps=6 format=3 uid="uid://bq48p6vvattek"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_krht7"]
+transparency = 1
+albedo_color = Color(0.53, 0.53, 0.53, 0.73333335)
+
+[sub_resource type="Curve" id="Curve_fgwed"]
+_data = [Vector2(0, 0.87074476), 0.0, 0.5321439, 0, 0, Vector2(0.18924302, 1), 0.0, 0.0, 0, 0, Vector2(0.6992031, 0.8203572), 0.0, 0.0, 0, 0, Vector2(0.98007953, 0), 0.0, 0.0, 0, 0]
+point_count = 4
+
+[sub_resource type="CurveTexture" id="CurveTexture_xh7fw"]
+curve = SubResource("Curve_fgwed")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xkvds"]
+spread = 180.0
+initial_velocity_min = 2.0
+initial_velocity_max = 4.0
+gravity = Vector3(0, 2, 0)
+damping_min = 2.0
+damping_max = 5.0
+scale_min = 0.29999998
+scale_max = 0.79999995
+scale_curve = SubResource("CurveTexture_xh7fw")
+
+[sub_resource type="SphereMesh" id="SphereMesh_oi3pg"]
+
+[node name="PuffDisappear" type="GPUParticles3D"]
+material_override = SubResource("StandardMaterial3D_krht7")
+cast_shadow = 0
+emitting = false
+one_shot = true
+explosiveness = 0.9
+randomness = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_xkvds")
+draw_pass_1 = SubResource("SphereMesh_oi3pg")
