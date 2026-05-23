@@ -59,9 +59,51 @@ text = "Level 3"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_03.tscn"
 
+[node name="Level4Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Level 4"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_local_04.tscn"
+
+[node name="SawCarryButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Saw carry"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_local_saw_carry.tscn"
+
 [node name="EnemyTestLevel" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Enemy test level"
 script = ExtResource("2_56xr1")
-level_scene_path = "uid://cy6nsntcg6gho"
+level_scene_path = "res://src/world/levels/world_enemy_test.tscn"
+
+[node name="RouterTestButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Router test"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_router_test.tscn"
+
+[node name="TrailerSceneButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Trailer"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_trailer_scene.tscn"
+
+[node name="TrailerSwordCarryButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Trailer: sword carry"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_trailer_sword_carry.tscn"
+
+[node name="TrailerMageStaticButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Trailer: mage static"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_trailer_mage_static_scene.tscn"

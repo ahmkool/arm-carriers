@@ -1,10 +1,16 @@
 class_name MageBehavior
 extends EnemyBehavior
 
+enum Mobility {
+	MOBILE,
+	STATIONARY,
+}
+
+@export var mobility: Mobility = Mobility.MOBILE
 @export var flee_distance := 3.0
 @export var flee_retreat_distance := 4.0
 @export var cast_min_distance := 5.0
-@export var cast_max_distance := 12.0
+@export var cast_max_distance := 30.0
 @export var cast_cooldown := 2.5
 
 var _cast_cooldown_remaining := 0.0
@@ -33,6 +39,11 @@ func _think(delta: float) -> void:
 		return
 
 	var direction := flat / distance
+
+	if mobility == Mobility.STATIONARY:
+		_think_stationary(distance, direction)
+		return
+
 	var flee_distance_sq := flee_distance * flee_distance
 	var distance_sq := distance * distance
 
@@ -51,6 +62,13 @@ func _think(delta: float) -> void:
 	if distance < cast_min_distance:
 		_set_flee_intent(direction)
 		return
+
+
+func _think_stationary(distance: float, toward_player: Vector3) -> void:
+	intent.face_direction = toward_player
+	if distance > cast_max_distance:
+		return
+	_apply_cast_band_intent(toward_player)
 
 
 func _apply_cast_band_intent(toward_player: Vector3) -> void:

@@ -1,0 +1,48 @@
+[gd_scene load_steps=7 format=3 uid="uid://brgsrnygngkc2"]
+
+[ext_resource type="Script" uid="uid://cvfjjy2fmnwnc" path="res://src/vfx/fireball_spawn.gd" id="1_c3uvo"]
+
+[sub_resource type="Curve" id="Curve_mjgpl"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_dvbte"]
+curve = SubResource("Curve_mjgpl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dpvmf"]
+particle_flag_align_y = true
+emission_shape = 2
+emission_sphere_radius = 3.0
+radial_velocity_min = -10.000022
+radial_velocity_max = -10.000022
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -10.000002
+radial_accel_max = -10.000002
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_dvbte")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_10pld"]
+albedo_color = Color(0.9122237, 0.41413048, 9.62615e-07, 1)
+emission_enabled = true
+emission = Color(0.8459809, 0.4121156, 1.92523e-07, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_au0l1"]
+material = SubResource("StandardMaterial3D_10pld")
+top_radius = 0.04
+bottom_radius = 0.0
+height = 0.5
+
+[node name="FireballSpawn" type="Node3D"]
+script = ExtResource("1_c3uvo")
+
+[node name="Focus" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 24
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_dpvmf")
+draw_pass_1 = SubResource("CylinderMesh_au0l1")

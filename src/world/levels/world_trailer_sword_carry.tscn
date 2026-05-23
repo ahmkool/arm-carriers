@@ -1,0 +1,239 @@
+[gd_scene load_steps=31 format=3 uid="uid://c8desagautixq"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_7331m"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_k8huu"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_obrxm"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_1wldd"]
+[ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_m4esp"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_mgs1m"]
+[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="7_imlqn"]
+[ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="8_g834t"]
+[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="9_m5rxk"]
+[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="10_mxh8h"]
+[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="11_0d6yc"]
+[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="12_1gfxg"]
+[ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="13_sv5l2"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_3b7p5"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="17_xwysy"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_gblro"]
+[ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="19_bk7ov"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="20_l0jcd"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_ws40m"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="22_k8huu"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_syebc"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="23_obrxm"]
+[ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="23_xcjup"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
+panorama = ExtResource("6_mgs1m")
+
+[sub_resource type="Sky" id="Sky_8eeh1"]
+sky_material = SubResource("PanoramaSkyMaterial_j5fge")
+
+[sub_resource type="Environment" id="Environment_msrya"]
+background_mode = 2
+sky = SubResource("Sky_8eeh1")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
+size = Vector3(4, 4, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
+size = Vector3(56.4718, 1, 76.77945)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_dvkoh"]
+vertices = PackedVector3Array(-35.7345, -0.5500002, 2.2544994, -35.2345, -0.5500002, 3.0044994, -27.7345, -0.5500002, 2.7544994, -44.2345, -0.5500002, -0.24550056, -43.9845, -0.5500002, 2.2544994, -44.7345, -0.5500002, -0.74550056, -27.9845, -0.5500002, -14.245501, -46.9845, -0.5500002, -14.245501, -47.2345, -0.5500002, -0.99550056, -9.734501, -0.5500002, -5.7455006, -9.984501, -0.5500002, -8.245501, -13.984501, -0.5500002, -8.245501, -14.234501, -0.5500002, -5.7455006, -17.2345, -0.5500002, 3.2544994, -17.7345, -0.5500002, 3.7544994, -17.7345, -0.5500002, 14.254499, -17.2345, -0.5500002, 14.754499, -9.234501, -0.5500002, -5.2455006, -14.734501, -0.5500002, -5.2455006, 5.265499, -0.5500002, 5.7544994, 5.765499, -0.5500002, 5.2544994, 8.265499, -0.5500002, -4.9955006, -17.2345, -0.5500002, -4.9955006, 8.265499, -0.5500002, 5.0044994, -19.7345, -0.5500002, 3.7544994, -19.7345, -0.5500002, 14.254499, -16.9845, -0.5500002, 17.2545, 5.015499, -0.5500002, 17.2545, -27.7345, -0.5500002, 3.2544994, -26.9845, -0.5500002, 11.254499, -26.7345, -0.5500002, 3.7544994, -35.2345, -0.5500002, 11.004499, -26.2345, -0.5500002, 11.754499, -25.9845, -0.5500002, 14.254499)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(4, 3, 0), PackedInt32Array(3, 5, 0), PackedInt32Array(0, 5, 2), PackedInt32Array(2, 5, 6), PackedInt32Array(6, 5, 7), PackedInt32Array(5, 8, 7), PackedInt32Array(10, 9, 11), PackedInt32Array(11, 9, 12), PackedInt32Array(14, 13, 15), PackedInt32Array(15, 13, 16), PackedInt32Array(9, 17, 12), PackedInt32Array(12, 17, 18), PackedInt32Array(20, 19, 21), PackedInt32Array(21, 19, 17), PackedInt32Array(18, 17, 22), PackedInt32Array(22, 17, 13), PackedInt32Array(21, 23, 20), PackedInt32Array(14, 15, 24), PackedInt32Array(24, 15, 25), PackedInt32Array(16, 13, 26), PackedInt32Array(26, 13, 17), PackedInt32Array(26, 17, 19), PackedInt32Array(26, 19, 27), PackedInt32Array(1, 2, 28), PackedInt32Array(30, 29, 28), PackedInt32Array(28, 29, 31), PackedInt32Array(28, 31, 1), PackedInt32Array(33, 32, 25), PackedInt32Array(32, 29, 25), PackedInt32Array(25, 29, 30), PackedInt32Array(25, 30, 24)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qrvdl"]
+size = Vector3(8, 5, 11)
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("1_7331m")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("2_k8huu")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("3_obrxm")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InfoMessage" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_1wldd")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessage"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessage/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="UI/InfoMessage/PanelContainer/MarginContainer"]
+layout_mode = 2
+text = "Press any button to join the game"
+
+[node name="DebugInfo" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -163.0
+offset_bottom = 108.0
+grow_horizontal = 0
+theme = ExtResource("4_1wldd")
+script = ExtResource("5_m4esp")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/DebugInfo"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugInfo/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug info:"
+
+[node name="CarryingStatusP0" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_msrya")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+
+[node name="GameStateMachine" type="Node" parent="."]
+script = ExtResource("7_imlqn")
+initial_state_path = NodePath("AwaitWorldLocalReady")
+
+[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
+script = ExtResource("8_g834t")
+
+[node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
+script = ExtResource("9_m5rxk")
+
+[node name="Playing" type="Node" parent="GameStateMachine"]
+script = ExtResource("10_mxh8h")
+
+[node name="WaitingForGameToStart" type="Node" parent="GameStateMachine"]
+script = ExtResource("11_0d6yc")
+
+[node name="GameOverLost" type="Node" parent="GameStateMachine"]
+script = ExtResource("12_1gfxg")
+
+[node name="Players" type="Node" parent="."]
+script = ExtResource("13_sv5l2")
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("16_3b7p5")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 8.754402)
+script = ExtResource("17_xwysy")
+
+[node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CheckpointManager/Checkpoint/TriggerArea"]
+shape = SubResource("BoxShape3D_lpgms")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
+script = ExtResource("18_gblro")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
+shape = SubResource("BoxShape3D_65eof")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_dvkoh")
+
+[node name="FloorGridMap" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("19_bk7ov")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 3, 62, -4, 3, 62, -3, 4, 62, -4, 4, 62, -4, 65533, 655404, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1048619, -65536, 65535, 62, -65535, 65535, 62, -65535, 65534, 1048619, -65534, 65535, 43, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 43, -65536, 5, 1441835, -1, 5, 1441835, -2, 5, 1441835, -2, 4, 62, -2, 3, 62, -5, 65534, 1441855, -5, 65535, 62, -5, 0, 62, -5, 1, 62, -5, 2, 62, -5, 3, 62, -6, 65535, 655403, -6, 0, 655403, -6, 1, 1441855, -6, 2, 62, -6, 3, 62, -7, 0, 1443024, -7, 1, 1048619, -7, 2, 62, -7, 3, 62, -8, 1, 1048619, -9, 1, 1048619, -9, 2, 62, -9, 3, 63, -8, 3, 62, -8, 2, 62, -4, 65534, 655423, -3, 65534, 1048619, -2, 65534, 1048619, -1, 65534, 1048619, -1, 65535, 62, -3, 65535, 62, -4, 65535, 62, -4, 0, 62, -4, 1, 62, -4, 2, 62, -3, 2, 62, -2, 2, 62, -2, 1, 62, -2, 0, 62, -2, 65535, 62, -3, 0, 62, -3, 1, 62, -1, 1, 62, -1, 0, 62, -65536, 0, 62, -65535, 0, 62, -65534, 0, 43, -65534, 1, 1048620, -65535, 1, 1048639, -65536, 1, 62, -65536, 2, 62, -1, 2, 62, -65535, 2, 43, -65534, 2, 1443041, -65535, 3, 43, -65536, 3, 62, -1, 3, 62, -1, 4, 62, -65536, 4, 62, -10, 3, 1441835, -10, 2, 62, -10, 1, 655423, -196608, 5, 57, -196607, 4, 1048633, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 57, -131076, 4, 1443039, -131082, 3, 57, -131079, 0, 656607, -131078, 65535, 1441849, -131077, 65534, 1441848, -131076, 65533, 655397, -196608, 65533, 1049823, -196607, 65534, 655417, -196606, 65535, 1048633, -196605, 0, 1049823, -196608, 65534, 655417, -196607, 65535, 1049822, -196606, 0, 1048633, -196606, 2, 1246, -196607, 3, 1048633, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 655417, -131078, 0, 1441849, -131077, 65535, 656606, -131076, 65534, 655416, -131081, 3, 56, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 57, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131080, 1, 655417, -10, 0, 43, -10, 65535, 43, -11, 1, 62, -11, 0, 62, -11, 65535, 62, -13, 0, 1441835, -12, 0, 63, -12, 65535, 62, -13, 65535, 62, -10, 65534, 43, -11, 65534, 62, -11, 65533, 62, -10, 65533, 43, -12, 65533, 62, -13, 65533, 62, -13, 65534, 62, -12, 65534, 62, -10, 65532, 43, -11, 65532, 62, -12, 65532, 62, -12, 65531, 1048619, -13, 65531, 62, -14, 65531, 1048619, -14, 65532, 62, -13, 65532, 62, -15, 65532, 62, -15, 65533, 62, -15, 65534, 62, -14, 65534, 62, -14, 65535, 62, -14, 0, 1441835, -15, 0, 44, -15, 65535, 63, -14, 65533, 62, -11, 2, 62, -131083, 2, 1443039, -131087, 0, 37, -131087, 65532, 656607, -131086, 65531, 655417, -131084, 65531, 655417, -131082, 65532, 1048633, -131082, 1, 655416, -131084, 65532, 1049822, -131086, 65532, 656606, -131083, 0, 1443038, -131082, 2, 1443038, -131083, 1, 1443037, -131084, 0, 56, -131085, 0, 57, -131086, 0, 57, -131087, 65535, 56, -131087, 65534, 1443037, -131087, 65533, 1443037, -131085, 65531, 655417, -131083, 65532, 656605, -131082, 65533, 1048633, -131082, 65534, 1048633, -131082, 65535, 1048633, -131082, 0, 1048633, -131081, 1, 655417, -13, 65528, 1250, -13, 65527, 1250, -13, 65526, 1250, -13, 65525, 1250, -14, 65525, 1250, -15, 65525, 1250, -16, 65525, 1250, -16, 65526, 1250, -16, 65527, 1250, -15, 65527, 1250, -14, 65527, 1250, -12, 65527, 1250, -11, 65527, 1250, -10, 65527, 1250, -10, 65526, 1250, -10, 65525, 1250, -11, 65525, 1250, -12, 65525, 1250, -12, 65526, 1250, -11, 65526, 1250, -14, 65526, 1250, -15, 65526, 1250, -65534, 65534, 655404, -65535, 5, 1048620, -3, 5, 1441835, -4, 5, 1441835, -5, 5, 1441835, -6, 5, 44, -6, 4, 63, -6, 65534, 1441836, -5, 65533, 1441836, -5, 4, 62, -12, 1, 655403, -12, 2, 655403, -12, 3, 44, -11, 3, 1441835, -9, 4, 44, -8, 4, 1441835, -7, 4, 1441835, -10, 65531, 655404, -11, 65531, 1048619, -15, 65531, 1048619, -16, 65531, 1441836, -16, 65532, 655403, -16, 65533, 655403, -16, 65534, 655403, -16, 65535, 44, -131075, 5, 57, -131076, 5, 57, -131077, 5, 57, -131079, 4, 57, -131080, 4, 57, -131083, 3, 57, -131084, 3, 37, -131088, 65534, 1441849, -131088, 65533, 1441849, -131088, 65532, 1441849, -131087, 65531, 655417, -131083, 65531, 655417, -131075, 65534, 655417, -131074, 65534, 655417, -131073, 65534, 655417, -196607, 2, 1048633, -196607, 5, 1048613, -196606, 1, 1048613, -131078, 5, 37, -131081, 4, 37, -131088, 65535, 37, -131088, 65531, 1441829, -131082, 65531, 655397, -196606, 65534, 655397, -131078, 65534, 1441829, -131077, 65533, 1441829, -131078, 1, 1441848, -196607, 1, 1048632, -131078, 4, 56)
+}
+metadata/_editor_floor_ = Vector3(0, -3, 0)
+
+[node name="GridMap" type="GridMap" parent="Level"]
+mesh_library = ExtResource("19_bk7ov")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-8, 2, 656654, -65535, 2, 7, -5, 0, 1049773, -9, 1, 1049773, -65535, 65535, 1441799, -1, 3, 1441799, -8, 4, 7, -5, 2, 655367, -4, 65534, 1048583, -11, 1, 7, -14, 65534, 7, -12, 65533, 7, -65536, 0, 7, -65536, 2, 6, -3, 3, 6, -7, 3, 6, -9, 2, 6, -5, 65535, 6, -1, 65534, 6, -1, 65535, 1441798, -5, 3, 1441798, -5, 5, 1441798, -11, 2, 1441798, -13, 65535, 1441798, -65534, 65534, 1441798, -65534, 0, 1441798, -1, 4, 1441798, -4, 4, 1441795, -7, 1, 1441795, -6, 65534, 1441795, -12, 65534, 1441795, -11, 65532, 1441795, -14, 65531, 1441795, -15, 65533, 655363, -16, 65534, 655363, -11, 65535, 1048583, -10, 0, 1048583, -12, 0, 1048586, -11, 65531, 1048586, -15, 0, 22, -11, 65533, 93, -16, 65531, 93)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Water" parent="Level" instance=ExtResource("20_l0jcd")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform" parent="Level/Bridges" instance=ExtResource("21_ws40m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -16.493908)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("21_ws40m")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -19.493908)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_syebc")
+platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/BridgePlatform2")]
+
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("22_k8huu")
+enemy_group = NodePath("")
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 10)
+script = ExtResource("23_obrxm")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AllPlayersAreaTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 1, -0.5)
+shape = SubResource("BoxShape3D_qrvdl")
+
+[node name="Weapon" type="Node" parent="."]
+
+[node name="Sword" parent="Weapon" instance=ExtResource("23_xcjup")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6896334, 0, 0)
+
+[node name="TestEnemies" type="Node" parent="."]
+
+[connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
+[connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Level/Events/MakeEnemiesGroup2Offensive" method="trigger"]

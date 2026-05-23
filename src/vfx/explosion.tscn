@@ -1,6 +1,7 @@
-[gd_scene load_steps=22 format=3 uid="uid://d1d5co1b7ui5x"]
+[gd_scene load_steps=23 format=3 uid="uid://d1d5co1b7ui5x"]
 
 [ext_resource type="Script" uid="uid://cdaovyj106v1e" path="res://src/vfx/explosion.gd" id="1_dvbte"]
+[ext_resource type="AudioStream" uid="uid://5hmxanehcf2g" path="res://assets/sounds/explosion.wav" id="2_01vq6"]
 
 [sub_resource type="Curve" id="Curve_83ytm"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -142,5 +143,8 @@ collision_mask = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
 shape = SubResource("SphereShape3D_hitbx")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_01vq6")
 
 [connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]

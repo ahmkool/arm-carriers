@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://d26sbcwmkq25h"]
+
+[ext_resource type="Script" uid="uid://bsxdmd6ydsn6m" path="res://src/vfx/dash.gd" id="1_dash"]
+
+[node name="Dash" type="Node3D"]
+script = ExtResource("1_dash")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]

@@ -1,5 +1,6 @@
-[gd_scene load_steps=11 format=4 uid="uid://e4fut737hp5k"]
+[gd_scene load_steps=12 format=4 uid="uid://e4fut737hp5k"]
 
+[ext_resource type="AudioStream" uid="uid://cpbsul3eh5ppn" path="res://assets/sounds/bazooka_shot.wav" id="2_60kgx"]
 [ext_resource type="Script" uid="uid://yjj2r26g3u46" path="res://src/weapon/bazooka_bullet_local.gd" id="2_u6gl8"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tlok2"]
@@ -89,5 +90,9 @@ draw_pass_1 = SubResource("SphereMesh_33dcg")
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 mesh = SubResource("ArrayMesh_rvese")
 skeleton = NodePath("")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_60kgx")
+autoplay = true
 
 [connection signal="body_entered" from="HitArea" to="." method="_on_hit_area_body_entered"]

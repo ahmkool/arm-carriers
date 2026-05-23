@@ -7,9 +7,16 @@ extends Node3D
 @onready var fire = $Fire
 @onready var smoke = $Smoke
 @onready var hitbox: Area3D = $Hitbox
+@onready var _sfx: AudioStreamPlayer3D = $AudioStreamPlayer3D
+
+const PITCH_MIN := 0.88
+const PITCH_MAX := 1.12
+const VOLUME_MIN_DB := -3.0
+const VOLUME_MAX_DB := 0.0
 
 
 func _ready() -> void:
+	_randomize_explosion_sfx()
 	debris.emitting = true
 	fire.emitting = true
 	smoke.emitting = true
@@ -18,6 +25,12 @@ func _ready() -> void:
 	get_tree().create_timer(0.2).timeout.connect(_queue_free_hitbox)
 	await get_tree().create_timer(2.0).timeout
 	queue_free()
+
+
+func _randomize_explosion_sfx() -> void:
+	_sfx.pitch_scale = randf_range(PITCH_MIN, PITCH_MAX)
+	_sfx.volume_db = randf_range(VOLUME_MIN_DB, VOLUME_MAX_DB)
+	_sfx.play()
 
 
 func _sync_hitbox_sphere_radius() -> void:

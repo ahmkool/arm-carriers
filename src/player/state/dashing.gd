@@ -4,6 +4,7 @@ const DASH_DURATION_SEC := 0.07
 const DASH_SPEED := 30.0
 const GHOST_SCENE := preload("res://src/vfx/ghost.tscn")
 const DASH_PARTICLES_SCENE := preload("res://src/vfx/dash_particles.tscn")
+const DASH_SFX_SCENE := preload("res://src/vfx/dash.tscn")
 const DASH_GHOST_COUNT := 5
 
 var _dash_time_remaining := 0.0
@@ -21,6 +22,7 @@ func enter() -> void:
 	player.velocity.x = _dash_direction.x * DASH_SPEED
 	player.velocity.z = _dash_direction.z * DASH_SPEED
 	_spawn_dash_particles()
+	_spawn_dash_sfx()
 	_spawn_dash_ghost()
 
 
@@ -82,6 +84,12 @@ func _spawn_dash_particles() -> void:
 	player.get_tree().current_scene.add_child(particles)
 	particles.global_transform = player.global_transform
 	particles.emitting = true
+
+
+func _spawn_dash_sfx() -> void:
+	var sfx := DASH_SFX_SCENE.instantiate() as Node3D
+	player.get_tree().current_scene.add_child(sfx)
+	sfx.global_transform = player.global_transform
 
 
 func _spawn_dash_ghost() -> void:
