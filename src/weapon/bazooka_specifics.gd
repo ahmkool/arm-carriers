@@ -73,7 +73,7 @@ func _set_look_direction() -> void:
 	var src := pick_and_drop_handler.look_vector_source
 	var tgt := pick_and_drop_handler.look_vector_target
 	var direction := tgt.global_position - src.global_position
-	DebugDraw3D.draw_arrow(src.global_position, tgt.global_position)
+	#DebugDraw3D.draw_arrow(src.global_position, tgt.global_position)
 	pick_and_drop_handler.look_direction = direction.normalized()
 
 func _check_firing_bullet(carry_info: CarryInfo) -> void:

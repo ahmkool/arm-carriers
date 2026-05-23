@@ -9,14 +9,19 @@ const SPAWN_POSITION_BY_DEVICE := {
 @export var checkpoint_manager_path: NodePath = NodePath("../CheckpointManager")
 
 var main_player_index = -1
-var player_scene: PackedScene = preload("res://src/player/player_local.tscn")
+
+@export var player_scenes: Array[PackedScene] = [
+	preload("res://src/player/player_local.tscn"),
+	preload("res://src/player/player_local_02.tscn"),
+]
 
 func add_player(device_id: int):
 	#Check that the player is not already added
 	for player in get_children():
 		if player.device_id == device_id:
 			return
-	var player = player_scene.instantiate()
+	var scene := _get_player_scene_for_device(device_id)
+	var player = scene.instantiate()
 	player.device_id = device_id
 	print("Adding player ", device_id)
 	add_child(player)
@@ -50,3 +55,22 @@ func _get_checkpoint_manager() -> Node:
 	if checkpoint_manager_path == NodePath():
 		return null
 	return get_node_or_null(checkpoint_manager_path)
+
+
+func _get_player_scene_for_device(device_id: int) -> PackedScene:
+	if device_id < 0 or device_id >= player_scenes.size():
+		_fail_invalid_player_scene(device_id, "device_id is out of range for player_scenes")
+		return null
+	var scene := player_scenes[device_id]
+	if scene == null:
+		_fail_invalid_player_scene(device_id, "player_scenes entry is null")
+		return null
+	return scene
+
+
+func _fail_invalid_player_scene(device_id: int, reason: String) -> void:
+	push_error(
+		"Players: cannot spawn device_id %s — %s (configured scenes: %s)"
+		% [device_id, reason, player_scenes.size()]
+	)
+	get_tree().quit(1)

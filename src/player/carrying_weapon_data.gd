@@ -3,6 +3,9 @@ extends Node
 
 @onready var player_node = $".."
 
+@export var arm_left_path: NodePath = ^"Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft"
+@export var arm_right_path: NodePath = ^"Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight"
+
 signal weapon_picked_up()
 signal weapon_dropped()
 
@@ -15,13 +18,16 @@ enum CanCarryStatus {
 }
 var can_carry_status: CanCarryStatus = CanCarryStatus.NO_WEAPON_AVAILABLE
 
-# Called when the node enters the scene tree for the first time.
-func _ready():
-	pass # Replace with function body.
+var _arm_left: MeshInstance3D
+var _arm_right: MeshInstance3D
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _physics_process(delta):
+func _ready() -> void:
+	_arm_left = _require_arm_mesh(arm_left_path, "arm_left_path")
+	_arm_right = _require_arm_mesh(arm_right_path, "arm_right_path")
+
+
+func _physics_process(_delta: float) -> void:
 	_process_weapon_carrying()
 	_update_arms_visibility()
 
@@ -69,9 +75,8 @@ func _process_not_carrying() -> bool:
 	return true
 
 func _update_arms_visibility() -> void:
-	var player: PlayerLocal = get_parent()
-	player.get_node("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft").show()
-	player.get_node("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight").show()
+	_arm_left.show()
+	_arm_right.show()
 	if can_carry_status != CanCarryStatus.CARRYING_SHOOTER and can_carry_status != CanCarryStatus.CARRYING_DIRECTION_SETTER:
 		return
 	var world_node = player_node.get_parent().get_parent()
@@ -79,12 +84,34 @@ func _update_arms_visibility() -> void:
 	var pick_and_drop_handler: PickAndDropHandler = big_weapon_node.get_node("PickAndDropHandler")
 	var arms_visibility: PickAndDropHandler.HideArmsType = pick_and_drop_handler.hide_arms_type
 	if arms_visibility == PickAndDropHandler.HideArmsType.LEFT_ARM_HIDDEN:
-		player.get_node("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft").hide()
-	elif arms_visibility == PickAndDropHandler.HideArmsType.RIGHT_ARM_HIDDEN:
-		player.get_node("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight").hide()
-	elif arms_visibility == PickAndDropHandler.HideArmsType.BOTH_ARMS_HIDDEN:
-		player.get_node("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft").hide()
-		player.get_node("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight").hide()
+		_arm_left.hide()
+		return
+	if arms_visibility == PickAndDropHandler.HideArmsType.RIGHT_ARM_HIDDEN:
+		_arm_right.hide()
+		return
+	if arms_visibility != PickAndDropHandler.HideArmsType.BOTH_ARMS_HIDDEN:
+		return
+	_arm_left.hide()
+	_arm_right.hide()
+
+
+func _require_arm_mesh(path: NodePath, export_name: String) -> MeshInstance3D:
+	if path.is_empty():
+		_fail_missing_arm(export_name, path, "path is empty")
+		return null
+	var mesh := player_node.get_node_or_null(path) as MeshInstance3D
+	if mesh != null:
+		return mesh
+	_fail_missing_arm(export_name, path, "node is missing or not a MeshInstance3D")
+	return null
+
+
+func _fail_missing_arm(export_name: String, path: NodePath, reason: String) -> void:
+	push_error(
+		"CarryingWeaponData on '%s': %s (%s) — %s"
+		% [player_node.name, export_name, path, reason]
+	)
+	get_tree().quit(1)
 
 func _process_carrying() -> bool:
 	if can_carry_status != CanCarryStatus.CARRYING_SHOOTER and can_carry_status != CanCarryStatus.CARRYING_DIRECTION_SETTER:

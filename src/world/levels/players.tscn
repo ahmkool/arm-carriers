@@ -1,13 +1,14 @@
-[gd_scene load_steps=3 format=3 uid="uid://d2bo2n33sqvci"]
+[gd_scene load_steps=4 format=3 uid="uid://d2bo2n33sqvci"]
 
 [ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="1_w8vo4"]
 [ext_resource type="PackedScene" uid="uid://b2d8v5hofa7a6" path="res://src/player/player_local.tscn" id="2_xxg1u"]
+[ext_resource type="PackedScene" uid="uid://bq1e02j55tmiu" path="res://src/player/player_local_02.tscn" id="3_hakfo"]
 
 [node name="Players" type="Node3D"]
 script = ExtResource("1_w8vo4")
 
 [node name="PlayerLocal" parent="." instance=ExtResource("2_xxg1u")]
 
-[node name="PlayerLocal2" parent="." instance=ExtResource("2_xxg1u")]
+[node name="PlayerLocal2" parent="." instance=ExtResource("3_hakfo")]
 device_id = 1
 player_id = 1

@@ -79,6 +79,7 @@ shape = SubResource("CapsuleShape3D_tlok2")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.8411186)
+cast_shadow = 0
 amount = 50
 lifetime = 0.8
 process_material = SubResource("ParticleProcessMaterial_ddrq0")

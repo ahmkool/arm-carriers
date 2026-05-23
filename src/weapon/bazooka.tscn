@@ -84,6 +84,7 @@ shape = SubResource("BoxShape3D_cmlmn")
 
 [node name="PickAndDropHandler" type="Node3D" parent="."]
 script = ExtResource("3_8k35n")
+hide_arms_type = 2
 
 [node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
 

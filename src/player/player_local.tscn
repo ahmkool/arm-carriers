@@ -593,6 +593,8 @@ text = "Press triangle to carry"
 
 [node name="CarryingWeaponData" type="Node" parent="."]
 script = ExtResource("8_xf7a6")
+arm_left_path = NodePath("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft")
+arm_right_path = NodePath("Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight")
 
 [node name="WeaponCarrierPinJoint" type="PinJoint3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78730226, 1.239912, 0)
