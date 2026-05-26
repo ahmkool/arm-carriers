@@ -1,0 +1,25 @@
+[gd_scene load_steps=10 format=3 uid="uid://bp1b8kp6ixbl3"]
+
+[ext_resource type="AudioStream" uid="uid://x1mcwljo2p72" path="res://assets/sounds/grass/GrassStep01.wav" id="1_7o2mi"]
+[ext_resource type="AudioStream" uid="uid://472ex6ic3avy" path="res://assets/sounds/grass/GrassStep02.wav" id="2_grass02"]
+[ext_resource type="AudioStream" uid="uid://crn380ryx24bg" path="res://assets/sounds/grass/GrassStep03.wav" id="3_grass03"]
+[ext_resource type="AudioStream" uid="uid://djtf2484fpk55" path="res://assets/sounds/grass/GrassStep04.wav" id="4_grass04"]
+[ext_resource type="AudioStream" uid="uid://cvde87oyuw4r1" path="res://assets/sounds/grass/GrassStep05.wav" id="5_grass05"]
+[ext_resource type="AudioStream" uid="uid://bdqsxwrrnkikx" path="res://assets/sounds/grass/GrassStep06.wav" id="6_grass06"]
+[ext_resource type="AudioStream" uid="uid://2frwk20o2xsb" path="res://assets/sounds/grass/GrassStep07.wav" id="7_grass07"]
+[ext_resource type="AudioStream" uid="uid://deubd8okb4826" path="res://assets/sounds/grass/GrassStep08.wav" id="8_grass08"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_br3kr"]
+streams_count = 8
+stream_0/stream = ExtResource("1_7o2mi")
+stream_1/stream = ExtResource("2_grass02")
+stream_2/stream = ExtResource("3_grass03")
+stream_3/stream = ExtResource("4_grass04")
+stream_4/stream = ExtResource("5_grass05")
+stream_5/stream = ExtResource("6_grass06")
+stream_6/stream = ExtResource("7_grass07")
+stream_7/stream = ExtResource("8_grass08")
+
+[node name="FootstepsSound" type="AudioStreamPlayer3D"]
+stream = SubResource("AudioStreamRandomizer_br3kr")
+volume_db = -10.0

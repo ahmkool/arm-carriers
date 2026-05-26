@@ -1,7 +1,8 @@
-[gd_scene load_steps=14 format=3 uid="uid://cm4mxhbh52ywr"]
+[gd_scene load_steps=15 format=3 uid="uid://cm4mxhbh52ywr"]
 
 [ext_resource type="Script" uid="uid://64pji2ifyp0g" path="res://src/vfx/fireball.gd" id="1_1qcgn"]
 [ext_resource type="Shader" uid="uid://cv47m7ybgxnhx" path="res://src/shaders/pan_shader.tres" id="1_bn7c4"]
+[ext_resource type="Shader" uid="uid://cc2ar3gvopx6i" path="res://src/shaders/fireball_visual.gdshader" id="1_fire_vis"]
 [ext_resource type="Texture2D" uid="uid://vbykkfhy2wij" path="res://assets/material/voronoi_1_voronoi.png" id="2_1qcgn"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_1qcgn"]
@@ -21,21 +22,17 @@ tracks/0/keys = {
 "update": 0,
 "values": [Vector3(0.05, 0.05, 0.05)]
 }
-
-[sub_resource type="Animation" id="Animation_1qcgn"]
-resource_name = "spawn"
-length = 0.2
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Visuals:scale")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.2),
-"transitions": PackedFloat32Array(1, 1),
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("OmniLight3D:light_energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector3(0.05, 0.05, 0.05), Vector3(1, 1, 1)]
+"values": [1.2]
 }
 
 [sub_resource type="Animation" id="Animation_ndwbl"]
@@ -53,6 +50,34 @@ tracks/0/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 0,
 "values": [Vector3(1, 1, 1), Vector3(0.8, 0.8, 0.8), Vector3(1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("OmniLight3D:light_energy")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 1.01, 2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [1.2, 2.0, 1.2]
+}
+
+[sub_resource type="Animation" id="Animation_1qcgn"]
+resource_name = "spawn"
+length = 0.2
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(0.05, 0.05, 0.05), Vector3(1, 1, 1)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ndwbl"]
@@ -75,17 +100,27 @@ color = Color(1, 0.01999998, 0.01999998, 1)
 
 [sub_resource type="SphereMesh" id="SphereMesh_5vuet"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bn7c4"]
-albedo_color = Color(0.9014828, 0.43954647, 0.05644928, 1)
-emission_enabled = true
-emission = Color(0.7440312, 0.45545077, 0.020425344, 1)
-emission_energy_multiplier = 3.0
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_fireball_body"]
+render_priority = 0
+shader = ExtResource("1_fire_vis")
+shader_parameter/noise_tex = ExtResource("2_1qcgn")
+shader_parameter/color_yellow = Color(1, 0.82, 0.12, 1)
+shader_parameter/color_orange = Color(0.9014828, 0.43954647, 0.05644928, 1)
+shader_parameter/noise_scale = 2.5
+shader_parameter/scroll_speed = 1.0
+shader_parameter/emission_strength = 3.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_1qcgn"]
-material = SubResource("StandardMaterial3D_bn7c4")
+material = SubResource("ShaderMaterial_fireball_body")
 
 [node name="Fireball" type="Node3D"]
 script = ExtResource("1_1qcgn")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(1, 0.55, 0.12, 1)
+light_energy = 1.2
+omni_range = 4.0
+omni_attenuation = 1.2
 
 [node name="Area3D" type="Area3D" parent="."]
 collision_layer = 0

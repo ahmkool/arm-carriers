@@ -107,3 +107,10 @@ theme_override_font_sizes/font_size = 40
 text = "Trailer: mage static"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_mage_static_scene.tscn"
+
+[node name="TrailerBridgeMagiciansButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Trailer: bridge magicians"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"

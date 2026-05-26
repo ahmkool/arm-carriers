@@ -16,7 +16,7 @@ const VOLUME_MAX_DB := 0.0
 
 
 func _ready() -> void:
-	_randomize_explosion_sfx()
+	# _randomize_explosion_sfx()
 	debris.emitting = true
 	fire.emitting = true
 	smoke.emitting = true
@@ -58,4 +58,4 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 func _apply_damage_to_body(body: Node) -> void:
 	if body is EnemyLocal:
-		(body as EnemyLocal).die()
+		(body as EnemyLocal).die(global_position)

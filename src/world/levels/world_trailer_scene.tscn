@@ -12,7 +12,6 @@
 [ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="10_jhrss"]
 [ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="11_75epk"]
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="12_w0tno"]
-[ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="13_7cbb6"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="14_sdrds"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_8nb1m"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="17_xqneh"]
@@ -22,6 +21,7 @@
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="20_sdrds"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="21_d07mg"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="22_b2628"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="22_sdrds"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_606gc")
@@ -134,9 +134,6 @@ script = ExtResource("11_75epk")
 [node name="GameOverLost" type="Node" parent="GameStateMachine"]
 script = ExtResource("12_w0tno")
 
-[node name="Players" type="Node" parent="."]
-script = ExtResource("13_7cbb6")
-
 [node name="Enemies" type="Node" parent="."]
 
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
@@ -235,5 +232,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.324318, 2.3595505, 0)
 [node name="MakeEnemiesGroup2Offensive" type="Node" parent="Events" node_paths=PackedStringArray("enemy_group")]
 script = ExtResource("22_b2628")
 enemy_group = NodePath("../../Enemies/SurvivalEnemyGroup")
+
+[node name="Players" parent="." instance=ExtResource("22_sdrds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6565056, 0)
 
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Events/MakeEnemiesGroup2Offensive" method="trigger"]

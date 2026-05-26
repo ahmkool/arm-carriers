@@ -6,8 +6,9 @@ extends Node
 @export var arm_left_path: NodePath = ^"Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft"
 @export var arm_right_path: NodePath = ^"Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight"
 
-signal weapon_picked_up()
 signal weapon_dropped()
+
+const RELOAD_SOUND := preload("res://assets/sounds/ammo/reload.wav")
 
 enum CanCarryStatus {
 	CAN_CARRY_SHOOTER,
@@ -72,7 +73,16 @@ func _process_not_carrying() -> bool:
 		get_parent().global_position = player_position
 		can_carry_status = CanCarryStatus.CARRYING_DIRECTION_SETTER
 		get_parent().weapon_carrier_pin_joint.set_node_b(big_weapon_node.get_path())
+	_play_weapon_pickup_sound()
 	return true
+
+
+func _play_weapon_pickup_sound() -> void:
+	var sfx := AudioStreamPlayer3D.new()
+	player_node.add_child(sfx)
+	sfx.stream = RELOAD_SOUND
+	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
+	sfx.play()
 
 func _update_arms_visibility() -> void:
 	_arm_left.show()

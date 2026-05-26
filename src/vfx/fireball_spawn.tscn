@@ -1,6 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://brgsrnygngkc2"]
+[gd_scene load_steps=18 format=3 uid="uid://brgsrnygngkc2"]
 
 [ext_resource type="Script" uid="uid://cvfjjy2fmnwnc" path="res://src/vfx/fireball_spawn.gd" id="1_c3uvo"]
+[ext_resource type="Texture2D" uid="uid://mpqnqkq0gx33" path="res://assets/sprites/particles/light_01_a.png" id="2_dpvmf"]
+[ext_resource type="AudioStream" uid="uid://dhuugr2mnc6ot" path="res://assets/sounds/fireball_cast.wav" id="2_mjgpl"]
 
 [sub_resource type="Curve" id="Curve_mjgpl"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
@@ -34,10 +36,59 @@ top_radius = 0.04
 bottom_radius = 0.0
 height = 0.5
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c3uvo"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_dpvmf")
+disable_receive_shadows = true
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_mjgpl"]
+offsets = PackedFloat32Array(0, 0.51241136, 1)
+colors = PackedColorArray(0.9999998, 0.51357263, 0.2621265, 1, 0.99999636, 0.5945094, 0.35344926, 1, 0.88556474, 0.89669037, 0.06699065, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dpvmf"]
+gradient = SubResource("Gradient_mjgpl")
+
+[sub_resource type="Curve" id="Curve_au0l1"]
+_data = [Vector2(0.08576052, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.26535624), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_esfnc"]
+curve = SubResource("Curve_au0l1")
+
+[sub_resource type="Curve" id="Curve_xv8pa"]
+_data = [Vector2(0, 0.8172263), 0.0, 0.0, 0, 0, Vector2(0.23300973, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_1bpjp"]
+curve = SubResource("Curve_xv8pa")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3emel"]
+particle_flag_align_y = true
+spread = 180.0
+initial_velocity_min = 10.0
+initial_velocity_max = 15.0
+gravity = Vector3(0, 1, 0)
+damping_min = 15.000001
+damping_max = 19.0
+scale_min = 0.099999994
+scale_max = 0.39999998
+scale_curve = SubResource("CurveTexture_1bpjp")
+color_initial_ramp = SubResource("GradientTexture1D_dpvmf")
+emission_curve = SubResource("CurveTexture_esfnc")
+
+[sub_resource type="QuadMesh" id="QuadMesh_au0l1"]
+
 [node name="FireballSpawn" type="Node3D"]
 script = ExtResource("1_c3uvo")
 
 [node name="Focus" type="GPUParticles3D" parent="."]
+cast_shadow = 0
 emitting = false
 amount = 24
 lifetime = 0.5
@@ -46,3 +97,18 @@ explosiveness = 1.0
 fixed_fps = 60
 process_material = SubResource("ParticleProcessMaterial_dpvmf")
 draw_pass_1 = SubResource("CylinderMesh_au0l1")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+material_override = SubResource("StandardMaterial3D_c3uvo")
+cast_shadow = 0
+emitting = false
+amount = 24
+lifetime = 0.5
+one_shot = true
+explosiveness = 1.0
+randomness = 0.8
+process_material = SubResource("ParticleProcessMaterial_3emel")
+draw_pass_1 = SubResource("QuadMesh_au0l1")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_mjgpl")

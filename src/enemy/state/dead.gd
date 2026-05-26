@@ -1,6 +1,7 @@
 extends EnemyState
 
 const PUFF_DISAPPEAR_SCENE := preload("res://src/vfx/puff_disappear.tscn")
+const ENEMY_DAMAGE_SCENE := preload("res://src/vfx/enemy_damage.tscn")
 
 @export var tween_delay: float = 2.0
 @export var shrink_duration: float = 0.4
@@ -10,6 +11,7 @@ func enter() -> void:
 	enemy.play_dead_animation()
 	enemy.velocity = Vector3.ZERO
 	_disable_collisions()
+	_spawn_enemy_damage()
 	_run_death_sequence()
 
 
@@ -48,6 +50,17 @@ func _tween_shrink_to_zero() -> void:
 	tween.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
 	tween.tween_property(enemy, "scale", almost_zero_vector, shrink_duration)
 	await tween.finished
+
+
+func _spawn_enemy_damage() -> void:
+	var world := enemy.get_tree().current_scene
+	if world == null:
+		return
+	var fx := ENEMY_DAMAGE_SCENE.instantiate()
+	if enemy.has_damage_source_position():
+		fx.set_damage_source(enemy.get_damage_source_position())
+	world.add_child(fx)
+	fx.global_position = enemy.global_position
 
 
 func _spawn_disappear_puff() -> void:

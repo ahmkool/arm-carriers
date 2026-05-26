@@ -1,0 +1,40 @@
+[gd_scene load_steps=8 format=3 uid="uid://beu2su0uavqxy"]
+
+[ext_resource type="Script" uid="uid://b3jp2wyj20fkp" path="res://src/vfx/enemy_damage.gd" id="1_damage"]
+[ext_resource type="AudioStream" uid="uid://5hmxanehcf2g" path="res://assets/sounds/explosion.wav" id="2_gaoic"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gaoic"]
+
+[sub_resource type="Curve" id="Curve_n5p5s"]
+_data = [Vector2(0.0032310188, 0.8033525), 0.0, 0.0, 0, 0, Vector2(0.25040388, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_ny0ro"]
+curve = SubResource("Curve_n5p5s")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_8vxpv"]
+direction = Vector3(0, 0, -1)
+initial_velocity_min = 5.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.59999996
+scale_max = 0.9
+scale_curve = SubResource("CurveTexture_ny0ro")
+
+[sub_resource type="SphereMesh" id="SphereMesh_if3lw"]
+
+[node name="EnemyDamage" type="Node3D"]
+script = ExtResource("1_damage")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_gaoic")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+material_override = SubResource("StandardMaterial3D_gaoic")
+emitting = false
+amount = 12
+lifetime = 0.4
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_8vxpv")
+draw_pass_1 = SubResource("SphereMesh_if3lw")

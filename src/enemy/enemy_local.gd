@@ -35,9 +35,14 @@ var behavior: EnemyBehavior
 @onready var animation_tree: AnimationTree = _find_animation_tree()
 @onready var animation_player: AnimationPlayer = _find_animation_player()
 
+var _hit_flash: HitFlash3D
+var _damage_source_position := Vector3.ZERO
+var _has_damage_source_position := false
+
 signal died
 
 func _ready() -> void:
+	_hit_flash = _get_or_create_hit_flash()
 	behavior = _find_behavior()
 	if animation_tree:
 		animation_tree.active = true
@@ -191,11 +196,40 @@ func is_alive() -> bool:
 		return false
 	return not enemy_state_machine.is_in_state("dead")
 
-func die() -> void:
+func die(damage_source_position: Variant = null) -> void:
 	if not is_alive():
 		return
+	_store_damage_source_position(damage_source_position)
+	if _hit_flash == null:
+		_hit_flash = _get_or_create_hit_flash()
+	_hit_flash.trigger()
 	velocity = Vector3.ZERO
 	enemy_state_machine.transition_to("dead")
+
+
+func has_damage_source_position() -> bool:
+	return _has_damage_source_position
+
+
+func get_damage_source_position() -> Vector3:
+	return _damage_source_position
+
+
+func _store_damage_source_position(damage_source_position: Variant) -> void:
+	_has_damage_source_position = damage_source_position is Vector3
+	if not _has_damage_source_position:
+		return
+	_damage_source_position = damage_source_position as Vector3
+
+
+func _get_or_create_hit_flash() -> HitFlash3D:
+	var existing := get_node_or_null("HitFlash3D")
+	if existing is HitFlash3D:
+		return existing as HitFlash3D
+	var flash := HitFlash3D.new()
+	flash.name = "HitFlash3D"
+	add_child(flash)
+	return flash
 
 func _sync_hit_box_to_offensive_state() -> void:
 	var hit_box := get_node_or_null("HitBox") as Area3D

@@ -1,14 +1,21 @@
 extends PlayerState
 
+const STEP_INTERVAL_SEC := 0.38
+
+var _step_timer := 0.0
+
+
 func enter() -> void:
 	if player.footsteps_particles:
 		player.footsteps_particles.emitting = true
+	_step_timer = 0.0
+	_play_footstep()
 
 func exit() -> void:
 	if player.footsteps_particles:
 		player.footsteps_particles.emitting = false
 
-func physics_update(_delta: float) -> void:
+func physics_update(delta: float) -> void:
 	if not player.is_on_floor():
 		player_state_machine.transition_to("falling")
 		return
@@ -36,3 +43,18 @@ func physics_update(_delta: float) -> void:
 			if carry_direction.length_squared() > 0.0001:
 				look_direction = carry_direction
 	player.look_at(player.global_position + look_direction, Vector3.UP)
+	_update_footsteps(delta)
+
+
+func _update_footsteps(delta: float) -> void:
+	_step_timer += delta
+	if _step_timer < STEP_INTERVAL_SEC:
+		return
+	_step_timer -= STEP_INTERVAL_SEC
+	_play_footstep()
+
+
+func _play_footstep() -> void:
+	if not player.footsteps_sound:
+		return
+	player.footsteps_sound.play()
