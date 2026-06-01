@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=4 uid="uid://cy6nsntcg6gho"]
+[gd_scene load_steps=36 format=4 uid="uid://cy6nsntcg6gho"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_0ibk8"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_q0ewb"]
@@ -6,6 +6,7 @@
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_4i1eg"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_8vvhd"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_56khi"]
+[ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_nm38y"]
 [ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="7_21vlg"]
 [ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="8_l1e6t"]
 [ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="9_x5441"]
@@ -186,6 +187,8 @@ text = "Status"
 [node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Status"
+
+[node name="PauseMenu" parent="UI" instance=ExtResource("6_nm38y")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")

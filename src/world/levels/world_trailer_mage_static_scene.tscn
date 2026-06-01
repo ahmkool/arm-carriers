@@ -1,10 +1,11 @@
-[gd_scene load_steps=34 format=3 uid="uid://guuw048lkf0n"]
+[gd_scene load_steps=35 format=3 uid="uid://guuw048lkf0n"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_prnbk"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_aymli"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_4mirc"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_fw44p"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_talnx"]
+[ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_fw44p"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_ru1oy"]
 [ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="7_7b414"]
 [ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="8_tvp5r"]
@@ -14,11 +15,11 @@
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="12_4bj17"]
 [ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="13_243we"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="14_aymli"]
-[ext_resource type="PackedScene" uid="uid://bau1ktlsnhlkq" path="res://src/enemy/enemy_mage_static.tscn" id="15_aymli"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="15_yoh42"]
-[ext_resource type="PackedScene" uid="uid://cje8utfev8m5t" path="res://src/enemy/enemy_flying_skull.tscn" id="16_4mirc"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="16_fw44p"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="16_o40vb"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="17_lbdak"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="17_talnx"]
 [ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="18_i8avp"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="19_uhkbd"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="20_lp1j3"]
@@ -119,6 +120,8 @@ text = "Status"
 layout_mode = 2
 text = "Status"
 
+[node name="PauseMenu" parent="UI" instance=ExtResource("6_fw44p")]
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")
 
@@ -156,35 +159,37 @@ script = ExtResource("14_aymli")
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
 
-[node name="EnemyMage" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("15_aymli")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -3)
+[node name="EnemyMage" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_fw44p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, -5)
 
-[node name="EnemyMage2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("15_aymli")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, -3)
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage"]
+script = ExtResource("17_talnx")
+mobility = 1
+cast_cooldown = 4.0
 
-[node name="EnemyMage3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("15_aymli")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 11)
+[node name="EnemyMage2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_fw44p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, 12)
 
-[node name="EnemyMage4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("15_aymli")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 0, 12)
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage2"]
+script = ExtResource("17_talnx")
+mobility = 1
+cast_cooldown = 5.0
 
-[node name="EnemyFlyingSkull" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_4mirc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
+[node name="EnemyMage3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_fw44p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 12)
 
-[node name="EnemyFlyingSkull2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_4mirc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 2)
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage3"]
+script = ExtResource("17_talnx")
+mobility = 1
+cast_cooldown = 2.0
 
-[node name="EnemyFlyingSkull3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_4mirc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, -19)
+[node name="EnemyMage4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_fw44p")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 0, -5)
 
-[node name="EnemyFlyingSkull4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_4mirc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 0)
-
-[node name="EnemyFlyingSkull5" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_4mirc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29, 0, 0)
-
-[node name="EnemyFlyingSkull6" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("16_4mirc")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20, 0, 12)
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage4"]
+script = ExtResource("17_talnx")
+mobility = 1
+cast_cooldown = 3.5
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("15_yoh42")
@@ -255,9 +260,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -19.49
 script = ExtResource("21_c3fv4")
 platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/BridgePlatform2")]
 
-[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events"]
 script = ExtResource("22_5kk36")
-enemy_group = NodePath("")
 
 [node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, 0, 10)
