@@ -25,7 +25,11 @@ func _on_body_entered(body: Node3D) -> void:
 	var player := body as PlayerLocal
 	if player == null:
 		return
+	# if player is dead return:
+	if player.is_in_dead_state():
+		return
 	_inside_ids[player.player_id] = true
+	print("All players inside: ", _inside_ids)
 	_try_emit_all_inside()
 
 
@@ -54,5 +58,6 @@ func _try_emit_all_inside() -> void:
 		return
 	_emitted_for_current_overlap = true
 	all_players_inside.emit()
+	print("Emitting all inside !")
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)

@@ -19,3 +19,4 @@ func _is_pause_input(event: InputEvent) -> bool:
 	if event.is_echo():
 		return false
 	return true
+	

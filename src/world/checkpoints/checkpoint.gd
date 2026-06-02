@@ -30,8 +30,7 @@ func set_world_at_checkpoint_state():
 	for enemy_group in enemy_groups_reset:
 		enemy_group.reset()
 	for area in areas_to_reactivate:
-		area.set_deferred("monitoring", true)
-		area.set_deferred("monitorable", true)
+		area._reset()
 	for area in areas_already_activated:
 		area._reset()
 	if not is_carrying_weapon:

@@ -535,7 +535,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.358948, 0, 6.0236473)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("19_yghaq")
-current_checkpoint = NodePath("Checkpoint8")
+current_checkpoint = NodePath("Checkpoint2")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.67946243)
@@ -712,6 +712,7 @@ platform_animation_stagger_seconds = 0.5
 script = ExtResource("23_iv26f")
 platforms = [NodePath("../../BridgePlatform"), NodePath("../../BridgePlatform2")]
 platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 event_type = 1
 next_event = NodePath("../MakeEnemiesGroup2Offensive")
 
@@ -728,6 +729,7 @@ platform_animation_stagger_seconds = 0.5
 script = ExtResource("23_iv26f")
 platforms = [NodePath("../../BridgePlatform5"), NodePath("../../BridgePlatform6"), NodePath("../../BridgePlatform5"), NodePath("../../BridgePlatform6")]
 platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 event_type = 1
 next_event = NodePath("../TriggerSurvivalEnemies")
 
@@ -744,6 +746,7 @@ platform_animation_stagger_seconds = 0.5
 script = ExtResource("23_iv26f")
 platforms = [NodePath("../../BridgePlatform7"), NodePath("../../BridgePlatform8")]
 platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 event_type = 1
 next_event = NodePath("../TriggerSurvivalEnemies2")
 
@@ -756,6 +759,7 @@ platform_animation_stagger_seconds = 0.5
 script = ExtResource("23_iv26f")
 platforms = [NodePath("../../BridgePlatform9"), NodePath("../../BridgePlatform10")]
 platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 event_type = 1
 next_event = NodePath("../MakeEnemiesGroup3Offensive")
 
@@ -768,6 +772,7 @@ platform_animation_stagger_seconds = 0.5
 script = ExtResource("23_iv26f")
 platforms = [NodePath("../../BridgePlatform11"), NodePath("../../BridgePlatform12"), NodePath("../../BridgePlatform13")]
 platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 event_type = 1
 next_event = NodePath("../MakeEnemiesGroup4Offensive")
 
@@ -785,6 +790,7 @@ platform_animation_stagger_seconds = 0.5
 script = ExtResource("23_iv26f")
 platforms = [NodePath("../../BridgePlatform16"), NodePath("../../BridgePlatform17")]
 platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 event_type = 1
 next_event = NodePath("../TriggerSurvivalEnemies3")
 
