@@ -1,6 +1,139 @@
-[gd_scene load_steps=2 format=3 uid="uid://c8pausemenu01"]
+[gd_scene load_steps=13 format=3 uid="uid://c8pausemenu01"]
 
-[ext_resource type="Script" path="res://src/ui/pause_menu.gd" id="1_pause"]
+[ext_resource type="Script" uid="uid://bfq14wxdjuanp" path="res://src/ui/pause_menu.gd" id="1_pause"]
+[ext_resource type="Theme" uid="uid://bpausemenutheme1" path="res://assets/theme/pause_menu_theme.tres" id="2_pause_theme"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_normal"]
+bg_color = Color(0.45, 0.82, 0.35, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_hover"]
+bg_color = Color(0.5, 0.9, 0.39, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_pressed"]
+bg_color = Color(0.38, 0.7, 0.3, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_checkpoint_normal"]
+bg_color = Color(0.28, 0.62, 0.95, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_checkpoint_hover"]
+bg_color = Color(0.31, 0.68, 1, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_checkpoint_pressed"]
+bg_color = Color(0.24, 0.53, 0.81, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_normal"]
+bg_color = Color(0.92, 0.45, 0.38, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_hover"]
+bg_color = Color(1, 0.5, 0.42, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_pressed"]
+bg_color = Color(0.78, 0.38, 0.32, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [node name="PauseMenu" type="Node"]
 script = ExtResource("1_pause")
+
+[node name="Layer" type="CanvasLayer" parent="."]
+
+[node name="MenuRoot" type="Control" parent="Layer"]
+visible = false
+process_mode = 3
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("2_pause_theme")
+
+[node name="DimOverlay" type="ColorRect" parent="Layer/MenuRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+color = Color(0.05, 0.08, 0.14, 0.55)
+
+[node name="PanelContainer" type="PanelContainer" parent="Layer/MenuRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -160.0
+offset_right = 240.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Layer/MenuRoot/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layer/MenuRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="TitleLabel" type="Label" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Paused"
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_continue_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_continue_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_continue_pressed")
+text = "Continue"
+
+[node name="RestartCheckpointButton" type="Button" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_checkpoint_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_checkpoint_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_checkpoint_pressed")
+text = "Last checkpoint"
+
+[node name="BackToMenuButton" type="Button" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_menu_normal")
+theme_override_styles/hover = SubResource("StyleBoxFlat_menu_hover")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_pressed")
+text = "Back to menu"

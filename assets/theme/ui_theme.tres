@@ -1,8 +1,13 @@
-[gd_resource type="Theme" load_steps=3 format=3 uid="uid://cqojbbcsl6jfh"]
+[gd_resource type="Theme" load_steps=5 format=3 uid="uid://cqojbbcsl6jfh"]
 
-[sub_resource type="SystemFont" id="SystemFont_ui"]
-font_names = PackedStringArray("Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif")
-font_weight = 600
+[ext_resource type="FontFile" uid="uid://dgsw8vp0k4tvk" path="res://assets/fonts/Lilita_One/LilitaOne-Regular.ttf" id="1_1exxx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l845e"]
+bg_color = Color(0.3740736, 0.15532747, 0, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 14.0
@@ -23,17 +28,25 @@ shadow_color = Color(0, 0, 0, 0.42)
 shadow_size = 6
 shadow_offset = Vector2(3, 3)
 
+[sub_resource type="SystemFont" id="SystemFont_ui"]
+font_names = PackedStringArray("Segoe UI", "Helvetica Neue", "Arial", "Noto Sans", "sans-serif")
+font_weight = 600
+
 [resource]
 default_font = SubResource("SystemFont_ui")
 default_font_size = 18
+Button/font_sizes/font_size = 40
+Button/fonts/font = ExtResource("1_1exxx")
+Button/styles/normal = SubResource("StyleBoxFlat_l845e")
 Label/colors/font_color = Color(0.94, 0.91, 0.84, 1)
 Label/colors/font_shadow_color = Color(0.02, 0.03, 0.06, 0.65)
 Label/constants/shadow_offset_x = 2
 Label/constants/shadow_offset_y = 2
-Label/font_sizes/font_size = 18
-Label/fonts/font = SubResource("SystemFont_ui")
+Label/font_sizes/font_size = 40
+Label/fonts/font = ExtResource("1_1exxx")
 MarginContainer/constants/margin_bottom = 18
 MarginContainer/constants/margin_left = 18
 MarginContainer/constants/margin_right = 18
 MarginContainer/constants/margin_top = 18
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
+VBoxContainer/constants/separation = 12
