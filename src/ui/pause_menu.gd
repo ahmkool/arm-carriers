@@ -3,12 +3,15 @@ extends Node
 const MENU_SCENE_PATH := "res://src/menu/menu.tscn"
 
 @onready var menu_root: Control = $Layer/MenuRoot
+@onready var menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
 @onready var continue_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton
 @onready var restart_checkpoint_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/RestartCheckpointButton
 @onready var back_to_menu_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/BackToMenuButton
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
+	menu_navigator.process_mode = Node.PROCESS_MODE_ALWAYS
+	menu_navigator.cancel_pressed.connect(_on_continue_pressed)
 	continue_button.pressed.connect(_on_continue_pressed)
 	restart_checkpoint_button.pressed.connect(_on_restart_checkpoint_pressed)
 	back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
@@ -16,10 +19,23 @@ func _ready() -> void:
 
 
 func _unhandled_input(event: InputEvent) -> void:
+	if not is_inside_tree():
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	if tree.paused:
+		if _is_pause_input(event):
+			_set_paused(false)
+			_mark_input_handled()
+			return
+		if menu_navigator.process_input_event(event):
+			_mark_input_handled()
+		return
 	if not _is_pause_input(event):
 		return
-	_set_paused(not get_tree().paused)
-	get_viewport().set_input_as_handled()
+	_set_paused(true)
+	_mark_input_handled()
 
 
 func _is_pause_input(event: InputEvent) -> bool:
@@ -47,18 +63,34 @@ func _on_restart_checkpoint_pressed() -> void:
 
 func _on_back_to_menu_pressed() -> void:
 	_set_paused(false)
-	var err := get_tree().change_scene_to_file(MENU_SCENE_PATH)
+	var tree := get_tree()
+	if tree == null:
+		return
+	var err := tree.change_scene_to_file(MENU_SCENE_PATH)
 	if err != OK:
 		push_error("PauseMenu: failed to change to menu scene (error %d)." % err)
 
 
 func _set_paused(should_pause: bool) -> void:
-	get_tree().paused = should_pause
+	if not is_inside_tree():
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	tree.paused = should_pause
 	menu_root.visible = should_pause
+	menu_navigator.set_active(should_pause)
+
+
+func _mark_input_handled() -> void:
+	var viewport := menu_root.get_viewport() if menu_root.is_inside_tree() else null
+	if viewport == null:
+		return
+	viewport.set_input_as_handled()
 
 
 func _find_world_local() -> Node:
-	var scene := get_tree().current_scene
-	if scene == null:
+	var tree := get_tree()
+	if tree == null:
 		return null
-	return scene
+	return tree.current_scene

@@ -1,7 +1,8 @@
-[gd_scene load_steps=13 format=3 uid="uid://c8pausemenu01"]
+[gd_scene load_steps=17 format=3 uid="uid://c8pausemenu01"]
 
 [ext_resource type="Script" uid="uid://bfq14wxdjuanp" path="res://src/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="Theme" uid="uid://bpausemenutheme1" path="res://assets/theme/pause_menu_theme.tres" id="2_pause_theme"]
+[ext_resource type="Script" path="res://src/ui/gamepad_menu_navigator.gd" id="3_nav"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_normal"]
 bg_color = Color(0.45, 0.82, 0.35, 1)
@@ -19,6 +20,18 @@ corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_pressed"]
 bg_color = Color(0.38, 0.7, 0.3, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_focus"]
+bg_color = Color(0.5, 0.9, 0.39, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.95, 0.6, 1)
 corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
@@ -45,6 +58,18 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_checkpoint_focus"]
+bg_color = Color(0.31, 0.68, 1, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.95, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_normal"]
 bg_color = Color(0.92, 0.45, 0.38, 1)
 corner_radius_top_left = 10
@@ -66,8 +91,27 @@ corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_menu_focus"]
+bg_color = Color(1, 0.5, 0.42, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.95, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
 [node name="PauseMenu" type="Node"]
 script = ExtResource("1_pause")
+
+[node name="GamepadMenuNavigator" type="Node" parent="."]
+script = ExtResource("3_nav")
+menu_root_path = NodePath("../Layer/MenuRoot")
+default_focus_path = NodePath("../Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton")
+emit_cancel_on_back = true
+listen_for_unhandled_input = false
 
 [node name="Layer" type="CanvasLayer" parent="."]
 
@@ -90,6 +134,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 1
+focus_mode = 0
 color = Color(0.05, 0.08, 0.14, 0.55)
 
 [node name="PanelContainer" type="PanelContainer" parent="Layer/MenuRoot"]
@@ -122,6 +167,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_continue_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_continue_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_continue_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_continue_focus")
 text = "Continue"
 
 [node name="RestartCheckpointButton" type="Button" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
@@ -129,6 +175,7 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_checkpoint_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_checkpoint_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_checkpoint_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_checkpoint_focus")
 text = "Last checkpoint"
 
 [node name="BackToMenuButton" type="Button" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
@@ -136,4 +183,5 @@ layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_menu_normal")
 theme_override_styles/hover = SubResource("StyleBoxFlat_menu_hover")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_pressed")
+theme_override_styles/focus = SubResource("StyleBoxFlat_menu_focus")
 text = "Back to menu"

@@ -1,7 +1,9 @@
-[gd_scene load_steps=3 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=5 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
+[ext_resource type="Script" path="res://src/menu/menu.gd" id="3_menu"]
+[ext_resource type="Script" path="res://src/ui/gamepad_menu_navigator.gd" id="4_nav"]
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -11,6 +13,12 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_sblgy")
+script = ExtResource("3_menu")
+
+[node name="GamepadMenuNavigator" type="Node" parent="."]
+script = ExtResource("4_nav")
+menu_root_path = NodePath("..")
+default_focus_path = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Level1Button")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1

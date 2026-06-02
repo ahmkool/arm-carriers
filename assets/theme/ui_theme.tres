@@ -1,6 +1,18 @@
-[gd_resource type="Theme" load_steps=5 format=3 uid="uid://cqojbbcsl6jfh"]
+[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cqojbbcsl6jfh"]
 
 [ext_resource type="FontFile" uid="uid://dgsw8vp0k4tvk" path="res://assets/fonts/Lilita_One/LilitaOne-Regular.ttf" id="1_1exxx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_focus"]
+bg_color = Color(0.48, 0.22, 0.04, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.95, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l845e"]
 bg_color = Color(0.3740736, 0.15532747, 0, 1)
@@ -37,6 +49,7 @@ default_font = SubResource("SystemFont_ui")
 default_font_size = 18
 Button/font_sizes/font_size = 40
 Button/fonts/font = ExtResource("1_1exxx")
+Button/styles/focus = SubResource("StyleBoxFlat_button_focus")
 Button/styles/normal = SubResource("StyleBoxFlat_l845e")
 Label/colors/font_color = Color(0.94, 0.91, 0.84, 1)
 Label/colors/font_shadow_color = Color(0.02, 0.03, 0.06, 0.65)
