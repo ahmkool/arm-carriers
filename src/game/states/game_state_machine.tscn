@@ -1,0 +1,32 @@
+[gd_scene load_steps=8 format=3 uid="uid://l3q0p7d7n4fk"]
+
+[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="1_ftqqt"]
+[ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="2_atqkm"]
+[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="3_3x3j4"]
+[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="4_d1oux"]
+[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="5_kqbwc"]
+[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="6_nubt4"]
+[ext_resource type="Script" uid="uid://q7qye2hb65af" path="res://src/game/states/local/resetting_checkpoint.gd" id="7_3r33x"]
+
+[node name="GameStateMachine" type="Node"]
+script = ExtResource("1_ftqqt")
+initial_state_path = NodePath("AwaitWorldLocalReady")
+
+[node name="AwaitWorldLocalReady" type="Node" parent="."]
+script = ExtResource("2_atqkm")
+next_state_name = "ResettingCheckpoint"
+
+[node name="WaitingForPlayers" type="Node" parent="."]
+script = ExtResource("3_3x3j4")
+
+[node name="Playing" type="Node" parent="."]
+script = ExtResource("4_d1oux")
+
+[node name="WaitingForGameToStart" type="Node" parent="."]
+script = ExtResource("5_kqbwc")
+
+[node name="GameOverLost" type="Node" parent="."]
+script = ExtResource("6_nubt4")
+
+[node name="ResettingCheckpoint" type="Node" parent="."]
+script = ExtResource("7_3r33x")

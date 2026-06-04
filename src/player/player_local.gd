@@ -91,6 +91,8 @@ func die() -> void:
 	player_state_machine.transition_to("dead")
 
 func is_in_dead_state() -> bool:
+	if not player_state_machine:
+		return false
 	return player_state_machine.current_state.name.to_lower() == "dead"
 
 func revive() -> void:

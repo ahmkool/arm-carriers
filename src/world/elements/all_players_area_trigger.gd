@@ -11,10 +11,16 @@ var _inside_ids: Dictionary = {}
 var _emitted_for_current_overlap := false
 
 func _reset() -> void:
-	set_deferred("monitoring", true)
-	set_deferred("monitorable", true)
 	_inside_ids.clear()
 	_emitted_for_current_overlap = false
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+
+func _mark_area_as_inactive() -> void:
+	_inside_ids.clear()
+	_emitted_for_current_overlap = true
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)

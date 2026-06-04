@@ -1,16 +1,11 @@
-[gd_scene load_steps=45 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=39 format=4 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_dvbv8"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="2_j5fge"]
-[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="3_msrya"]
-[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="4_wi560"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_y67nd"]
-[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="5_wi560"]
-[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="6_qi7jy"]
-[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_65eof"]
-[ext_resource type="Script" uid="uid://q7qye2hb65af" path="res://src/game/states/local/resetting_checkpoint.gd" id="12_h2fuj"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="8_ykjll"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="12_ykjll"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="13_dvbv8"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="14_h2fuj"]
@@ -25,7 +20,6 @@
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="23_iv26f"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="23_qrvdl"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
-[ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="24_awaitwl"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="24_iv26f"]
 [ext_resource type="Texture2D" uid="uid://btl10tqrvruqw" path="res://assets/models/weapon/wooden_sign_forest_green_kaykit_modular_forest_texture.png" id="26_ndvwn"]
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="27_pause"]
@@ -186,28 +180,7 @@ shadow_enabled = true
 shadow_normal_bias = 5.0
 shadow_blur = 2.0
 
-[node name="GameStateMachine" type="Node" parent="."]
-script = ExtResource("3_msrya")
-initial_state_path = NodePath("AwaitWorldLocalReady")
-
-[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
-script = ExtResource("24_awaitwl")
-next_state_name = "ResettingCheckpoint"
-
-[node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
-script = ExtResource("4_wi560")
-
-[node name="Playing" type="Node" parent="GameStateMachine"]
-script = ExtResource("5_wi560")
-
-[node name="WaitingForGameToStart" type="Node" parent="GameStateMachine"]
-script = ExtResource("6_qi7jy")
-
-[node name="GameOverLost" type="Node" parent="GameStateMachine"]
-script = ExtResource("10_65eof")
-
-[node name="ResettingCheckpoint" type="Node" parent="GameStateMachine"]
-script = ExtResource("12_h2fuj")
+[node name="GameStateMachine" parent="." instance=ExtResource("8_ykjll")]
 
 [node name="Players" parent="." instance=ExtResource("12_ykjll")]
 
@@ -275,6 +248,7 @@ is_offensive = false
 [node name="SurvivalEnemyGroup" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
 script = ExtResource("17_4muf4")
+fight_duration = 20.0
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup"]
 
@@ -535,7 +509,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.358948, 0, 6.0236473)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("19_yghaq")
-current_checkpoint = NodePath("Checkpoint2")
+current_checkpoint = NodePath("Checkpoint4")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.67946243)

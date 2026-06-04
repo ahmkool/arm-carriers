@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 CameraFeedback="*res://src/autoload/camera_feedback.gd"
 GameplayInput="*res://src/autoload/gameplay_input.gd"
+ScreenFade="*res://src/ui/screen_fade.gd"
 
 [debug_draw_3d]
 

@@ -32,7 +32,7 @@ func set_world_at_checkpoint_state():
 	for area in areas_to_reactivate:
 		area._reset()
 	for area in areas_already_activated:
-		area._reset()
+		area._mark_area_as_inactive()
 	if not is_carrying_weapon:
 		var players: Node = get_parent().get_parent().get_node("Players")
 		if players != null:

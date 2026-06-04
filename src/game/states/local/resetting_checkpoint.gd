@@ -1,8 +1,25 @@
 extends GameState
 
 const CARRIER_SHOULDER_HEIGHT := 1.35
+const RESET_CHECKPOINT_DELAY := 0.5
+const CHECKPOINT_FADE_DURATION := 0.15
 
-func enter() -> void:
+var _checkpoint_reset_timer: float = 0.0
+var _world_reset_timer: float = 0.0
+var _checkpoint_reset_applied: bool = false
+var _world_reset_applied: bool = false
+
+func enter():
+	ScreenFade.fade_to_black(CHECKPOINT_FADE_DURATION)
+	_checkpoint_reset_timer = CHECKPOINT_FADE_DURATION
+	_world_reset_timer = CHECKPOINT_FADE_DURATION + RESET_CHECKPOINT_DELAY
+	_checkpoint_reset_applied = false
+	_world_reset_applied = false
+
+func exit():
+	ScreenFade.fade_from_black(CHECKPOINT_FADE_DURATION)
+
+func _apply_checkpoint_reset() -> void:
 	var world_local := world as WorldLocal
 	if world_local == null:
 		push_error("ResettingCheckpointState: world is not WorldLocal")
@@ -17,18 +34,10 @@ func enter() -> void:
 	var weapon := world_local.get_active_weapon() as BigWeapon
 	_place_weapon_and_carriers_at_checkpoint(weapon)
 
-	# set world at checkpoint state
-	var current_checkpoint = world_local.checkpoint_manager.current_checkpoint
+func _apply_world_reset() -> void:
+	var current_checkpoint = world.checkpoint_manager.current_checkpoint
 	if current_checkpoint != null:
 		current_checkpoint.set_world_at_checkpoint_state()
-
-	# reset trial zones:
-	for trial_zone in world_local.enemies.get_children():
-		var trial_zone_node = trial_zone as TrialZone
-		if trial_zone_node == null:
-			continue
-		trial_zone_node.reset()
-
 
 func _place_weapon_and_carriers_at_checkpoint(weapon: BigWeapon) -> void:
 	if weapon == null:
@@ -99,5 +108,19 @@ func _apply_weapon_pose_from_ends(weapon: BigWeapon, shooter_end_world: Vector3,
 	weapon.global_transform = Transform3D(target_basis, target_origin)
 
 
-func physics_update(_delta: float):
+func physics_update(delta: float) -> void:
+	if not _checkpoint_reset_applied:
+		_checkpoint_reset_timer -= delta
+		if _checkpoint_reset_timer <= 0.0:
+			_checkpoint_reset_applied = true
+			_apply_checkpoint_reset()
+
+	if _world_reset_applied:
+		return
+
+	_world_reset_timer -= delta
+	if _world_reset_timer > 0.0:
+		return
+	_world_reset_applied = true
+	_apply_world_reset()
 	game_state_machine.transition_to("playing")
