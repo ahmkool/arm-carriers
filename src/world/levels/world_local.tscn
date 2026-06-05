@@ -508,12 +508,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.358948, 0, 6.0236473)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("19_yghaq")
-current_checkpoint = NodePath("Checkpoint4")
+current_checkpoint = NodePath("Checkpoint")
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.67946243)
 script = ExtResource("20_n7rb1")
-is_carrying_weapon = false
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
@@ -966,7 +965,7 @@ font_size = 55
 [node name="Weapon" type="Node3D" parent="."]
 
 [node name="Bazooka" parent="Weapon" instance=ExtResource("20_kj30a")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0.593, 0)
 
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
