@@ -1,9 +1,149 @@
-[gd_scene load_steps=5 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=15 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
-[ext_resource type="Script" path="res://src/menu/menu.gd" id="3_menu"]
-[ext_resource type="Script" path="res://src/ui/gamepad_menu_navigator.gd" id="4_nav"]
+[ext_resource type="Script" uid="uid://ccmmve4muk2xt" path="res://src/menu/menu.gd" id="3_menu"]
+[ext_resource type="Texture2D" uid="uid://clwb1vxva528" path="res://assets/sprites/menu/background.png" id="3_yk76d"]
+[ext_resource type="Texture2D" uid="uid://bwiaawnjbr56b" path="res://assets/sprites/menu/enemy_boss.png" id="4_2qbme"]
+[ext_resource type="Script" uid="uid://4jigl16qop30" path="res://src/ui/gamepad_menu_navigator.gd" id="4_nav"]
+[ext_resource type="Texture2D" uid="uid://dl2qpx3g8wne3" path="res://assets/sprites/menu/players.png" id="5_ep4cv"]
+[ext_resource type="Texture2D" uid="uid://cpsr4ads7c6mx" path="res://assets/sprites/menu/skeletons.png" id="6_u4pfo"]
+[ext_resource type="Texture2D" uid="uid://xt4pg84h817t" path="res://assets/sprites/menu/skeleton_ground.png" id="7_g1jg8"]
+[ext_resource type="Texture2D" uid="uid://biv0lpvm51c77" path="res://assets/sprites/menu/logo.png" id="8_fnvh6"]
+[ext_resource type="AudioStream" uid="uid://dao716u2k2fw0" path="res://assets/music/peritune_title_screen.mp3" id="11_2qbme"]
+
+[sub_resource type="Animation" id="Animation_2qbme"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Skeletons:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Players:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Boss:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Logo:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PressStartRoot/PromptLabel:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+
+[sub_resource type="Animation" id="Animation_yk76d"]
+resource_name = "appearance"
+length = 8.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Skeletons:modulate")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(1, 2),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Players:modulate")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(2, 3.03),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Boss:modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(3.49, 4.45),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Logo:modulate")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(5.03, 6.05),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("PressStartRoot/PromptLabel:modulate")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(5.6064, 6.5463996),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_ep4cv"]
+_data = {
+&"RESET": SubResource("Animation_2qbme"),
+&"appearance": SubResource("Animation_yk76d")
+}
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -15,12 +155,97 @@ grow_vertical = 2
 theme = ExtResource("1_sblgy")
 script = ExtResource("3_menu")
 
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_yk76d")
+expand_mode = 2
+
+[node name="Boss" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_2qbme")
+expand_mode = 2
+
+[node name="Players" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_ep4cv")
+expand_mode = 2
+
+[node name="Skeletons" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_u4pfo")
+expand_mode = 2
+
+[node name="GroundSkeletons" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_g1jg8")
+expand_mode = 2
+
+[node name="Logo" type="TextureRect" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -419.0
+offset_top = -42.0
+offset_right = -419.0
+offset_bottom = -42.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_fnvh6")
+expand_mode = 2
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_ep4cv")
+}
+autoplay = "appearance"
+
 [node name="GamepadMenuNavigator" type="Node" parent="."]
 script = ExtResource("4_nav")
 menu_root_path = NodePath("..")
-default_focus_path = NodePath("../PanelContainer/MarginContainer/VBoxContainer/Level1Button")
+default_focus_path = NodePath("../HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/PlayButton")
+emit_cancel_on_back = true
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="PressStartRoot" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="PressStartRoot"]
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -34,91 +259,250 @@ offset_bottom = 12.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="PressStartRoot/PanelContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="PressStartRoot/PanelContainer/MarginContainer"]
 layout_mode = 2
-theme_override_constants/separation = 20
+theme_override_constants/separation = 24
+alignment = 1
 
-[node name="Label" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="PressStartRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 60
 text = "ARMED TOGETHER"
+horizontal_alignment = 1
 
-[node name="Level1Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="PromptLabel" type="Label" parent="PressStartRoot"]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 0
+offset_left = 721.0
+offset_top = 474.0
+offset_right = 1201.0
+offset_bottom = 566.0
+theme_override_colors/font_shadow_color = Color(0.0021021725, 0.0002579943, 0, 0.6509804)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 12
+theme_override_font_sizes/font_size = 80
+text = "Press Start"
+horizontal_alignment = 1
+
+[node name="HomeMenuRoot" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="HomeMenuRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -86.0
+offset_right = 200.0
+offset_bottom = 86.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="HomeMenuRoot/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="HomeMenuRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "ARMED TOGETHER"
+horizontal_alignment = 1
+
+[node name="PlayButton" type="Button" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Level 1"
+text = "Play"
+
+[node name="QuitButton" type="Button" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Quit"
+
+[node name="LevelStartChoiceRoot" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="LevelStartChoiceRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -12.0
+offset_right = 14.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="LevelStartChoiceRoot/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="LevelStartChoiceRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "ARMED TOGETHER"
+horizontal_alignment = 1
+
+[node name="PromptLabel" type="Label" parent="LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Continue from checkpoint?"
+horizontal_alignment = 1
+
+[node name="ContinueButton" type="Button" parent="LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Continue"
+
+[node name="FromBeginningButton" type="Button" parent="LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "From beginning"
+
+[node name="MainMenuRoot" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MainMenuRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -14.0
+offset_top = -12.0
+offset_right = 14.0
+offset_bottom = 12.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="MainMenuRoot/PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainMenuRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Label" type="Label" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 60
+text = "Choose level"
+horizontal_alignment = 1
+
+[node name="Level1Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Level 1 (easy)"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local.tscn"
 
-[node name="Level2Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Level2Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Level 2"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_02.tscn"
 
-[node name="Level3Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Level3Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Level 3"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_03.tscn"
 
-[node name="Level4Button" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="Level4Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Level 4"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_04.tscn"
 
-[node name="SawCarryButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="SawCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Saw carry"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_saw_carry.tscn"
 
-[node name="EnemyTestLevel" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="EnemyTestLevel" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Enemy test level"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_enemy_test.tscn"
 
-[node name="RouterTestButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="RouterTestButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Router test"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_router_test.tscn"
 
-[node name="TrailerSceneButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TrailerSceneButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Trailer"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_scene.tscn"
 
-[node name="TrailerSwordCarryButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TrailerSwordCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Trailer: sword carry"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_sword_carry.tscn"
 
-[node name="TrailerMageStaticButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TrailerMageStaticButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Trailer: mage static"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_mage_static_scene.tscn"
 
-[node name="TrailerBridgeMagiciansButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="TrailerBridgeMagiciansButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Trailer: bridge magicians"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("11_2qbme")
+volume_db = -14.197
+autoplay = true
+parameters/looping = false

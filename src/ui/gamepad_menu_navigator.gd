@@ -26,6 +26,10 @@ func _ready() -> void:
 	set_active(enabled_on_ready)
 
 
+func set_default_focus(control: Control) -> void:
+	_default_focus = control
+
+
 func set_active(active: bool) -> void:
 	_is_active = active
 	set_process_unhandled_input(active and listen_for_unhandled_input)

@@ -1,7 +1,5 @@
 extends Node
 
-const MENU_SCENE_PATH := "res://src/menu/menu.tscn"
-
 @onready var menu_root: Control = $Layer/MenuRoot
 @onready var menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
 @onready var continue_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton
@@ -63,12 +61,7 @@ func _on_restart_checkpoint_pressed() -> void:
 
 func _on_back_to_menu_pressed() -> void:
 	_set_paused(false)
-	var tree := get_tree()
-	if tree == null:
-		return
-	var err := tree.change_scene_to_file(MENU_SCENE_PATH)
-	if err != OK:
-		push_error("PauseMenu: failed to change to menu scene (error %d)." % err)
+	SessionFlow.go_to_main_menu()
 
 
 func _set_paused(should_pause: bool) -> void:

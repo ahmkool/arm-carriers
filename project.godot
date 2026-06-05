@@ -21,6 +21,7 @@ CameraFeedback="*res://src/autoload/camera_feedback.gd"
 GameSave="*res://src/autoload/game_save.gd"
 GameplayInput="*res://src/autoload/gameplay_input.gd"
 ScreenFade="*res://src/ui/screen_fade.gd"
+SessionFlow="*res://src/session/session_flow.gd"
 
 [debug_draw_3d]
 

@@ -6,10 +6,21 @@ const SAVE_VERSION := 1
 var _levels: Dictionary = {}
 var _tracked_manager: CheckpointManager
 var _tracked_level_id: String = ""
+var _apply_save_on_next_load := true
 
 
 func _ready() -> void:
 	_load_from_disk()
+
+
+func set_apply_save_on_next_load(apply: bool) -> void:
+	_apply_save_on_next_load = apply
+
+
+func consume_apply_save_on_next_load() -> bool:
+	var apply := _apply_save_on_next_load
+	_apply_save_on_next_load = true
+	return apply
 
 
 func get_saved_checkpoint(level_id: String) -> String:

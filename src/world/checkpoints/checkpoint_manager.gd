@@ -112,6 +112,8 @@ func _apply_saved_progress() -> void:
 	var level_id: String = world.get_level_id()
 	if level_id.is_empty():
 		return
+	if not GameSave.consume_apply_save_on_next_load():
+		return
 	GameSave.apply_to_manager(self, level_id)
 
 

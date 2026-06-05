@@ -2,6 +2,7 @@ class_name SurvivalEnemyGroup
 extends EnemyGroup
 
 @export var enemy_scene: PackedScene = preload("res://src/enemy/enemy_local.tscn")
+@export var spawner_scene: PackedScene = preload("res://src/enemy/spawn/enemy_spawner.tscn")
 @export_range(0.05, 120.0, 0.05) var interval_spawn: float = 3.0
 @export_range(0.1, 600.0, 0.1) var fight_duration: float = 60.0
 
@@ -87,6 +88,8 @@ func _cache_spawn_points() -> void:
 
 func _spawn_one() -> void:
 	if not is_instance_valid(_enemies_parent) or _spawn_point_nodes.is_empty():
+		return
+	if spawner_scene == null:
 		return
 	var marker := _spawn_point_nodes[randi() % _spawn_point_nodes.size()]
 	var enemy := enemy_scene.instantiate() as EnemyLocal
