@@ -248,7 +248,6 @@ is_offensive = false
 [node name="SurvivalEnemyGroup" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
 script = ExtResource("17_4muf4")
-fight_duration = 20.0
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup"]
 

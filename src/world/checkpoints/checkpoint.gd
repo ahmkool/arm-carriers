@@ -4,6 +4,8 @@ extends Node3D
 @onready var position_direction_setter = $PositionDirectionSetter
 @onready var position_shooter = $PositionShooter
 
+@export var checkpoint_id: String = ""
+@export var order: int = 0
 @export var is_carrying_weapon: bool = true
 @export var events_completed: Array[LevelEvent]
 @export var enemy_groups_reset: Array[EnemyGroup]
@@ -16,6 +18,12 @@ func _ready():
 	var manager := get_parent() as Node
 	if manager != null and manager.has_method("register_checkpoint"):
 		manager.call("register_checkpoint", self)
+
+func get_save_id() -> String:
+	if not checkpoint_id.is_empty():
+		return checkpoint_id
+	return name
+
 
 func get_spawn_transform() -> Transform3D:
 	if is_instance_valid(position_direction_setter) and position_direction_setter is Node3D:

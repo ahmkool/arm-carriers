@@ -1,6 +1,9 @@
 class_name WorldLocal
 extends Node3D
 
+@export var level_id: String = ""
+@export var skip_save: bool = false
+
 @onready var players = $Players
 @onready var enemies = $Enemies
 @onready var checkpoint_manager: Node = $CheckpointManager
@@ -13,6 +16,14 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	pass
+
+func get_level_id() -> String:
+	if not level_id.is_empty():
+		return level_id
+	if scene_file_path.is_empty():
+		return ""
+	return scene_file_path
+
 
 func restart_game() -> void:
 	var game_state_machine = get_node_or_null("GameStateMachine") as GameStateMachine
