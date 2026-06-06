@@ -1,6 +1,7 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+export/
 
 src/mesh_library/
 assets/mesh_library/
