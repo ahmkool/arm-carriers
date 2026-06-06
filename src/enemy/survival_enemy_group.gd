@@ -3,7 +3,7 @@ extends EnemyGroup
 
 @export var enemy_scene: PackedScene = preload("res://src/enemy/enemy_local.tscn")
 @export var spawner_scene: PackedScene = preload("res://src/enemy/spawn/enemy_spawner.tscn")
-@export_range(0.05, 120.0, 0.05) var interval_spawn: float = 3.0
+@export var spawn_interval_curve: Curve
 @export_range(0.1, 600.0, 0.1) var fight_duration: float = 60.0
 
 var signal_emitted := false
@@ -19,6 +19,7 @@ var _spawn_point_nodes: Array[Node3D] = []
 func _ready() -> void:
 	_resolve_containers()
 	_cache_spawn_points()
+	_validate_spawn_interval_curve()
 
 
 func trigger(offensive: bool = true) -> void:
@@ -51,14 +52,46 @@ func _physics_process(delta: float) -> void:
 		return
 	_fight_elapsed += delta
 	_spawn_timer += delta
-	while _fight_elapsed < fight_duration and _spawn_timer >= interval_spawn:
-		_spawn_timer -= interval_spawn
-		_spawn_one()
-	if _fight_elapsed >= fight_duration and _all_spawned_dead():
-		signal_emitted = true
-		_started = false
-		print("SurvivalEnemyGroup: Timer ended and all enemies defeated")
-		enemies_defeated.emit()
+	_process_spawning()
+	if not _fight_ended_and_cleared():
+		return
+	signal_emitted = true
+	_started = false
+	print("SurvivalEnemyGroup: Timer ended and all enemies defeated")
+	enemies_defeated.emit()
+
+
+func _process_spawning() -> void:
+	if _fight_elapsed >= fight_duration:
+		return
+	var interval := _spawn_interval_at(_fight_elapsed)
+	if _spawn_timer < interval:
+		return
+	_spawn_timer -= interval
+	_spawn_one()
+
+
+func _spawn_interval_at(elapsed: float) -> float:
+	if spawn_interval_curve == null or spawn_interval_curve.get_point_count() == 0:
+		return 120.0
+	if fight_duration <= 0.0:
+		return clampf(spawn_interval_curve.sample(0.0), 0.05, 120.0)
+	var t := clampf(elapsed / fight_duration, 0.0, 1.0)
+	return clampf(spawn_interval_curve.sample(t), 0.05, 120.0)
+
+
+func _validate_spawn_interval_curve() -> void:
+	if spawn_interval_curve == null:
+		push_warning("SurvivalEnemyGroup: spawn_interval_curve is required on %s" % str(get_path()))
+		return
+	if spawn_interval_curve.get_point_count() == 0:
+		push_warning("SurvivalEnemyGroup: spawn_interval_curve has no points on %s" % str(get_path()))
+
+
+func _fight_ended_and_cleared() -> bool:
+	if _fight_elapsed < fight_duration:
+		return false
+	return _all_spawned_dead()
 
 
 func _resolve_containers() -> void:
@@ -87,6 +120,7 @@ func _cache_spawn_points() -> void:
 
 
 func _spawn_one() -> void:
+	print("Spawn enemy at %.2f s" % _fight_elapsed)
 	if not is_instance_valid(_enemies_parent) or _spawn_point_nodes.is_empty():
 		return
 	if spawner_scene == null:

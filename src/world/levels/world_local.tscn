@@ -1,4 +1,4 @@
-[gd_scene load_steps=42 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=43 format=4 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
@@ -12,7 +12,7 @@
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="17_4muf4"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
-[ext_resource type="Script" path="res://src/events/level_finished_event.gd" id="20_iv26f"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="20_iv26f"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_kj30a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="20_n7rb1"]
 [ext_resource type="MeshLibrary" uid="uid://d3kkksaa5a6ce" path="res://assets/mesh_library/tiles_Color1.tres" id="21_4muf4"]
@@ -25,6 +25,7 @@
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="24_iv26f"]
 [ext_resource type="Texture2D" uid="uid://btl10tqrvruqw" path="res://assets/models/weapon/wooden_sign_forest_green_kaykit_modular_forest_texture.png" id="26_ndvwn"]
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="27_pause"]
+[ext_resource type="Curve" uid="uid://5rtl5f3x2v2w" path="res://src/enemy/spawn_interval_flat_3s.tres" id="28_flat3s"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("2_j5fge")
@@ -244,6 +245,7 @@ is_offensive = false
 [node name="SurvivalEnemyGroup" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
 script = ExtResource("17_4muf4")
+spawn_interval_curve = ExtResource("28_flat3s")
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup"]
 
@@ -264,6 +266,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.358948, 0, 11.023647)
 [node name="SurvivalEnemyGroup2" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.296173, 0, -25.647747)
 script = ExtResource("17_4muf4")
+spawn_interval_curve = ExtResource("28_flat3s")
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup2"]
 
@@ -449,6 +452,7 @@ is_offensive = false
 [node name="SurvivalEnemyGroup3" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 134.29617, 0, -31.647747)
 script = ExtResource("17_4muf4")
+spawn_interval_curve = ExtResource("28_flat3s")
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup3"]
 

@@ -10,8 +10,8 @@
 [ext_resource type="Texture2D" uid="uid://cpsr4ads7c6mx" path="res://assets/sprites/menu/skeletons.png" id="6_u4pfo"]
 [ext_resource type="Texture2D" uid="uid://xt4pg84h817t" path="res://assets/sprites/menu/skeleton_ground.png" id="7_g1jg8"]
 [ext_resource type="Texture2D" uid="uid://biv0lpvm51c77" path="res://assets/sprites/menu/logo.png" id="8_fnvh6"]
-[ext_resource type="AudioStream" uid="uid://dao716u2k2fw0" path="res://assets/music/peritune_title_screen.mp3" id="11_2qbme"]
 [ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="12_audio"]
+[ext_resource type="AudioStream" uid="uid://o55a1qhogedi" path="res://assets/music/Peritune_Zephyr_Fields_loop.mp3" id="12_ep4cv"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -493,10 +493,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -14.0
-offset_top = -12.0
-offset_right = 14.0
-offset_bottom = 12.0
+offset_left = -250.0
+offset_top = -164.0
+offset_right = 250.0
+offset_bottom = 164.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -568,10 +568,9 @@ script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_router_test.tscn"
 
 [node name="TrailerSceneButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
-visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Trailer"
+text = "Survival level (hard)"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_scene.tscn"
 
@@ -600,8 +599,8 @@ script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
-stream = ExtResource("11_2qbme")
+stream = ExtResource("12_ep4cv")
 volume_db = -14.197
-autoplay = true
+autoplay = false
 bus = &"Music"
 parameters/looping = false

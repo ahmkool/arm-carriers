@@ -28,3 +28,7 @@ func _find_world_local() -> WorldLocal:
 			return w
 		n = n.get_parent()
 	return null
+
+
+func _on_survival_enemy_group_enemies_defeated():
+	pass # Replace with function body.

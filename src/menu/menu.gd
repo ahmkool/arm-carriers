@@ -1,5 +1,7 @@
 extends Control
 
+const MENU_MUSIC_DELAY_SECONDS := 1.5
+
 @onready var _press_start_root: Control = $PressStartRoot
 @onready var _home_menu_root: Control = $HomeMenuRoot
 @onready var _settings_menu_root: Control = $SettingsMenuRoot
@@ -14,6 +16,7 @@ extends Control
 @onready var _continue_button: Button = $LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton
 @onready var _from_beginning_button: Button = $LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer/FromBeginningButton
 @onready var _level_start_prompt: Label = $LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer/PromptLabel
+@onready var _menu_music: AudioStreamPlayer = $AudioStreamPlayer
 
 
 func _ready() -> void:
@@ -37,6 +40,14 @@ func _ready() -> void:
 		_level_start_prompt,
 	)
 	SessionFlow.start()
+	_begin_menu_music()
+
+
+func _begin_menu_music() -> void:
+	await get_tree().create_timer(MENU_MUSIC_DELAY_SECONDS).timeout
+	if not is_inside_tree():
+		return
+	_menu_music.play()
 
 
 func _on_play_pressed() -> void:

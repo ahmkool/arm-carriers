@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=3 uid="uid://c8desagautixq"]
+[gd_scene load_steps=33 format=3 uid="uid://c8desagautixq"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_7331m"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_k8huu"]
@@ -24,6 +24,7 @@
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_syebc"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="23_obrxm"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="23_xcjup"]
+[ext_resource type="Curve" uid="uid://c8spawnintflat05s" path="res://src/enemy/spawn_interval_flat_0_5s.tres" id="24_flat05s"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_mgs1m")
@@ -151,7 +152,7 @@ script = ExtResource("13_sv5l2")
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12.703827, 0, -2.647747)
 script = ExtResource("14_k8huu")
-interval_spawn = 0.5
+spawn_interval_curve = ExtResource("24_flat05s")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
 

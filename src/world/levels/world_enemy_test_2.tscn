@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=4 uid="uid://2jc60h8dpmd3"]
+[gd_scene load_steps=41 format=4 uid="uid://2jc60h8dpmd3"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_cqwfk"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_tba3d"]
@@ -26,6 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="22_jydnb"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="24_pff6g"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="26_bxx4n"]
+[ext_resource type="Curve" uid="uid://c8spawnintflat1s" path="res://src/enemy/spawn_interval_flat_1s.tres" id="27_flat1s"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_p83lq")
@@ -243,7 +244,7 @@ cast_cooldown = 5.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.740549, 1.9217563, -33.188488)
 script = ExtResource("17_dlxly")
 enemy_scene = ExtResource("18_p83lq")
-interval_spawn = 1.0
+spawn_interval_curve = ExtResource("27_flat1s")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
 

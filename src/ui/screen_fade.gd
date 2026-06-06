@@ -29,7 +29,7 @@ func _ensure_overlay() -> void:
 	_layer = CanvasLayer.new()
 	_layer.layer = FADE_LAYER
 	_layer.process_mode = Node.PROCESS_MODE_ALWAYS
-	get_tree().root.add_child(_layer)
+	get_tree().root.add_child.call_deferred(_layer)
 	_rect = ColorRect.new()
 	_rect.set_anchors_preset(Control.PRESET_FULL_RECT)
 	_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
