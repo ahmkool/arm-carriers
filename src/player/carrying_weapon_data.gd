@@ -83,6 +83,7 @@ func _process_not_carrying() -> bool:
 func _play_weapon_pickup_sound() -> void:
 	var sfx := AudioStreamPlayer3D.new()
 	player_node.add_child(sfx)
+	sfx.bus = "SFX"
 	sfx.stream = RELOAD_SOUND
 	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
 	sfx.play()

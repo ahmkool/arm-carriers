@@ -14,10 +14,12 @@ var pending_saved_checkpoint_id := ""
 
 var press_start_root: Control
 var home_menu_root: Control
+var settings_menu_root: Control
 var main_menu_root: Control
 var level_start_choice_root: Control
 var menu_navigator: GamepadMenuNavigator
 var home_menu_focus: Control
+var settings_menu_focus: Control
 var level_picker_focus: Control
 var level_start_choice_focus: Control
 var level_start_choice_prompt: Label
@@ -26,6 +28,7 @@ var level_start_choice_prompt: Label
 func _ready() -> void:
 	_register_state("pressstart", PressStartState.new())
 	_register_state("homemenu", HomeMenuState.new())
+	_register_state("settingsmenu", SettingsMenuState.new())
 	_register_state("mainmenu", MainMenuState.new())
 	_register_state("levelstartchoice", LevelStartChoiceState.new())
 
@@ -41,20 +44,24 @@ func _unhandled_input(event: InputEvent) -> void:
 func register_menu_ui(
 	press_start: Control,
 	home_menu: Control,
+	settings_menu: Control,
 	main_menu: Control,
 	level_start_choice: Control,
 	navigator: GamepadMenuNavigator,
 	home_focus: Control,
+	settings_focus: Control,
 	level_focus: Control,
 	level_start_focus: Control,
 	level_start_prompt: Label,
 ) -> void:
 	press_start_root = press_start
 	home_menu_root = home_menu
+	settings_menu_root = settings_menu
 	main_menu_root = main_menu
 	level_start_choice_root = level_start_choice
 	menu_navigator = navigator
 	home_menu_focus = home_focus
+	settings_menu_focus = settings_focus
 	level_picker_focus = level_focus
 	level_start_choice_focus = level_start_focus
 	level_start_choice_prompt = level_start_prompt
@@ -147,6 +154,7 @@ func show_menu_screen(screen_name: String) -> void:
 	var key := screen_name.to_lower()
 	set_press_start_visible(key == "pressstart")
 	set_home_menu_visible(key == "homemenu")
+	set_settings_menu_visible(key == "settingsmenu")
 	set_main_menu_visible(key == "mainmenu")
 	set_level_start_choice_visible(key == "levelstartchoice")
 
@@ -161,6 +169,12 @@ func set_home_menu_visible(visible: bool) -> void:
 	if home_menu_root == null:
 		return
 	home_menu_root.visible = visible
+
+
+func set_settings_menu_visible(visible: bool) -> void:
+	if settings_menu_root == null:
+		return
+	settings_menu_root.visible = visible
 
 
 func set_main_menu_visible(visible: bool) -> void:
@@ -200,6 +214,9 @@ func _connect_menu_cancel() -> void:
 func _on_menu_cancel() -> void:
 	if _current_state_name == "homemenu":
 		transition_to("pressstart")
+		return
+	if _current_state_name == "settingsmenu":
+		transition_to("homemenu")
 		return
 	if _current_state_name == "mainmenu":
 		transition_to("homemenu")

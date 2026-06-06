@@ -27,6 +27,7 @@ scale_curve = SubResource("CurveTexture_ny0ro")
 script = ExtResource("1_damage")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+bus = &"SFX"
 stream = ExtResource("2_gaoic")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]

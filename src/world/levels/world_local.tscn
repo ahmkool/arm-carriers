@@ -940,6 +940,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0.593, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("24_h2fuj")
+bus = &"Music"
 volume_db = -20.14
 autoplay = true
 parameters/looping = false

@@ -92,6 +92,7 @@ mesh = SubResource("ArrayMesh_rvese")
 skeleton = NodePath("")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+bus = &"SFX"
 stream = ExtResource("2_60kgx")
 autoplay = true
 

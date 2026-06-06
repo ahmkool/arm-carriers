@@ -1,8 +1,9 @@
-[gd_scene load_steps=16 format=3 uid="uid://c8pausemenu01"]
+[gd_scene load_steps=17 format=3 uid="uid://c8pausemenu01"]
 
 [ext_resource type="Script" uid="uid://bfq14wxdjuanp" path="res://src/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="Theme" uid="uid://wgaw3undqvio" path="res://assets/theme/pause_menu_theme.tres" id="2_pause_theme"]
 [ext_resource type="Script" uid="uid://4jigl16qop30" path="res://src/ui/gamepad_menu_navigator.gd" id="3_nav"]
+[ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="4_audio"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_normal"]
 bg_color = Color(0.45, 0.82, 0.35, 1)
@@ -143,10 +144,10 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = -240.0
-offset_top = -160.0
-offset_right = 240.0
-offset_bottom = 160.0
+offset_left = -280.0
+offset_top = -240.0
+offset_right = 280.0
+offset_bottom = 240.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -155,11 +156,42 @@ layout_mode = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Layer/MenuRoot/PanelContainer/MarginContainer"]
 layout_mode = 2
+theme_override_constants/separation = 16
 
 [node name="TitleLabel" type="Label" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Paused"
 horizontal_alignment = 1
+
+[node name="MusicRow" type="HBoxContainer" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/MusicRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/MusicRow"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SfxRow" type="HBoxContainer" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="SfxLabel" type="Label" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/SfxRow"]
+custom_minimum_size = Vector2(72, 0)
+layout_mode = 2
+text = "SFX"
+
+[node name="SfxSlider" type="HSlider" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/SfxRow"]
+custom_minimum_size = Vector2(220, 0)
+layout_mode = 2
+size_flags_horizontal = 3
 
 [node name="ContinueButton" type="Button" parent="Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -184,3 +216,8 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_menu_pressed")
 theme_override_styles/hover = SubResource("StyleBoxFlat_menu_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_menu_focus")
 text = "Back to menu"
+
+[node name="AudioVolumeControls" type="Node" parent="." node_paths=PackedStringArray("music_slider", "sfx_slider")]
+script = ExtResource("4_audio")
+music_slider = NodePath("../Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/MusicRow/MusicSlider")
+sfx_slider = NodePath("../Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/SfxRow/SfxSlider")

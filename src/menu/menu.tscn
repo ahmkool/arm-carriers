@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=16 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://xt4pg84h817t" path="res://assets/sprites/menu/skeleton_ground.png" id="7_g1jg8"]
 [ext_resource type="Texture2D" uid="uid://biv0lpvm51c77" path="res://assets/sprites/menu/logo.png" id="8_fnvh6"]
 [ext_resource type="AudioStream" uid="uid://dao716u2k2fw0" path="res://assets/music/peritune_title_screen.mp3" id="11_2qbme"]
+[ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="12_audio"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -304,9 +305,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = -86.0
+offset_top = -120.0
 offset_right = 200.0
-offset_bottom = 86.0
+offset_bottom = 120.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -330,10 +331,98 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Play"
 
+[node name="SettingsButton" type="Button" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Settings"
+
 [node name="QuitButton" type="Button" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Quit"
+
+[node name="SettingsMenuRoot" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="SettingsMenuRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -280.0
+offset_top = -160.0
+offset_right = 280.0
+offset_bottom = 160.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="SettingsMenuRoot/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SettingsMenuRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Settings"
+horizontal_alignment = 1
+
+[node name="MusicRow" type="HBoxContainer" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="MusicLabel" type="Label" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/MusicRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "Music"
+
+[node name="MusicSlider" type="HSlider" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/MusicRow"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SfxRow" type="HBoxContainer" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="SfxLabel" type="Label" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/SfxRow"]
+custom_minimum_size = Vector2(120, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "SFX"
+
+[node name="SfxSlider" type="HSlider" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/SfxRow"]
+custom_minimum_size = Vector2(280, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="BackButton" type="Button" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Back"
+
+[node name="AudioVolumeControls" type="Node" parent="SettingsMenuRoot" node_paths=PackedStringArray("music_slider", "sfx_slider")]
+script = ExtResource("12_audio")
+music_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/MusicRow/MusicSlider")
+sfx_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/SfxRow/SfxSlider")
 
 [node name="LevelStartChoiceRoot" type="Control" parent="."]
 visible = false
@@ -505,4 +594,5 @@ level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 stream = ExtResource("11_2qbme")
 volume_db = -14.197
 autoplay = true
+bus = &"Music"
 parameters/looping = false
