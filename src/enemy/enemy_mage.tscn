@@ -409,6 +409,7 @@ collision_mask = 4
 script = ExtResource("1_36sbk")
 
 [node name="Mage_Warrior" type="Node3D" parent="."]
+visible = false
 
 [node name="Rig_Medium" type="Node3D" parent="Mage_Warrior"]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)

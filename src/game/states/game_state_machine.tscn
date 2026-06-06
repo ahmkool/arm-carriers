@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://l3q0p7d7n4fk"]
+[gd_scene load_steps=9 format=3 uid="uid://l3q0p7d7n4fk"]
 
 [ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="1_ftqqt"]
 [ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="2_atqkm"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="5_kqbwc"]
 [ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="6_nubt4"]
 [ext_resource type="Script" uid="uid://q7qye2hb65af" path="res://src/game/states/local/resetting_checkpoint.gd" id="7_3r33x"]
+[ext_resource type="Script" uid="uid://c8levelfinished01" path="res://src/game/states/local/level_finished.gd" id="8_lvfns"]
 
 [node name="GameStateMachine" type="Node"]
 script = ExtResource("1_ftqqt")
@@ -27,6 +28,9 @@ script = ExtResource("5_kqbwc")
 
 [node name="GameOverLost" type="Node" parent="."]
 script = ExtResource("6_nubt4")
+
+[node name="LevelFinished" type="Node" parent="."]
+script = ExtResource("8_lvfns")
 
 [node name="ResettingCheckpoint" type="Node" parent="."]
 script = ExtResource("7_3r33x")

@@ -7,6 +7,7 @@ const CAST_DURATION_SECONDS := 2.0
 var _cast_time_remaining := 0.0
 
 func enter() -> void:
+	super.enter()
 	_cast_time_remaining = CAST_DURATION_SECONDS
 	enemy.velocity = Vector3.ZERO
 	if enemy.footsteps_particles:

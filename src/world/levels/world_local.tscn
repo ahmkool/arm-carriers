@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=42 format=4 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
@@ -12,6 +12,7 @@
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="17_4muf4"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
+[ext_resource type="Script" path="res://src/events/level_finished_event.gd" id="20_iv26f"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_kj30a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="20_n7rb1"]
 [ext_resource type="MeshLibrary" uid="uid://d3kkksaa5a6ce" path="res://assets/mesh_library/tiles_Color1.tres" id="21_4muf4"]
@@ -103,7 +104,10 @@ shadow_mesh = SubResource("ArrayMesh_bw5yx")
 [sub_resource type="BoxShape3D" id="BoxShape3D_4muf4"]
 size = Vector3(2.1982422, 3.255005, 0.31640625)
 
-[node name="WorldLocal3" type="Node3D"]
+[sub_resource type="BoxShape3D" id="BoxShape3D_h2fuj"]
+size = Vector3(10, 3, 9)
+
+[node name="WorldLocal" type="Node3D"]
 script = ExtResource("1_1chlw")
 
 [node name="CameraFollowRig" type="Node3D" parent="."]
@@ -197,27 +201,22 @@ script = ExtResource("14_h2fuj")
 
 [node name="EnemyLocal" parent="TestEnemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.851555, 0, -5.5580826)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal2" parent="TestEnemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.05615, 0, -5.5580826)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal3" parent="TestEnemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.460549, 0, -5.5580826)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal4" parent="TestEnemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.89029, 0, 1.3649864)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal5" parent="TestEnemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.207027, 0, 0.28055573)
-speed = null
 is_offensive = false
 
 [node name="EnemyGroup2" type="Node3D" parent="TestEnemies"]
@@ -228,22 +227,18 @@ script = ExtResource("14_h2fuj")
 
 [node name="EnemyLocal" parent="TestEnemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.208807, 0, 1.8665352)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal2" parent="TestEnemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.140326, 0, -10.35825)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal3" parent="TestEnemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 9.921222, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal4" parent="TestEnemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -10.496037, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="SurvivalEnemyGroup" type="Node3D" parent="TestEnemies"]
@@ -295,67 +290,54 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 65)
 
 [node name="EnemyLocal" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.208807, 0, 1.8665352)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal5" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.208809, 0, 4.866535)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal2" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 17.140327, 0, 4.6417503)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal13" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 17.140327, 0, 0.64175034)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal3" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 9.921222, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal11" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 12.921223, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal12" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 16.921223, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal4" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -10.496037, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal6" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -8.496037, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal7" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -4.4960365, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal8" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -0.49603653, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal9" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, 3.5039635, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal10" parent="TestEnemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, 6.5039635, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyGroup4" type="Node3D" parent="TestEnemies"]
@@ -367,97 +349,78 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.000002, 0, -2)
 
 [node name="EnemyLocal" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.208809, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal5" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.208809, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal14" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.208809, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal15" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.2088089, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal16" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.7911911, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal17" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.791191, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal18" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.791191, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal19" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.791191, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal2" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 14.140327, 0, -11.35825)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal13" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 17.140327, 0, -11.35825)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal3" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 9.921222, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal11" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 12.921223, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal12" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 16.921223, 0, 8.320618)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal4" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -10.496037, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal6" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -7.4960403, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal7" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -4.4960365, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal8" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -0.49603653, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal9" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, 3.5039635, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal10" parent="TestEnemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, 6.5039635, 0, 8.329853)
-speed = null
 is_offensive = false
 
 [node name="EnemyGroup5" type="Node3D" parent="TestEnemies"]
@@ -469,28 +432,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.000002, 0, -2)
 
 [node name="EnemyLocal" parent="TestEnemies/EnemyGroup5/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -5.9073715, 0, -10.702127)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal5" parent="TestEnemies/EnemyGroup5/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.7911987, 0, -11.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal14" parent="TestEnemies/EnemyGroup5/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6.208809, 0, -5.133465)
-speed = null
 is_offensive = false
 
 [node name="EnemyLocal15" parent="TestEnemies/EnemyGroup5/InstancedEnemies" instance=ExtResource("13_dvbv8")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.7911987, 0, -5.133465)
-speed = null
 is_offensive = false
 
 [node name="SurvivalEnemyGroup3" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 134.29617, 0, -31.647747)
 script = ExtResource("17_4muf4")
-fight_duration = 20.0
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup3"]
 
@@ -789,6 +747,9 @@ enemy_group = NodePath("../../../TestEnemies/EnemyGroup4")
 script = ExtResource("23_qrvdl")
 enemy_group = NodePath("../../../TestEnemies/SurvivalEnemyGroup3")
 
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("20_iv26f")
+
 [node name="BridgePlatform" parent="Level" instance=ExtResource("22_h2fuj")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5060863, -3.9927697, -40.493908)
 
@@ -964,6 +925,14 @@ text = "YOU DID
 IT !"
 font_size = 55
 
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 143, 0, -49)
+script = ExtResource("24_iv26f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1.5)
+shape = SubResource("BoxShape3D_h2fuj")
+
 [node name="Weapon" type="Node3D" parent="."]
 
 [node name="Bazooka" parent="Weapon" instance=ExtResource("20_kj30a")]
@@ -997,3 +966,4 @@ parameters/looping = false
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger4" to="Level/Events/CloseBridge4" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger5" to="Level/Events/CloseBridge5" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger6" to="Level/Events/CloseBridge7" method="trigger"]
+[connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]

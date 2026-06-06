@@ -4,6 +4,7 @@ const POST_APPEAR_DELAY_SECONDS := 2.0
 
 
 func enter() -> void:
+	super.enter()
 	enemy.velocity = Vector3.ZERO
 	if enemy.footsteps_particles:
 		enemy.footsteps_particles.emitting = false
