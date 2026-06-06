@@ -27,6 +27,7 @@ var action_accept: String
 var action_action: String
 var action_shoot: String
 var action_dash: String
+var _animate_on_dead_enter: bool = true
 var is_dead: bool:
 	get:
 		return is_in_dead_state()
@@ -80,9 +81,10 @@ func is_dashing() -> bool:
 	return player_state_machine.current_state.name.to_lower() == "dashing"
 
 
-func die() -> void:
+func die(animate_death: bool = true) -> void:
 	if is_in_dead_state():
 		return
+	_animate_on_dead_enter = animate_death
 	velocity = Vector3.ZERO
 	carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 	weapon_carrier_pin_joint.set_node_b("")

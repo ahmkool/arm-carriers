@@ -1,16 +1,28 @@
 extends GameState
 
+const MESSAGE_HOLD_SECONDS := 3.0
+const FADE_TO_MENU_DURATION := 0.75
+
 
 func enter() -> void:
-	self.world.get_node("UI/InfoMessage").show()
-	self.world.get_node("UI/InfoMessage/PanelContainer/MarginContainer/InfoLabel").text = "Level Complete! - Press Start to return to the main menu"
+	GameplayInput.lock()
+	world.get_node("UI/InfoMessage").show()
+	world.get_node("UI/InfoMessage/PanelContainer/MarginContainer/InfoLabel").text = "Level Complete - congratulations !"
+	_begin_return_to_menu_sequence()
+
 
 func exit() -> void:
-	pass
+	GameplayInput.unlock()
 
-func update(_delta: float) -> void:
-	pass
 
-func physics_update(_delta: float) -> void:
-	if Input.is_action_just_pressed("p0_start") or Input.is_action_just_pressed("p1_start"):
-		SessionFlow.go_to_main_menu()
+func _begin_return_to_menu_sequence() -> void:
+	await get_tree().create_timer(MESSAGE_HOLD_SECONDS).timeout
+	if not is_inside_tree():
+		return
+	ScreenFade.fade_to_black(FADE_TO_MENU_DURATION)
+	await get_tree().create_timer(FADE_TO_MENU_DURATION).timeout
+	if not is_inside_tree():
+		return
+	GameplayInput.unlock()
+	ScreenFade.fade_from_black(FADE_TO_MENU_DURATION)
+	SessionFlow.go_to_main_menu()

@@ -19,7 +19,7 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 
 	CameraFeedback.add_trauma_hurt()
-	player.die()
+	player.die(false)
 	gsm.transition_to("gameoverlost")
 
 

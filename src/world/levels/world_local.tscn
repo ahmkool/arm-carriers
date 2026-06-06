@@ -599,11 +599,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 [node name="Level" type="Node" parent="."]
 
 [node name="FallArea" type="Area3D" parent="Level"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -7.425766, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.726822, 0)
 script = ExtResource("18_oc40d")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.378174, 3.3051434, -65.25947)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.378174, 4.5282993, -65.25947)
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="GridMapDecoration" type="GridMap" parent="Level"]
@@ -940,9 +940,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0.593, 0)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("24_h2fuj")
-bus = &"Music"
 volume_db = -20.14
 autoplay = true
+bus = &"Music"
 parameters/looping = false
 
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
