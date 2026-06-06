@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://247visav4a1w"]
+[gd_scene load_steps=23 format=3 uid="uid://247visav4a1w"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_2yqsx"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_sdrds"]
@@ -6,14 +6,9 @@
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_b2628"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_if4wr"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_606gc"]
-[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="7_fh1ny"]
-[ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="8_vcmm5"]
-[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="9_fcsl4"]
-[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="10_jhrss"]
-[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="11_75epk"]
-[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="12_w0tno"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="14_sdrds"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_8nb1m"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="17_m3hw7"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="17_xqneh"]
 [ext_resource type="MeshLibrary" uid="uid://d3kkksaa5a6ce" path="res://assets/mesh_library/tiles_Color1.tres" id="18_lxar6"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="19_1oqbg"]
@@ -115,31 +110,11 @@ environment = SubResource("Environment_msrya")
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
 shadow_enabled = true
 
-[node name="GameStateMachine" type="Node" parent="."]
-script = ExtResource("7_fh1ny")
-initial_state_path = NodePath("AwaitWorldLocalReady")
-
-[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
-script = ExtResource("8_vcmm5")
-
-[node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
-script = ExtResource("9_fcsl4")
-
-[node name="Playing" type="Node" parent="GameStateMachine"]
-script = ExtResource("10_jhrss")
-
-[node name="WaitingForGameToStart" type="Node" parent="GameStateMachine"]
-script = ExtResource("11_75epk")
-
-[node name="GameOverLost" type="Node" parent="GameStateMachine"]
-script = ExtResource("12_w0tno")
-
 [node name="Enemies" type="Node" parent="."]
 
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.283951, 1.9217563, -3.8764763)
 script = ExtResource("14_sdrds")
-interval_spawn = 1.0
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
 
@@ -235,5 +210,7 @@ enemy_group = NodePath("../../Enemies/SurvivalEnemyGroup")
 
 [node name="Players" parent="." instance=ExtResource("22_sdrds")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6565056, 0)
+
+[node name="GameStateMachine" parent="." instance=ExtResource("17_m3hw7")]
 
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Events/MakeEnemiesGroup2Offensive" method="trigger"]

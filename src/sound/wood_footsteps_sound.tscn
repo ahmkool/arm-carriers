@@ -30,4 +30,5 @@ stream_11/stream = ExtResource("12_wood12")
 
 [node name="WoodFootstepsSound" type="AudioStreamPlayer3D"]
 stream = SubResource("AudioStreamRandomizer_wood")
+bus = &"SFX"
 volume_db = -10.0

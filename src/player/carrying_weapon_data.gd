@@ -9,6 +9,7 @@ extends Node
 signal weapon_dropped()
 
 const RELOAD_SOUND := preload("res://assets/sounds/ammo/reload.wav")
+const SKIP_PICKUP_DROP := true
 
 enum CanCarryStatus {
 	CAN_CARRY_SHOOTER,
@@ -56,7 +57,9 @@ func _process_not_carrying() -> bool:
 		
 	if GameplayInput.is_locked() or not Input.is_action_just_pressed(player_node.action_action):
 		return false
-	
+	if SKIP_PICKUP_DROP:
+		return false
+
 	var world_node = player_node.get_parent().get_parent()
 	var big_weapon_node: BigWeapon = world_node.get_node("Weapon").get_child(0) as BigWeapon
 	var pick_and_drop_handler: PickAndDropHandler = big_weapon_node.get_node("PickAndDropHandler")
@@ -80,6 +83,7 @@ func _process_not_carrying() -> bool:
 func _play_weapon_pickup_sound() -> void:
 	var sfx := AudioStreamPlayer3D.new()
 	player_node.add_child(sfx)
+	sfx.bus = "SFX"
 	sfx.stream = RELOAD_SOUND
 	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
 	sfx.play()
@@ -133,7 +137,9 @@ func _process_carrying() -> bool:
 		
 	if GameplayInput.is_locked() or not Input.is_action_just_pressed(player_node.action_action):
 		return false
-	
+	if SKIP_PICKUP_DROP:
+		return false
+
 	var world_node = player_node.get_parent().get_parent()
 	if can_carry_status == CanCarryStatus.CARRYING_SHOOTER:
 		can_carry_status = CanCarryStatus.NO_WEAPON_AVAILABLE

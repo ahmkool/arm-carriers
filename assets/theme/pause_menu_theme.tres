@@ -1,0 +1,46 @@
+[gd_resource type="Theme" load_steps=3 format=3 uid="uid://wgaw3undqvio"]
+
+[ext_resource type="FontFile" uid="uid://dgsw8vp0k4tvk" path="res://assets/fonts/Lilita_One/LilitaOne-Regular.ttf" id="1_font"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
+content_margin_left = 14.0
+content_margin_top = 12.0
+content_margin_right = 14.0
+content_margin_bottom = 12.0
+bg_color = Color(0.13, 0.15, 0.22, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.85, 0.72, 0.42, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+shadow_color = Color(0, 0, 0, 0.42)
+shadow_size = 6
+shadow_offset = Vector2(3, 3)
+
+[resource]
+default_font = ExtResource("1_font")
+default_font_size = 18
+Button/colors/font_color = Color(0.98, 0.97, 0.94, 1)
+Button/colors/font_hover_color = Color(1, 1, 1, 1)
+Button/colors/font_pressed_color = Color(0.92, 0.91, 0.88, 1)
+Button/colors/font_shadow_color = Color(0.05, 0.07, 0.12, 0.5)
+Button/constants/shadow_offset_x = 2
+Button/constants/shadow_offset_y = 2
+Button/font_sizes/font_size = 32
+Button/fonts/font = ExtResource("1_font")
+Label/colors/font_color = Color(0.96, 0.93, 0.86, 1)
+Label/colors/font_shadow_color = Color(0.05, 0.07, 0.12, 0.5)
+Label/constants/shadow_offset_x = 2
+Label/constants/shadow_offset_y = 2
+Label/font_sizes/font_size = 44
+Label/fonts/font = ExtResource("1_font")
+MarginContainer/constants/margin_bottom = 16
+MarginContainer/constants/margin_left = 16
+MarginContainer/constants/margin_right = 16
+MarginContainer/constants/margin_top = 16
+PanelContainer/styles/panel = SubResource("StyleBoxFlat_panel")
+VBoxContainer/constants/separation = 12

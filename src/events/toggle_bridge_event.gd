@@ -56,8 +56,11 @@ func _complete_event() -> void:
 		if not is_instance_valid(platform):
 			continue
 		var animation_player := platform.get_node_or_null("AnimationPlayer") as AnimationPlayer
+		var animation_to_play: String = "complete"
+		if event_type == EventType.CLOSE_BRIDGE:
+			animation_to_play = "bottom"
 		if animation_player:
-			animation_player.play(&"complete")
+			animation_player.play(animation_to_play)
 
 
 func _compute_platforms_focal_point() -> Vector3:

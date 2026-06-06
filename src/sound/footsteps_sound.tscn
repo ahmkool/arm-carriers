@@ -22,4 +22,5 @@ stream_7/stream = ExtResource("8_grass08")
 
 [node name="FootstepsSound" type="AudioStreamPlayer3D"]
 stream = SubResource("AudioStreamRandomizer_br3kr")
+bus = &"SFX"
 volume_db = -10.0

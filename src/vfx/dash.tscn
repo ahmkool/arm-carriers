@@ -6,3 +6,4 @@
 script = ExtResource("1_dash")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+bus = &"SFX"

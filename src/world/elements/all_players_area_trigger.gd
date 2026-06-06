@@ -11,10 +11,16 @@ var _inside_ids: Dictionary = {}
 var _emitted_for_current_overlap := false
 
 func _reset() -> void:
-	set_deferred("monitoring", true)
-	set_deferred("monitorable", true)
 	_inside_ids.clear()
 	_emitted_for_current_overlap = false
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
+
+func _mark_area_as_inactive() -> void:
+	_inside_ids.clear()
+	_emitted_for_current_overlap = true
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
 
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
@@ -25,7 +31,11 @@ func _on_body_entered(body: Node3D) -> void:
 	var player := body as PlayerLocal
 	if player == null:
 		return
+	# if player is dead return:
+	if player.is_in_dead_state():
+		return
 	_inside_ids[player.player_id] = true
+	print("All players inside: ", _inside_ids)
 	_try_emit_all_inside()
 
 
@@ -54,5 +64,6 @@ func _try_emit_all_inside() -> void:
 		return
 	_emitted_for_current_overlap = true
 	all_players_inside.emit()
+	print("Emitting all inside !")
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)

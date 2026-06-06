@@ -1,26 +1,21 @@
-[gd_scene load_steps=27 format=3 uid="uid://da5h1xiphyi5d"]
+[gd_scene load_steps=22 format=3 uid="uid://da5h1xiphyi5d"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_i8gtj"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_2s0mp"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="3_0pise"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="4_uv4m7"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_n1pwe"]
-[ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="6_xjdqa"]
-[ext_resource type="Script" uid="uid://b1rccall5h4qg" path="res://src/game/states/local/waiting_for_players.gd" id="7_jhlcr"]
-[ext_resource type="Script" uid="uid://di2sw6xmvmf0f" path="res://src/game/states/local/playing.gd" id="8_mh6p5"]
-[ext_resource type="Script" uid="uid://csn8iroqrbr03" path="res://src/game/states/local/waiting_for_game_to_start.gd" id="9_2nr37"]
-[ext_resource type="Script" uid="uid://by8imkbmy8i0l" path="res://src/game/states/local/game_over_lost.gd" id="10_yt2c5"]
-[ext_resource type="Script" uid="uid://fw1n66kmaerp" path="res://src/player/players.gd" id="11_x4m5b"]
+[ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_0pise"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_cp7ye"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="13_o1f2a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_cwww3"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="14_i8gtj"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_dpu70"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="17_u7kdl"]
 [ext_resource type="MeshLibrary" uid="uid://bgx3parunbk2e" path="res://assets/mesh_library/tiles_all.tres" id="18_2s0mp"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_i8gtj"]
 [ext_resource type="PackedScene" uid="uid://lilxckjevvd5" path="res://src/weapon/saw.tscn" id="19_2s0mp"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
-[ext_resource type="Script" path="res://src/game/states/local/await_world_local_ready.gd" id="24_awaitwl"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_n1pwe")
@@ -107,6 +102,8 @@ text = "Status"
 layout_mode = 2
 text = "Status"
 
+[node name="PauseMenu" parent="UI" instance=ExtResource("6_0pise")]
+
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")
 
@@ -114,27 +111,7 @@ environment = SubResource("Environment_msrya")
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
 shadow_enabled = true
 
-[node name="GameStateMachine" type="Node" parent="."]
-script = ExtResource("6_xjdqa")
-initial_state_path = NodePath("AwaitWorldLocalReady")
-
-[node name="AwaitWorldLocalReady" type="Node" parent="GameStateMachine"]
-script = ExtResource("24_awaitwl")
-
-[node name="WaitingForPlayers" type="Node" parent="GameStateMachine"]
-script = ExtResource("7_jhlcr")
-
-[node name="Playing" type="Node" parent="GameStateMachine"]
-script = ExtResource("8_mh6p5")
-
-[node name="WaitingForGameToStart" type="Node" parent="GameStateMachine"]
-script = ExtResource("9_2nr37")
-
-[node name="GameOverLost" type="Node" parent="GameStateMachine"]
-script = ExtResource("10_yt2c5")
-
-[node name="Players" type="Node3D" parent="."]
-script = ExtResource("11_x4m5b")
+[node name="GameStateMachine" parent="." instance=ExtResource("17_u7kdl")]
 
 [node name="Enemies" type="Node" parent="."]
 

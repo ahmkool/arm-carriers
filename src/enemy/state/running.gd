@@ -1,6 +1,7 @@
 extends EnemyState
 
 func enter() -> void:
+	super.enter()
 	if enemy.footsteps_particles:
 		enemy.footsteps_particles.emitting = true
 

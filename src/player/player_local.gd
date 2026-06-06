@@ -10,6 +10,7 @@ const JUMP_VELOCITY = 4.5
 ## Matches `LocomotionBlend` (AnimationNodeBlend2) in mannequin_medium.tscn: input 0 = idle, 1 = run.
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/LocomotionBlend/blend_amount"
 const ANIM_PARAM_DEAD_BLEND := &"parameters/DeadBlend/blend_amount"
+const ANIM_PARAM_DEAD_ONESHOT_REQUEST := &"parameters/DeadOneShot/request"
 
 @onready var animation_tree: AnimationTree = $Mannequin_Medium/AnimationTree
 @onready var carrying_weapon_data: CarryingWeaponData = $CarryingWeaponData
@@ -26,7 +27,9 @@ var action_accept: String
 var action_action: String
 var action_shoot: String
 var action_dash: String
-var is_dead := false
+var is_dead: bool:
+	get:
+		return is_in_dead_state()
 
 @onready var player_state_machine: PlayerStateMachine = $PlayerStateMachine
 
@@ -35,6 +38,7 @@ func _ready():
 	if animation_tree:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
+		animation_tree.set(ANIM_PARAM_DEAD_ONESHOT_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
 	action_left = "p%s_left" % device_id
 	action_right = "p%s_right" % device_id
 	action_up = "p%s_up" % device_id
@@ -49,6 +53,8 @@ func _ready():
 
 ## Drives blend tree: 0 = idle, 1 = full run, from horizontal speed / SPEED.
 func update_locomotion_blend() -> void:
+	if is_in_dead_state():
+		return
 	if not animation_tree or not animation_tree.active:
 		return
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
@@ -75,9 +81,8 @@ func is_dashing() -> bool:
 
 
 func die() -> void:
-	if is_dead:
+	if is_in_dead_state():
 		return
-	is_dead = true
 	velocity = Vector3.ZERO
 	carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 	weapon_carrier_pin_joint.set_node_b("")
@@ -85,9 +90,12 @@ func die() -> void:
 		$UI.hide()
 	player_state_machine.transition_to("dead")
 
+func is_in_dead_state() -> bool:
+	if not player_state_machine:
+		return false
+	return player_state_machine.current_state.name.to_lower() == "dead"
 
 func revive() -> void:
-	is_dead = false
 	velocity = Vector3.ZERO
 	carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 	weapon_carrier_pin_joint.set_node_b("")
@@ -95,6 +103,7 @@ func revive() -> void:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
 		animation_tree.set(ANIM_PARAM_LOCOMOTION_BLEND, 0.0)
+		animation_tree.set(ANIM_PARAM_DEAD_ONESHOT_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
 	if has_node("UI"):
 		$UI.show()
 	player_state_machine.transition_to("idle")
@@ -103,4 +112,5 @@ func revive() -> void:
 func play_dead_animation() -> void:
 	if not animation_tree or not animation_tree.active:
 		return
+	animation_tree.set(ANIM_PARAM_DEAD_ONESHOT_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 	animation_tree.set(ANIM_PARAM_DEAD_BLEND, 1.0)

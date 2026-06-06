@@ -238,6 +238,7 @@ speed = 3.0
 is_offensive = null
 
 [node name="skeleton_flying_head" type="Node3D" parent="."]
+visible = false
 transform = Transform3D(0.6, 0, 0, 0, 0.59881604, -0.037674315, 0, 0.037674315, 0.59881604, 0, 0, 0)
 
 [node name="Skeleton_Minion_Eyes" type="MeshInstance3D" parent="skeleton_flying_head"]

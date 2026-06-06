@@ -8,6 +8,7 @@ const ENEMY_DAMAGE_SCENE := preload("res://src/vfx/enemy_damage.tscn")
 
 
 func enter() -> void:
+	super.enter()
 	enemy.play_dead_animation()
 	enemy.velocity = Vector3.ZERO
 	_disable_collisions()

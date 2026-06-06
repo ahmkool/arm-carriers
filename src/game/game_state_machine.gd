@@ -33,7 +33,7 @@ func _print_connected_joypads() -> void:
 
 func start():
 	current = get_node(initial_state_path) as GameState
-	print("Starting game state: ", current.name)
+	#print("Starting game state: ", current.name)
 	current.enter()
 
 func transition_to(state_name: String):
@@ -42,7 +42,7 @@ func transition_to(state_name: String):
 		return
 	if current:
 		current.exit()
-	print("Transitioning to game state: ", state_name)
+	#print("Transitioning to game state: ", state_name)
 	current = states[state_name.to_lower()]
 	current.enter()
 
