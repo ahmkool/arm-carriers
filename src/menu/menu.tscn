@@ -544,12 +544,11 @@ script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_04.tscn"
 
 [node name="SawCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
-visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Saw carry"
 script = ExtResource("2_56xr1")
-level_scene_path = "res://src/world/levels/world_local_saw_carry.tscn"
+level_scene_path = "uid://dntri6ipdywfo"
 
 [node name="EnemyTestLevel" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -601,6 +600,5 @@ level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_ep4cv")
 volume_db = -14.197
-autoplay = false
 bus = &"Music"
 parameters/looping = false

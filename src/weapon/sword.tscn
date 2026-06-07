@@ -1,8 +1,9 @@
-[gd_scene load_steps=17 format=4 uid="uid://bgdgrubg87row"]
+[gd_scene load_steps=18 format=4 uid="uid://bgdgrubg87row"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_q1t8x"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="4_ptwm4"]
 [ext_resource type="Script" uid="uid://dbijqxrfnj5se" path="res://src/weapon/sword_specifics.gd" id="4_q1t8x"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="6_wpnmv"]
 [ext_resource type="Texture2D" uid="uid://bvxbwotn0sp58" path="res://assets/models/weapon/sword2_saw_forest_kaykit_modular_forest_texture.png" id="5_dc8ne"]
 [ext_resource type="Script" uid="uid://b1sdupmemvn3g" path="res://src/weapon/sword/hit_area.gd" id="5_ywwcy"]
 
@@ -101,6 +102,12 @@ script = ExtResource("1_q1t8x")
 
 [node name="PickAndDropHandler" type="Node3D" parent="."]
 script = ExtResource("4_ptwm4")
+
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("6_wpnmv")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+min_carrier_distance = 1.6
+max_carrier_distance = 3.2
 
 [node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
 

@@ -1,10 +1,11 @@
-[gd_scene load_steps=19 format=4 uid="uid://lilxckjevvd5"]
+[gd_scene load_steps=20 format=4 uid="uid://lilxckjevvd5"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_b3w3s"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="2_tui83"]
 [ext_resource type="Texture2D" uid="uid://ewfhboadsevf" path="res://assets/models/weapon/saw_forest_kaykit_modular_forest_texture.png" id="3_py2tq"]
 [ext_resource type="Script" uid="uid://dt14qjokdf4nr" path="res://src/weapon/saw/saw_specifics.gd" id="3_qf4v4"]
 [ext_resource type="Script" uid="uid://dbf4um7k2pf2d" path="res://src/weapon/saw/hit_box.gd" id="4_b3w3s"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="5_wpnmv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ab1mk"]
 size = Vector3(2.0615234, 1.7197266, 2.1870117)
@@ -171,14 +172,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2780561, 0, -0.60760236)
 [node name="Target" type="Node3D" parent="PickAndDropHandler/LookVector"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.731182, 0, -0.6281984)
 
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("5_wpnmv")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+min_carrier_distance = 5.5
+max_carrier_distance = 7.0
+carrier_drag_ratio = 0.5
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2783661, 0, -0.6558118)
 shape = SubResource("BoxShape3D_dc8ne")
 
-[node name="WeaponSpecifics" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+[node name="WeaponSpecifics" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2758595, -1.1920929e-07, -0.62745786)
 script = ExtResource("3_qf4v4")
-pick_and_drop_handler = NodePath("../PickAndDropHandler")
 
 [node name="HitBox" type="Area3D" parent="WeaponSpecifics"]
 collision_layer = 2
