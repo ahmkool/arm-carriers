@@ -2,8 +2,8 @@ class_name PickAndDropHandler
 extends Node3D
 
 @onready var players: Players = LevelNodes.get_players(self)
-@onready var shooter_position_marker = $ShooterPosition
-@onready var direction_setter_position_marker = $DirectionSetterPosition
+@onready var shooter_position_marker: Marker3D = $ShooterPosition
+@onready var direction_setter_position_marker: Marker3D = $DirectionSetterPosition
 @onready var look_vector_source: Node3D = $LookVector/Source
 @onready var look_vector_target: Node3D = $LookVector/Target
 
@@ -51,15 +51,15 @@ func on_body_exited_direction_setter_zone(body: Node3D):
 		return
 	player.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 
-func _check_not_already_carrying(player: PlayerLocal):
-	var carry_info = get_carry_info()
+func _check_not_already_carrying(player: PlayerLocal) -> bool:
+	var carry_info: CarryInfo = get_carry_info()
 	if carry_info.main_carrier == player:
 		return true
 	if carry_info.secondary_carrier == player:
 		return true
 	return false
 	
-func get_carry_info():
+func get_carry_info() -> CarryInfo:
 	var carry_info: CarryInfo = CarryInfo.new()
 	if players == null:
 		return carry_info

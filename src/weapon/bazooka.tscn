@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=4 uid="uid://cq5v348mrgy7q"]
+[gd_scene load_steps=11 format=4 uid="uid://cq5v348mrgy7q"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_th40a"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="3_8k35n"]
 [ext_resource type="Script" uid="uid://dvw83kdn7iel2" path="res://src/weapon/bazooka_specifics.gd" id="3_hpcti"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="4_wpnmv"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h5d61"]
 resource_name = "Main"
@@ -81,6 +82,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12.1723585)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.054214478, 0.1071167, -0.06695557)
 shape = SubResource("BoxShape3D_cmlmn")
+
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("4_wpnmv")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
 
 [node name="PickAndDropHandler" type="Node3D" parent="."]
 script = ExtResource("3_8k35n")
