@@ -177,7 +177,6 @@ script = ExtResource("5_wpnmv")
 pick_and_drop_handler = NodePath("../PickAndDropHandler")
 min_carrier_distance = 5.5
 max_carrier_distance = 7.0
-carrier_drag_ratio = 0.5
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2783661, 0, -0.6558118)
@@ -191,6 +190,7 @@ script = ExtResource("3_qf4v4")
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("4_b3w3s")
+damage = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/HitBox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.10668945, 0)

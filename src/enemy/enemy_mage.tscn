@@ -1,6 +1,7 @@
-[gd_scene load_steps=64 format=4 uid="uid://bu7ghcfraaja"]
+[gd_scene load_steps=66 format=4 uid="uid://bu7ghcfraaja"]
 
 [ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_36sbk"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="2_health"]
 [ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="1_mage"]
 [ext_resource type="Texture2D" uid="uid://bh4wb78vjnmb0" path="res://assets/characters/Skeleton_Mage_skeleton_texture.png" id="1_uw1rm"]
 [ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="2_keclc"]
@@ -35,6 +36,7 @@
 [ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="32_5bjus"]
 [ext_resource type="Script" uid="uid://81vjno7uh7i4" path="res://src/enemy/state/casting.gd" id="34_w0lih"]
 [ext_resource type="Script" uid="uid://0ntrlhws2o6g" path="res://src/enemy/mage/fireball_emitter.gd" id="35_su138"]
+[ext_resource type="Script" uid="uid://c8k2hitdmg01" path="res://src/enemy/state/taking_damage.gd" id="36_hitdmg"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_o7vus"]
 resource_name = "skeleton"
@@ -664,6 +666,9 @@ script = ExtResource("32_5bjus")
 script = ExtResource("34_w0lih")
 fireball_emitter = NodePath("../../FireballEmitter")
 
+[node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("36_hitdmg")
+
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.5
 target_desired_distance = 0.5
@@ -676,3 +681,6 @@ draw_pass_1 = SubResource("SphereMesh_w0lih")
 [node name="FireballEmitter" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2430093, -1.111675)
 script = ExtResource("35_su138")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")

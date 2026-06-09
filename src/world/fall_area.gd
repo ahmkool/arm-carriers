@@ -18,8 +18,9 @@ func _on_body_entered(body: Node3D) -> void:
 	if gsm.current.name.to_lower() != "playing":
 		return
 
+	player._animate_on_dead_enter = false
 	CameraFeedback.add_trauma_hurt()
-	player.die(false)
+	Health.apply_damage(player, 9999)
 	gsm.transition_to("gameoverlost")
 
 

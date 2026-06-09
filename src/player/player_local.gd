@@ -33,9 +33,11 @@ var is_dead: bool:
 		return is_in_dead_state()
 
 @onready var player_state_machine: PlayerStateMachine = $PlayerStateMachine
+@onready var health: Health = $Health
 
 func _ready():
 	print("PlayerLocal ready, device_id: ", device_id)
+	_bind_health()
 	if animation_tree:
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
@@ -50,6 +52,16 @@ func _ready():
 	action_shoot = "p%s_shoot" % device_id
 	action_dash = "p%s_dash" % device_id
 	player_id = device_id
+
+
+func _bind_health() -> void:
+	if health == null:
+		return
+	health.died.connect(_on_health_died)
+
+
+func _on_health_died(_source_position: Vector3 = Vector3.ZERO) -> void:
+	die(_animate_on_dead_enter)
 
 
 ## Drives blend tree: 0 = idle, 1 = full run, from horizontal speed / SPEED.
@@ -98,6 +110,9 @@ func is_in_dead_state() -> bool:
 	return player_state_machine.current_state.name.to_lower() == "dead"
 
 func revive() -> void:
+	if health != null:
+		health.reset_to_full()
+	_animate_on_dead_enter = true
 	velocity = Vector3.ZERO
 	carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 	weapon_carrier_pin_joint.set_node_b("")

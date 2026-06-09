@@ -30,6 +30,10 @@ func is_in_state(state_name: String) -> bool:
 		return false
 	return current_state == states[key]
 
+
+func has_state(state_name: String) -> bool:
+	return states.has(state_name.to_lower())
+
 func transition_to(state_name: String) -> void:
 	var key := state_name.to_lower()
 	if not states.has(key):
@@ -61,9 +65,23 @@ func _apply_behavior_locomotion_request() -> void:
 	var requested: StringName = enemy.behavior.intent.requested_locomotion
 	if requested.is_empty():
 		return
-	if is_in_state("dead") or is_in_state("casting") or is_in_state("spawning"):
+	if _blocks_behavior_locomotion():
 		return
 	var requested_name := String(requested).to_lower()
 	if current_state != null and current_state.name.to_lower() == requested_name:
 		return
 	transition_to(requested_name)
+
+
+func _blocks_behavior_locomotion() -> bool:
+	if is_in_state("dead"):
+		return true
+	if is_in_state("casting"):
+		return true
+	if is_in_state("spawning"):
+		return true
+	if is_in_state("takingdamage"):
+		return true
+	if is_in_state("takingdamageflying"):
+		return true
+	return false

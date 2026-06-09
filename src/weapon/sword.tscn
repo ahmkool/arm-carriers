@@ -3,9 +3,9 @@
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_q1t8x"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="4_ptwm4"]
 [ext_resource type="Script" uid="uid://dbijqxrfnj5se" path="res://src/weapon/sword_specifics.gd" id="4_q1t8x"]
-[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="6_wpnmv"]
 [ext_resource type="Texture2D" uid="uid://bvxbwotn0sp58" path="res://assets/models/weapon/sword2_saw_forest_kaykit_modular_forest_texture.png" id="5_dc8ne"]
 [ext_resource type="Script" uid="uid://b1sdupmemvn3g" path="res://src/weapon/sword/hit_area.gd" id="5_ywwcy"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="6_wpnmv"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ab1mk"]
 size = Vector3(2.0615234, 1.7197266, 2.1870117)
@@ -103,12 +103,6 @@ script = ExtResource("1_q1t8x")
 [node name="PickAndDropHandler" type="Node3D" parent="."]
 script = ExtResource("4_ptwm4")
 
-[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
-script = ExtResource("6_wpnmv")
-pick_and_drop_handler = NodePath("../PickAndDropHandler")
-min_carrier_distance = 1.6
-max_carrier_distance = 3.2
-
 [node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/ShooterPickArea"]
@@ -135,6 +129,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.8539495)
 [node name="Target" type="Marker3D" parent="PickAndDropHandler/LookVector"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.0905557)
 
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("6_wpnmv")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+max_carrier_distance = 3.2
+
 [node name="WeaponSpecifics" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 2.3491564)
 script = ExtResource("4_q1t8x")
@@ -153,6 +152,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -22.003174)
 collision_layer = 2
 collision_mask = 2
 script = ExtResource("5_ywwcy")
+damage = 3
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/HitArea"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4210855e-14, 0, -3.9787445)

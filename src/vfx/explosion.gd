@@ -2,6 +2,7 @@ extends Node3D
 
 ## Matches `Hitbox/CollisionShape3D` sphere radius when synced in `_ready`.
 @export var damage_radius: float = 3.5
+@export var damage: int = 9999
 
 @onready var debris = $Debris
 @onready var fire = $Fire
@@ -57,5 +58,6 @@ func _on_hitbox_body_entered(body: Node) -> void:
 
 
 func _apply_damage_to_body(body: Node) -> void:
-	if body is EnemyLocal:
-		(body as EnemyLocal).die(global_position)
+	if body is not EnemyLocal:
+		return
+	Health.apply_damage(body, damage, global_position)

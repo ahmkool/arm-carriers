@@ -24,10 +24,13 @@ const ANIM_PARAM_CAST_ONESHOT := &"parameters/OneShot 2/request"
 const ANIM_PARAM_CAST_ONESHOT_ACTIVE := &"parameters/OneShot 2/internal_active"
 const ANIM_PARAM_SPAWN_ONESHOT := &"parameters/OneShotSpawn/request"
 const ANIM_PARAM_SPAWN_ONESHOT_ACTIVE := &"parameters/OneShotSpawn/internal_active"
+const ANIM_PARAM_HIT_ONESHOT := &"parameters/OneShot/request"
 
 var target_player: PlayerLocal
+var _resume_state_after_hit := &"idle"
 
 @onready var enemy_state_machine: EnemyStateMachine = $EnemyStateMachine
+@onready var health: Health = $Health
 @onready var navigation_agent: NavigationAgent3D = $NavigationAgent3D
 @onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
 
@@ -42,6 +45,7 @@ var _has_damage_source_position := false
 signal died
 
 func _ready() -> void:
+	_bind_health()
 	_hit_flash = _get_or_create_hit_flash()
 	behavior = _find_behavior()
 	if animation_tree:
@@ -51,6 +55,140 @@ func _ready() -> void:
 		navigation_agent.target_position = global_position
 	_sync_hit_box_to_offensive_state()
 	update_target_player()
+
+
+func _bind_health() -> void:
+	if health == null:
+		return
+	health.damaged.connect(_on_health_damaged)
+	health.died.connect(_on_health_died)
+
+
+func _on_health_damaged(_amount: int, remaining: int, source_position: Vector3) -> void:
+	if remaining <= 0:
+		return
+	if not is_alive():
+		return
+	if enemy_state_machine != null and enemy_state_machine.is_in_state("spawning"):
+		return
+	_store_damage_source_position(source_position)
+	if _hit_flash == null:
+		_hit_flash = _get_or_create_hit_flash()
+	_hit_flash.trigger()
+	_request_taking_damage_state()
+
+
+func _on_health_died(source_position: Vector3 = Vector3.ZERO) -> void:
+	die(source_position)
+
+
+func _request_taking_damage_state() -> void:
+	if enemy_state_machine == null:
+		return
+	if enemy_state_machine.is_in_state("dead"):
+		return
+	var hit_state := _get_taking_damage_state_name()
+	if hit_state.is_empty():
+		return
+	if _is_in_taking_damage_state():
+		var current := enemy_state_machine.current_state
+		if current != null and current.has_method("refresh_hit"):
+			current.call("refresh_hit")
+		return
+	if enemy_state_machine.current_state != null:
+		var prior_state := enemy_state_machine.current_state.name.to_lower()
+		if _can_resume_after_hit(prior_state):
+			_resume_state_after_hit = StringName(prior_state)
+	enemy_state_machine.transition_to(hit_state)
+
+
+func _can_resume_after_hit(state_name: String) -> bool:
+	if state_name == "dead":
+		return false
+	if state_name == "spawning":
+		return false
+	if state_name == "takingdamage":
+		return false
+	if state_name == "takingdamageflying":
+		return false
+	return true
+
+
+func _get_taking_damage_state_name() -> String:
+	if enemy_state_machine.has_state("takingdamage"):
+		return "takingdamage"
+	if enemy_state_machine.has_state("takingdamageflying"):
+		return "takingdamageflying"
+	return ""
+
+
+func _is_in_taking_damage_state() -> bool:
+	if enemy_state_machine == null:
+		return false
+	return enemy_state_machine.is_in_state("takingdamage") \
+		or enemy_state_machine.is_in_state("takingdamageflying")
+
+
+func resume_state_after_hit() -> void:
+	if enemy_state_machine == null:
+		return
+	if enemy_state_machine.has_state("flyingidle"):
+		_resume_flying_after_hit()
+		return
+	_resume_ground_after_hit()
+
+
+func _resume_flying_after_hit() -> void:
+	if get_move_direction().length_squared() > 0.0001:
+		enemy_state_machine.transition_to("flyingmoving")
+		return
+	enemy_state_machine.transition_to("flyingidle")
+
+
+func _resume_ground_after_hit() -> void:
+	if not is_on_floor():
+		enemy_state_machine.transition_to("falling")
+		return
+	var resume := String(_resume_state_after_hit)
+	if resume.is_empty() or not enemy_state_machine.has_state(resume):
+		_resolve_ground_locomotion_after_hit()
+		return
+	if resume == "running" and get_move_direction().length_squared() < 0.0001:
+		enemy_state_machine.transition_to("idle")
+		return
+	enemy_state_machine.transition_to(resume)
+
+
+func _resolve_ground_locomotion_after_hit() -> void:
+	if not is_on_floor():
+		enemy_state_machine.transition_to("falling")
+		return
+	if get_move_direction().length_squared() > 0.0001:
+		enemy_state_machine.transition_to("running")
+		return
+	enemy_state_machine.transition_to("idle")
+
+
+func play_hit_animation() -> void:
+	if animation_tree != null and animation_tree.active:
+		animation_tree.set(ANIM_PARAM_HIT_ONESHOT, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		return
+	_play_hit_animation_fallback()
+
+
+func _play_hit_animation_fallback() -> void:
+	if animation_player == null:
+		return
+	var candidates: Array[StringName] = [
+		&"skeleton_warrior/Hit_A",
+		&"animations/Hit_A",
+		&"Hit_A",
+	]
+	for anim_name in candidates:
+		if animation_player.has_animation(anim_name):
+			animation_player.play(anim_name)
+			return
+
 
 func _process(_delta: float) -> void:
 	if not is_offensive:
@@ -252,10 +390,12 @@ func _on_hit_box_body_entered(body):
 	if player == null:
 		return
 	CameraFeedback.add_trauma_hurt()
-	player.die()
+	Health.apply_damage(player, 9999)
 
 
 func update_locomotion_blend() -> void:
+	if _is_in_taking_damage_state():
+		return
 	if enemy_state_machine != null and enemy_state_machine.is_in_state("casting"):
 		return
 	if enemy_state_machine != null and enemy_state_machine.is_in_state("spawning"):

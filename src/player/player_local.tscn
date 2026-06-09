@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=4 uid="uid://b2d8v5hofa7a6"]
+[gd_scene load_steps=67 format=4 uid="uid://b2d8v5hofa7a6"]
 
 [ext_resource type="Script" uid="uid://dnxojpch253fl" path="res://src/player/player_local.gd" id="2_plocal"]
 [ext_resource type="Texture2D" uid="uid://ctxw4lrjrj6qg" path="res://assets/characters/Mannequin_Medium_mannequin_texture.png" id="2_tu43t"]
@@ -38,6 +38,7 @@
 [ext_resource type="Texture2D" uid="uid://iv1lh1nxefuv" path="res://assets/sprites/ui/triangle_icon.png" id="36_jysfc"]
 [ext_resource type="Script" uid="uid://cvr3qrb04hdeg" path="res://src/player/ui/carrying_icon.gd" id="37_aj4gt"]
 [ext_resource type="PackedScene" uid="uid://bp1b8kp6ixbl3" path="res://src/sound/footsteps_sound.tscn" id="38_aktf2"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="39_health"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wra63"]
 resource_name = "Character_Material"
@@ -599,6 +600,9 @@ text = "Press triangle to carry"
 
 [node name="CarryingWeaponData" type="Node" parent="."]
 script = ExtResource("8_xf7a6")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("39_health")
 
 [node name="WeaponCarrierPinJoint" type="PinJoint3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78730226, 1.239912, 0)

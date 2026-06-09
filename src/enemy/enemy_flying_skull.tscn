@@ -1,12 +1,14 @@
-[gd_scene load_steps=22 format=4 uid="uid://cje8utfev8m5t"]
+[gd_scene load_steps=24 format=4 uid="uid://cje8utfev8m5t"]
 
 [ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_qhfi4"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="2_health"]
 [ext_resource type="Texture2D" uid="uid://gcnaitymqah5" path="res://assets/models/enemies/skeleton_flying_head_skeleton_texture.png" id="2_qpyey"]
 [ext_resource type="Script" uid="uid://bd7583ugquauj" path="res://src/enemy/state/flying_moving.gd" id="4_qpyey"]
 [ext_resource type="Script" uid="uid://bi8fj6lobnn62" path="res://src/enemy/state/flying_idle.gd" id="5_7e4tl"]
 [ext_resource type="Script" uid="uid://dws4xa6ijerls" path="res://src/enemy/behavior/flying_skull_behavior.gd" id="6_7e4tl"]
 [ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="29_upvxt"]
 [ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="33_2itx6"]
+[ext_resource type="Script" uid="uid://c8k2hitfly01" path="res://src/enemy/state/taking_damage_flying.gd" id="34_hitfly"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_w0rb1"]
 resource_name = "Glow"
@@ -273,6 +275,9 @@ script = ExtResource("5_7e4tl")
 [node name="Dead" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("33_2itx6")
 
+[node name="TakingDamageFlying" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("34_hitfly")
+
 [node name="HitBox" type="Area3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.11647177, 0.9850457)
 
@@ -293,5 +298,8 @@ autoplay = "flying"
 
 [node name="FlyingSkullBehavior" type="Node" parent="."]
 script = ExtResource("6_7e4tl")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")
 
 [connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]

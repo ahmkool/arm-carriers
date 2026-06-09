@@ -1,4 +1,4 @@
-[gd_scene load_steps=66 format=4 uid="uid://bq1e02j55tmiu"]
+[gd_scene load_steps=67 format=4 uid="uid://bq1e02j55tmiu"]
 
 [ext_resource type="Script" uid="uid://dnxojpch253fl" path="res://src/player/player_local.gd" id="1_dy68d"]
 [ext_resource type="Texture2D" uid="uid://druj3r6olei4y" path="res://assets/models/Kaykit/characters/Ranger_ranger_texture.png" id="2_fw372"]
@@ -38,6 +38,7 @@
 [ext_resource type="Script" uid="uid://714wfd5yluad" path="res://src/player/carrying_weapon_data.gd" id="35_kysgk"]
 [ext_resource type="Texture2D" uid="uid://iv1lh1nxefuv" path="res://assets/sprites/ui/triangle_icon.png" id="36_pxyf4"]
 [ext_resource type="Script" uid="uid://cvr3qrb04hdeg" path="res://src/player/ui/carrying_icon.gd" id="37_liokm"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="38_health"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ax8v0"]
 resource_name = "ranger"
@@ -670,6 +671,9 @@ text = "Press triangle to carry"
 script = ExtResource("35_kysgk")
 arm_left_path = NodePath("Mannequin_Medium/Rig_Medium/Skeleton3D/Ranger_ArmLeft")
 arm_right_path = NodePath("Mannequin_Medium/Rig_Medium/Skeleton3D/Ranger_ArmRight")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("38_health")
 
 [node name="WeaponCarrierPinJoint" type="PinJoint3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.78730226, 1.239912, 0)
