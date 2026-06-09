@@ -107,6 +107,7 @@ func _load_from_disk() -> void:
 		push_error("GameSave: save file missing 'levels' section.")
 		return
 	_levels = (data["levels"] as Dictionary).duplicate()
+	print("_levels: %s" % _levels)
 
 
 func _on_checkpoint_changed(

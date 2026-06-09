@@ -1,0 +1,389 @@
+[gd_scene load_steps=33 format=3 uid="uid://omin38ccge2r"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_3bv6y"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_xuff2"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_2e4q0"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_iqtrv"]
+[ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_tco1a"]
+[ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_fofcv"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="7_eo5y3"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="8_x67eb"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="9_xkex7"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="10_ar1ik"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="11_cxe7y"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="12_eprlo"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="12_mcu2a"]
+[ext_resource type="Curve" uid="uid://5rtl5f3x2v2w" path="res://src/enemy/spawn_interval_flat_3s.tres" id="13_s5jd1"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="14_03nbd"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="15_3slf2"]
+[ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="16_cxe7y"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="16_fmhrp"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_oiipb"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="19_mwvyj"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="20_dbhn5"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="22_r6rja"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="23_kx47s"]
+[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="25_2toxr"]
+[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="26_qfp5g"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
+panorama = ExtResource("7_eo5y3")
+
+[sub_resource type="Sky" id="Sky_8eeh1"]
+sky_material = SubResource("PanoramaSkyMaterial_j5fge")
+
+[sub_resource type="Environment" id="Environment_msrya"]
+background_mode = 2
+sky = SubResource("Sky_8eeh1")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
+size = Vector3(375, 1, 244)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_gudwi"]
+vertices = PackedVector3Array(-24.489502, -0.679656, -81.221504, -22.489502, -0.679656, -81.471504, -22.489502, -0.679656, -83.721504, -24.489502, -0.679656, -83.971504, -27.489502, -0.679656, -78.221504, -24.489502, -0.679656, -78.471504, -32.489502, -0.679656, -78.471504, -29.739502, -0.679656, -78.221504, -24.489502, -0.679656, -86.471504, -32.489502, -0.679656, -86.471504, -1.739502, -0.679656, -83.721504, -1.739502, -0.679656, -81.471504, 0.26049805, -0.679656, -81.221504, 0.26049805, -0.679656, -83.971504, 8.510498, -0.679656, -86.471504, 0.26049805, -0.679656, -86.471504, 8.760498, -0.679656, -81.471504, 8.760498, -0.679656, -83.721504, 8.510498, -0.679656, -78.471504, 0.26049805, -0.679656, -78.471504, -10.739502, -0.679656, -81.471504, -10.239502, -0.679656, -83.721504, -8.739502, -0.679656, -81.221504, -6.489502, -0.679656, -81.221504, -8.739502, -0.679656, -73.721504, -6.489502, -0.679656, -73.721504, 21.010498, -0.679656, -81.471504, 21.010498, -0.679656, -71.721504, 23.510498, -0.679656, -71.471504, 23.510498, -0.679656, -83.721504, -20.989502, -0.679656, -63.471504, -20.989502, -0.679656, -65.721504, -27.489502, -0.679656, -65.971504, -29.739502, -0.679656, -63.471504, -6.239502, -0.679656, -71.721504, -8.989502, -0.679656, -71.721504, -13.239502, -0.679656, -71.721504, -13.489502, -0.679656, -57.471504, -11.739502, -0.679656, -57.221504, -11.739502, -0.679656, -51.471504, -3.489502, -0.679656, -51.471504, -3.489502, -0.679656, -57.221504, -0.48950195, -0.679656, -57.471504, -0.48950195, -0.679656, -71.721504, -20.739502, -0.679656, -57.471504, -20.739502, -0.679656, -71.721504, 15.260498, -0.679656, -71.721504, 15.260498, -0.679656, -63.471504, 23.510498, -0.679656, -63.471504, -2.739502, -0.679656, -24.221504, -2.739502, -0.679656, -13.721504, -0.48950195, -0.679656, -13.221504, -0.48950195, -0.679656, -27.221504, -8.739502, -0.679656, -27.221504, -6.239502, -0.679656, -24.471504, -14.739502, -0.679656, -27.471504, 5.510498, -0.679656, -27.471504, 5.510498, -0.679656, -44.721504, -14.739502, -0.679656, -44.721504, -8.739502, -0.679656, -13.221504, -6.489502, -0.679656, -13.721504, -2.989502, -0.679656, -11.721504, -0.23950195, -0.679656, -5.721504, -6.239502, -0.679656, -11.721504, -8.739502, -0.679656, -5.971504, 8.510498, -0.679656, 11.528496, 8.510498, -0.679656, -5.721504, -11.739502, -0.679656, -5.721504, -11.739502, -0.679656, 11.528496)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(4, 3, 0), PackedInt32Array(0, 5, 4), PackedInt32Array(7, 6, 4), PackedInt32Array(4, 6, 3), PackedInt32Array(3, 6, 8), PackedInt32Array(8, 6, 9), PackedInt32Array(10, 13, 11), PackedInt32Array(11, 13, 12), PackedInt32Array(13, 15, 14), PackedInt32Array(17, 16, 14), PackedInt32Array(14, 16, 18), PackedInt32Array(14, 18, 12), PackedInt32Array(14, 12, 13), PackedInt32Array(18, 19, 12), PackedInt32Array(1, 2, 20), PackedInt32Array(20, 2, 21), PackedInt32Array(20, 21, 22), PackedInt32Array(22, 21, 23), PackedInt32Array(23, 21, 11), PackedInt32Array(11, 21, 10), PackedInt32Array(23, 25, 22), PackedInt32Array(22, 25, 24), PackedInt32Array(27, 26, 28), PackedInt32Array(28, 26, 29), PackedInt32Array(16, 17, 26), PackedInt32Array(26, 17, 29), PackedInt32Array(31, 30, 32), PackedInt32Array(32, 30, 33), PackedInt32Array(4, 32, 7), PackedInt32Array(7, 32, 33), PackedInt32Array(25, 34, 24), PackedInt32Array(24, 34, 35), PackedInt32Array(37, 36, 35), PackedInt32Array(41, 40, 38), PackedInt32Array(38, 40, 39), PackedInt32Array(34, 43, 42), PackedInt32Array(38, 37, 41), PackedInt32Array(41, 37, 42), PackedInt32Array(42, 37, 34), PackedInt32Array(34, 37, 35), PackedInt32Array(31, 45, 30), PackedInt32Array(30, 45, 36), PackedInt32Array(30, 36, 44), PackedInt32Array(44, 36, 37), PackedInt32Array(27, 28, 46), PackedInt32Array(46, 28, 48), PackedInt32Array(46, 48, 47), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 52), PackedInt32Array(49, 54, 52), PackedInt32Array(52, 54, 53), PackedInt32Array(53, 55, 52), PackedInt32Array(52, 55, 56), PackedInt32Array(56, 55, 58), PackedInt32Array(56, 58, 57), PackedInt32Array(60, 59, 54), PackedInt32Array(54, 59, 53), PackedInt32Array(50, 51, 61), PackedInt32Array(61, 51, 62), PackedInt32Array(60, 63, 59), PackedInt32Array(59, 63, 64), PackedInt32Array(62, 66, 65), PackedInt32Array(64, 62, 67), PackedInt32Array(67, 62, 68), PackedInt32Array(68, 62, 65), PackedInt32Array(63, 61, 64), PackedInt32Array(64, 61, 62)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h2fuj"]
+size = Vector3(10, 3, 9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_wteuk"]
+size = Vector3(10, 3, 8)
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("1_3bv6y")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("2_xuff2")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("3_2e4q0")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" type="CanvasLayer" parent="."]
+
+[node name="InfoMessage" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -20.0
+offset_top = -40.0
+offset_right = 20.0
+grow_horizontal = 2
+grow_vertical = 0
+theme = ExtResource("4_iqtrv")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessage"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessage/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="Label" parent="UI/InfoMessage/PanelContainer/MarginContainer"]
+layout_mode = 2
+text = "Press any button to join the game"
+
+[node name="DebugInfo" type="MarginContainer" parent="UI"]
+visible = false
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -163.0
+offset_bottom = 108.0
+grow_horizontal = 0
+theme = ExtResource("4_iqtrv")
+script = ExtResource("5_tco1a")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/DebugInfo"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugInfo/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Debug info:"
+
+[node name="CarryingStatusP0" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Status"
+
+[node name="PauseMenu" parent="UI" instance=ExtResource("6_fofcv")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_msrya")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+
+[node name="GameStateMachine" parent="." instance=ExtResource("8_x67eb")]
+
+[node name="Players" parent="." instance=ExtResource("9_xkex7")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.46787, 0.98599815, -39.519367)
+script = ExtResource("10_ar1ik")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
+
+[node name="EnemyMage2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.1836414, 0, -3.6875687)
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage2"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 4.0
+
+[node name="EnemyMage3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.104425, 0, -3.8673286)
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage3"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 5.0
+
+[node name="EnemyMage4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.536768, 0, 11.146872)
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage4"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 9.0
+
+[node name="EnemyMage5" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.0799274, 0, 11.139778)
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyMage5"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 9.0
+
+[node name="EnemyGroup2" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.46787, 0.98599815, -78.51936)
+script = ExtResource("10_ar1ik")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup2"]
+
+[node name="EnemyMage2" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8163586, 0, -3.6875687)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup2/InstancedEnemies/EnemyMage2"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 4.0
+
+[node name="EnemyMage3" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.104425, 0, -3.8673286)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup2/InstancedEnemies/EnemyMage3"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 5.0
+
+[node name="EnemyMage4" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.536766, 0, 11.146873)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup2/InstancedEnemies/EnemyMage4"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 9.0
+
+[node name="EnemyMage5" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.0799274, 0, 9.139778)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup2/InstancedEnemies/EnemyMage5"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 9.0
+
+[node name="EnemyMage6" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("11_cxe7y")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.079927, 0, 9.139778)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup2/InstancedEnemies/EnemyMage6"]
+script = ExtResource("12_mcu2a")
+mobility = 1
+cast_cooldown = 9.0
+
+[node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
+script = ExtResource("12_eprlo")
+spawn_interval_curve = ExtResource("13_s5jd1")
+fight_duration = 600.0
+
+[node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="Node3D" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.453758, 0, -11.040913)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -41.015522, 0, -19.952229)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.01253, 0, -20.102055)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.641052, 0, -10.976353)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48.641052, 0, -10.976353)
+
+[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44.641052, 0, -2.9763527)
+
+[node name="Node3D7" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.641052, 0, -2.9763527)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("14_03nbd")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026123, -0.67946243)
+script = ExtResource("15_3slf2")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.8026123, -38.679462)
+script = ExtResource("15_3slf2")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup2"), NodePath("../../Enemies/SurvivalEnemyGroup")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, 1.8026123, -82.67946)
+script = ExtResource("15_3slf2")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.726822, 0)
+script = ExtResource("16_fmhrp")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.378174, 4.5282993, -65.25947)
+shape = SubResource("BoxShape3D_65eof")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_gudwi")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("16_cxe7y")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 62, -3, 65534, 62, -2, 65534, 62, -1, 65534, 62, -65536, 65534, 62, -65535, 65534, 62, -65534, 65534, 62, -65534, 65535, 62, -65534, 0, 62, -65534, 1, 62, -65534, 2, 62, -65534, 3, 62, -65535, 3, 62, -65536, 3, 62, -1, 3, 62, -2, 3, 62, -3, 3, 62, -4, 3, 62, -4, 2, 62, -4, 1, 62, -4, 0, 62, -4, 65535, 62, -3, 65535, 62, -2, 65535, 62, -1, 65535, 62, -65536, 65535, 62, -65535, 65535, 62, -65535, 0, 62, -65535, 1, 62, -65535, 2, 62, -65536, 2, 62, -1, 2, 62, -2, 2, 62, -3, 2, 62, -3, 1, 62, -3, 0, 62, -2, 0, 62, -1, 0, 62, -65536, 0, 62, -65536, 1, 62, -1, 1, 62, -2, 1, 62, -3, 65532, 62, -3, 65533, 62, -2, 65533, 62, -2, 65532, 62, -1, 65532, 62, -1, 65533, 62, -3, 65527, 62, -2, 65527, 62, -1, 65527, 62, -5, 65521, 62, -5, 65522, 62, -5, 65523, 62, -5, 65524, 62, -5, 65525, 62, -5, 65526, 62, -4, 65526, 62, -3, 65526, 62, -2, 65526, 62, -1, 65526, 62, -65536, 65526, 62, -65535, 65526, 62, -65535, 65525, 62, -65535, 65524, 62, -65535, 65523, 62, -65535, 65522, 62, -65535, 65521, 62, -65536, 65521, 62, -1, 65521, 62, -2, 65521, 62, -3, 65521, 62, -4, 65521, 62, -4, 65522, 62, -3, 65522, 62, -2, 65522, 62, -1, 65522, 62, -65536, 65522, 62, -65536, 65523, 62, -65536, 65524, 62, -65536, 65525, 62, -1, 65525, 62, -2, 65525, 62, -3, 65525, 62, -4, 65525, 62, -4, 65524, 62, -4, 65523, 62, -3, 65523, 62, -2, 65523, 62, -1, 65523, 62, -1, 65524, 62, -2, 65524, 62, -3, 65524, 62, -3, 65528, 1, -3, 65529, 1, -3, 65530, 1, -3, 65531, 1, -1, 65528, 1, -1, 65529, 1, -1, 65530, 1, -1, 65531, 1, -2, 65518, 62, -3, 65518, 62, -4, 65518, 62, -4, 65517, 62, -3, 65517, 62, -2, 65517, 62, -2, 65516, 62, -3, 65516, 62, -4, 65516, 62, -11, 65507, 62, -11, 65508, 62, -11, 65509, 62, -10, 65509, 62, -9, 65509, 62, -9, 65508, 62, -9, 65507, 62, -10, 65507, 62, -10, 65508, 62, -65536, 65507, 62, -65536, 65508, 62, -65536, 65509, 62, -65535, 65509, 62, -65534, 65509, 62, -65534, 65508, 62, -65534, 65507, 62, -65535, 65507, 62, -65535, 65508, 62, -65531, 65512, 62, -65530, 65512, 62, -65529, 65512, 62, -65529, 65513, 62, -65529, 65514, 62, -65530, 65514, 62, -65531, 65514, 62, -65531, 65513, 62, -65530, 65513, 62, -1, 65512, 62, -2, 65512, 62, -3, 65512, 62, -4, 65512, 62, -5, 65512, 62, -6, 65512, 62, -7, 65512, 62, -7, 65513, 62, -7, 65514, 62, -7, 65515, 62, -7, 65516, 62, -6, 65516, 62, -5, 65516, 62, -1, 65516, 62, -1, 65515, 62, -1, 65514, 62, -1, 65513, 62, -2, 65514, 62, -2, 65513, 62, -3, 65513, 62, -4, 65513, 62, -4, 65514, 62, -5, 65514, 62, -6, 65514, 62, -6, 65513, 62, -5, 65513, 62, -6, 65515, 62, -5, 65515, 62, -4, 65515, 62, -3, 65515, 62, -2, 65515, 62, -3, 65514, 62, -8, 65514, 1, -9, 65514, 1, -10, 65514, 1441793, -10, 65513, 1441793, -10, 65512, 1441793, -10, 65511, 1441793, -10, 65510, 1441793, -8, 65508, 655361, -7, 65508, 655361, -6, 65508, 655361, -5, 65508, 655361, -4, 65508, 655361, -3, 65508, 655361, -2, 65508, 655361, -1, 65508, 655361, -65533, 65508, 655361, -65532, 65508, 655361, -65531, 65508, 655361, -65530, 65508, 655361, -65529, 65508, 655361, -65529, 65509, 1048577, -65529, 65510, 1048577, -65529, 65511, 1048577, -3, 65511, 1048577, -3, 65510, 1048577, -3, 65509, 1048577)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Water" parent="Level" instance=ExtResource("18_oiipb")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61, -5.6065345, -72.06691)
+
+[node name="Node3D" type="Node3D" parent="Level"]
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("19_mwvyj")
+platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("19_mwvyj")
+platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeEnemiesGroup1Offensive")
+
+[node name="MakeEnemiesGroup1Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("20_dbhn5")
+enemy_group = NodePath("../../../Enemies/EnemyGroup2")
+next_event = NodePath("../TriggerSurvivalGroup")
+
+[node name="TriggerSurvivalGroup" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("20_dbhn5")
+enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
+
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 143, 0, -49)
+script = ExtResource("23_kx47s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -1.5)
+shape = SubResource("BoxShape3D_h2fuj")
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform" parent="Level/Bridges" instance=ExtResource("22_r6rja")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5060863, -3.9927697, -46.493908)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("22_r6rja")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5060863, -3.9927697, -49.493908)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6, 0, -28)
+script = ExtResource("23_kx47s")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, -26.5)
+shape = SubResource("BoxShape3D_wteuk")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="Bazooka" parent="Weapon" instance=ExtResource("25_2toxr")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.8920293, 0.593, 0)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("26_qfp5g")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = false
+
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]

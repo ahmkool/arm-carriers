@@ -518,12 +518,21 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Level 1 (easy)"
 script = ExtResource("2_56xr1")
-level_scene_path = "res://src/world/levels/world_local.tscn"
+level_scene_path = "uid://dj2pg5uao6elb"
+level_id = "res://src/world/levels/world_local.tscn"
 
 [node name="Level2Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Level 2"
+text = "Level 2 (medium)"
+script = ExtResource("2_56xr1")
+level_scene_path = "uid://omin38ccge2r"
+level_id = "res://src/world/levels/world_local_level_2.tscn"
+
+[node name="TestSwordLevelButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Test sword level"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_02.tscn"
 
