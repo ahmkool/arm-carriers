@@ -123,8 +123,8 @@ omni_range = 4.0
 omni_attenuation = 1.2
 
 [node name="Area3D" type="Area3D" parent="."]
-collision_layer = 0
-monitorable = false
+collision_layer = 8
+monitorable = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("SphereShape3D_1qcgn")

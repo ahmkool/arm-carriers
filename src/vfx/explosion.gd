@@ -51,13 +51,26 @@ func _queue_free_hitbox() -> void:
 func _hurt_initial_overlaps() -> void:
 	for body in hitbox.get_overlapping_bodies():
 		_apply_damage_to_body(body)
+	for area in hitbox.get_overlapping_areas():
+		_extinguish_fireball_area(area)
 
 
 func _on_hitbox_body_entered(body: Node) -> void:
 	_apply_damage_to_body(body)
 
 
+func _on_hitbox_area_entered(area: Area3D) -> void:
+	_extinguish_fireball_area(area)
+
+
 func _apply_damage_to_body(body: Node) -> void:
 	if body is not EnemyLocal:
 		return
 	Health.apply_damage(body, damage, global_position)
+
+
+func _extinguish_fireball_area(area: Area3D) -> void:
+	var fireball := area.get_parent() as Fireball
+	if fireball == null:
+		return
+	fireball.queue_free()

@@ -72,7 +72,7 @@ script = ExtResource("2_u6gl8")
 
 [node name="HitArea" type="Area3D" parent="."]
 collision_layer = 2
-collision_mask = 2
+collision_mask = 10
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="HitArea"]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -4.1086143e-09, 0.09399414)
@@ -96,4 +96,5 @@ bus = &"SFX"
 stream = ExtResource("2_60kgx")
 autoplay = true
 
+[connection signal="area_entered" from="HitArea" to="." method="_on_hit_area_area_entered"]
 [connection signal="body_entered" from="HitArea" to="." method="_on_hit_area_body_entered"]

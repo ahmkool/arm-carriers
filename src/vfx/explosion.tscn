@@ -139,7 +139,7 @@ draw_pass_1 = SubResource("SphereMesh_r2swv")
 
 [node name="Hitbox" type="Area3D" parent="."]
 collision_layer = 0
-collision_mask = 3
+collision_mask = 11
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Hitbox"]
 shape = SubResource("SphereShape3D_hitbx")
@@ -148,4 +148,5 @@ shape = SubResource("SphereShape3D_hitbx")
 bus = &"SFX"
 stream = ExtResource("2_01vq6")
 
+[connection signal="area_entered" from="Hitbox" to="." method="_on_hitbox_area_entered"]
 [connection signal="body_entered" from="Hitbox" to="." method="_on_hitbox_body_entered"]

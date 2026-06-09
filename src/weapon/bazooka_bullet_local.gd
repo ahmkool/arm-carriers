@@ -15,9 +15,21 @@ func _physics_process(delta: float) -> void:
 	global_position += velocity * delta
 
 func _on_hit_area_body_entered(body: Node) -> void:
-	if _spent:
-		return
 	if body is not EnemyLocal:
+		return
+	_detonate()
+
+
+func _on_hit_area_area_entered(area: Area3D) -> void:
+	var fireball := area.get_parent() as Fireball
+	if fireball == null:
+		return
+	fireball.queue_free()
+	_detonate()
+
+
+func _detonate() -> void:
+	if _spent:
 		return
 	_spent = true
 	set_physics_process(false)
