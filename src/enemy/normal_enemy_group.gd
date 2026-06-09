@@ -3,11 +3,10 @@ extends EnemyGroup
 
 var signal_emitted := false
 
-var enemy_scene: PackedScene = preload("res://src/enemy/enemy_local.tscn")
+const _SNAPSHOT_FLAGS := Node.DUPLICATE_SCRIPTS | Node.DUPLICATE_USE_INSTANTIATION
 
-var initial_positions: Array[Vector3]
-var initial_rotations: Array[Quaternion]
-var initial_is_offensives: Array[bool]
+## Editor-placed enemy templates (scene type, children, overrides) captured at ready.
+var _enemy_snapshots: Array[Node] = []
 
 ## Parent of [EnemyLocal] instances. Prefer a child named InstancedEnemies; falls back to this node for older scenes.
 var _enemy_instances_parent: Node
@@ -18,9 +17,7 @@ func _ready() -> void:
 	if _enemy_instances_parent == null:
 		_enemy_instances_parent = self
 	for enemy in _list_enemy_locals():
-		initial_positions.append(enemy.global_position)
-		#initial_rotations.append(enemy.global_rotation)
-		initial_is_offensives.append(enemy.is_offensive)
+		_enemy_snapshots.append(enemy.duplicate(_SNAPSHOT_FLAGS))
 
 
 func trigger(offensive: bool = true) -> void:
@@ -32,12 +29,9 @@ func reset() -> void:
 	signal_emitted = false
 	for enemy in _list_enemy_locals():
 		enemy.queue_free()
-	for i in range(initial_positions.size()):
-		var enemy := enemy_scene.instantiate() as EnemyLocal
+	for snapshot in _enemy_snapshots:
+		var enemy := snapshot.duplicate(_SNAPSHOT_FLAGS)
 		_enemy_instances_parent.add_child(enemy)
-		enemy.global_position = initial_positions[i]
-		#enemy.global_rotation = initial_rotations[i]
-		enemy.is_offensive = initial_is_offensives[i]
 
 
 func _physics_process(_delta: float) -> void:

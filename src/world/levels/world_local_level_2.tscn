@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://omin38ccge2r"]
+[gd_scene load_steps=31 format=3 uid="uid://omin38ccge2r"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_3bv6y"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_xuff2"]
@@ -11,9 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="9_xkex7"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="10_ar1ik"]
 [ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="11_cxe7y"]
-[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="12_eprlo"]
 [ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="12_mcu2a"]
-[ext_resource type="Curve" uid="uid://5rtl5f3x2v2w" path="res://src/enemy/spawn_interval_flat_3s.tres" id="13_s5jd1"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="14_03nbd"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="15_3slf2"]
 [ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="16_cxe7y"]
@@ -224,37 +222,6 @@ script = ExtResource("12_mcu2a")
 mobility = 1
 cast_cooldown = 9.0
 
-[node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
-script = ExtResource("12_eprlo")
-spawn_interval_curve = ExtResource("13_s5jd1")
-fight_duration = 600.0
-
-[node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
-
-[node name="SpawnPoints" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
-
-[node name="Node3D" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.453758, 0, -11.040913)
-
-[node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -41.015522, 0, -19.952229)
-
-[node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70.01253, 0, -20.102055)
-
-[node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -57.641052, 0, -10.976353)
-
-[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48.641052, 0, -10.976353)
-
-[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44.641052, 0, -2.9763527)
-
-[node name="Node3D7" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62.641052, 0, -2.9763527)
-
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("14_03nbd")
 current_checkpoint = NodePath("Checkpoint")
@@ -273,7 +240,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8, 1.8026123, -38.679462)
 script = ExtResource("15_3slf2")
 events_completed = [NodePath("../../Level/Events/OpenBridge1")]
-enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup2"), NodePath("../../Enemies/SurvivalEnemyGroup")]
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup2")]
 enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
 areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
 
@@ -336,14 +303,18 @@ use_camera_focus = false
 event_type = 1
 next_event = NodePath("../MakeEnemiesGroup1Offensive")
 
-[node name="MakeEnemiesGroup1Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+[node name="MakeEnemiesGroup1Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
 script = ExtResource("20_dbhn5")
 enemy_group = NodePath("../../../Enemies/EnemyGroup2")
-next_event = NodePath("../TriggerSurvivalGroup")
 
 [node name="TriggerSurvivalGroup" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
 script = ExtResource("20_dbhn5")
-enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
+enemy_group = NodePath("")
+
+[node name="OpenBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("19_mwvyj")
+platforms = [NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
 
 [node name="EndLevelArea" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 143, 0, -49)
@@ -360,6 +331,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5060863, -3.9927697, -46.4
 
 [node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("22_r6rja")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5060863, -3.9927697, -49.493908)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("22_r6rja")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4939137, -3.9927697, -88.49391)
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("22_r6rja")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4939137, -3.9927697, -91.49391)
 
 [node name="Areas" type="Node" parent="Level"]
 
@@ -383,7 +360,8 @@ autoplay = true
 bus = &"Music"
 parameters/looping = false
 
-[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
-[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/OpenBridge2" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
