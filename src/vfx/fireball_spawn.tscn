@@ -5,7 +5,7 @@
 [ext_resource type="AudioStream" uid="uid://dhuugr2mnc6ot" path="res://assets/sounds/fireball_cast.wav" id="2_mjgpl"]
 
 [sub_resource type="Curve" id="Curve_mjgpl"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_dpvmf"]
@@ -62,7 +62,7 @@ point_count = 2
 curve = SubResource("Curve_au0l1")
 
 [sub_resource type="Curve" id="Curve_xv8pa"]
-_data = [Vector2(0, 0.8172263), 0.0, 0.0, 0, 0, Vector2(0.23300973, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.8172263), 0.0, 0.0, 0, 0, Vector2(0.23300973, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_1bpjp"]

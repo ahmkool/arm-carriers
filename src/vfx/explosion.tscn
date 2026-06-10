@@ -4,7 +4,7 @@
 [ext_resource type="AudioStream" uid="uid://5hmxanehcf2g" path="res://assets/sounds/explosion.wav" id="2_01vq6"]
 
 [sub_resource type="Curve" id="Curve_83ytm"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_dvbte"]
@@ -45,7 +45,7 @@ point_count = 2
 curve = SubResource("Curve_10ly8")
 
 [sub_resource type="Curve" id="Curve_ml80x"]
-_data = [Vector2(0, 0.011813045), 0.0, 0.0, 0, 0, Vector2(0.19277106, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.011813045), 0.0, 0.0, 0, 0, Vector2(0.19277106, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_k5ltb"]
@@ -83,7 +83,7 @@ point_count = 3
 curve = SubResource("Curve_hxhj7")
 
 [sub_resource type="Curve" id="Curve_skqbl"]
-_data = [Vector2(0, 0.011813045), 0.0, 0.0, 0, 0, Vector2(0.19277106, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.011813045), 0.0, 0.0, 0, 0, Vector2(0.19277106, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_nismu"]

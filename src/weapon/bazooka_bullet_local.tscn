@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://e4fut737hp5k"]
+[gd_scene load_steps=11 format=4 uid="uid://e4fut737hp5k"]
 
 [ext_resource type="AudioStream" uid="uid://cpbsul3eh5ppn" path="res://assets/sounds/bazooka_shot.wav" id="2_60kgx"]
 [ext_resource type="Script" uid="uid://yjj2r26g3u46" path="res://src/weapon/bazooka_bullet_local.gd" id="2_u6gl8"]
@@ -6,27 +6,6 @@
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tlok2"]
 radius = 0.8076172
 height = 2.4731445
-
-[sub_resource type="Curve" id="Curve_u6gl8"]
-_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.5692771, 0.85978425), 0.0, 0.0, 0, 0, Vector2(0.9849397, 0), 0.0, 0.0, 0, 0]
-point_count = 3
-
-[sub_resource type="CurveTexture" id="CurveTexture_60kgx"]
-curve = SubResource("Curve_u6gl8")
-
-[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ddrq0"]
-lifetime_randomness = 0.5
-initial_velocity_max = 0.099999994
-gravity = Vector3(0, 1, 0)
-scale_min = 0.5
-scale_curve = SubResource("CurveTexture_60kgx")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tlok2"]
-
-[sub_resource type="SphereMesh" id="SphereMesh_33dcg"]
-material = SubResource("StandardMaterial3D_tlok2")
-radius = 0.3
-height = 0.6
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nnson"]
 resource_name = "Material.001"
@@ -67,6 +46,24 @@ _surfaces = [{
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_1djbo")
 
+[sub_resource type="Curve" id="Curve_u6gl8"]
+_data = [Vector2(0, 0.86688226), 0.0, 0.0, 0, 0, Vector2(0.41853034, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.040151), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_60kgx"]
+curve = SubResource("Curve_u6gl8")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_u6gl8"]
+spread = 180.0
+initial_velocity_min = 0.19999999
+initial_velocity_max = 0.79999995
+gravity = Vector3(0, 2, 0)
+scale_min = 0.19999999
+scale_max = 0.79999995
+scale_curve = SubResource("CurveTexture_60kgx")
+
+[sub_resource type="SphereMesh" id="SphereMesh_60kgx"]
+
 [node name="BazookaBulletLocal" type="Node3D"]
 script = ExtResource("2_u6gl8")
 
@@ -78,23 +75,20 @@ collision_mask = 10
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, -4.1086143e-09, 0.09399414)
 shape = SubResource("CapsuleShape3D_tlok2")
 
-[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.8411186)
-cast_shadow = 0
-amount = 50
-lifetime = 0.8
-process_material = SubResource("ParticleProcessMaterial_ddrq0")
-draw_pass_1 = SubResource("SphereMesh_33dcg")
-
 [node name="bullet" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.3, 0, 0, 0, 0.3, 0, 0, 0, 0.3, 0, 0, 0)
 mesh = SubResource("ArrayMesh_rvese")
 skeleton = NodePath("")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-bus = &"SFX"
 stream = ExtResource("2_60kgx")
 autoplay = true
+bus = &"SFX"
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.990386)
+process_material = SubResource("ParticleProcessMaterial_u6gl8")
+draw_pass_1 = SubResource("SphereMesh_60kgx")
 
 [connection signal="area_entered" from="HitArea" to="." method="_on_hit_area_area_entered"]
 [connection signal="body_entered" from="HitArea" to="." method="_on_hit_area_body_entered"]

@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://cil1xwaiw037u"]
 
 [sub_resource type="Curve" id="Curve_2jfst"]
-_data = [Vector2(0, 0.6349521), 0.0, 0.0, 0, 0, Vector2(0.052734368, 1), 0.0, 0.0, 0, 0, Vector2(0.9999999, 0), 0.0, 0.0, 0, 0]
+_data = [Vector2(0, 0.6349521), 0.0, 0.0, 0, 0, Vector2(0.052734368, 1), 0.0, 0.0, 0, 0, Vector2(0.9999999, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
 [sub_resource type="CurveTexture" id="CurveTexture_r0in6"]
