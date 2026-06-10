@@ -14,11 +14,12 @@ var _spawn_timer := 0.0
 
 var _enemies_parent: Node
 var _spawn_point_nodes: Array[Node3D] = []
+var _spawn_polygon_nodes: Array[Node3D] = []
 
 
 func _ready() -> void:
 	_resolve_containers()
-	_cache_spawn_points()
+	_cache_spawn_sources()
 	_validate_spawn_interval_curve()
 
 
@@ -104,32 +105,93 @@ func _resolve_containers() -> void:
 		push_warning("SurvivalEnemyGroup: Missing Enemies container under %s" % str(get_path()))
 
 
-func _cache_spawn_points() -> void:
+func _cache_spawn_sources() -> void:
 	_spawn_point_nodes.clear()
-	var time_enemies := get_node_or_null(^"TimeEnemies") as Node
-	var spawn_root: Node = null
-	if time_enemies != null:
-		spawn_root = time_enemies.get_node_or_null(^"SpawnPoints")
-	else:
-		spawn_root = get_node_or_null(^"SpawnPoints")
-	if spawn_root == null:
+	_spawn_polygon_nodes.clear()
+	var spawn_points_root := _spawn_config_root(^"SpawnPoints")
+	if spawn_points_root != null:
+		_cache_node3d_children(spawn_points_root, _spawn_point_nodes)
+	var spawn_polygons_root := _spawn_config_root(^"SpawnPolygons")
+	if spawn_polygons_root == null:
 		return
-	for child in spawn_root.get_children():
+	for child in spawn_polygons_root.get_children():
 		if child is Node3D:
-			_spawn_point_nodes.append(child as Node3D)
+			_spawn_polygon_nodes.append(child as Node3D)
+
+
+func _spawn_config_root(child_name: NodePath) -> Node:
+	var time_enemies := get_node_or_null(^"TimeEnemies") as Node
+	if time_enemies != null:
+		return time_enemies.get_node_or_null(child_name)
+	return get_node_or_null(child_name)
+
+
+func _cache_node3d_children(root: Node, out: Array[Node3D]) -> void:
+	for child in root.get_children():
+		if child is Node3D:
+			out.append(child as Node3D)
+
+
+func _has_spawn_sources() -> bool:
+	return not _spawn_point_nodes.is_empty() or not _spawn_polygon_nodes.is_empty()
 
 
 func _spawn_one() -> void:
 	print("Spawn enemy at %.2f s" % _fight_elapsed)
-	if not is_instance_valid(_enemies_parent) or _spawn_point_nodes.is_empty():
+	if not is_instance_valid(_enemies_parent) or not _has_spawn_sources():
 		return
 	if spawner_scene == null:
 		return
-	var marker := _spawn_point_nodes[randi() % _spawn_point_nodes.size()]
 	var enemy := enemy_scene.instantiate() as EnemyLocal
 	_enemies_parent.add_child(enemy)
-	enemy.global_transform = marker.global_transform
+	enemy.global_transform = _pick_spawn_transform()
 	enemy.is_offensive = true
+
+
+func _pick_spawn_transform() -> Transform3D:
+	var source_count := _spawn_point_nodes.size() + _spawn_polygon_nodes.size()
+	var index := randi() % source_count
+	if index < _spawn_point_nodes.size():
+		return _spawn_point_nodes[index].global_transform
+	var polygon := _spawn_polygon_nodes[index - _spawn_point_nodes.size()]
+	return _spawn_transform_in_polygon(polygon)
+
+
+func _spawn_transform_in_polygon(polygon: Node3D) -> Transform3D:
+	var vertices := _polygon_vertices(polygon)
+	if vertices.size() < 3:
+		push_warning(
+			"SurvivalEnemyGroup: Polygon %s needs at least 3 vertex nodes" % str(polygon.get_path())
+		)
+		return polygon.global_transform
+	var position := _random_point_in_polygon_vertices(vertices)
+	return Transform3D(polygon.global_basis, position)
+
+
+func _polygon_vertices(polygon: Node3D) -> Array[Vector3]:
+	var out: Array[Vector3] = []
+	for child in polygon.get_children():
+		if child is not Node3D:
+			continue
+		out.append((child as Node3D).global_position)
+	return out
+
+
+func _random_point_in_polygon_vertices(vertices: Array[Vector3]) -> Vector3:
+	if vertices.size() == 3:
+		return _random_point_in_triangle(vertices[0], vertices[1], vertices[2])
+	if randf() < 0.5:
+		return _random_point_in_triangle(vertices[0], vertices[1], vertices[2])
+	return _random_point_in_triangle(vertices[0], vertices[2], vertices[3])
+
+
+func _random_point_in_triangle(a: Vector3, b: Vector3, c: Vector3) -> Vector3:
+	var r1 := randf()
+	var r2 := randf()
+	if r1 + r2 > 1.0:
+		r1 = 1.0 - r1
+		r2 = 1.0 - r2
+	return a + r1 * (b - a) + r2 * (c - a)
 
 
 func _clear_spawned_enemies() -> void:
