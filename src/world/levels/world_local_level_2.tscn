@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=4 uid="uid://omin38ccge2r"]
+[gd_scene load_steps=53 format=4 uid="uid://omin38ccge2r"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_3bv6y"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_xuff2"]
@@ -25,7 +25,9 @@
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="22_r6rja"]
 [ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="23_2e4q0"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="23_kx47s"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="24_iqtrv"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="25_2toxr"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="25_tco1a"]
 [ext_resource type="Script" uid="uid://ff5ixdrcsb45" path="res://src/world/elements/single_player_area_trigger.gd" id="25_xuff2"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="26_qfp5g"]
 
@@ -443,11 +445,15 @@ script = ExtResource("12_mcu2a")
 mobility = 1
 cast_cooldown = 9.0
 
+[node name="FocusPoint" type="Node3D" parent="Enemies"]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 86.29617, 0, -199.54045)
+
 [node name="SurvivalEnemyGroup2" type="Node3D" parent="Enemies"]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 76.29617, 0, -199.54045)
 script = ExtResource("13_3bv6y")
 enemy_scene = ExtResource("14_xuff2")
 spawn_interval_curve = ExtResource("15_2e4q0")
+fight_duration = 20.0
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup2"]
 
@@ -730,9 +736,10 @@ next_event = NodePath("../OpenParallelBridge4")
 script = ExtResource("20_dbhn5")
 enemy_group = NodePath("../../../Enemies/EnemyGroup4")
 
-[node name="MakeSurvivalGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+[node name="MakeSurvivalGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
 script = ExtResource("20_dbhn5")
 enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup2")
+next_event = NodePath("../FocusCamera")
 
 [node name="OpenParallelBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
@@ -763,6 +770,13 @@ platform_animation_stagger_seconds = 0.5
 
 [node name="LevelSucceeded" type="Node" parent="Level/Events"]
 script = ExtResource("23_2e4q0")
+
+[node name="FocusCamera" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("24_iqtrv")
+focal_point = NodePath("../../../Enemies/FocusPoint")
+
+[node name="UnfocusCamera" type="Node" parent="Level/Events"]
+script = ExtResource("25_tco1a")
 
 [node name="EndLevelArea" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95, 0, -238)
@@ -1102,6 +1116,7 @@ parameters/looping = false
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup4" to="Level/Events/OpenParallelBridge3" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup2" to="CheckpointManager/Checkpoint8" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup2" to="Level/Events/OpenParallelBridge5" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup2" to="Level/Events/UnfocusCamera" method="trigger"]
 [connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/CloseBridge2" method="trigger"]

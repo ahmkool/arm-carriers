@@ -31,6 +31,7 @@ func get_spawn_transform() -> Transform3D:
 	return global_transform
 
 func set_world_at_checkpoint_state():
+	_clear_camera_focal_points()
 	for event in events_completed:
 		event._complete_event()
 	for enemy_group in enemy_groups_defeated:
@@ -57,3 +58,13 @@ func get_shooter_transform() -> Transform3D:
 func _trigger_checkpoint() -> void:
 	var checkpoint_manager: CheckpointManager = get_parent() as CheckpointManager
 	checkpoint_manager.set_current_checkpoint(self)
+
+
+func _clear_camera_focal_points() -> void:
+	var world := get_parent().get_parent() as WorldLocal
+	if world == null:
+		return
+	var rig := world.get_node_or_null("CameraFollowRig") as CameraFollowRig
+	if rig == null:
+		return
+	rig.clear_focal_points()

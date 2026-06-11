@@ -11,6 +11,7 @@ var players: Node
 var big_weapon: BigWeapon
 
 var _cutscene_active: bool = false
+var _extra_focal_nodes: Array[Node3D] = []
 
 
 func _ready():
@@ -56,6 +57,22 @@ func run_focus_on_point(world_focal_point: Vector3, hold_sec: float, move_in_sec
 	_cutscene_active = false
 
 
+func add_focal_point(node: Node3D) -> void:
+	if not is_instance_valid(node):
+		return
+	if _extra_focal_nodes.has(node):
+		return
+	_extra_focal_nodes.append(node)
+
+
+func remove_focal_point(node: Node3D) -> void:
+	_extra_focal_nodes.erase(node)
+
+
+func clear_focal_points() -> void:
+	_extra_focal_nodes.clear()
+
+
 func compute_desired_follow_position() -> Vector3:
 	if not is_instance_valid(players):
 		_find_players_node()
@@ -69,6 +86,7 @@ func compute_desired_follow_position() -> Vector3:
 		return global_position
 	if _is_jointly_carrying_big_weapon():
 		player_positions.append_array(_get_aim_target_positions())
+	player_positions.append_array(_get_extra_focal_positions())
 
 	var midpoint := _get_midpoint(player_positions)
 	var spread := _get_max_distance_from(midpoint, player_positions)
@@ -106,6 +124,15 @@ func _is_jointly_carrying_big_weapon() -> bool:
 	if pick_and_drop_handler == null:
 		return false
 	return is_instance_valid(carry_info.main_carrier) and is_instance_valid(carry_info.secondary_carrier)
+
+
+func _get_extra_focal_positions() -> Array[Vector3]:
+	var positions: Array[Vector3] = []
+	for node in _extra_focal_nodes:
+		if not is_instance_valid(node):
+			continue
+		positions.append(node.global_position)
+	return positions
 
 
 func _get_aim_target_positions() -> Array[Vector3]:
