@@ -2,6 +2,10 @@ shader_type spatial;
 
 uniform vec3 water_color : source_color = vec3(0.1, 0.4, 0.6);
 uniform vec3 foam_color : source_color = vec3(0.8, 0.9, 1.0);
+uniform float wave_scale : hint_range(0.1, 50.0) = 1.0;
+uniform float wave_scale_detail : hint_range(0.1, 50.0) = 1.50;
+
+varying vec3 v_world_pos;
 
 // Portable cell hash (no sin of large values — stable on D3D/Vulkan/Metal).
 vec2 hash22(vec2 p) {
@@ -24,13 +28,16 @@ float voronoi(vec2 uv) {
 	return sqrt(res);
 }
 
+void vertex() {
+	v_world_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
+}
+
 void fragment() {
 	float time = TIME * 0.2;
+	vec2 world_uv = v_world_pos.xz;
 
-	// Sample in mesh UV space — MODEL_MATRIX * VERTEX is camera-relative in Godot
-	// and makes the pattern slide when the camera moves.
-	float v1 = voronoi(UV * 100.0 + time);
-	float v2 = voronoi(UV * 150.0 - time * 0.5);
+	float v1 = voronoi(world_uv * wave_scale + time);
+	float v2 = voronoi(world_uv * wave_scale_detail - time * 0.5);
 
 	float final_v = smoothstep(0.35, 0.55, v1 * v2);
 	vec3 normal_offset = vec3(v1 - 0.5, 0.0, v2 - 0.5) * 0.2;
