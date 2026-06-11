@@ -240,9 +240,10 @@ func get_face_direction() -> Vector3:
 func smooth_rotate_toward(flat_direction: Vector3, delta: float) -> void:
 	if flat_direction.length_squared() < 0.0001:
 		return
+	var current_basis := global_basis.orthonormalized()
 	var target_basis := Basis.looking_at(flat_direction.normalized(), Vector3.UP)
 	var w := 1.0 - exp(-ROTATION_SMOOTH_LAMBDA * delta)
-	global_basis = global_basis.slerp(target_basis, w).orthonormalized()
+	global_basis = current_basis.slerp(target_basis, w)
 
 
 func update_target_player() -> void:

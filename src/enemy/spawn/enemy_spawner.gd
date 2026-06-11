@@ -34,5 +34,5 @@ func _spawn_enemy() -> void:
 		return
 	var enemy := enemy_scene.instantiate() as EnemyLocal
 	enemies_parent.add_child(enemy)
-	enemy.global_transform = global_transform
+	enemy.global_transform = Transform3D(global_basis.orthonormalized(), global_position)
 	enemy.is_offensive = is_offensive

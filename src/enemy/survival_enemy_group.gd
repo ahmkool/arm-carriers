@@ -152,9 +152,13 @@ func _pick_spawn_transform() -> Transform3D:
 	var source_count := _spawn_point_nodes.size() + _spawn_polygon_nodes.size()
 	var index := randi() % source_count
 	if index < _spawn_point_nodes.size():
-		return _spawn_point_nodes[index].global_transform
+		return _rotation_only_transform(_spawn_point_nodes[index])
 	var polygon := _spawn_polygon_nodes[index - _spawn_point_nodes.size()]
 	return _spawn_transform_in_polygon(polygon)
+
+
+func _rotation_only_transform(source: Node3D) -> Transform3D:
+	return Transform3D(source.global_basis.orthonormalized(), source.global_position)
 
 
 func _spawn_transform_in_polygon(polygon: Node3D) -> Transform3D:
@@ -163,9 +167,9 @@ func _spawn_transform_in_polygon(polygon: Node3D) -> Transform3D:
 		push_warning(
 			"SurvivalEnemyGroup: Polygon %s needs at least 3 vertex nodes" % str(polygon.get_path())
 		)
-		return polygon.global_transform
+		return _rotation_only_transform(polygon)
 	var position := _random_point_in_polygon_vertices(vertices)
-	return Transform3D(polygon.global_basis, position)
+	return Transform3D(polygon.global_basis.orthonormalized(), position)
 
 
 func _polygon_vertices(polygon: Node3D) -> Array[Vector3]:
