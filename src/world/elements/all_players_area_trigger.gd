@@ -1,5 +1,5 @@
 class_name AllPlayersAreaTrigger
-extends Area3D
+extends EventAreaTrigger
 
 ## Fired once when every `required_player_id` has a [PlayerLocal] overlapping this area,
 ## then again only after someone leaves and the full set enters again.
@@ -8,47 +8,19 @@ signal all_players_inside
 @export var required_player_ids: Array[int] = [0, 1]
 
 var _inside_ids: Dictionary = {}
-var _emitted_for_current_overlap := false
 
-func _reset() -> void:
+func _clear_overlap_state() -> void:
 	_inside_ids.clear()
-	_emitted_for_current_overlap = false
-	set_deferred("monitoring", true)
-	set_deferred("monitorable", true)
 
-func _mark_area_as_inactive() -> void:
-	_inside_ids.clear()
-	_emitted_for_current_overlap = true
-	set_deferred("monitoring", false)
-	set_deferred("monitorable", false)
-
-func _ready() -> void:
-	body_entered.connect(_on_body_entered)
-	body_exited.connect(_on_body_exited)
-
-
-func _on_body_entered(body: Node3D) -> void:
-	var player := body as PlayerLocal
-	if player == null:
-		return
-	# if player is dead return:
-	if player.is_in_dead_state():
-		return
+func _handle_player_entered(player: PlayerLocal) -> void:
 	_inside_ids[player.player_id] = true
-	print("All players inside: ", _inside_ids)
-	_try_emit_all_inside()
+	_try_emit()
 
-
-func _on_body_exited(body: Node3D) -> void:
-	var player := body as PlayerLocal
-	if player == null:
-		return
+func _handle_player_exited(player: PlayerLocal) -> void:
 	_inside_ids.erase(player.player_id)
-	if not _all_required_inside():
-		_emitted_for_current_overlap = false
+	_rearm_if_needed()
 
-
-func _all_required_inside() -> bool:
+func _should_emit() -> bool:
 	if required_player_ids.is_empty():
 		return false
 	for id in required_player_ids:
@@ -56,14 +28,5 @@ func _all_required_inside() -> bool:
 			return false
 	return true
 
-
-func _try_emit_all_inside() -> void:
-	if _emitted_for_current_overlap:
-		return
-	if not _all_required_inside():
-		return
-	_emitted_for_current_overlap = true
+func _emit_triggered() -> void:
 	all_players_inside.emit()
-	print("Emitting all inside !")
-	set_deferred("monitoring", false)
-	set_deferred("monitorable", false)

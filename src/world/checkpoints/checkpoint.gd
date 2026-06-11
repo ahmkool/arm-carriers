@@ -10,8 +10,8 @@ extends Node3D
 @export var events_completed: Array[LevelEvent]
 @export var enemy_groups_reset: Array[EnemyGroup]
 @export var enemy_groups_defeated: Array[EnemyGroup]
-@export var areas_to_reactivate: Array[AllPlayersAreaTrigger]
-@export var areas_already_activated: Array[AllPlayersAreaTrigger]
+@export var areas_to_reactivate: Array[EventAreaTrigger]
+@export var areas_already_activated: Array[EventAreaTrigger]
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

@@ -9,3 +9,7 @@ func _trigger_event():
 
 func _complete_event():
 	pass
+
+
+func _on_all_players_area_trigger_4_all_players_inside():
+	pass # Replace with function body.
