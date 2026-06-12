@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://dntri6ipdywfo"]
+[gd_scene load_steps=28 format=3 uid="uid://dntri6ipdywfo"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_6qsxp"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_3t3mc"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_30pqa"]
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_8vqml"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_c2bog"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="11_trwi5"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="14_3t3mc"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="15_8vqml"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_ogh4n"]
@@ -134,16 +135,16 @@ spawn_interval_curve = ExtResource("22_flat1s")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, 2, 25)
 
 [node name="Node3D" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.453758, 0, -8.040913)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.453758, 0, -3.0409126)
 
 [node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.984478, 0, -7.9522285)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 12.984478, 0, -2.9522285)
 
 [node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.012524, 0, 10.897949)
 
 [node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.358948, 0, 11.023647)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.358948, 0, 11.023647)
 
 [node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.453758, 0, 29.959087)
@@ -163,13 +164,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.358948, 0, 45.023647)
 script = ExtResource("15_8vqml")
 enemy_group = NodePath("../../Enemies/SurvivalEnemyGroup")
 
+[node name="LevelSucceeded" type="Node" parent="Events"]
+script = ExtResource("11_trwi5")
+
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("16_ogh4n")
 current_checkpoint = NodePath("Checkpoint")
 
-[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset", "areas_to_reactivate")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 2.7544022)
 script = ExtResource("17_l8vg1")
+enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/AllPlayersAreaTrigger")]
 
 [node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
 
@@ -232,5 +238,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 
 [node name="GameStateMachine" parent="." instance=ExtResource("19_eq7uj")]
 
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Events/LevelSucceeded" method="trigger"]
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Events/MakeEnemiesGroup2Offensive" method="trigger"]

@@ -453,7 +453,6 @@ transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 76.2
 script = ExtResource("13_3bv6y")
 enemy_scene = ExtResource("14_xuff2")
 spawn_interval_curve = ExtResource("15_2e4q0")
-fight_duration = 20.0
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup2"]
 
