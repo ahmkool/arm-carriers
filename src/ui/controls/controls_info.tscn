@@ -1,0 +1,316 @@
+[gd_scene load_steps=15 format=3 uid="uid://b084xi54c14bg"]
+
+[ext_resource type="Script" uid="uid://dn1luwj2yu1qs" path="res://src/ui/controls/controls_info.gd" id="1_controls"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_vprmg"]
+[ext_resource type="Texture2D" uid="uid://nkroeenhn3uh" path="res://assets/sprites/ui/controls/T_X_Dpad_Light.png" id="2_nxuhp"]
+[ext_resource type="Texture2D" uid="uid://dtd568pplrfns" path="res://assets/sprites/ui/controls/T_X_L_2D_Light.png" id="3_p2uj4"]
+[ext_resource type="Texture2D" uid="uid://ijsxx8d3oajs" path="res://assets/sprites/ui/controls/T_X_RB_Light.png" id="4_74ol3"]
+[ext_resource type="Texture2D" uid="uid://cshwfxxhcj6rx" path="res://assets/sprites/ui/controls/T_X_RT_Light.png" id="5_cnvre"]
+[ext_resource type="Texture2D" uid="uid://d3uyqirctsm11" path="res://assets/sprites/ui/controls/arrows_asdw.png" id="6_vfumr"]
+[ext_resource type="Texture2D" uid="uid://babpwil5f5lx7" path="res://assets/sprites/ui/controls/T_Space_Key_White.png" id="7_u4328"]
+[ext_resource type="Texture2D" uid="uid://cufye3sgmu42l" path="res://assets/sprites/ui/controls/T_Shift_Key_White.png" id="8_vor5a"]
+[ext_resource type="Texture2D" uid="uid://baspngigg0fcq" path="res://assets/sprites/ui/controls/arrows_icon.png" id="9_nlwxd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_normal"]
+bg_color = Color(0.45, 0.48, 0.55, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_pressed"]
+bg_color = Color(0.38, 0.4, 0.46, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_hover"]
+bg_color = Color(0.52, 0.55, 0.62, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_back_focus"]
+bg_color = Color(0.52, 0.55, 0.62, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 0.95, 0.6, 1)
+corner_radius_top_left = 10
+corner_radius_top_right = 10
+corner_radius_bottom_right = 10
+corner_radius_bottom_left = 10
+
+[node name="PanelContainer" type="PanelContainer"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -500.0
+offset_top = -450.0
+offset_right = 500.0
+offset_bottom = 450.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+script = ExtResource("1_controls")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="ScrollContainer" type="ScrollContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="Controls" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme = ExtResource("1_vprmg")
+
+[node name="MarginContainer" type="MarginContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Controller Pad"
+uppercase = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("2_nxuhp")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="TextureRect2" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("3_p2uj4")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Move"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("4_74ol3")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Shoot"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+texture = ExtResource("5_cnvre")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer/VBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Dash"
+
+[node name="MarginContainer3" type="MarginContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+text = "Keyboard - Player 1"
+uppercase = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+texture = ExtResource("6_vfumr")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Move"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+texture = ExtResource("7_u4328")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer2"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Shoot"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+texture = ExtResource("8_vor5a")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer3"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer3/VBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Dash (left shift)"
+
+[node name="MarginContainer2" type="MarginContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+text = "Keyboard - Player 2"
+uppercase = true
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+texture = ExtResource("9_nlwxd")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+text = "Move"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+texture = ExtResource("7_u4328")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Shoot "
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer3"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+texture = ExtResource("8_vor5a")
+expand_mode = 5
+stretch_mode = 5
+
+[node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer3"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer3"]
+layout_mode = 2
+text = "Dash (right shift)"
+
+[node name="BackButton" type="Button" parent="MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_back_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_back_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_back_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_back_focus")
+text = "Back"

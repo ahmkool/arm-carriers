@@ -12,7 +12,8 @@ extends Node
 @onready var _restart_checkpoint_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/RestartCheckpointButton
 @onready var _back_to_menu_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/BackToMenuButton
 @onready var _options_back_button: Button = $Layer/MenuRoot/PauseOptionsRoot/PanelContainer/MarginContainer/VBoxContainer/BackButton
-@onready var _controls_back_button: Button = $Layer/MenuRoot/PauseControlsRoot/PanelContainer/MarginContainer/VBoxContainer/BackButton
+@onready var _controls_panel: ControlsInfoPanel = $Layer/MenuRoot/PauseControlsRoot/PanelContainer
+@onready var _controls_back_button: Button = $Layer/MenuRoot/PauseControlsRoot/PanelContainer/MarginContainer/ScrollContainer/VBoxContainer/BackButton
 
 
 func _ready() -> void:
@@ -49,6 +50,8 @@ func _unhandled_input(event: InputEvent) -> void:
 			_set_paused(false)
 			_mark_input_handled()
 			return
+		if _try_controls_scroll_input(event):
+			return
 		if _menu_navigator.process_input_event(event):
 			_mark_input_handled()
 		return
@@ -56,6 +59,15 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	_set_paused(true)
 	_mark_input_handled()
+
+
+func _try_controls_scroll_input(event: InputEvent) -> bool:
+	if not _controls_root.visible:
+		return false
+	if not _controls_panel.process_scroll_input(event):
+		return false
+	_mark_input_handled()
+	return true
 
 
 func _is_pause_input(event: InputEvent) -> bool:
