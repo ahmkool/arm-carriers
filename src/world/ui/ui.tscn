@@ -1,13 +1,46 @@
-[gd_scene load_steps=4 format=3 uid="uid://ddmgied4vtriv"]
+[gd_scene load_steps=9 format=3 uid="uid://ddmgied4vtriv"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_q2a7b"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="2_xvh14"]
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="3_4x7g5"]
+[ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="4_discord"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_normal"]
+bg_color = Color(0.345098, 0.396078, 0.94902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_pressed"]
+bg_color = Color(0.278431, 0.321569, 0.768627, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_hover"]
+bg_color = Color(0.415686, 0.458824, 0.956863, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_focus"]
+bg_color = Color(0.415686, 0.458824, 0.956863, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="UI" type="CanvasLayer"]
 
 [node name="InfoMessage" type="MarginContainer" parent="."]
-visible = false
 anchors_preset = 7
 anchor_left = 0.5
 anchor_top = 1.0
@@ -26,9 +59,25 @@ layout_mode = 2
 [node name="MarginContainer" type="MarginContainer" parent="InfoMessage/PanelContainer"]
 layout_mode = 2
 
-[node name="InfoLabel" type="Label" parent="InfoMessage/PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="InfoMessage/PanelContainer/MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="InfoLabel" type="Label" parent="InfoMessage/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 text = "Press any button to join the game"
+
+[node name="DiscordButton" type="Button" parent="InfoMessage/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_discord_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_discord_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_discord_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_discord_focus")
+script = ExtResource("4_discord")
 
 [node name="DebugInfo" type="MarginContainer" parent="."]
 visible = false

@@ -9,7 +9,7 @@ func enter() -> void:
 	var info_message := world.get_node("UI/InfoMessage")
 	InfoMessagePresenter.hide_feedback_controls(info_message)
 	info_message.show()
-	info_message.get_node("PanelContainer/MarginContainer/InfoLabel").text = "Game Over !"
+	info_message.get_node("PanelContainer/MarginContainer/VBoxContainer/InfoLabel").text = "Game Over !"
 	_begin_return_to_checkpoint_sequence()
 
 
