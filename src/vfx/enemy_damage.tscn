@@ -1,7 +1,6 @@
-[gd_scene load_steps=8 format=3 uid="uid://beu2su0uavqxy"]
+[gd_scene load_steps=7 format=3 uid="uid://beu2su0uavqxy"]
 
 [ext_resource type="Script" uid="uid://b3jp2wyj20fkp" path="res://src/vfx/enemy_damage.gd" id="1_damage"]
-[ext_resource type="AudioStream" uid="uid://5hmxanehcf2g" path="res://assets/sounds/explosion.wav" id="2_gaoic"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gaoic"]
 
@@ -25,10 +24,6 @@ scale_curve = SubResource("CurveTexture_ny0ro")
 
 [node name="EnemyDamage" type="Node3D"]
 script = ExtResource("1_damage")
-
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-bus = &"SFX"
-stream = ExtResource("2_gaoic")
 
 [node name="GPUParticles3D" type="GPUParticles3D" parent="."]
 material_override = SubResource("StandardMaterial3D_gaoic")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=4 uid="uid://lilxckjevvd5"]
+[gd_scene load_steps=21 format=4 uid="uid://lilxckjevvd5"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_b3w3s"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="2_tui83"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://dt14qjokdf4nr" path="res://src/weapon/saw/saw_specifics.gd" id="3_qf4v4"]
 [ext_resource type="Script" uid="uid://dbf4um7k2pf2d" path="res://src/weapon/saw/hit_box.gd" id="4_b3w3s"]
 [ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="5_wpnmv"]
+[ext_resource type="AudioStream" uid="uid://t4gadpfx1jqs" path="res://assets/sounds/damage/sword_hit.wav" id="6_hit_sfx"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_ab1mk"]
 size = Vector3(2.0615234, 1.7197266, 2.1870117)
@@ -195,6 +196,10 @@ damage = 3
 [node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/HitBox"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.10668945, 0)
 shape = SubResource("CapsuleShape3D_py2tq")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="WeaponSpecifics/HitBox"]
+bus = &"SFX"
+stream = ExtResource("6_hit_sfx")
 
 [node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
 
