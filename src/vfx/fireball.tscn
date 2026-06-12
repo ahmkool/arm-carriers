@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cm4mxhbh52ywr"]
+[gd_scene load_steps=16 format=3 uid="uid://cm4mxhbh52ywr"]
 
 [ext_resource type="Script" uid="uid://64pji2ifyp0g" path="res://src/vfx/fireball.gd" id="1_1qcgn"]
 [ext_resource type="Shader" uid="uid://cv47m7ybgxnhx" path="res://src/shaders/pan_shader.tres" id="1_bn7c4"]
@@ -80,9 +80,26 @@ tracks/0/keys = {
 "values": [Vector3(0.05, 0.05, 0.05), Vector3(1, 1, 1)]
 }
 
+[sub_resource type="Animation" id="Animation_5vuet"]
+resource_name = "disappear"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0.05, 0.05, 0.05)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ndwbl"]
 _data = {
 &"RESET": SubResource("Animation_bq0j5"),
+&"disappear": SubResource("Animation_5vuet"),
 &"pulse": SubResource("Animation_ndwbl"),
 &"spawn": SubResource("Animation_1qcgn")
 }
@@ -124,7 +141,6 @@ omni_attenuation = 1.2
 
 [node name="Area3D" type="Area3D" parent="."]
 collision_layer = 8
-monitorable = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
 shape = SubResource("SphereShape3D_1qcgn")
