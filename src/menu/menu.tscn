@@ -610,4 +610,4 @@ level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 stream = ExtResource("12_ep4cv")
 volume_db = -14.197
 bus = &"Music"
-parameters/looping = false
+parameters/looping = true

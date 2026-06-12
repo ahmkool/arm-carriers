@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://b63pyb1sthxyn"]
+[gd_scene load_steps=30 format=3 uid="uid://b63pyb1sthxyn"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
@@ -20,6 +20,7 @@
 [ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="21_jq7lx"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_jq7lx"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
+[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="22_tak01"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="24_g7rls"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
@@ -252,6 +253,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6896334, 0, 0)
 [node name="TestEnemies" type="Node" parent="."]
 
 [node name="Players" parent="." instance=ExtResource("24_g7rls")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("22_tak01")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
 
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Level/Events/MakeEnemiesGroup2Offensive" method="trigger"]

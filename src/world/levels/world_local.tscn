@@ -947,7 +947,7 @@ stream = ExtResource("24_h2fuj")
 volume_db = -20.14
 autoplay = true
 bus = &"Music"
-parameters/looping = false
+parameters/looping = true
 
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="TestEnemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
