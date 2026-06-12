@@ -20,9 +20,11 @@ const MENU_MUSIC_DELAY_SECONDS := 1.5
 @onready var _from_beginning_button: Button = $LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer/FromBeginningButton
 @onready var _level_start_prompt: Label = $LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer/PromptLabel
 @onready var _menu_music: AudioStreamPlayer = $AudioStreamPlayer
+@onready var _playtest_notice_label: Label = $PlaytestNoticeRoot/PanelContainer/MarginContainer/VBoxContainer/NoticeLabel
 
 
 func _ready() -> void:
+	_playtest_notice_label.text = PlaytestFeedback.HOME_MENU_NOTICE
 	_play_button.pressed.connect(_on_play_pressed)
 	_settings_button.pressed.connect(_on_settings_pressed)
 	_credits_button.pressed.connect(_on_credits_pressed)

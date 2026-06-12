@@ -1,8 +1,9 @@
 extends GameState
 
 func enter() -> void:
-	# Hide InfoMessage
-	self.world.get_node("UI/InfoMessage").hide()
+	var info_message := self.world.get_node("UI/InfoMessage")
+	InfoMessagePresenter.hide_feedback_controls(info_message)
+	info_message.hide()
 
 func exit() -> void:
 	pass

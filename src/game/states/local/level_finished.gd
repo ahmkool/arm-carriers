@@ -1,14 +1,13 @@
 extends GameState
 
-const MESSAGE_HOLD_SECONDS := 3.0
+const MESSAGE_HOLD_SECONDS := 6.0
 const FADE_TO_MENU_DURATION := 0.75
 
 
 func enter() -> void:
 	GameplayInput.lock()
 	_persist_level_completion()
-	world.get_node("UI/InfoMessage").show()
-	world.get_node("UI/InfoMessage/PanelContainer/MarginContainer/InfoLabel").text = "Level Complete - congratulations !"
+	InfoMessagePresenter.show_level_complete(world.get_node("UI/InfoMessage"))
 	_begin_return_to_menu_sequence()
 
 

@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=21 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -12,6 +12,7 @@
 [ext_resource type="Texture2D" uid="uid://biv0lpvm51c77" path="res://assets/sprites/menu/logo.png" id="8_fnvh6"]
 [ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="12_audio"]
 [ext_resource type="AudioStream" uid="uid://o55a1qhogedi" path="res://assets/music/Peritune_Zephyr_Fields_loop.mp3" id="12_ep4cv"]
+[ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="13_discord"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -70,6 +71,18 @@ tracks/4/path = NodePath("PressStartRoot/PromptLabel:modulate")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 0)]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PlaytestNoticeRoot:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
@@ -139,12 +152,57 @@ tracks/4/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 0), Color(1, 1, 1, 1)]
 }
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("PlaytestNoticeRoot:modulate")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 2.48, 3.4, 8),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 0), Color(1, 1, 1, 0), Color(1, 1, 1, 1), Color(1, 1, 1, 1)]
+}
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_ep4cv"]
 _data = {
 &"RESET": SubResource("Animation_2qbme"),
 &"appearance": SubResource("Animation_yk76d")
 }
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_normal"]
+bg_color = Color(0.345098, 0.396078, 0.94902, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_pressed"]
+bg_color = Color(0.278431, 0.321569, 0.768627, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_hover"]
+bg_color = Color(0.415686, 0.458824, 0.956863, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_focus"]
+bg_color = Color(0.415686, 0.458824, 0.956863, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0.85)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
 [node name="Menu" type="Control"]
 layout_mode = 3
@@ -430,6 +488,7 @@ music_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/MusicRo
 sfx_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/SfxRow/SfxSlider")
 
 [node name="CreditsMenuRoot" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -689,6 +748,49 @@ text = "Trailer: bridge magicians"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 level_id = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
+
+[node name="PlaytestNoticeRoot" type="MarginContainer" parent="."]
+modulate = Color(1, 1, 1, 0)
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -500.0
+offset_bottom = 353.0
+grow_horizontal = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="PlaytestNoticeRoot"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PlaytestNoticeRoot/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 12
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PlaytestNoticeRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="NoticeLabel" type="Label" parent="PlaytestNoticeRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 36
+text = "This is a playtest build. I'd love your feedback and ideas for improvements!"
+autowrap_mode = 3
+
+[node name="DiscordButton" type="Button" parent="PlaytestNoticeRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_focus_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_discord_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_discord_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_discord_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_discord_focus")
+text = "Join Discord"
+script = ExtResource("13_discord")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_ep4cv")
