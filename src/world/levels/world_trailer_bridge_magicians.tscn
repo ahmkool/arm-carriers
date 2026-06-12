@@ -1,10 +1,9 @@
-[gd_scene load_steps=45 format=4 uid="uid://c32saqns24qbo"]
+[gd_scene load_steps=44 format=4 uid="uid://c32saqns24qbo"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_82sxy"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="24_ui"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_k2r8q"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_u0a2s"]
-[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_8fr30"]
-[ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_m1yt2"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_7bqi3"]
 [ext_resource type="Script" uid="uid://de3schl6owkvv" path="res://src/game/game_state_machine.gd" id="7_osj3h"]
 [ext_resource type="Script" uid="uid://dalcm5ar0jm3s" path="res://src/game/states/local/await_world_local_ready.gd" id="8_sr7pg"]
@@ -158,61 +157,7 @@ script = ExtResource("2_k2r8q")
 script = ExtResource("3_u0a2s")
 
 [node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
-
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="InfoMessage" type="MarginContainer" parent="UI"]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
-grow_horizontal = 2
-grow_vertical = 0
-theme = ExtResource("4_8fr30")
-
-[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessage"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessage/PanelContainer"]
-layout_mode = 2
-
-[node name="InfoLabel" type="Label" parent="UI/InfoMessage/PanelContainer/MarginContainer"]
-layout_mode = 2
-text = "Press any button to join the game"
-
-[node name="DebugInfo" type="MarginContainer" parent="UI"]
-visible = false
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -163.0
-offset_bottom = 108.0
-grow_horizontal = 0
-theme = ExtResource("4_8fr30")
-script = ExtResource("5_m1yt2")
-
-[node name="PanelContainer" type="PanelContainer" parent="UI/DebugInfo"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugInfo/PanelContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "Debug info:"
-
-[node name="CarryingStatusP0" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "Status"
-
-[node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "Status"
+[node name="UI" parent="." instance=ExtResource("24_ui")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")

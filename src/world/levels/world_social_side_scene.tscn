@@ -1,13 +1,12 @@
-[gd_scene load_steps=30 format=3 uid="uid://c551rkwptexeq"]
+[gd_scene load_steps=29 format=3 uid="uid://c551rkwptexeq"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_2yqsx"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="23_ui"]
 [ext_resource type="Script" path="res://src/world/social_side_camera.gd" id="1_sidecam"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_sdrds"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_4nm5s"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_b2628"]
-[ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="5_if4wr"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_606gc"]
-[ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_x7bvg"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="14_sdrds"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="15_2e6ne"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_8nb1m"]
@@ -63,64 +62,7 @@ script = ExtResource("3_4nm5s")
 script = ExtResource("1_sidecam")
 
 [node name="Camera3D" type="Camera3D" parent="SocialSideCamera"]
-
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="InfoMessage" type="MarginContainer" parent="UI"]
-visible = false
-anchors_preset = 7
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -20.0
-offset_top = -40.0
-offset_right = 20.0
-grow_horizontal = 2
-grow_vertical = 0
-theme = ExtResource("4_b2628")
-
-[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessage"]
-layout_mode = 2
-
-[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessage/PanelContainer"]
-layout_mode = 2
-
-[node name="InfoLabel" type="Label" parent="UI/InfoMessage/PanelContainer/MarginContainer"]
-layout_mode = 2
-text = "Press any button to join the game"
-
-[node name="DebugInfo" type="MarginContainer" parent="UI"]
-visible = false
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -163.0
-offset_bottom = 108.0
-grow_horizontal = 0
-theme = ExtResource("4_b2628")
-script = ExtResource("5_if4wr")
-
-[node name="PanelContainer" type="PanelContainer" parent="UI/DebugInfo"]
-layout_mode = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/DebugInfo/PanelContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "Debug info:"
-
-[node name="CarryingStatusP0" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "Status"
-
-[node name="CarryingStatusP1" type="Label" parent="UI/DebugInfo/PanelContainer/VBoxContainer"]
-layout_mode = 2
-text = "Status"
-
-[node name="PauseMenu" parent="UI" instance=ExtResource("6_x7bvg")]
-
+[node name="UI" parent="." instance=ExtResource("23_ui")]
 [node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
 anchors_preset = 3
 anchor_left = 1.0
@@ -149,6 +91,7 @@ for 2 minutes. It will start slow but
 enemies will be more and more frequent"
 fit_content = true
 scroll_active = false
+
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")
