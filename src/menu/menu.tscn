@@ -609,6 +609,7 @@ theme_override_font_sizes/font_size = 40
 text = "Test sword level"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_02.tscn"
+level_id = "res://src/world/levels/world_local_02.tscn"
 
 [node name="Level3Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -617,6 +618,7 @@ theme_override_font_sizes/font_size = 40
 text = "Level 3"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_03.tscn"
+level_id = "res://src/world/levels/world_local_03.tscn"
 
 [node name="Level4Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -625,6 +627,7 @@ theme_override_font_sizes/font_size = 40
 text = "Level 4"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_04.tscn"
+level_id = "res://src/world/levels/world_local_04.tscn"
 
 [node name="SawCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -632,6 +635,7 @@ theme_override_font_sizes/font_size = 40
 text = "Saw carry"
 script = ExtResource("2_56xr1")
 level_scene_path = "uid://dntri6ipdywfo"
+level_id = "res://src/world/levels/world_local_saw_carry.tscn"
 
 [node name="EnemyTestLevel" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -640,6 +644,7 @@ theme_override_font_sizes/font_size = 40
 text = "Enemy test level"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_enemy_test.tscn"
+level_id = "res://src/world/levels/world_enemy_test.tscn"
 
 [node name="RouterTestButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -648,6 +653,7 @@ theme_override_font_sizes/font_size = 40
 text = "Router test"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_router_test.tscn"
+level_id = "res://src/world/levels/world_router_test.tscn"
 
 [node name="TrailerSceneButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -655,6 +661,7 @@ theme_override_font_sizes/font_size = 40
 text = "Survival level (hard)"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_scene.tscn"
+level_id = "res://src/world/levels/world_trailer_scene.tscn"
 
 [node name="TrailerSwordCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -663,6 +670,7 @@ theme_override_font_sizes/font_size = 40
 text = "Trailer: sword carry"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_sword_carry.tscn"
+level_id = "res://src/world/levels/world_trailer_sword_carry.tscn"
 
 [node name="TrailerMageStaticButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -671,6 +679,7 @@ theme_override_font_sizes/font_size = 40
 text = "Trailer: mage static"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_mage_static_scene.tscn"
+level_id = "res://src/world/levels/world_trailer_mage_static_scene.tscn"
 
 [node name="TrailerBridgeMagiciansButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -679,6 +688,7 @@ theme_override_font_sizes/font_size = 40
 text = "Trailer: bridge magicians"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
+level_id = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("12_ep4cv")

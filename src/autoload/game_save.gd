@@ -1,9 +1,10 @@
 extends Node
 
 const SAVE_PATH := "user://save.json"
-const SAVE_VERSION := 1
+const SAVE_VERSION := 2
 
 var _levels: Dictionary = {}
+var _completed: Dictionary = {}
 var _tracked_manager: CheckpointManager
 var _tracked_level_id: String = ""
 var _apply_save_on_next_load := true
@@ -11,6 +12,12 @@ var _apply_save_on_next_load := true
 
 func _ready() -> void:
 	_load_from_disk()
+
+
+static func resolve_level_id(level_scene_path: String, level_id: String) -> String:
+	if not level_id.is_empty():
+		return level_id
+	return level_scene_path
 
 
 func set_apply_save_on_next_load(apply: bool) -> void:
@@ -38,17 +45,49 @@ func set_saved_checkpoint(level_id: String, checkpoint_id: String) -> void:
 	_levels[level_id] = checkpoint_id
 
 
+func is_level_completed(level_id: String) -> bool:
+	if level_id.is_empty():
+		return false
+	var completed: Variant = _completed.get(level_id, false)
+	return completed == true
+
+
+func mark_level_completed(level_id: String) -> void:
+	if level_id.is_empty():
+		return
+	if is_level_completed(level_id):
+		return
+	_completed[level_id] = true
+	save_to_disk()
+
+
+func clear_level_completion(level_id: String) -> void:
+	if level_id.is_empty():
+		return
+	if not _completed.has(level_id):
+		return
+	_completed.erase(level_id)
+	save_to_disk()
+
+
 func clear_all() -> void:
 	_levels.clear()
+	_completed.clear()
 	save_to_disk()
 
 
 func clear_level(level_id: String) -> void:
 	if level_id.is_empty():
 		return
-	if not _levels.has(level_id):
+	var changed := false
+	if _levels.has(level_id):
+		_levels.erase(level_id)
+		changed = true
+	if _completed.has(level_id):
+		_completed.erase(level_id)
+		changed = true
+	if not changed:
 		return
-	_levels.erase(level_id)
 	save_to_disk()
 
 
@@ -81,6 +120,7 @@ func save_to_disk() -> void:
 	var data := {
 		"version": SAVE_VERSION,
 		"levels": _levels.duplicate(),
+		"completed": _completed.duplicate(),
 	}
 	var json_text := JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -92,6 +132,7 @@ func save_to_disk() -> void:
 
 func _load_from_disk() -> void:
 	_levels.clear()
+	_completed.clear()
 	if not FileAccess.file_exists(SAVE_PATH):
 		return
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -107,7 +148,8 @@ func _load_from_disk() -> void:
 		push_error("GameSave: save file missing 'levels' section.")
 		return
 	_levels = (data["levels"] as Dictionary).duplicate()
-	print("_levels: %s" % _levels)
+	if data.has("completed") and data["completed"] is Dictionary:
+		_completed = (data["completed"] as Dictionary).duplicate()
 
 
 func _on_checkpoint_changed(

@@ -95,9 +95,7 @@ func request_level(level_scene_path: String, level_id: String = "") -> void:
 	if level_scene_path.is_empty():
 		push_warning("SessionFlow: empty level scene path.")
 		return
-	var resolved_level_id := level_id
-	if resolved_level_id.is_empty():
-		resolved_level_id = level_scene_path
+	var resolved_level_id := GameSave.resolve_level_id(level_scene_path, level_id)
 	_pending_level_path = level_scene_path
 	_pending_level_id = resolved_level_id
 	var saved_checkpoint_id := GameSave.get_saved_checkpoint(resolved_level_id)

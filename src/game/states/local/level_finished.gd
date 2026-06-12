@@ -6,6 +6,7 @@ const FADE_TO_MENU_DURATION := 0.75
 
 func enter() -> void:
 	GameplayInput.lock()
+	_persist_level_completion()
 	world.get_node("UI/InfoMessage").show()
 	world.get_node("UI/InfoMessage/PanelContainer/MarginContainer/InfoLabel").text = "Level Complete - congratulations !"
 	_begin_return_to_menu_sequence()
@@ -13,6 +14,19 @@ func enter() -> void:
 
 func exit() -> void:
 	GameplayInput.unlock()
+
+
+func _persist_level_completion() -> void:
+	var world_local := world as WorldLocal
+	if world_local == null:
+		return
+	if world_local.skip_save:
+		return
+	var level_id := world_local.get_level_id()
+	if level_id.is_empty():
+		push_warning("LevelFinished: cannot save completion without level_id.")
+		return
+	GameSave.mark_level_completed(level_id)
 
 
 func _begin_return_to_menu_sequence() -> void:
