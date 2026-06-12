@@ -305,9 +305,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -200.0
-offset_top = -120.0
+offset_top = -150.0
 offset_right = 200.0
-offset_bottom = 120.0
+offset_bottom = 150.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -335,6 +335,11 @@ text = "Play"
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Settings"
+
+[node name="CreditsButton" type="Button" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Credits"
 
 [node name="QuitButton" type="Button" parent="HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -423,6 +428,75 @@ text = "Back"
 script = ExtResource("12_audio")
 music_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/MusicRow/MusicSlider")
 sfx_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/SfxRow/SfxSlider")
+
+[node name="CreditsMenuRoot" type="Control" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="CreditsMenuRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -320.0
+offset_top = -240.0
+offset_right = 320.0
+offset_bottom = 240.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="CreditsMenuRoot/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CreditsMenuRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="CreditsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 48
+text = "Credits"
+horizontal_alignment = 1
+
+[node name="CreditsScroll" type="ScrollContainer" parent="CreditsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(560, 320)
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="CreditsText" type="Label" parent="CreditsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/CreditsScroll"]
+custom_minimum_size = Vector2(560, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = "Music: Peritune
+
+3D models for characters and terrain: Kaykit
+
+Sound effects from Freesound:
+Ammo pickup #1 by zivs -- https://freesound.org/s/433770/ -- License: Attribution 4.0
+Fireball Cast 3 by LiamG_SFX -- https://freesound.org/s/334237/ -- License: Attribution 4.0
+Complex Mechanism Long by Sabacky -- https://freesound.org/s/807844/ -- License: Attribution 4.0
+Complex Mechanism Short by Sabacky -- https://freesound.org/s/807842/ -- License: Attribution 4.0
+Healing (Soft Ripple) by SilverIllusionist -- https://freesound.org/s/677080/ -- License: Attribution NonCommercial 4.0
+"
+autowrap_mode = 3
+
+[node name="BackButton" type="Button" parent="CreditsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Back"
 
 [node name="LevelStartChoiceRoot" type="Control" parent="."]
 visible = false

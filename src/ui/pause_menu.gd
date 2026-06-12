@@ -1,18 +1,40 @@
 extends Node
 
-@onready var menu_root: Control = $Layer/MenuRoot
-@onready var menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
-@onready var continue_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton
-@onready var restart_checkpoint_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/RestartCheckpointButton
-@onready var back_to_menu_button: Button = $Layer/MenuRoot/PanelContainer/MarginContainer/VBoxContainer/BackToMenuButton
+@onready var _menu_root: Control = $Layer/MenuRoot
+@onready var _pause_flow: PauseFlowNode = $PauseFlow
+@onready var _menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
+@onready var _main_root: Control = $Layer/MenuRoot/PauseMainRoot
+@onready var _options_root: Control = $Layer/MenuRoot/PauseOptionsRoot
+@onready var _controls_root: Control = $Layer/MenuRoot/PauseControlsRoot
+@onready var _continue_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton
+@onready var _options_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/OptionsButton
+@onready var _controls_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/ControlsButton
+@onready var _restart_checkpoint_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/RestartCheckpointButton
+@onready var _back_to_menu_button: Button = $Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/BackToMenuButton
+@onready var _options_back_button: Button = $Layer/MenuRoot/PauseOptionsRoot/PanelContainer/MarginContainer/VBoxContainer/BackButton
+@onready var _controls_back_button: Button = $Layer/MenuRoot/PauseControlsRoot/PanelContainer/MarginContainer/VBoxContainer/BackButton
+
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
-	menu_navigator.process_mode = Node.PROCESS_MODE_ALWAYS
-	menu_navigator.cancel_pressed.connect(_on_continue_pressed)
-	continue_button.pressed.connect(_on_continue_pressed)
-	restart_checkpoint_button.pressed.connect(_on_restart_checkpoint_pressed)
-	back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
+	_menu_navigator.process_mode = Node.PROCESS_MODE_ALWAYS
+	_continue_button.pressed.connect(_on_continue_pressed)
+	_options_button.pressed.connect(_on_options_pressed)
+	_controls_button.pressed.connect(_on_controls_pressed)
+	_restart_checkpoint_button.pressed.connect(_on_restart_checkpoint_pressed)
+	_back_to_menu_button.pressed.connect(_on_back_to_menu_pressed)
+	_options_back_button.pressed.connect(_on_options_back_pressed)
+	_controls_back_button.pressed.connect(_on_controls_back_pressed)
+	_pause_flow.resume_requested.connect(_on_continue_pressed)
+	_pause_flow.register_pause_ui(
+		_main_root,
+		_options_root,
+		_controls_root,
+		_menu_navigator,
+		_continue_button,
+		_options_back_button,
+		_controls_back_button,
+	)
 	_set_paused(false)
 
 
@@ -27,7 +49,7 @@ func _unhandled_input(event: InputEvent) -> void:
 			_set_paused(false)
 			_mark_input_handled()
 			return
-		if menu_navigator.process_input_event(event):
+		if _menu_navigator.process_input_event(event):
 			_mark_input_handled()
 		return
 	if not _is_pause_input(event):
@@ -48,6 +70,22 @@ func _is_pause_input(event: InputEvent) -> bool:
 
 func _on_continue_pressed() -> void:
 	_set_paused(false)
+
+
+func _on_options_pressed() -> void:
+	_pause_flow.transition_to("options")
+
+
+func _on_controls_pressed() -> void:
+	_pause_flow.transition_to("controls")
+
+
+func _on_options_back_pressed() -> void:
+	_pause_flow.transition_to("main")
+
+
+func _on_controls_back_pressed() -> void:
+	_pause_flow.transition_to("main")
 
 
 func _on_restart_checkpoint_pressed() -> void:
@@ -71,12 +109,16 @@ func _set_paused(should_pause: bool) -> void:
 	if tree == null:
 		return
 	tree.paused = should_pause
-	menu_root.visible = should_pause
-	menu_navigator.set_active(should_pause)
+	_menu_root.visible = should_pause
+	if not should_pause:
+		_menu_navigator.set_active(false)
+		return
+	_pause_flow.start()
+	_menu_navigator.set_active(true)
 
 
 func _mark_input_handled() -> void:
-	var viewport := menu_root.get_viewport() if menu_root.is_inside_tree() else null
+	var viewport := _menu_root.get_viewport() if _menu_root.is_inside_tree() else null
 	if viewport == null:
 		return
 	viewport.set_input_as_handled()

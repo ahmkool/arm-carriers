@@ -1,6 +1,13 @@
 class_name OpenBridgeEvent
 extends LevelEvent
 
+const OPEN_BRIDGE_HEAL_SFX := preload(
+	"res://assets/sounds/heal/677080__silverillusionist__healing-soft-ripple.wav"
+)
+const OPEN_BRIDGE_SFX := preload(
+	"res://assets/sounds/cogs/807842__sabacky__complex-mechanism-short.wav"
+)
+
 @export var platforms: Array[BridgePlatform]
 
 @export_range(0.05, 10.0, 0.05) var focus_move_in_seconds: float = 1.0
@@ -29,6 +36,9 @@ func _reset_event():
 			animation_player.play(&"RESET")
 
 func _trigger_event() -> void:
+	if event_type == EventType.OPEN_BRIDGE:
+		_play_focal_sfx(OPEN_BRIDGE_HEAL_SFX, 1.0)
+
 	if use_camera_focus:
 		GameplayInput.lock()
 
@@ -47,7 +57,6 @@ func _trigger_event() -> void:
 			focus_move_in_seconds,
 			focus_move_out_seconds
 		)
-
 	if use_camera_focus:
 		GameplayInput.unlock()
 	
@@ -61,6 +70,21 @@ func _complete_event() -> void:
 			animation_to_play = "bottom"
 		if animation_player:
 			animation_player.play(animation_to_play)
+
+
+func _play_focal_sfx(stream: AudioStream, delay_seconds: float = 0.0) -> void:
+	if delay_seconds > 0.0:
+		await get_tree().create_timer(delay_seconds).timeout
+	var scene_root := get_tree().current_scene
+	if scene_root == null:
+		return
+	var sfx := AudioStreamPlayer3D.new()
+	scene_root.add_child(sfx)
+	sfx.global_position = _compute_platforms_focal_point()
+	sfx.bus = "SFX"
+	sfx.stream = stream
+	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
+	sfx.play()
 
 
 func _compute_platforms_focal_point() -> Vector3:
