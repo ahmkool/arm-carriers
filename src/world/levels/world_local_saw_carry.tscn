@@ -20,7 +20,6 @@
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="20_3ft82"]
 [ext_resource type="PackedScene" uid="uid://lilxckjevvd5" path="res://src/weapon/saw.tscn" id="21_4fct5"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="21_6qsxp"]
-[ext_resource type="Curve" uid="uid://621sclswvacw" path="res://src/enemy/spawn_interval_flat_1s.tres" id="22_flat1s"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_c2bog")
@@ -33,6 +32,10 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+
+[sub_resource type="Curve" id="Curve_trwi5"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
 size = Vector3(4, 4, 4)
@@ -128,7 +131,7 @@ shadow_enabled = true
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
 script = ExtResource("14_3t3mc")
-spawn_interval_curve = ExtResource("22_flat1s")
+spawn_interval_curve = SubResource("Curve_trwi5")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
 

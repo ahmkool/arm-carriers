@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=45 format=4 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_56gt1"]
@@ -25,7 +25,6 @@
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="24_iv26f"]
 [ext_resource type="Texture2D" uid="uid://btl10tqrvruqw" path="res://assets/models/weapon/wooden_sign_forest_green_kaykit_modular_forest_texture.png" id="26_ndvwn"]
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="27_pause"]
-[ext_resource type="Curve" uid="uid://5rtl5f3x2v2w" path="res://src/enemy/spawn_interval_flat_3s.tres" id="28_flat3s"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("2_j5fge")
@@ -38,6 +37,21 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+
+[sub_resource type="Curve" id="Curve_qrvdl"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_ndvwn"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_iv26f"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
 size = Vector3(375, 1, 244)
@@ -245,7 +259,7 @@ is_offensive = false
 [node name="SurvivalEnemyGroup" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
 script = ExtResource("17_4muf4")
-spawn_interval_curve = ExtResource("28_flat3s")
+spawn_interval_curve = SubResource("Curve_qrvdl")
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup"]
 
@@ -266,7 +280,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.358948, 0, 11.023647)
 [node name="SurvivalEnemyGroup2" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.296173, 0, -25.647747)
 script = ExtResource("17_4muf4")
-spawn_interval_curve = ExtResource("28_flat3s")
+spawn_interval_curve = SubResource("Curve_ndvwn")
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup2"]
 
@@ -452,7 +466,7 @@ is_offensive = false
 [node name="SurvivalEnemyGroup3" type="Node3D" parent="TestEnemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 134.29617, 0, -31.647747)
 script = ExtResource("17_4muf4")
-spawn_interval_curve = ExtResource("28_flat3s")
+spawn_interval_curve = SubResource("Curve_iv26f")
 
 [node name="Enemies" type="Node3D" parent="TestEnemies/SurvivalEnemyGroup3"]
 

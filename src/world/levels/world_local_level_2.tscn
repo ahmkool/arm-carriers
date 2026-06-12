@@ -1,4 +1,4 @@
-[gd_scene load_steps=53 format=4 uid="uid://omin38ccge2r"]
+[gd_scene load_steps=54 format=4 uid="uid://omin38ccge2r"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_3bv6y"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_xuff2"]
@@ -15,7 +15,6 @@
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="13_3bv6y"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="14_03nbd"]
 [ext_resource type="PackedScene" uid="uid://bau1ktlsnhlkq" path="res://src/enemy/enemy_mage_static.tscn" id="14_xuff2"]
-[ext_resource type="Curve" uid="uid://5rtl5f3x2v2w" path="res://src/enemy/spawn_interval_flat_3s.tres" id="15_2e4q0"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="15_3slf2"]
 [ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="16_cxe7y"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="16_fmhrp"]
@@ -42,6 +41,16 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+
+[sub_resource type="Curve" id="Curve_tco1a"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_iqtrv"]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 2.5), 0.0, 0.0, 0, 0, Vector2(1, 1.9853945), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_03nbd"]
 size = Vector3(375, 1, 356)
@@ -349,7 +358,7 @@ cast_cooldown = 9.0
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -112.54045)
 script = ExtResource("13_3bv6y")
 enemy_scene = ExtResource("14_xuff2")
-spawn_interval_curve = ExtResource("15_2e4q0")
+spawn_interval_curve = SubResource("Curve_tco1a")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
 
@@ -452,7 +461,7 @@ transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 86.2
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 76.29617, 0, -199.54045)
 script = ExtResource("13_3bv6y")
 enemy_scene = ExtResource("14_xuff2")
-spawn_interval_curve = ExtResource("15_2e4q0")
+spawn_interval_curve = SubResource("Curve_iqtrv")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup2"]
 

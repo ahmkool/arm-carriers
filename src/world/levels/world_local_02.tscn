@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://b63pyb1sthxyn"]
+[gd_scene load_steps=31 format=3 uid="uid://b63pyb1sthxyn"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
@@ -8,13 +8,13 @@
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="6_g7rls"]
 [ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="6_gsm"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="9_nixuq"]
-[ext_resource type="Curve" uid="uid://5rtl5f3x2v2w" path="res://src/enemy/spawn_interval_flat_3s.tres" id="10_tak01"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_f7b5o"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_lj4gk"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_xb4ls"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_iifxy"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="18_khskr"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="19_g7rls"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="19_khskr"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
 [ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="21_jq7lx"]
@@ -34,6 +34,11 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+
+[sub_resource type="Curve" id="Curve_tak01"]
+_limits = [0.0, 1.0, 0.0, 5.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(5, 1), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
 size = Vector3(4, 4, 4)
@@ -131,7 +136,7 @@ shadow_enabled = true
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.703827, 0, 6.352253)
 script = ExtResource("9_nixuq")
-spawn_interval_curve = ExtResource("10_tak01")
+spawn_interval_curve = SubResource("Curve_tak01")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
 
@@ -237,6 +242,9 @@ platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/B
 script = ExtResource("18_khskr")
 enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
 
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("19_khskr")
+
 [node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 8)
 script = ExtResource("19_g7rls")
@@ -261,5 +269,6 @@ autoplay = true
 bus = &"Music"
 parameters/looping = true
 
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/LevelSucceeded" method="trigger"]
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Level/Events/MakeEnemiesGroup2Offensive" method="trigger"]

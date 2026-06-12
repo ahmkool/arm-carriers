@@ -36,7 +36,7 @@ sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
 
-[sub_resource type="Curve" id="Curve_m3hw7"]
+[sub_resource type="Curve" id="Curve_4nm5s"]
 _limits = [0.0, 3.0, 0.0, 1.0]
 _data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(0.31205672, 2.0480685), 0.0, 0.0, 0, 0, Vector2(0.6560284, 0.62309074), 0.0, 0.0, 0, 0, Vector2(1, 0.20844579), 0.0, 0.0, 0, 0]
 point_count = 4
@@ -157,7 +157,7 @@ shadow_enabled = true
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.283951, 1.9217563, -3.8764763)
 script = ExtResource("14_sdrds")
-spawn_interval_curve = SubResource("Curve_m3hw7")
+spawn_interval_curve = SubResource("Curve_4nm5s")
 fight_duration = 120.0
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
