@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="ArmCarriers"
+config/name="Armed Together"
 run/main_scene="uid://bf0gdkwg6xy2g"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="uid://bn4yfsa77fbid"

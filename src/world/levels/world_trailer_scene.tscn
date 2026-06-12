@@ -1,7 +1,6 @@
 [gd_scene load_steps=29 format=3 uid="uid://247visav4a1w"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_2yqsx"]
-[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="24_ui"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_sdrds"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_4nm5s"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="4_b2628"]
@@ -22,6 +21,7 @@
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="22_b2628"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="22_sdrds"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="23_4nm5s"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="24_ui"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_606gc")
@@ -57,7 +57,9 @@ script = ExtResource("2_sdrds")
 script = ExtResource("3_4nm5s")
 
 [node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
 [node name="UI" parent="." instance=ExtResource("24_ui")]
+
 [node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
 anchors_preset = 3
 anchor_left = 1.0
@@ -86,7 +88,6 @@ for 2 minutes. It will start slow but
 enemies will be more and more frequent"
 fit_content = true
 scroll_active = false
-
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")

@@ -1,7 +1,6 @@
 [gd_scene load_steps=27 format=3 uid="uid://dntri6ipdywfo"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_6qsxp"]
-[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="22_ui"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_3t3mc"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="3_8vqml"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="6_c2bog"]
@@ -18,6 +17,7 @@
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="20_3ft82"]
 [ext_resource type="PackedScene" uid="uid://lilxckjevvd5" path="res://src/weapon/saw.tscn" id="21_4fct5"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="21_6qsxp"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="22_ui"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_c2bog")
@@ -39,7 +39,7 @@ point_count = 2
 size = Vector3(4, 4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
-size = Vector3(56.4718, 1, 76.77945)
+size = Vector3(99.352264, 1, 97.6995)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_6qsxp"]
 vertices = PackedVector3Array(1.253499, 1.45, -41.2365, -7.996501, 1.45, -41.2365, -8.246501, 1.45, -38.7365, -8.246501, 1.45, -24.2365, -7.996501, 1.45, -21.7365, 1.253499, 1.45, -21.7365, -8.746501, 1.45, -38.2365, -8.746501, 1.45, -24.7365, -11.246501, 1.45, -37.9865, -11.246501, 1.45, -24.9865, 17.753498, 1.45, -33.7365, 19.753498, 1.45, -33.7365, 19.753498, 1.45, -38.2365, 17.753498, 1.45, -38.2365, 14.753499, 1.45, -21.7365, 17.253498, 1.45, -21.9865, 17.253498, 1.45, -33.2365, 3.253499, 1.45, -21.7365, 17.253498, 1.45, -38.7365, 3.753499, 1.45, -21.2365, 14.253499, 1.45, -21.2365, 17.003498, 1.45, -41.2365, 3.753499, 1.45, -19.2365, 14.253499, 1.45, -19.2365, 44.003498, 1.45, -33.7365, 44.253498, 1.45, -37.9865, 3.753499, 1.45, -10.7365, 14.253499, 1.45, -10.7365, 14.253499, 1.45, -8.7365, 3.753499, 1.45, -8.7365, 20.253498, 1.45, -7.9865, 14.753499, 1.45, -8.2365, 3.253499, 1.45, -8.2365, -8.246501, 1.45, -7.9865, -7.996501, 1.45, 14.2635, 20.253498, 1.45, 14.0135)
@@ -59,6 +59,7 @@ script = ExtResource("2_3t3mc")
 script = ExtResource("3_8vqml")
 
 [node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
 [node name="UI" parent="." instance=ExtResource("22_ui")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -141,7 +142,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
 script = ExtResource("18_x7fwy")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15.041336, -0.69485664, -16.94556)
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="Water" parent="Level" instance=ExtResource("20_3ft82")]

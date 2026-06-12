@@ -662,10 +662,18 @@ script = ExtResource("2_56xr1")
 level_scene_path = "uid://omin38ccge2r"
 level_id = "res://src/world/levels/world_local_level_2.tscn"
 
+[node name="TrailerSceneButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Survival level (impossible)"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_trailer_scene.tscn"
+level_id = "res://src/world/levels/world_trailer_scene.tscn"
+
 [node name="TestSwordLevelButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Test sword level"
+text = "Sword survival (hard)"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_local_02.tscn"
 level_id = "res://src/world/levels/world_local_02.tscn"
@@ -691,7 +699,7 @@ level_id = "res://src/world/levels/world_local_04.tscn"
 [node name="SawCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Saw carry"
+text = "Saw survival (hard)"
 script = ExtResource("2_56xr1")
 level_scene_path = "uid://dntri6ipdywfo"
 level_id = "res://src/world/levels/world_local_saw_carry.tscn"
@@ -713,14 +721,6 @@ text = "Router test"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_router_test.tscn"
 level_id = "res://src/world/levels/world_router_test.tscn"
-
-[node name="TrailerSceneButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-theme_override_font_sizes/font_size = 40
-text = "Survival level (hard)"
-script = ExtResource("2_56xr1")
-level_scene_path = "res://src/world/levels/world_trailer_scene.tscn"
-level_id = "res://src/world/levels/world_trailer_scene.tscn"
 
 [node name="TrailerSwordCarryButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
