@@ -2,6 +2,7 @@ class_name BazookaBulletLocal
 extends Node3D
 
 const ExplosionScene := preload("res://src/vfx/explosion.tscn")
+const SmallExplosionScene := preload("res://src/vfx/small_explosion.tscn")
 
 var velocity = Vector3.ZERO
 var _spent := false
@@ -24,8 +25,15 @@ func _on_hit_area_area_entered(area: Area3D) -> void:
 	var fireball := area.get_parent() as Fireball
 	if fireball == null:
 		return
+	_spawn_small_explosion(fireball.global_position)
 	fireball.queue_free()
 	_detonate()
+
+
+func _spawn_small_explosion(at_position: Vector3) -> void:
+	var pop := SmallExplosionScene.instantiate() as Node3D
+	get_tree().current_scene.add_child(pop)
+	pop.global_position = at_position
 
 
 func _detonate() -> void:

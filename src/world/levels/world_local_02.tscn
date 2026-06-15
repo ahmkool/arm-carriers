@@ -1,9 +1,9 @@
-[gd_scene load_steps=29 format=3 uid="uid://b63pyb1sthxyn"]
+[gd_scene load_steps=31 format=3 uid="uid://b63pyb1sthxyn"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
-[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="25_ui"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_g7rls"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="5_nixuq"]
 [ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="6_gsm"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="9_nixuq"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_f7b5o"]
@@ -17,9 +17,11 @@
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
 [ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="21_jq7lx"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_jq7lx"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="22_khskr"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="22_tak01"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="24_g7rls"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="25_ui"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_g7rls")
@@ -42,7 +44,7 @@ point_count = 2
 size = Vector3(4, 4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
-size = Vector3(56.4718, 1, 76.77945)
+size = Vector3(105, 1, 94)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_dvkoh"]
 vertices = PackedVector3Array(-35.7345, -0.5500002, 2.2544994, -35.2345, -0.5500002, 3.0044994, -27.7345, -0.5500002, 2.7544994, -44.2345, -0.5500002, -0.24550056, -43.9845, -0.5500002, 2.2544994, -44.7345, -0.5500002, -0.74550056, -27.9845, -0.5500002, -14.245501, -46.9845, -0.5500002, -14.245501, -47.2345, -0.5500002, -0.99550056, -9.734501, -0.5500002, -5.7455006, -9.984501, -0.5500002, -8.245501, -13.984501, -0.5500002, -8.245501, -14.234501, -0.5500002, -5.7455006, -17.2345, -0.5500002, 3.2544994, -17.7345, -0.5500002, 3.7544994, -17.7345, -0.5500002, 14.254499, -17.2345, -0.5500002, 14.754499, -9.234501, -0.5500002, -5.2455006, -14.734501, -0.5500002, -5.2455006, 5.265499, -0.5500002, 5.7544994, 5.765499, -0.5500002, 5.2544994, 8.265499, -0.5500002, -4.9955006, -17.2345, -0.5500002, -4.9955006, 8.265499, -0.5500002, 5.0044994, -19.7345, -0.5500002, 3.7544994, -19.7345, -0.5500002, 14.254499, -16.9845, -0.5500002, 17.2545, 5.015499, -0.5500002, 17.2545, -27.7345, -0.5500002, 3.2544994, -26.9845, -0.5500002, 11.254499, -26.7345, -0.5500002, 3.7544994, -35.2345, -0.5500002, 11.004499, -26.2345, -0.5500002, 11.754499, -25.9845, -0.5500002, 14.254499)
@@ -62,7 +64,35 @@ script = ExtResource("2_nixuq")
 script = ExtResource("22_shkpiv")
 
 [node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
 [node name="UI" parent="." instance=ExtResource("25_ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("5_nixuq")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#ff8888]Sword usage[/color]
+
+Use dash to swing and attack with the sword !"
+fit_content = true
+scroll_active = false
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_msrya")
@@ -137,7 +167,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
 script = ExtResource("15_xb4ls")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.6140747, -0.69485664, -15.95665)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.650024, -0.69485664, -7.3463745)
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
@@ -210,6 +240,12 @@ volume_db = -20.14
 autoplay = true
 bus = &"Music"
 parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("22_khskr")
+message_string = "[color=#ff8888]Sword usage[/color]
+
+Use dash to swing and attack with the sword !"
 
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/LevelSucceeded" method="trigger"]
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]

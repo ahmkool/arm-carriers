@@ -1,5 +1,11 @@
 extends Node
 
+const _PAUSE_BLOCKED_STATE_NAMES: Array[String] = [
+	"resettingcheckpoint",
+	"levelfinished",
+	"gameoverlost",
+]
+
 @onready var _menu_root: Control = $Layer/MenuRoot
 @onready var _pause_flow: PauseFlowNode = $PauseFlow
 @onready var _menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
@@ -57,6 +63,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		return
 	if not _is_pause_input(event):
 		return
+	if not _can_open_pause():
+		_mark_input_handled()
+		return
 	_set_paused(true)
 	_mark_input_handled()
 
@@ -68,6 +77,16 @@ func _try_controls_scroll_input(event: InputEvent) -> bool:
 		return false
 	_mark_input_handled()
 	return true
+
+
+func _can_open_pause() -> bool:
+	var world := _find_world_local() as WorldLocal
+	if world == null:
+		return true
+	var gsm := world.get_node_or_null("GameStateMachine") as GameStateMachine
+	if gsm == null or gsm.current == null:
+		return true
+	return gsm.current.name.to_lower() not in _PAUSE_BLOCKED_STATE_NAMES
 
 
 func _is_pause_input(event: InputEvent) -> bool:
