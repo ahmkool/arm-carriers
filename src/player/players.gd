@@ -23,7 +23,6 @@ func add_player(device_id: int):
 	var scene := _get_player_scene_for_device(device_id)
 	var player = scene.instantiate()
 	player.device_id = device_id
-	print("Adding player ", device_id)
 	add_child(player)
 	_apply_spawn_for_device(player, device_id)
 	if main_player_index == -1:
