@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://bu2c1eg0titi2"]
+[gd_scene load_steps=31 format=3 uid="uid://bu2c1eg0titi2"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_pmjqh"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_43rbl"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="14_uflwf"]
 [ext_resource type="PackedScene" uid="uid://jknk0yo32lsj" path="res://src/world/elements/moving_platform.tscn" id="15_43rbl"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="15_ntejw"]
+[ext_resource type="PackedScene" uid="uid://cxf2dya85k8ud" path="res://src/world/elements/rotating_platform.tscn" id="16_m585q"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="16_nx7g7"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="17_ssa8w"]
 [ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="18_c2yf5"]
@@ -203,7 +204,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.493914, -1.9927697, 19.506
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.493914, -1.9927697, 16.506092)
 
 [node name="MovingPlatform" parent="Level" instance=ExtResource("15_43rbl")]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 24.442518, 0.730741, 5)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 28.60951, 0.730741, 5)
+
+[node name="MovingPlatform2" parent="Level" instance=ExtResource("16_m585q")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.166992, 0.7384653, 4)
 
 [node name="Weapon" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.324318, 2.3595505, 0)
