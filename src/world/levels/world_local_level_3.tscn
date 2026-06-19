@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=44 format=4 uid="uid://crtwmltci7i7a"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_dvbv8"]
@@ -21,6 +21,7 @@
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="23_qrvdl"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="24_h2fuj"]
+[ext_resource type="PackedScene" uid="uid://bau1ktlsnhlkq" path="res://src/enemy/enemy_mage_static.tscn" id="25_mage"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="24_iv26f"]
 [ext_resource type="Texture2D" uid="uid://btl10tqrvruqw" path="res://assets/models/weapon/wooden_sign_forest_green_kaykit_modular_forest_texture.png" id="26_ndvwn"]
 
@@ -37,18 +38,18 @@ ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
 
 [sub_resource type="Curve" id="Curve_qrvdl"]
-_limits = [0.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 1.25), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_ndvwn"]
-_limits = [0.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 2), 0.0, 0.0, 0, 0, Vector2(1, 1.25), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="Curve" id="Curve_iv26f"]
-_limits = [0.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 3), 0.0, 0.0, 0, 0, Vector2(1, 3), 0.0, 0.0, 0, 0]
+_limits = [0.0, 2.5, 0.0, 1.0]
+_data = [Vector2(0, 1.75), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
@@ -122,6 +123,7 @@ size = Vector3(10, 3, 9)
 
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("1_1chlw")
+level_id = "res://src/world/levels/world_local_level_3.tscn"
 
 [node name="CameraFollowRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
@@ -175,6 +177,14 @@ is_offensive = false
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.207027, 0, 0.28055573)
 is_offensive = false
 
+[node name="EnemyLocal6" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.460549, 0, -5.5580826)
+is_offensive = false
+
+[node name="EnemyLocal7" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -2.05615, 0, 1.3649864)
+is_offensive = false
+
 [node name="EnemyGroup2" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3287868, 0, -56.585575)
 script = ExtResource("14_h2fuj")
@@ -197,9 +207,19 @@ is_offensive = false
 transform = Transform3D(0.15733066, 0, -0.98754597, 0, 1, 0, 0.98754597, 0, 0.15733066, -10.496037, 0, 8.329853)
 is_offensive = false
 
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.921222, 0, 8.320618)
+is_offensive = false
+
+[node name="EnemyLocal6" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -5.208807, 0, -5.133465)
+is_offensive = false
+
 [node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.296173, 0, -59.647747)
 script = ExtResource("17_4muf4")
+enemy_scene = ExtResource("25_mage")
+fight_duration = 75.0
 spawn_interval_curve = SubResource("Curve_qrvdl")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
@@ -218,9 +238,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.012524, 0, 10.897949)
 [node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.358948, 0, 11.023647)
 
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.76536, 0, 1.927868)
+
+[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.76536, 0, -1.072132)
+
 [node name="SurvivalEnemyGroup2" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48.296173, 0, -25.647747)
 script = ExtResource("17_4muf4")
+enemy_scene = ExtResource("25_mage")
+fight_duration = 75.0
 spawn_interval_curve = SubResource("Curve_ndvwn")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup2"]
@@ -238,6 +266,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.0125237, 0, 11.897949)
 
 [node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.641052, 0, 0.023647308)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.265477, 0, 5.972771)
+
+[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.265477, 0, -5.027229)
 
 [node name="EnemyGroup3" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3287868, 0, -56.585575)
@@ -404,9 +438,19 @@ is_offensive = false
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.7911987, 0, -5.133465)
 is_offensive = false
 
+[node name="EnemyLocal16" parent="Enemies/EnemyGroup5/InstancedEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -0.9073715, 0, -10.702127)
+is_offensive = false
+
+[node name="EnemyLocal17" parent="Enemies/EnemyGroup5/InstancedEnemies" instance=ExtResource("13_dvbv8")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.7911987, 0, -11.133465)
+is_offensive = false
+
 [node name="SurvivalEnemyGroup3" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 134.29617, 0, -31.647747)
 script = ExtResource("17_4muf4")
+enemy_scene = ExtResource("25_mage")
+fight_duration = 90.0
 spawn_interval_curve = SubResource("Curve_iv26f")
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup3"]
@@ -424,6 +468,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.012527, 0, 5.897949)
 
 [node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup3/SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.358948, 0, 6.0236473)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup3/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.234409, 0, 0.427948)
+
+[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup3/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.234409, 0, -0.572052)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("19_yghaq")
@@ -830,7 +880,7 @@ shape = SubResource("BoxShape3D_4muf4")
 [node name="Label3D" type="Label3D" parent="Level/Signs/wooden_sign"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0246022, 0.09950638)
 text = "SURVIVE FOR
-1 MIN"
+75 SEC"
 font_size = 55
 
 [node name="wooden_sign2" type="StaticBody3D" parent="Level/Signs"]
@@ -846,8 +896,8 @@ shape = SubResource("BoxShape3D_4muf4")
 
 [node name="Label3D" type="Label3D" parent="Level/Signs/wooden_sign2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0246022, 0.09950638)
-text = "THESE GUYS
-ARE CHILL"
+text = "MAGE
+SURGE"
 font_size = 55
 
 [node name="wooden_sign3" type="StaticBody3D" parent="Level/Signs"]
@@ -863,8 +913,8 @@ shape = SubResource("BoxShape3D_4muf4")
 
 [node name="Label3D" type="Label3D" parent="Level/Signs/wooden_sign3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0246022, 0.09950638)
-text = "TAKE A
-BREATH"
+text = "HOLD THE
+LINE"
 font_size = 55
 
 [node name="wooden_sign4" type="StaticBody3D" parent="Level/Signs"]

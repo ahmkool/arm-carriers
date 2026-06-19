@@ -679,13 +679,12 @@ level_scene_path = "res://src/world/levels/world_local_02.tscn"
 level_id = "res://src/world/levels/world_local_02.tscn"
 
 [node name="Level3Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
-visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Level 3"
+text = "Level 3 (hard)"
 script = ExtResource("2_56xr1")
-level_scene_path = "res://src/world/levels/world_local_03.tscn"
-level_id = "res://src/world/levels/world_local_03.tscn"
+level_scene_path = "res://src/world/levels/world_local_level_3.tscn"
+level_id = "res://src/world/levels/world_local_level_3.tscn"
 
 [node name="Level4Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 visible = false
@@ -748,6 +747,14 @@ text = "Trailer: bridge magicians"
 script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 level_id = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
+
+[node name="BossFight" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Boss fight"
+script = ExtResource("2_56xr1")
+level_scene_path = "uid://dymeqs381w0fb"
+level_id = "res://src/world/levels/world_boss_scene.tscn"
 
 [node name="PlaytestNoticeRoot" type="MarginContainer" parent="."]
 modulate = Color(1, 1, 1, 0)
