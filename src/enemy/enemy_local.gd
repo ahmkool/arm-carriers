@@ -111,6 +111,8 @@ func _can_resume_after_hit(state_name: String) -> bool:
 		return false
 	if state_name == "takingdamageflying":
 		return false
+	if state_name == "attacking":
+		return false
 	return true
 
 
@@ -398,6 +400,8 @@ func update_locomotion_blend() -> void:
 	if _is_in_taking_damage_state():
 		return
 	if enemy_state_machine != null and enemy_state_machine.is_in_state("casting"):
+		return
+	if enemy_state_machine != null and enemy_state_machine.is_in_state("attacking"):
 		return
 	if enemy_state_machine != null and enemy_state_machine.is_in_state("spawning"):
 		return

@@ -78,6 +78,8 @@ func _blocks_behavior_locomotion() -> bool:
 		return true
 	if is_in_state("casting"):
 		return true
+	if is_in_state("attacking"):
+		return true
 	if is_in_state("spawning"):
 		return true
 	if is_in_state("takingdamage"):
