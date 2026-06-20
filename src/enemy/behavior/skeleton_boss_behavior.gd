@@ -3,7 +3,7 @@ extends EnemyBehavior
 
 @export var attack_min_distance := 1.2
 @export var attack_max_distance := 3.5
-@export var stab_preferred_distance := 2.0
+@export var stab_preferred_distance := 3.0
 @export var chase_max_distance := 14.0
 @export var attack_cooldown := 1.5
 
