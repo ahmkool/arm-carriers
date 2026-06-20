@@ -1,0 +1,31 @@
+[gd_scene load_steps=8 format=3 uid="uid://3hd7rsafohhk"]
+
+[ext_resource type="Script" uid="uid://bb0q26042lr7p" path="res://src/player/state/player_state_machine.gd" id="1_yvy6n"]
+[ext_resource type="Script" uid="uid://bru2sustmt8nd" path="res://src/player/state/idle.gd" id="2_hjlug"]
+[ext_resource type="Script" uid="uid://ccnehos01hou" path="res://src/player/state/running.gd" id="3_caxpk"]
+[ext_resource type="Script" uid="uid://yeo4owi2ngpt" path="res://src/player/state/falling.gd" id="4_u4cvl"]
+[ext_resource type="Script" uid="uid://hwuw1ykmhuoy" path="res://src/player/state/dead.gd" id="5_ynuu6"]
+[ext_resource type="Script" uid="uid://b38q225msyjxt" path="res://src/player/state/dashing.gd" id="6_5g443"]
+[ext_resource type="Script" uid="uid://c7ot21yeeweaq" path="res://src/player/state/taking_damage.gd" id="7_76jae"]
+
+[node name="PlayerStateMachine" type="Node"]
+script = ExtResource("1_yvy6n")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="."]
+script = ExtResource("2_hjlug")
+
+[node name="Running" type="Node" parent="."]
+script = ExtResource("3_caxpk")
+
+[node name="Falling" type="Node" parent="."]
+script = ExtResource("4_u4cvl")
+
+[node name="Dead" type="Node" parent="."]
+script = ExtResource("5_ynuu6")
+
+[node name="Dashing" type="Node" parent="."]
+script = ExtResource("6_5g443")
+
+[node name="TakingDamage" type="Node" parent="."]
+script = ExtResource("7_76jae")

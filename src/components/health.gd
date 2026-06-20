@@ -7,22 +7,40 @@ signal died(source_position: Vector3)
 @export var max_hp: int = 3
 
 var current_hp: int
+var _invulnerable_time_remaining := 0.0
 
 
 func _ready() -> void:
 	reset_to_full()
 
 
+func _process(delta: float) -> void:
+	if _invulnerable_time_remaining <= 0.0:
+		return
+	_invulnerable_time_remaining = maxf(0.0, _invulnerable_time_remaining - delta)
+
+
 func is_alive() -> bool:
 	return current_hp > 0
 
 
+func is_invulnerable() -> bool:
+	return _invulnerable_time_remaining > 0.0
+
+
+func grant_invulnerability(duration: float) -> void:
+	_invulnerable_time_remaining = maxf(_invulnerable_time_remaining, duration)
+
+
 func reset_to_full() -> void:
 	current_hp = max_hp
+	_invulnerable_time_remaining = 0.0
 
 
 func take_damage(amount: int, source_position: Vector3 = Vector3.ZERO) -> void:
 	if not is_alive():
+		return
+	if is_invulnerable():
 		return
 	var applied := mini(amount, current_hp)
 	current_hp -= applied

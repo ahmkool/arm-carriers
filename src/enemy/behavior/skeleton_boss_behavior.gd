@@ -3,22 +3,26 @@ extends EnemyBehavior
 
 @export var attack_min_distance := 1.2
 @export var attack_max_distance := 3.5
-@export var stab_preferred_distance := 3.0
 @export var chase_max_distance := 14.0
 @export var attack_cooldown := 1.5
+@export var target_refresh_interval := 0.5
 
 var _attack_cooldown_remaining := 0.0
+var _target_refresh_remaining := 0.0
 
 
 func _think(delta: float) -> void:
 	if enemy == null or not enemy.is_offensive:
 		return
+
+	_tick_target_refresh(delta)
+
 	if _is_attacking():
 		return
 
 	_attack_cooldown_remaining = maxf(_attack_cooldown_remaining - delta, 0.0)
 
-	if not _ensure_target():
+	if not _has_valid_target():
 		return
 
 	var flat_to_target := _get_flat_to_target()
@@ -29,7 +33,7 @@ func _think(delta: float) -> void:
 	var direction := flat_to_target / distance
 
 	if _can_request_attack(distance):
-		_request_attack(distance, direction)
+		_request_attack(direction)
 		return
 
 	if distance > attack_max_distance and distance <= chase_max_distance:
@@ -47,12 +51,34 @@ func _is_attacking() -> bool:
 	return enemy.enemy_state_machine.is_in_state("attacking")
 
 
-func _ensure_target() -> bool:
+func _tick_target_refresh(delta: float) -> void:
+	if _needs_immediate_target_refresh():
+		_refresh_target()
+		return
+
+	_target_refresh_remaining -= delta
+	if _target_refresh_remaining > 0.0:
+		return
+	_refresh_target()
+
+
+func _refresh_target() -> void:
+	enemy.update_target_player()
+	_target_refresh_remaining = target_refresh_interval
+
+
+func _needs_immediate_target_refresh() -> bool:
 	if not is_instance_valid(enemy.target_player):
-		enemy.update_target_player()
-	if is_instance_valid(enemy.target_player) and enemy.target_player.is_dead:
-		enemy.update_target_player()
-	return is_instance_valid(enemy.target_player)
+		return true
+	if enemy.target_player.is_dead:
+		return true
+	return false
+
+
+func _has_valid_target() -> bool:
+	if not is_instance_valid(enemy.target_player):
+		return false
+	return not enemy.target_player.is_dead
 
 
 func _get_flat_to_target() -> Vector3:
@@ -70,14 +96,14 @@ func _can_request_attack(distance: float) -> bool:
 	return true
 
 
-func _request_attack(distance: float, face_direction: Vector3) -> void:
+func _request_attack(face_direction: Vector3) -> void:
 	intent.face_direction = face_direction
-	intent.requested_attack = _pick_attack(distance)
+	intent.requested_attack = _pick_attack()
 	intent.requested_locomotion = &"attacking"
 	_attack_cooldown_remaining = attack_cooldown
 
 
-func _pick_attack(distance: float) -> StringName:
-	if distance <= stab_preferred_distance:
-		return &"stab"
-	return &"slash"
+func _pick_attack() -> StringName:
+	if randi() % 2 == 0:
+		return &"slash"
+	return &"stab"
