@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://ddmgied4vtriv"]
+[gd_scene load_steps=10 format=3 uid="uid://ddmgied4vtriv"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_q2a7b"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="2_xvh14"]
 [ext_resource type="PackedScene" uid="uid://c8pausemenu01" path="res://src/ui/pause_menu.tscn" id="3_4x7g5"]
 [ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="4_discord"]
+[ext_resource type="PackedScene" uid="uid://ck4bhpbar001sc" path="res://src/world/ui/boss_health_bar.tscn" id="5_bhpbar"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_normal"]
 bg_color = Color(0.345098, 0.396078, 0.94902, 1)
@@ -109,3 +110,5 @@ layout_mode = 2
 text = "Status"
 
 [node name="PauseMenu" parent="." instance=ExtResource("3_4x7g5")]
+
+[node name="BossHealthBar" parent="." instance=ExtResource("5_bhpbar")]

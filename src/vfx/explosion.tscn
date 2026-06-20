@@ -107,6 +107,7 @@ radius = 3.5
 
 [node name="Explosion" type="Node3D"]
 script = ExtResource("1_dvbte")
+damage = 3
 
 [node name="Debris" type="GPUParticles3D" parent="."]
 emitting = false

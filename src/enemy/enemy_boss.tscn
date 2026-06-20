@@ -554,7 +554,7 @@ draw_pass_1 = SubResource("CylinderMesh_cd20w")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("36_bb3bq")
-max_hp = 30000
+max_hp = 60
 
 [node name="Skeleton_Golem" type="Node3D" parent="."]
 
