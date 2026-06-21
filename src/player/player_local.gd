@@ -41,8 +41,6 @@ var is_dead: bool:
 @onready var player_state_machine: PlayerStateMachine = $PlayerStateMachine
 @onready var health: Health = $Health
 
-const TWINSTICK_ACTIVE = true
-
 func _ready():
 	print("PlayerLocal ready, device_id: ", device_id)
 	_bind_health()
@@ -51,6 +49,18 @@ func _ready():
 		animation_tree.active = true
 		animation_tree.set(ANIM_PARAM_DEAD_BLEND, 0.0)
 		animation_tree.set(ANIM_PARAM_DEAD_ONESHOT_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_ABORT)
+	_bind_input_actions()
+	GameplaySettings.twinstick_active_changed.connect(_bind_input_actions)
+	player_id = device_id
+
+
+func _exit_tree() -> void:
+	if not GameplaySettings.twinstick_active_changed.is_connected(_bind_input_actions):
+		return
+	GameplaySettings.twinstick_active_changed.disconnect(_bind_input_actions)
+
+
+func _bind_input_actions(_active: bool = false) -> void:
 	action_left = "p%s_left" % device_id
 	action_right = "p%s_right" % device_id
 	action_up = "p%s_up" % device_id
@@ -60,7 +70,14 @@ func _ready():
 	action_action = "p%s_action" % device_id
 	action_shoot = "p%s_shoot" % device_id
 	action_dash = "p%s_dash" % device_id
-	player_id = device_id
+	if not GameplaySettings.is_twinstick_active():
+		return
+	action_left = "twinstick_p%s_left" % device_id
+	action_right = "twinstick_p%s_right" % device_id
+	action_up = "twinstick_p%s_up" % device_id
+	action_down = "twinstick_p%s_down" % device_id
+	action_shoot = "twinstick_p%s_shoot" % device_id
+	action_dash = "twinstick_p%s_dash" % device_id
 
 
 func _bind_health() -> void:

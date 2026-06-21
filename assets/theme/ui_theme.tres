@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=6 format=3 uid="uid://cqojbbcsl6jfh"]
+[gd_resource type="Theme" load_steps=8 format=3 uid="uid://cqojbbcsl6jfh"]
 
 [ext_resource type="FontFile" uid="uid://dgsw8vp0k4tvk" path="res://assets/fonts/Lilita_One/LilitaOne-Regular.ttf" id="1_1exxx"]
 
@@ -20,6 +20,10 @@ corner_radius_top_left = 10
 corner_radius_top_right = 10
 corner_radius_bottom_right = 10
 corner_radius_bottom_left = 10
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_1exxx"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l845e"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
 content_margin_left = 14.0
@@ -51,6 +55,10 @@ Button/font_sizes/font_size = 40
 Button/fonts/font = ExtResource("1_1exxx")
 Button/styles/focus = SubResource("StyleBoxFlat_button_focus")
 Button/styles/normal = SubResource("StyleBoxFlat_l845e")
+CheckButton/font_sizes/font_size = 40
+CheckButton/fonts/font = ExtResource("1_1exxx")
+CheckButton/styles/hover = SubResource("StyleBoxEmpty_1exxx")
+CheckButton/styles/normal = SubResource("StyleBoxEmpty_l845e")
 Label/colors/font_color = Color(0.94, 0.91, 0.84, 1)
 Label/colors/font_shadow_color = Color(0.02, 0.03, 0.06, 0.65)
 Label/constants/shadow_offset_x = 2

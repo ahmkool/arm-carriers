@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=22 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="12_audio"]
 [ext_resource type="AudioStream" uid="uid://o55a1qhogedi" path="res://assets/music/Peritune_Zephyr_Fields_loop.mp3" id="12_ep4cv"]
 [ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="13_discord"]
+[ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="14_twinstick"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -405,7 +406,6 @@ theme_override_font_sizes/font_size = 40
 text = "Quit"
 
 [node name="SettingsMenuRoot" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -421,9 +421,9 @@ anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
 offset_left = -280.0
-offset_top = -160.0
+offset_top = -200.0
 offset_right = 280.0
-offset_bottom = 160.0
+offset_bottom = 200.0
 grow_horizontal = 2
 grow_vertical = 2
 
@@ -477,6 +477,18 @@ custom_minimum_size = Vector2(280, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 
+[node name="TwinstickRow" type="HBoxContainer" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="TwinstickCheck" type="CheckButton" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/TwinstickRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 32
+text = "Twin-stick"
+
 [node name="BackButton" type="Button" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -486,6 +498,10 @@ text = "Back"
 script = ExtResource("12_audio")
 music_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/MusicRow/MusicSlider")
 sfx_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/SfxRow/SfxSlider")
+
+[node name="TwinstickSettingControl" type="Node" parent="SettingsMenuRoot" node_paths=PackedStringArray("checkbox")]
+script = ExtResource("14_twinstick")
+checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/TwinstickRow/TwinstickCheck")
 
 [node name="CreditsMenuRoot" type="Control" parent="."]
 visible = false
@@ -612,6 +628,7 @@ theme_override_font_sizes/font_size = 40
 text = "From beginning"
 
 [node name="MainMenuRoot" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
