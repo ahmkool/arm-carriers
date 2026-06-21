@@ -23,6 +23,7 @@ bus_layout="res://default_bus_layout.tres"
 
 AudioSettings="*res://src/autoload/audio_settings.gd"
 CameraFeedback="*res://src/autoload/camera_feedback.gd"
+DisplaySettings="*res://src/autoload/display_settings.gd"
 GameSave="*res://src/autoload/game_save.gd"
 GameplayInput="*res://src/autoload/gameplay_input.gd"
 GameplaySettings="*res://src/autoload/gameplay_settings.gd"
@@ -256,6 +257,11 @@ twinstick_p1_shoot={
 twinstick_p1_dash={
 "deadzone": 0.2,
 "events": [Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":-1,"axis":5,"axis_value":1.0,"script":null)
+]
+}
+toggle_full_screen={
+"deadzone": 0.2,
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":true,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194309,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
 

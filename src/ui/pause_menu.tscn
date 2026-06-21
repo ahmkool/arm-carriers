@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://c8pausemenu01"]
+[gd_scene load_steps=29 format=3 uid="uid://c8pausemenu01"]
 
 [ext_resource type="Script" uid="uid://bfq14wxdjuanp" path="res://src/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="Theme" uid="uid://wgaw3undqvio" path="res://assets/theme/pause_menu_theme.tres" id="2_pause_theme"]
@@ -7,6 +7,7 @@
 [ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="5_audio"]
 [ext_resource type="PackedScene" uid="uid://b084xi54c14bg" path="res://src/ui/controls/controls_info.tscn" id="6_kcxqm"]
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="7_twinstick"]
+[ext_resource type="Script" uid="uid://dfullscreensetting01" path="res://src/ui/fullscreen_setting_control.gd" id="8_fullscreen"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_normal"]
 bg_color = Color(0.45, 0.82, 0.35, 1)
@@ -363,6 +364,17 @@ size_flags_horizontal = 3
 size_flags_vertical = 8
 text = "Twin-stick"
 
+[node name="FullscreenRow" type="HBoxContainer" parent="Layer/MenuRoot/PauseOptionsRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 1
+
+[node name="FullscreenCheck" type="CheckButton" parent="Layer/MenuRoot/PauseOptionsRoot/PanelContainer/MarginContainer/VBoxContainer/FullscreenRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+text = "Full screen"
+
 [node name="BackButton" type="Button" parent="Layer/MenuRoot/PauseOptionsRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_back_normal")
@@ -379,6 +391,10 @@ sfx_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/SfxRow/Sf
 [node name="TwinstickSettingControl" type="Node" parent="Layer/MenuRoot/PauseOptionsRoot" node_paths=PackedStringArray("checkbox")]
 script = ExtResource("7_twinstick")
 checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/TwinstickRow/TwinstickCheck")
+
+[node name="FullscreenSettingControl" type="Node" parent="Layer/MenuRoot/PauseOptionsRoot" node_paths=PackedStringArray("checkbox")]
+script = ExtResource("8_fullscreen")
+checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/FullscreenRow/FullscreenCheck")
 
 [node name="PauseControlsRoot" type="Control" parent="Layer/MenuRoot"]
 visible = false

@@ -1,4 +1,4 @@
-[gd_scene load_steps=22 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=23 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -14,6 +14,7 @@
 [ext_resource type="AudioStream" uid="uid://o55a1qhogedi" path="res://assets/music/Peritune_Zephyr_Fields_loop.mp3" id="12_ep4cv"]
 [ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="13_discord"]
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="14_twinstick"]
+[ext_resource type="Script" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -489,6 +490,18 @@ theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 32
 text = "Twin-stick"
 
+[node name="FullscreenRow" type="HBoxContainer" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="FullscreenCheck" type="CheckButton" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/FullscreenRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 32
+text = "Full screen"
+
 [node name="BackButton" type="Button" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -502,6 +515,10 @@ sfx_slider = NodePath("../PanelContainer/MarginContainer/VBoxContainer/SfxRow/Sf
 [node name="TwinstickSettingControl" type="Node" parent="SettingsMenuRoot" node_paths=PackedStringArray("checkbox")]
 script = ExtResource("14_twinstick")
 checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/TwinstickRow/TwinstickCheck")
+
+[node name="FullscreenSettingControl" type="Node" parent="SettingsMenuRoot" node_paths=PackedStringArray("checkbox")]
+script = ExtResource("15_fullscreen")
+checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/FullscreenRow/FullscreenCheck")
 
 [node name="CreditsMenuRoot" type="Control" parent="."]
 visible = false
