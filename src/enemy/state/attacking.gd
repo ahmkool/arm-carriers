@@ -9,10 +9,12 @@ const ATTACK_SLASH := &"slash"
 const ATTACK_STAB := &"stab"
 
 var _active_attack: StringName = &""
+var _attack_animation_started := false
 
 
 func enter() -> void:
 	super.enter()
+	_attack_animation_started = false
 	_active_attack = _resolve_attack_kind()
 	enemy.velocity = Vector3.ZERO
 	if enemy.footsteps_particles:
@@ -26,7 +28,8 @@ func physics_update(delta: float) -> void:
 		return
 
 	enemy.velocity = Vector3.ZERO
-	_rotate_toward_target(delta)
+	# Lock facing during attack animation:
+	# _rotate_toward_target(delta)
 
 	if _is_attack_animation_playing():
 		return
@@ -59,6 +62,14 @@ func _is_attack_animation_playing() -> bool:
 		return false
 	if not enemy.animation_tree.active:
 		return false
+	var active := _get_attack_animation_active()
+	if active:
+		_attack_animation_started = true
+		return true
+	return not _attack_animation_started
+
+
+func _get_attack_animation_active() -> bool:
 	if _active_attack == ATTACK_STAB:
 		return enemy.animation_tree.get(ANIM_PARAM_STAB_ACTIVE)
 	return enemy.animation_tree.get(ANIM_PARAM_SLASH_ACTIVE)

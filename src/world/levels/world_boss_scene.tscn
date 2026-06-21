@@ -206,9 +206,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.6565056, 0)
 
 [node name="ShowMessageAtLaunch" type="Node" parent="."]
 script = ExtResource("21_v2ylt")
-message_string = "[color=#ff8888]Survival level[/color]
+message_string = "[color=#ff8888]Boss level[/color]
 
-In this level you will have to survive for [color=#ff8888]2 minutes[/color]. It will start slow but enemies will be more and more frequent."
+In this level you will fight against a boss. Good luck !"
 
 [node name="ShowBossHealthBar" type="Node" parent="." node_paths=PackedStringArray("fight_trigger", "enemy_group")]
 script = ExtResource("24_bhpbind")
