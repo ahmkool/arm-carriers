@@ -4,7 +4,7 @@ const BOSS_HEALTH_BAR_PATH := "UI/BossHealthBar"
 
 @export var fight_trigger: AllPlayersAreaTrigger
 @export var enemy_group: EnemyGroup
-@export var boss_name: String = ""
+@export var boss_icon: Texture2D
 
 
 func _ready() -> void:
@@ -26,7 +26,7 @@ func _on_fight_started() -> void:
 	var health := Health.from_target(boss_node)
 	if health == null:
 		return
-	bar.bind(health, boss_name)
+	bar.bind(health, boss_icon)
 
 
 func _find_boss_node() -> Node:

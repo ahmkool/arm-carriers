@@ -1,16 +1,13 @@
 class_name BossHealthBar
 extends MarginContainer
 
-const DEFAULT_BOSS_NAME := "Boss"
-
-@onready var _progress_bar: ProgressBar = $PanelContainer/MarginContainer/VBoxContainer/ProgressBar
-@onready var _name_label: Label = $PanelContainer/MarginContainer/VBoxContainer/NameLabel
+@onready var _progress_bar: ProgressBar = $PanelContainer/MarginContainer/HBoxContainer/ProgressBar
+@onready var _icon: TextureRect = $PanelContainer/MarginContainer/HBoxContainer/TextureRect
 
 var _health: Health = null
 
 
 func _ready() -> void:
-	_set_boss_name(DEFAULT_BOSS_NAME)
 	hide()
 
 
@@ -18,12 +15,12 @@ func _exit_tree() -> void:
 	unbind()
 
 
-func bind(health: Health, display_name: String = "") -> void:
+func bind(health: Health, icon: Texture2D = null) -> void:
 	unbind()
 	if health == null:
 		return
-	if not display_name.is_empty():
-		_set_boss_name(display_name)
+	if icon != null:
+		_icon.texture = icon
 	_health = health
 	_health.damaged.connect(_on_health_damaged)
 	_health.died.connect(_on_health_died)
@@ -48,10 +45,6 @@ func show_bar() -> void:
 func hide_bar() -> void:
 	unbind()
 	hide()
-
-
-func _set_boss_name(display_name: String) -> void:
-	_name_label.text = display_name
 
 
 func _sync_from_health() -> void:

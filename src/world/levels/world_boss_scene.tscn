@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://dymeqs381w0fb"]
+[gd_scene load_steps=31 format=3 uid="uid://dymeqs381w0fb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_5ydlk"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nr5h7"]
@@ -24,6 +24,7 @@
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="21_v2ylt"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="22_6t3nx"]
 [ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="24_bhpbind"]
+[ext_resource type="Texture2D" uid="uid://ckiqqxl7keelk" path="res://assets/sprites/ui/icons/skeleton_boss_icon.png" id="25_bossicon"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_rddsj")
@@ -213,7 +214,7 @@ In this level you will have to survive for [color=#ff8888]2 minutes[/color]. It 
 script = ExtResource("24_bhpbind")
 fight_trigger = NodePath("../Level/AllPlayersAreaTrigger")
 enemy_group = NodePath("../Enemies/EnemyGroup")
-boss_name = "Skeleton Golem"
+boss_icon = ExtResource("25_bossicon")
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("22_6t3nx")
