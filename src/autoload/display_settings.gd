@@ -14,7 +14,7 @@ func _ready() -> void:
 	_apply_fullscreen(_fullscreen)
 
 
-func _unhandled_input(event: InputEvent) -> void:
+func _input(event: InputEvent) -> void:
 	if not event.is_action_pressed("toggle_full_screen"):
 		return
 	toggle_fullscreen()
