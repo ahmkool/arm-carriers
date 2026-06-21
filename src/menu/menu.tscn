@@ -272,17 +272,17 @@ expand_mode = 2
 [node name="Logo" type="TextureRect" parent="."]
 modulate = Color(1, 1, 1, 0)
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -419.0
-offset_top = -42.0
-offset_right = -419.0
-offset_bottom = -42.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -350.0
+offset_top = 60.0
+offset_right = 350.0
+offset_bottom = 360.0
 grow_horizontal = 2
-grow_vertical = 2
 texture = ExtResource("8_fnvh6")
-expand_mode = 2
+expand_mode = 1
+stretch_mode = 4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 libraries = {
@@ -297,7 +297,6 @@ default_focus_path = NodePath("../HomeMenuRoot/PanelContainer/MarginContainer/VB
 emit_cancel_on_back = true
 
 [node name="PressStartRoot" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -336,11 +335,18 @@ horizontal_alignment = 1
 
 [node name="PromptLabel" type="Label" parent="PressStartRoot"]
 modulate = Color(1, 1, 1, 0)
-layout_mode = 0
-offset_left = 721.0
-offset_top = 474.0
-offset_right = 1201.0
-offset_bottom = 566.0
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -240.0
+offset_top = -46.0
+offset_right = 240.0
+offset_bottom = 46.0
+grow_horizontal = 2
+grow_vertical = 2
 theme_override_colors/font_shadow_color = Color(0.0021021725, 0.0002579943, 0, 0.6509804)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 12
