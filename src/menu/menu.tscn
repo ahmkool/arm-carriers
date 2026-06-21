@@ -297,6 +297,7 @@ default_focus_path = NodePath("../HomeMenuRoot/PanelContainer/MarginContainer/VB
 emit_cancel_on_back = true
 
 [node name="PressStartRoot" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -413,6 +414,7 @@ theme_override_font_sizes/font_size = 40
 text = "Quit"
 
 [node name="SettingsMenuRoot" type="Control" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -527,7 +529,6 @@ script = ExtResource("15_fullscreen")
 checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/FullscreenRow/FullscreenCheck")
 
 [node name="CreditsMenuRoot" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -578,7 +579,9 @@ custom_minimum_size = Vector2(560, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
-text = "Music: Peritune
+text = "Developer: ahmkool
+
+Music: Peritune
 
 3D models for characters and terrain: Kaykit
 
