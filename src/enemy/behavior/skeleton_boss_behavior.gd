@@ -4,9 +4,15 @@ extends EnemyBehavior
 @export var attack_min_distance := 1.2
 @export var attack_max_distance := 3.5
 @export var chase_max_distance := 14.0
-@export var attack_cooldown := 1.5
-@export var enraged_attack_cooldown := 1.0
+@export var attack_cooldown := 3
+@export var enraged_attack_cooldown := 2.5
 @export var target_refresh_interval := 0.5
+
+@export_group("Phase 2 — enraged attack ranges")
+@export var enraged_close_attack_threshold := 2.0
+@export var enraged_slash_max_distance := 3.5
+@export var enraged_stab_max_distance := 2.2
+@export var enraged_slam_max_distance := 3.5
 
 const ATTACK_SLASH := &"slash"
 const ATTACK_STAB := &"stab"
@@ -34,6 +40,14 @@ func _on_phase_changed(phase_index: int) -> void:
 	if phase_index < 2:
 		return
 	_pending_phase2_slam = true
+	_override_queued_attack_with_slam()
+
+
+func _override_queued_attack_with_slam() -> void:
+	if intent.requested_locomotion != &"attacking":
+		return
+	intent.requested_attack = ATTACK_SLAM
+	_pending_phase2_slam = false
 
 
 func _think(delta: float) -> void:
@@ -51,23 +65,44 @@ func _think(delta: float) -> void:
 		return
 
 	var flat_to_target := _get_flat_to_target()
-	if flat_to_target.length_squared() < 0.0001:
+	var direction := Vector3.FORWARD
+	if flat_to_target.length_squared() >= 0.0001:
+		direction = flat_to_target.normalized()
+	elif not _pending_phase2_slam:
 		return
 
 	var distance := flat_to_target.length()
-	var direction := flat_to_target / distance
 
 	if _can_request_attack(distance):
-		_request_attack(direction)
+		_request_attack(direction, distance)
 		return
 
-	if distance > attack_max_distance and distance <= chase_max_distance:
+	if distance > _get_max_attack_distance() and distance <= chase_max_distance:
 		intent.move_direction = enemy.get_path_direction_to(enemy.target_player.global_position)
 		intent.face_direction = direction
 		return
 
 	if distance <= chase_max_distance:
 		intent.face_direction = direction
+
+
+func _would_block_attack_transition() -> bool:
+	if enemy.enemy_state_machine == null:
+		return false
+	var state_machine := enemy.enemy_state_machine
+	if state_machine.is_in_state("dead"):
+		return true
+	if state_machine.is_in_state("casting"):
+		return true
+	if state_machine.is_in_state("attacking"):
+		return true
+	if state_machine.is_in_state("spawning"):
+		return true
+	if state_machine.is_in_state("takingdamage"):
+		return true
+	if state_machine.is_in_state("takingdamageflying"):
+		return true
+	return false
 
 
 func _is_attacking() -> bool:
@@ -112,18 +147,26 @@ func _get_flat_to_target() -> Vector3:
 
 
 func _can_request_attack(distance: float) -> bool:
+	if _pending_phase2_slam:
+		return not _would_block_attack_transition()
 	if _attack_cooldown_remaining > 0.0:
 		return false
 	if distance < attack_min_distance:
 		return false
+	if _is_enraged():
+		return not _get_enraged_eligible_attacks(distance).is_empty()
 	if distance > attack_max_distance:
 		return false
 	return true
 
 
-func _request_attack(face_direction: Vector3) -> void:
+func _request_attack(face_direction: Vector3, distance: float) -> void:
 	intent.face_direction = face_direction
-	intent.requested_attack = _pick_attack()
+	if _pending_phase2_slam:
+		intent.requested_attack = ATTACK_SLAM
+		_pending_phase2_slam = false
+	else:
+		intent.requested_attack = _pick_attack(distance)
 	intent.requested_locomotion = &"attacking"
 	_attack_cooldown_remaining = _get_attack_cooldown()
 
@@ -134,10 +177,19 @@ func _get_attack_cooldown() -> float:
 	return attack_cooldown
 
 
-func _pick_attack() -> StringName:
+func _get_max_attack_distance() -> float:
+	if not _is_enraged():
+		return attack_max_distance
+	return maxf(
+		enraged_slash_max_distance,
+		maxf(enraged_stab_max_distance, enraged_slam_max_distance)
+	)
+
+
+func _pick_attack(distance: float) -> StringName:
 	if not _is_enraged():
 		return _pick_calm_attack()
-	return _pick_enraged_attack()
+	return _pick_enraged_attack(distance)
 
 
 func _is_enraged() -> bool:
@@ -152,13 +204,39 @@ func _pick_calm_attack() -> StringName:
 	return ATTACK_STAB
 
 
-func _pick_enraged_attack() -> StringName:
-	if _pending_phase2_slam:
-		_pending_phase2_slam = false
-		return ATTACK_SLAM
-	var roll := randi() % 100
-	if roll < 35:
+func _pick_enraged_attack(distance: float) -> StringName:
+	var eligible := _get_enraged_eligible_attacks(distance)
+	if eligible.is_empty():
 		return ATTACK_SLASH
-	if roll < 70:
-		return ATTACK_STAB
-	return ATTACK_SLAM
+	return eligible[randi() % eligible.size()]
+
+
+func _get_enraged_eligible_attacks(distance: float) -> Array[StringName]:
+	var eligible: Array[StringName] = []
+	if distance <= enraged_close_attack_threshold:
+		_append_attack_if_in_range(eligible, ATTACK_SLASH, distance, enraged_slash_max_distance)
+		_append_attack_if_in_range(eligible, ATTACK_STAB, distance, enraged_stab_max_distance)
+		_append_attack_if_in_range(eligible, ATTACK_SLAM, distance, enraged_slam_max_distance)
+		return eligible
+	_append_attack_if_in_range(eligible, ATTACK_SLASH, distance, enraged_slash_max_distance)
+	_append_attack_if_in_range(eligible, ATTACK_SLAM, distance, enraged_slam_max_distance)
+	return eligible
+
+
+func _append_attack_if_in_range(
+	eligible: Array[StringName],
+	attack: StringName,
+	distance: float,
+	max_distance: float
+) -> void:
+	if not _is_distance_in_attack_range(distance, max_distance):
+		return
+	eligible.append(attack)
+
+
+func _is_distance_in_attack_range(distance: float, max_distance: float) -> bool:
+	if distance < attack_min_distance:
+		return false
+	if distance > max_distance:
+		return false
+	return true

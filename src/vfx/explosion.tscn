@@ -7,7 +7,7 @@
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_dvbte"]
+[sub_resource type="CurveTexture" id="CurveTexture_01vq6"]
 curve = SubResource("Curve_83ytm")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_01vq6"]
@@ -17,7 +17,7 @@ initial_velocity_min = 12.0
 initial_velocity_max = 14.0
 scale_min = 0.5
 scale_max = 1.5
-scale_curve = SubResource("CurveTexture_dvbte")
+scale_curve = SubResource("CurveTexture_01vq6")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_10pld"]
 albedo_color = Color(0.9122237, 0.41413048, 9.62615e-07, 1)
@@ -33,7 +33,7 @@ bottom_radius = 0.0
 [sub_resource type="Gradient" id="Gradient_01vq6"]
 colors = PackedColorArray(0.9369734, 0.78441393, 0.1342201, 1, 0.88266045, 0.3285362, 0.14506045, 1)
 
-[sub_resource type="GradientTexture1D" id="GradientTexture1D_10pld"]
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_10ly8"]
 gradient = SubResource("Gradient_01vq6")
 
 [sub_resource type="Curve" id="Curve_10ly8"]
@@ -48,7 +48,7 @@ curve = SubResource("Curve_10ly8")
 _data = [Vector2(0, 0.011813045), 0.0, 0.0, 0, 0, Vector2(0.19277106, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
 point_count = 3
 
-[sub_resource type="CurveTexture" id="CurveTexture_k5ltb"]
+[sub_resource type="CurveTexture" id="CurveTexture_ml80x"]
 curve = SubResource("Curve_ml80x")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_a5k3c"]
@@ -61,17 +61,17 @@ initial_velocity_max = 4.0
 gravity = Vector3(0, 5, 0)
 scale_min = 0.5
 scale_max = 1.5
-scale_curve = SubResource("CurveTexture_k5ltb")
+scale_curve = SubResource("CurveTexture_ml80x")
 color = Color(0.89403147, 0.67078054, 1.1551381e-06, 1)
-color_ramp = SubResource("GradientTexture1D_10pld")
+color_ramp = SubResource("GradientTexture1D_10ly8")
 emission_curve = SubResource("CurveTexture_eo72l")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_6luam"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_k5ltb"]
 transparency = 1
 vertex_color_use_as_albedo = true
 
 [sub_resource type="SphereMesh" id="SphereMesh_r2swv"]
-material = SubResource("StandardMaterial3D_6luam")
+material = SubResource("StandardMaterial3D_k5ltb")
 radial_segments = 8
 rings = 4
 

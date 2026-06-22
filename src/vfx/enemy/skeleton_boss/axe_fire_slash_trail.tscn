@@ -1,0 +1,235 @@
+[gd_scene load_steps=15 format=3 uid="uid://y6u10ge22ied"]
+
+[ext_resource type="Texture2D" uid="uid://b7mu0h64wu8j8" path="res://assets/sprites/particles/slash_04_a.png" id="1_arnqj"]
+[ext_resource type="Script" uid="uid://di4vqrfa5aarp" path="res://src/vfx/enemy/skeleton_boss/axe_fire_slash_trail.gd" id="1_wiadm"]
+[ext_resource type="Texture2D" uid="uid://cnkv2y3rchd23" path="res://assets/sprites/particles/flame_01_a.png" id="3_63euh"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wiadm"]
+transparency = 1
+cull_mode = 2
+albedo_color = Color(0.92594343, 0.7036075, 0.30735236, 1)
+albedo_texture = ExtResource("1_arnqj")
+emission_enabled = true
+emission = Color(0.97, 0.97, 0.28130004, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="QuadMesh" id="QuadMesh_63euh"]
+material = SubResource("StandardMaterial3D_wiadm")
+orientation = 1
+
+[sub_resource type="Animation" id="Animation_63euh"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:mesh:material:emission_energy_multiplier")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [2.0]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("MeshInstance3D:mesh:material:albedo_color")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0.92594343, 0.7036075, 0.30735236, 1)]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("FireParticles:emitting")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Area3D:monitoring")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Area3D:monitorable")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+
+[sub_resource type="Animation" id="Animation_joa1y"]
+resource_name = "disappear"
+length = 3.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("MeshInstance3D:mesh:material:albedo_color")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 3),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Color(0.92594343, 0.7036075, 0.30735236, 1), Color(0.93, 0.70153, 0.3069, 0)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(3.3333333),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("MeshInstance3D:mesh:material:emission_energy_multiplier")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2, 2.5, 3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 0,
+"values": [2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("FireParticles:emitting")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 2.03),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Area3D:monitoring")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 2.22),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/5/type = "value"
+tracks/5/imported = false
+tracks/5/enabled = true
+tracks/5/path = NodePath("Area3D:monitorable")
+tracks/5/interp = 1
+tracks/5/loop_wrap = true
+tracks/5/keys = {
+"times": PackedFloat32Array(0, 2.22),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_joa1y"]
+_data = {
+&"RESET": SubResource("Animation_63euh"),
+&"disappear": SubResource("Animation_joa1y")
+}
+
+[sub_resource type="Curve" id="Curve_joa1y"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.053571433, 1), 0.0, 0.0, 0, 0, Vector2(0.24404764, 0.91425675), 0.0, 0.0, 0, 0, Vector2(0.6726191, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.020547986), 0.0, 0.0, 0, 0]
+point_count = 5
+
+[sub_resource type="CurveTexture" id="CurveTexture_em4wx"]
+curve = SubResource("Curve_joa1y")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3phfo"]
+emission_shape_scale = Vector3(2.5, 0.1, 0.3)
+emission_shape = 3
+emission_box_extents = Vector3(1, 1, 1)
+angle_min = 1.0728835e-05
+angle_max = 360.00003
+gravity = Vector3(0, 1, 0)
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_em4wx")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_v7ugf"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+albedo_color = Color(0.9874528, 0.89206904, 0.53021866, 1)
+albedo_texture = ExtResource("3_63euh")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="QuadMesh_rn8qw"]
+material = SubResource("StandardMaterial3D_v7ugf")
+size = Vector2(0.35, 0.35)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_63euh"]
+size = Vector3(4.902588, 1, 1.4833984)
+
+[node name="AxeFireSlashTrail" type="Node3D"]
+script = ExtResource("1_wiadm")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 0, 0, 0)
+mesh = SubResource("QuadMesh_63euh")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_joa1y")
+}
+autoplay = "disappear"
+
+[node name="FireParticles" type="GPUParticles3D" parent="."]
+transform = Transform3D(1.0000005, 0, 0, 0, 1.0000002, 0, 0, 0, 1.0000006, 0, 0, -0.23024988)
+cast_shadow = 0
+emitting = false
+amount = 50
+lifetime = 2.0
+preprocess = 0.45
+randomness = 0.6
+fixed_fps = 60
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_3phfo")
+draw_pass_1 = SubResource("QuadMesh_rn8qw")
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("BoxShape3D_63euh")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_body_collision"]

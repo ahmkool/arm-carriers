@@ -4,6 +4,7 @@ extends CharacterBody3D
 @export var device_id: int
 @export var player_id: int
 @export var damage_invulnerability_seconds := 1.0
+@export var health_bar_icon: Texture2D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5

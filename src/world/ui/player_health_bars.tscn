@@ -1,0 +1,24 @@
+[gd_scene load_steps=3 format=3 uid="uid://xhd3xnbkaki"]
+
+[ext_resource type="Script" uid="uid://drckc1o7p7tvw" path="res://src/world/ui/player_health_bars.gd" id="1_script"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="2_theme"]
+
+[node name="PlayerHealthBars" type="MarginContainer"]
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 20.0
+offset_bottom = 20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("2_theme")
+script = ExtResource("1_script")
+
+[node name="PanelContainer" type="PanelContainer" parent="."]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20

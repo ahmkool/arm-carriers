@@ -1,6 +1,7 @@
 class_name BossAxeFireVisual
 extends Node
 
+const ENRAGE_BURST_SCENE := preload("res://src/vfx/boss_axe_enrage_burst.tscn")
 const BLADE_SURFACE_INDEX := 1
 const FIRE_INTENSITY_PARAM := &"fire_intensity"
 const FADE_IN_DURATION_SEC := 0.6
@@ -28,6 +29,7 @@ func _ready() -> void:
 
 
 func start_enrage() -> void:
+	_spawn_enrage_burst()
 	if not _ensure_blade_material():
 		return
 	_kill_fade_tween()
@@ -56,6 +58,28 @@ func _process(delta: float) -> void:
 	var amplitude := (PULSE_MAX - PULSE_MIN) * 0.5
 	var pulse := midpoint + amplitude * sin(_pulse_time * pulse_speed)
 	_set_fire_intensity(pulse)
+
+
+func _spawn_enrage_burst() -> void:
+	var burst := ENRAGE_BURST_SCENE.instantiate() as Node3D
+	if burst == null:
+		return
+	var scene_root := get_tree().current_scene
+	if scene_root == null:
+		burst.queue_free()
+		return
+	scene_root.add_child(burst)
+	burst.global_position = _get_burst_spawn_position()
+
+
+func _get_burst_spawn_position() -> Vector3:
+	if _blade_light != null:
+		return _blade_light.global_position
+	if _axe_mesh == null:
+		_bind_axe_mesh()
+	if _axe_mesh != null:
+		return _axe_mesh.global_position
+	return Vector3.ZERO
 
 
 func _bind_axe_mesh() -> void:

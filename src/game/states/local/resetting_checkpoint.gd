@@ -3,6 +3,7 @@ extends GameState
 const CARRIER_SHOULDER_HEIGHT := 1.35
 const RESET_CHECKPOINT_DELAY := 0.5
 const CHECKPOINT_FADE_DURATION := 0.15
+const BOSS_HEALTH_BAR_PATH := "UI/BossHealthBar"
 
 var _checkpoint_reset_timer: float = 0.0
 var _world_reset_timer: float = 0.0
@@ -11,6 +12,7 @@ var _world_reset_applied: bool = false
 
 func enter():
 	ScreenFade.fade_to_black(CHECKPOINT_FADE_DURATION)
+	_hide_boss_health_bar()
 	_checkpoint_reset_timer = CHECKPOINT_FADE_DURATION
 	_world_reset_timer = CHECKPOINT_FADE_DURATION + RESET_CHECKPOINT_DELAY
 	_checkpoint_reset_applied = false
@@ -18,6 +20,12 @@ func enter():
 
 func exit():
 	ScreenFade.fade_from_black(CHECKPOINT_FADE_DURATION)
+
+func _hide_boss_health_bar() -> void:
+	var bar := world.get_node_or_null(BOSS_HEALTH_BAR_PATH) as BossHealthBar
+	if bar == null:
+		return
+	bar.hide_bar()
 
 func _apply_checkpoint_reset() -> void:
 	var world_local := world as WorldLocal

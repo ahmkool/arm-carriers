@@ -3,6 +3,7 @@ extends Node
 
 signal damaged(amount: int, remaining: int, source_position: Vector3)
 signal died(source_position: Vector3)
+signal restored
 
 @export var max_hp: int = 3
 
@@ -35,6 +36,7 @@ func grant_invulnerability(duration: float) -> void:
 func reset_to_full() -> void:
 	current_hp = max_hp
 	_invulnerable_time_remaining = 0.0
+	restored.emit()
 
 
 func take_damage(amount: int, source_position: Vector3 = Vector3.ZERO) -> void:

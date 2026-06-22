@@ -1,0 +1,21 @@
+[gd_scene load_steps=6 format=3 uid="uid://c8biuu344qf23"]
+
+[ext_resource type="AudioStream" uid="uid://cok30t6l7i4td" path="res://assets/sounds/slash_1.wav" id="1_pg17k"]
+[ext_resource type="AudioStream" uid="uid://dlo0c4rw6xkld" path="res://assets/sounds/slash_2.wav" id="2_x34kt"]
+[ext_resource type="AudioStream" uid="uid://45g8sh1hkmrs" path="res://assets/sounds/slash_3.wav" id="3_e4efn"]
+[ext_resource type="AudioStream" uid="uid://da7mjfny22p4k" path="res://assets/sounds/slash_4.wav" id="4_by6xn"]
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_20h63"]
+streams_count = 4
+stream_0/stream = ExtResource("1_pg17k")
+stream_1/stream = ExtResource("2_x34kt")
+stream_2/stream = ExtResource("3_e4efn")
+stream_3/stream = ExtResource("4_by6xn")
+
+[node name="AxeSlash" type="Node3D"]
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = SubResource("AudioStreamRandomizer_20h63")
+autoplay = true
+
+[connection signal="finished" from="AudioStreamPlayer3D" to="." method="queue_free"]

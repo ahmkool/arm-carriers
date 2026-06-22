@@ -1,0 +1,171 @@
+[gd_scene load_steps=18 format=3 uid="uid://susir3wmwvnc"]
+
+[ext_resource type="Texture2D" uid="uid://ci3fc64aoncmk" path="res://assets/sprites/particles/circle_01_a.png" id="1_xx8yf"]
+[ext_resource type="AudioStream" uid="uid://delirm24484h5" path="res://assets/sounds/axe/yodguard-giant-axe-impact-striking-into-dirt-4-450258.mp3" id="2_0p8ee"]
+
+[sub_resource type="Curve" id="Curve_ib7b8"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_exm1e"]
+curve = SubResource("Curve_ib7b8")
+
+[sub_resource type="Curve" id="Curve_2o565"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.35119048, 0.7262811), 1.246575, 1.246575, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_b6d11"]
+curve = SubResource("Curve_2o565")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_b423h"]
+gravity = Vector3(0, 0, 0)
+scale_min = 12.0
+scale_max = 12.0
+scale_curve = SubResource("CurveTexture_b6d11")
+color = Color(1, 1, 0, 1)
+alpha_curve = SubResource("CurveTexture_exm1e")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tlsgm"]
+transparency = 1
+cull_mode = 2
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("1_xx8yf")
+
+[sub_resource type="QuadMesh" id="QuadMesh_dthns"]
+material = SubResource("StandardMaterial3D_tlsgm")
+orientation = 1
+
+[sub_resource type="Curve" id="Curve_exm1e"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7976191, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_2o565"]
+curve = SubResource("Curve_exm1e")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p51n3"]
+direction = Vector3(0, 1, 0)
+spread = 15.0
+initial_velocity_min = 5.0
+initial_velocity_max = 8.0
+scale_min = 0.7
+scale_max = 0.9
+scale_curve = SubResource("CurveTexture_2o565")
+collision_mode = 1
+collision_friction = 0.3
+collision_bounce = 0.1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3tmvu"]
+albedo_color = Color(2.88, 3.04, 0, 1)
+
+[sub_resource type="PrismMesh" id="PrismMesh_fxge6"]
+material = SubResource("StandardMaterial3D_3tmvu")
+left_to_right = 0.2
+size = Vector3(0.2, 0.2, 0.2)
+
+[sub_resource type="Animation" id="Animation_ib7b8"]
+resource_name = "animate"
+length = 3.0
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shockwave:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.03),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Debris:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.03),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "method"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(2.8666666),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_exm1e"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Shockwave:emitting")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Debris:emitting")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_2o565"]
+_data = {
+&"RESET": SubResource("Animation_exm1e"),
+&"animate": SubResource("Animation_ib7b8")
+}
+
+[node name="AxeSlamImpact" type="Node3D"]
+
+[node name="Shockwave" type="GPUParticles3D" parent="."]
+emitting = false
+amount = 1
+one_shot = true
+process_material = SubResource("ParticleProcessMaterial_b423h")
+draw_pass_1 = SubResource("QuadMesh_dthns")
+
+[node name="Debris" type="GPUParticles3D" parent="."]
+emitting = false
+lifetime = 3.0
+one_shot = true
+explosiveness = 1.0
+randomness = 0.9
+transform_align = 3
+process_material = SubResource("ParticleProcessMaterial_p51n3")
+draw_pass_1 = SubResource("PrismMesh_fxge6")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_0p8ee")
+autoplay = true
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_2o565")
+}
+autoplay = "animate"
+
+[node name="GPUParticlesCollisionBox3D" type="GPUParticlesCollisionBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0369856, 0)
+size = Vector3(8, 2, 8)
