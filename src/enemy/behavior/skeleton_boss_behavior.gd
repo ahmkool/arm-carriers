@@ -6,7 +6,6 @@ extends EnemyBehavior
 @export var chase_max_distance := 14.0
 @export var attack_cooldown := 3
 @export var enraged_attack_cooldown := 2.5
-@export var target_refresh_interval := 0.5
 
 @export_group("Phase 2 — enraged attack ranges")
 @export var enraged_close_attack_threshold := 2.0
@@ -19,7 +18,6 @@ const ATTACK_STAB := &"stab"
 const ATTACK_SLAM := &"slam"
 
 var _attack_cooldown_remaining := 0.0
-var _target_refresh_remaining := 0.0
 var _phase_controller: BossPhaseController
 var _pending_phase2_slam := false
 
@@ -54,7 +52,7 @@ func _think(delta: float) -> void:
 	if enemy == null or not enemy.is_offensive:
 		return
 
-	_tick_target_refresh(delta)
+	_ensure_target()
 
 	if _is_attacking():
 		return
@@ -111,28 +109,10 @@ func _is_attacking() -> bool:
 	return enemy.enemy_state_machine.is_in_state("attacking")
 
 
-func _tick_target_refresh(delta: float) -> void:
-	if _needs_immediate_target_refresh():
-		_refresh_target()
+func _ensure_target() -> void:
+	if _has_valid_target():
 		return
-
-	_target_refresh_remaining -= delta
-	if _target_refresh_remaining > 0.0:
-		return
-	_refresh_target()
-
-
-func _refresh_target() -> void:
 	enemy.update_target_player()
-	_target_refresh_remaining = target_refresh_interval
-
-
-func _needs_immediate_target_refresh() -> bool:
-	if not is_instance_valid(enemy.target_player):
-		return true
-	if enemy.target_player.is_dead:
-		return true
-	return false
 
 
 func _has_valid_target() -> bool:
