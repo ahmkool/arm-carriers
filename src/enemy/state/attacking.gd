@@ -4,9 +4,12 @@ const ANIM_PARAM_SLASH_REQUEST := &"parameters/Slash/request"
 const ANIM_PARAM_SLASH_ACTIVE := &"parameters/Slash/internal_active"
 const ANIM_PARAM_STAB_REQUEST := &"parameters/Stab/request"
 const ANIM_PARAM_STAB_ACTIVE := &"parameters/Stab/internal_active"
+const ANIM_PARAM_SLAM_REQUEST := &"parameters/Slam/request"
+const ANIM_PARAM_SLAM_ACTIVE := &"parameters/Slam/internal_active"
 
 const ATTACK_SLASH := &"slash"
 const ATTACK_STAB := &"stab"
+const ATTACK_SLAM := &"slam"
 
 var _active_attack: StringName = &""
 var _attack_animation_started := false
@@ -54,6 +57,9 @@ func _play_attack_animation() -> void:
 	if _active_attack == ATTACK_STAB:
 		enemy.animation_tree.set(ANIM_PARAM_STAB_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 		return
+	if _active_attack == ATTACK_SLAM:
+		enemy.animation_tree.set(ANIM_PARAM_SLAM_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
+		return
 	enemy.animation_tree.set(ANIM_PARAM_SLASH_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 
 
@@ -72,6 +78,8 @@ func _is_attack_animation_playing() -> bool:
 func _get_attack_animation_active() -> bool:
 	if _active_attack == ATTACK_STAB:
 		return enemy.animation_tree.get(ANIM_PARAM_STAB_ACTIVE)
+	if _active_attack == ATTACK_SLAM:
+		return enemy.animation_tree.get(ANIM_PARAM_SLAM_ACTIVE)
 	return enemy.animation_tree.get(ANIM_PARAM_SLASH_ACTIVE)
 
 
