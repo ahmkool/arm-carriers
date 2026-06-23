@@ -6,9 +6,8 @@ extends Area3D
 func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 
-func _physics_process(delta):
-	print("monitorable: ", monitorable)
-	print("monitoring: ", monitoring)
+func _physics_process(_delta):
+	pass
 
 func _on_body_entered(body: Node) -> void:
 	if body is not PlayerLocal:

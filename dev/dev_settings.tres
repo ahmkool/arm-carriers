@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="DevSettingsConfig" load_steps=2 format=3 uid="uid://dqgu5yyd225mu"]
+
+[ext_resource type="Script" uid="uid://l2uxohmshruv" path="res://src/autoload/dev_settings_config.gd" id="1_config"]
+
+[resource]
+script = ExtResource("1_config")
+player_max_hp_override = 60
+boss_hp_multiplier = 0.5

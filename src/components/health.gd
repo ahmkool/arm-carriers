@@ -10,8 +10,13 @@ signal restored
 var current_hp: int
 var _invulnerable_time_remaining := 0.0
 
+func get_scene_max_hp() -> int:
+	print("Getting scene max HP for ", self, " with max_hp ", max_hp)
+	return max_hp
+
 
 func _ready() -> void:
+	DevSettings.apply_to_health(self)
 	reset_to_full()
 
 
