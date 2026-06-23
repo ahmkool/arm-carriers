@@ -1,7 +1,7 @@
 class_name AxeFireSlashTrail
 extends Node3D
 
-const LIFETIME_SEC := 3.0
+const LIFETIME_SEC := 8.0
 const MOVE_SPEED_MAX := 5.0
 const MOVE_SPEED_START_RATIO := 0.04
 const DAMAGE := 1

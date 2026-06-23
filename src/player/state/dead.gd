@@ -1,6 +1,7 @@
 extends PlayerState
 
 func enter() -> void:
+	player.play_damage_sound()
 	player.velocity = Vector3.ZERO
 	if not player._animate_on_dead_enter:
 		return

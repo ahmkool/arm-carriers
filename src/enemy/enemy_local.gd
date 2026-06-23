@@ -410,3 +410,11 @@ func update_locomotion_blend() -> void:
 	var horizontal_speed := Vector2(velocity.x, velocity.z).length()
 	var blend := clampf(horizontal_speed / speed, 0.0, 1.0)
 	animation_tree.set(ANIM_PARAM_LOCOMOTION_BLEND, blend)
+
+func set_weapon_hitbox_monitoring(monitoring: bool) -> void:
+	var hit_box := get_node_or_null("Skeleton_Golem/Rig_Large/Skeleton3D/BoneAttachment3D/HitBox") as Area3D
+	if hit_box == null:
+		return
+	print("Setting weapon hitbox monitoring to ", monitoring)
+	hit_box.set_deferred("monitoring", monitoring)
+	hit_box.set_deferred("monitorable", monitoring)

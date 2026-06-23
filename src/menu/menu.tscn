@@ -791,13 +791,21 @@ script = ExtResource("2_56xr1")
 level_scene_path = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 level_id = "res://src/world/levels/world_trailer_bridge_magicians.tscn"
 
-[node name="BossFight" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+[node name="BossFightBazooka" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
-text = "Boss fight"
+text = "Boss fight (bazooka)"
 script = ExtResource("2_56xr1")
 level_scene_path = "uid://dymeqs381w0fb"
 level_id = "res://src/world/levels/world_boss_scene.tscn"
+
+[node name="BossFightSword" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Boss fight (sword)"
+script = ExtResource("2_56xr1")
+level_scene_path = "uid://cpxq3ainb4mw4"
+level_id = "res://src/world/levels/world_boss_scene_sword.tscn"
 
 [node name="PlaytestNoticeRoot" type="MarginContainer" parent="."]
 modulate = Color(1, 1, 1, 0)

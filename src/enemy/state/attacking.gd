@@ -24,8 +24,11 @@ func enter() -> void:
 		enemy.footsteps_particles.emitting = false
 	_play_attack_animation()
 
+func exit() -> void:
+	super.exit()
+	enemy.set_weapon_hitbox_monitoring(false)
 
-func physics_update(delta: float) -> void:
+func physics_update(_delta: float) -> void:
 	if not enemy.is_on_floor():
 		enemy_state_machine.transition_to("falling")
 		return

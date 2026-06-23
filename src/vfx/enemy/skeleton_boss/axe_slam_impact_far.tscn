@@ -1,6 +1,6 @@
 [gd_scene load_steps=37 format=3 uid="uid://jxnxavck3bqb"]
 
-[ext_resource type="Script" uid="uid://b7k3slamfar01" path="res://src/vfx/enemy/skeleton_boss/axe_slam_impact_far.gd" id="1_farhb"]
+[ext_resource type="Script" uid="uid://b7k3slamimp01" path="res://src/vfx/enemy/skeleton_boss/axe_slam_impact.gd" id="1_farhb"]
 [ext_resource type="AudioStream" uid="uid://delirm24484h5" path="res://assets/sounds/axe/yodguard-giant-axe-impact-striking-into-dirt-4-450258.mp3" id="1_2m6pd"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_epoyc"]

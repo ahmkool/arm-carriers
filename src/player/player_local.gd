@@ -8,6 +8,7 @@ extends CharacterBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
+const DAMAGE_SOUND := preload("res://assets/sounds/damage.wav")
 
 ## Matches `LocomotionBlend` (AnimationNodeBlend2) in mannequin_medium.tscn: input 0 = idle, 1 = run.
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/LocomotionBlend/blend_amount"
@@ -180,6 +181,15 @@ func _store_damage_source_position(damage_source_position: Variant) -> void:
 	if not _has_damage_source_position:
 		return
 	_damage_source_position = damage_source_position as Vector3
+
+
+func play_damage_sound() -> void:
+	var sfx := AudioStreamPlayer3D.new()
+	add_child(sfx)
+	sfx.bus = "SFX"
+	sfx.stream = DAMAGE_SOUND
+	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
+	sfx.play()
 
 
 func play_hit_animation() -> void:

@@ -10,6 +10,7 @@ var _knockback_time_remaining := 0.0
 
 
 func enter() -> void:
+	player.play_damage_sound()
 	_begin_hit_reaction()
 
 
