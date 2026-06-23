@@ -19,8 +19,9 @@ func physics_update(_delta: float) -> void:
 		enemy_state_machine.transition_to("idle")
 		return
 
-	enemy.velocity.x = direction.x * enemy.speed
-	enemy.velocity.z = direction.z * enemy.speed
+	var step := enemy.speed * _delta
+	enemy.velocity.x = move_toward(enemy.velocity.x, direction.x * enemy.speed, step)
+	enemy.velocity.z = move_toward(enemy.velocity.z, direction.z * enemy.speed, step)
 	var face_direction: Vector3 = enemy.get_face_direction()
 	if face_direction.length_squared() < 0.0001:
 		face_direction = direction

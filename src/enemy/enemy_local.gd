@@ -13,6 +13,7 @@ var _is_offensive := true
 			return
 		_is_offensive = value
 		_sync_hit_box_to_offensive_state()
+@export var hitbox_damage: int = 1
 
 const DEATH_FREE_DELAY_SECONDS := 10.0
 ## Higher = faster turn toward a facing direction (roughly “how many times per second” to ease toward the target).
@@ -393,7 +394,7 @@ func _on_hit_box_body_entered(body):
 	if player == null:
 		return
 	CameraFeedback.add_trauma_hurt()
-	Health.apply_damage(player, 9999)
+	Health.apply_damage(player, hitbox_damage)
 
 
 func update_locomotion_blend() -> void:

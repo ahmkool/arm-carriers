@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=44 format=4 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_dvbv8"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="12_ykjll"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="13_dvbv8"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="14_h2fuj"]
+[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="14_iv26f"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="17_4muf4"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
@@ -566,7 +567,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.378174, 4.5282993, -65.259
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="GridMapDecoration" type="GridMap" parent="Level"]
-mesh_library = ExtResource("21_4muf4")
+mesh_library = ExtResource("14_iv26f")
 collision_layer = 4
 collision_mask = 0
 data = {

@@ -90,7 +90,7 @@ tracks/0/path = NodePath("MeshInstance3D:mesh:material:albedo_color")
 tracks/0/interp = 2
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 3),
+"times": PackedFloat32Array(0, 5.9666667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 0,
 "values": [Color(0.92594343, 0.7036075, 0.30735236, 1), Color(0.93, 0.70153, 0.3069, 0)]
@@ -102,10 +102,10 @@ tracks/1/path = NodePath("MeshInstance3D:mesh:material:emission_energy_multiplie
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2, 2.5, 3),
-"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"times": PackedFloat32Array(0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
 "update": 0,
-"values": [2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0]
+"values": [2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0, 3.0, 2.0]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
@@ -114,7 +114,7 @@ tracks/2/path = NodePath("FireParticles:emitting")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 2.03),
+"times": PackedFloat32Array(0, 5.9666667),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -126,7 +126,7 @@ tracks/3/path = NodePath("Area3D:monitoring")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0, 2.22),
+"times": PackedFloat32Array(0, 5.9333334),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
@@ -138,7 +138,7 @@ tracks/4/path = NodePath("Area3D:monitorable")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0, 2.22),
+"times": PackedFloat32Array(0, 5.9333334),
 "transitions": PackedFloat32Array(1, 1),
 "update": 1,
 "values": [true, false]
