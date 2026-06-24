@@ -1,4 +1,4 @@
-[gd_scene load_steps=112 format=4 uid="uid://bl4uchw4icfei"]
+[gd_scene load_steps=111 format=4 uid="uid://bl4uchw4icfei"]
 
 [ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_bypgp"]
 [ext_resource type="Script" uid="uid://3h845x3vvubw" path="res://src/enemy/behavior/skeleton_boss_behavior.gd" id="2_bypgp"]
@@ -39,7 +39,6 @@
 [ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="34_jh6sl"]
 [ext_resource type="Animation" uid="uid://ci1ajwr48yq2k" path="res://assets/animations_source/animations/rig_large/skeleton/T-Pose.res" id="34_l65e6"]
 [ext_resource type="Animation" uid="uid://d2j06nxhnix2u" path="res://assets/animations_source/animations/rig_large/skeleton/Walking_A.res" id="35_foi5r"]
-[ext_resource type="Script" uid="uid://c8k2hitdmg01" path="res://src/enemy/state/taking_damage.gd" id="35_gin8x"]
 [ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="36_bb3bq"]
 [ext_resource type="Script" uid="uid://djda3j3mx1537" path="res://src/enemy/boss/boss_phase_controller.gd" id="37_phase"]
 [ext_resource type="Script" uid="uid://pwaevg8frinu" path="res://src/enemy/boss/boss_axe_fire_visual.gd" id="38_axe_fire_vis"]
@@ -643,6 +642,7 @@ animation = &"golem_boss/Melee_1H_Stab"
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_8xsfq"]
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_bypgp"]
+graph_offset = Vector2(-492.85928, -63.056488)
 nodes/output/position = Vector2(1540, 180)
 nodes/Animation/node = SubResource("AnimationNodeAnimation_awda7")
 nodes/Animation/position = Vector2(-450, 260)
@@ -674,6 +674,7 @@ node_connections = [&"output", 0, &"DeadBlend", &"BlendIdleRun", 0, &"Animation 
 collision_layer = 2
 collision_mask = 4
 script = ExtResource("1_bypgp")
+is_offensive = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
@@ -682,6 +683,7 @@ shape = SubResource("CapsuleShape3D_65eof")
 [node name="SkeletonBossBehavior" type="Node" parent="."]
 script = ExtResource("2_bypgp")
 attack_max_distance = 5.0
+chase_max_distance = 30.0
 enraged_slash_max_distance = 7.0
 enraged_stab_max_distance = 5.0
 enraged_slam_max_distance = 7.0
@@ -704,9 +706,6 @@ script = ExtResource("33_32wiu")
 
 [node name="Dead" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("34_jh6sl")
-
-[node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
-script = ExtResource("35_gin8x")
 
 [node name="Attacking" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("10_bypgp")
@@ -1031,6 +1030,8 @@ parameters/Slam/request = 0
 [node name="SlamImpactPoint" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07901311, -5.3026314)
 script = ExtResource("44_k7bun")
+far_burst_count_min = 3
+far_burst_count_max = 5
 
 [node name="SlashImpactPoint" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7727029, -5.1910625)

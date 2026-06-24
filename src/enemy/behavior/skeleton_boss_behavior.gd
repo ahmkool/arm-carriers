@@ -96,10 +96,6 @@ func _would_block_attack_transition() -> bool:
 		return true
 	if state_machine.is_in_state("spawning"):
 		return true
-	if state_machine.is_in_state("takingdamage"):
-		return true
-	if state_machine.is_in_state("takingdamageflying"):
-		return true
 	return false
 
 

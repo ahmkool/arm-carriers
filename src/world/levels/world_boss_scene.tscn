@@ -188,8 +188,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.324318, 2.3595505, 0)
 
 [node name="Events" type="Node" parent="."]
 
-[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Events"]
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Events" node_paths=PackedStringArray("enemy_group")]
 script = ExtResource("16_iw7r2")
+enemy_group = NodePath("../../Enemies/EnemyGroup")
 
 [node name="CloseBridge1" type="Node" parent="Events" node_paths=PackedStringArray("platforms", "next_event")]
 script = ExtResource("17_0sgwl")

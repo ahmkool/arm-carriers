@@ -4,3 +4,5 @@
 
 [resource]
 script = ExtResource("1_config")
+player_max_hp_override = 10
+boss_hp_multiplier = 2.0
