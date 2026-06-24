@@ -10,7 +10,7 @@ height = 2.4731445
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_nnson"]
 resource_name = "Material.001"
 cull_mode = 2
-albedo_color = Color(0.4771229, 0.46862504, 0.617091, 1)
+albedo_color = Color(0.827451, 0.49019608, 0.32156864, 1)
 metallic = 1.0
 roughness = 0.3
 
