@@ -10,8 +10,7 @@ var _spent := false
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	pass # Replace with function body.
-
+	$SpawnExplosion.emitting = true
 
 func _physics_process(delta: float) -> void:
 	global_position += velocity * delta
