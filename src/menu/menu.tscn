@@ -14,7 +14,7 @@
 [ext_resource type="AudioStream" uid="uid://o55a1qhogedi" path="res://assets/music/Peritune_Zephyr_Fields_loop.mp3" id="12_ep4cv"]
 [ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="13_discord"]
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="14_twinstick"]
-[ext_resource type="Script" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
+[ext_resource type="Script" uid="uid://c3th7pdltvvb5" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -807,6 +807,14 @@ text = "Boss fight (sword)"
 script = ExtResource("2_56xr1")
 level_scene_path = "uid://cpxq3ainb4mw4"
 level_id = "res://src/world/levels/world_boss_scene_sword.tscn"
+
+[node name="BossFightSaw" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Boss fight (saw)"
+script = ExtResource("2_56xr1")
+level_scene_path = "uid://iy6t64a6tafb"
+level_id = "res://src/world/levels/world_boss_scene_saw.tscn"
 
 [node name="PlaytestNoticeRoot" type="MarginContainer" parent="."]
 modulate = Color(1, 1, 1, 0)

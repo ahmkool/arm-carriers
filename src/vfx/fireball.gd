@@ -42,5 +42,5 @@ func _on_body_collision(body: Node3D) -> void:
 	_spent = true
 	set_physics_process(false)
 	CameraFeedback.add_trauma_hurt()
-	Health.apply_damage(player, 9999)
+	Health.apply_damage(player, 9999, global_position)
 	queue_free()
