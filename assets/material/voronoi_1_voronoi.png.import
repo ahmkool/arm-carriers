@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://vbykkfhy2wij"
 path.s3tc="res://.godot/imported/voronoi_1_voronoi.png-495ad6e838ac601a65138f3e07b75547.s3tc.ctex"
+path.etc2="res://.godot/imported/voronoi_1_voronoi.png-495ad6e838ac601a65138f3e07b75547.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/material/voronoi_1_voronoi.png"
-dest_files=["res://.godot/imported/voronoi_1_voronoi.png-495ad6e838ac601a65138f3e07b75547.s3tc.ctex"]
+dest_files=["res://.godot/imported/voronoi_1_voronoi.png-495ad6e838ac601a65138f3e07b75547.s3tc.ctex", "res://.godot/imported/voronoi_1_voronoi.png-495ad6e838ac601a65138f3e07b75547.etc2.ctex"]
 
 [params]
 

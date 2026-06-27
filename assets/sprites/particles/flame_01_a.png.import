@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cnkv2y3rchd23"
 path.s3tc="res://.godot/imported/flame_01_a.png-6c051bedf9865c2ce90a00183cf17f5d.s3tc.ctex"
+path.etc2="res://.godot/imported/flame_01_a.png-6c051bedf9865c2ce90a00183cf17f5d.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/sprites/particles/flame_01_a.png"
-dest_files=["res://.godot/imported/flame_01_a.png-6c051bedf9865c2ce90a00183cf17f5d.s3tc.ctex"]
+dest_files=["res://.godot/imported/flame_01_a.png-6c051bedf9865c2ce90a00183cf17f5d.s3tc.ctex", "res://.godot/imported/flame_01_a.png-6c051bedf9865c2ce90a00183cf17f5d.etc2.ctex"]
 
 [params]
 

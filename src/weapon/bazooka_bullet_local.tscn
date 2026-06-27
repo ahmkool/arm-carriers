@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=4 uid="uid://e4fut737hp5k"]
+[gd_scene load_steps=19 format=4 uid="uid://e4fut737hp5k"]
 
 [ext_resource type="AudioStream" uid="uid://cpbsul3eh5ppn" path="res://assets/sounds/bazooka_shot.wav" id="2_60kgx"]
 [ext_resource type="Script" uid="uid://yjj2r26g3u46" path="res://src/weapon/bazooka_bullet_local.gd" id="2_u6gl8"]
@@ -101,6 +101,10 @@ particles_anim_loop = false
 [sub_resource type="QuadMesh" id="QuadMesh_33dcg"]
 material = SubResource("StandardMaterial3D_ddrq0")
 
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ddrq0"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_n5m6u"]
+
 [node name="BazookaBulletLocal" type="Node3D"]
 script = ExtResource("2_u6gl8")
 
@@ -137,6 +141,11 @@ one_shot = true
 explosiveness = 1.0
 process_material = SubResource("ParticleProcessMaterial_60kgx")
 draw_pass_1 = SubResource("QuadMesh_33dcg")
+
+[node name="GPUParticles3D2" type="GPUParticles3D" parent="."]
+visible = false
+process_material = SubResource("ParticleProcessMaterial_ddrq0")
+draw_pass_1 = SubResource("QuadMesh_n5m6u")
 
 [connection signal="area_entered" from="HitArea" to="." method="_on_hit_area_area_entered"]
 [connection signal="body_entered" from="HitArea" to="." method="_on_hit_area_body_entered"]

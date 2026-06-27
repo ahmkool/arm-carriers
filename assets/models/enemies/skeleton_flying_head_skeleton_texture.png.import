@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://gcnaitymqah5"
 path.s3tc="res://.godot/imported/skeleton_flying_head_skeleton_texture.png-370fecd814a07fe87db8e9a69caa2b03.s3tc.ctex"
+path.etc2="res://.godot/imported/skeleton_flying_head_skeleton_texture.png-370fecd814a07fe87db8e9a69caa2b03.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/models/enemies/skeleton_flying_head_skeleton_texture.png"
-dest_files=["res://.godot/imported/skeleton_flying_head_skeleton_texture.png-370fecd814a07fe87db8e9a69caa2b03.s3tc.ctex"]
+dest_files=["res://.godot/imported/skeleton_flying_head_skeleton_texture.png-370fecd814a07fe87db8e9a69caa2b03.s3tc.ctex", "res://.godot/imported/skeleton_flying_head_skeleton_texture.png-370fecd814a07fe87db8e9a69caa2b03.etc2.ctex"]
 
 [params]
 

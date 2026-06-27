@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cf7iy8ghu0fwc"
 path.s3tc="res://.godot/imported/Wooden_Platform_Top_forest_texture.png-bcb7e738fb98bbf4997589bb431d87bf.s3tc.ctex"
+path.etc2="res://.godot/imported/Wooden_Platform_Top_forest_texture.png-bcb7e738fb98bbf4997589bb431d87bf.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/models/weapon/Wooden_Platform_Top_forest_texture.png"
-dest_files=["res://.godot/imported/Wooden_Platform_Top_forest_texture.png-bcb7e738fb98bbf4997589bb431d87bf.s3tc.ctex"]
+dest_files=["res://.godot/imported/Wooden_Platform_Top_forest_texture.png-bcb7e738fb98bbf4997589bb431d87bf.s3tc.ctex", "res://.godot/imported/Wooden_Platform_Top_forest_texture.png-bcb7e738fb98bbf4997589bb431d87bf.etc2.ctex"]
 
 [params]
 

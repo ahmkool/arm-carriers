@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://cmmi476lkes8"
 path.s3tc="res://.godot/imported/Skeleton_Golem_skeleton_texture_A.png-08e00e5b30543675f70e137bc75beff9.s3tc.ctex"
+path.etc2="res://.godot/imported/Skeleton_Golem_skeleton_texture_A.png-08e00e5b30543675f70e137bc75beff9.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/characters/Skeleton_Golem_skeleton_texture_A.png"
-dest_files=["res://.godot/imported/Skeleton_Golem_skeleton_texture_A.png-08e00e5b30543675f70e137bc75beff9.s3tc.ctex"]
+dest_files=["res://.godot/imported/Skeleton_Golem_skeleton_texture_A.png-08e00e5b30543675f70e137bc75beff9.s3tc.ctex", "res://.godot/imported/Skeleton_Golem_skeleton_texture_A.png-08e00e5b30543675f70e137bc75beff9.etc2.ctex"]
 
 [params]
 

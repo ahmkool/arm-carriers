@@ -4,8 +4,9 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bxu7ifs3wx0wr"
 path.s3tc="res://.godot/imported/golem_axe_skeleton_texture_A.png-c4e6ae0ed4836cc4b9619194f28f5a44.s3tc.ctex"
+path.etc2="res://.godot/imported/golem_axe_skeleton_texture_A.png-c4e6ae0ed4836cc4b9619194f28f5a44.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 generator_parameters={
@@ -15,7 +16,7 @@ generator_parameters={
 [deps]
 
 source_file="res://assets/models/weapon/enemies/golem_axe/golem_axe_skeleton_texture_A.png"
-dest_files=["res://.godot/imported/golem_axe_skeleton_texture_A.png-c4e6ae0ed4836cc4b9619194f28f5a44.s3tc.ctex"]
+dest_files=["res://.godot/imported/golem_axe_skeleton_texture_A.png-c4e6ae0ed4836cc4b9619194f28f5a44.s3tc.ctex", "res://.godot/imported/golem_axe_skeleton_texture_A.png-c4e6ae0ed4836cc4b9619194f28f5a44.etc2.ctex"]
 
 [params]
 

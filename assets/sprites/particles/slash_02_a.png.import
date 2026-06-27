@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://bga7rc08f6vql"
 path.s3tc="res://.godot/imported/slash_02_a.png-f0b92814f9f40b1433de771c14539e21.s3tc.ctex"
+path.etc2="res://.godot/imported/slash_02_a.png-f0b92814f9f40b1433de771c14539e21.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://assets/sprites/particles/slash_02_a.png"
-dest_files=["res://.godot/imported/slash_02_a.png-f0b92814f9f40b1433de771c14539e21.s3tc.ctex"]
+dest_files=["res://.godot/imported/slash_02_a.png-f0b92814f9f40b1433de771c14539e21.s3tc.ctex", "res://.godot/imported/slash_02_a.png-f0b92814f9f40b1433de771c14539e21.etc2.ctex"]
 
 [params]
 
