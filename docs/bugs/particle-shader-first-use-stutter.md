@@ -1,8 +1,10 @@
 # Particle effects — first-use shader / pipeline stutter
 
-This document explains why new or runtime-spawned particle effects can freeze gameplay for a few seconds the **first** time they appear, why clearing Godot's `shader_cache` alone does not reproduce the hitch, and what we can do about it.
+This document explains why new or runtime-spawned particle effects can freeze gameplay for a few seconds the **first** time they appear, why clearing Godot's `shader_cache` alone does not reproduce the hitch, and what we implemented to fix it.
 
-**Related code:** `src/vfx/vfx_warmup.gd`, `src/vfx/`, `src/weapon/bazooka_bullet_local.gd`, `src/game/states/local/resetting_checkpoint.gd`, `src/ui/screen_fade.gd`
+**Related code:** `src/vfx/vfx_warmup.gd`, `src/vfx/hit_flash_3d.gd`, `src/vfx/`, `src/weapon/bazooka_bullet_local.gd`, `src/game/states/local/resetting_checkpoint.gd`, `src/world/world_local.gd`, `src/ui/screen_fade.gd`, `scripts/clear_shader_caches_mac.sh`
+
+**Autoload:** `VfxWarmup` in `project.godot`
 
 **Engine:** Godot 4.5, Forward+ (see `project.godot` features)
 
@@ -48,10 +50,21 @@ Wiping only Godot's `shader_cache` leaves the Metal driver cache intact, so the 
 
 ### Reproduce a true cold start
 
-Quit the game (and editor if testing there), then:
+Quit the game (and editor if testing there), then either run the helper script or delete caches manually.
+
+**Helper script (recommended):**
+
+```bash
+./scripts/clear_shader_caches_mac.sh
+```
+
+Add `--editor` to also clear the Godot editor Metal cache when testing in-editor.
+
+**Manual commands (same paths the script clears):**
 
 ```bash
 rm -rf "$HOME/Library/Application Support/Godot/app_userdata/Armed Together/shader_cache"
+rm -rf "$HOME/Library/Application Support/Godot/app_userdata/Armed Together/pipeline_cache"
 rm -rf "$(getconf DARWIN_USER_CACHE_DIR)/com.nighttrainstudio.armedtogether/com.apple.metal"
 rm -rf "$(getconf DARWIN_USER_CACHE_DIR)/com.nighttrainstudio.armedtogether/com.apple.metalfe"
 ```
@@ -60,9 +73,15 @@ Launch the **exported** `.app`, trigger each VFX once. Stutters should return on
 
 ### Verify without wiping caches
 
-In the Godot debugger while running: **Monitors → Pipeline compilations**. A spike in **Surface** or **Draw** at the same moment as the hitch confirms shader/pipeline compile, not asset I/O.
+In the Godot debugger while running: **Monitors → Pipeline compilations**.
 
-After warmup, **Surface** should rise during the checkpoint fade, not during combat. **Draw** should stay at **0**.
+| Counter | What to expect |
+|---------|----------------|
+| **Surface** | Spikes when a new mesh/material combo is first drawn. After warmup, should climb during the checkpoint fade, not during combat. |
+| **Draw** | Should stay at **0** during normal play. |
+| **Specialization** | May climb gradually during play — that is normal and not the same as first-use Surface hitches. |
+
+A spike in **Surface** or **Draw** at the same moment as a hitch confirms shader/pipeline compile, not asset I/O.
 
 ---
 
@@ -70,19 +89,21 @@ After warmup, **Surface** should rise during the checkpoint fade, not during com
 
 Runtime-spawned scenes (preload alone is not enough):
 
-| Scene | Spawned from |
-|-------|----------------|
-| `src/vfx/small_explosion.tscn` | `bazooka_bullet_local.gd` |
-| `src/vfx/explosion.tscn` | `bazooka_bullet_local.gd` |
-| `src/vfx/enemy_damage.tscn` | `enemy/state/dead.gd` |
-| `src/vfx/puff_disappear.tscn` | `enemy/state/dead.gd` |
-| `src/vfx/dash_particles.tscn` | `player/state/dashing.gd` |
-| `src/vfx/ghost.tscn` | `player/state/dashing.gd` (dash afterimage meshes) |
-| `src/vfx/dash.tscn` | `player/state/dashing.gd` (audio only) |
-| `src/vfx/fireball_spawn.tscn` | `enemy/mage/fireball_emitter.gd` |
-| `src/vfx/fireball.tscn` | `fireball_spawn.gd` |
-| `src/vfx/boss_axe_enrage_burst.tscn` | `boss_axe_fire_visual.gd` |
-| `src/vfx/enemy/skeleton_boss/*.tscn` | Boss attack handlers |
+| Scene | Spawned from | Warmed by |
+|-------|----------------|-----------|
+| `src/vfx/small_explosion.tscn` | `bazooka_bullet_local.gd` | Shared list |
+| `src/vfx/explosion.tscn` | `bazooka_bullet_local.gd` | Shared list |
+| `src/vfx/enemy_damage.tscn` | `enemy/state/dead.gd` | Shared list |
+| `src/vfx/puff_disappear.tscn` | `enemy/state/dead.gd` | Shared list |
+| `src/vfx/dash_particles.tscn` | `player/state/dashing.gd` | Shared list |
+| `src/vfx/ghost.tscn` | `player/state/dashing.gd` (dash afterimage meshes) | Shared list |
+| `src/vfx/dash.tscn` | `player/state/dashing.gd` (audio only) | Shared list |
+| `src/vfx/fireball_spawn.tscn` | `enemy/mage/fireball_emitter.gd` | Shared list |
+| `src/vfx/fireball.tscn` | `fireball_spawn.gd` | Shared list |
+| `src/weapon/bazooka_bullet_local.tscn` | weapon spawn | Shared list |
+| `src/vfx/boss_axe_enrage_burst.tscn` | `boss_axe_fire_visual.gd` | Boss `vfx_warmup_scenes` |
+| `src/vfx/enemy/skeleton_boss/*.tscn` | Boss attack handlers | Boss `vfx_warmup_scenes` |
+| Hit flash overlay shader | `hit_flash_3d.gd` on damage | Per-actor `warm_render()` |
 
 Effects already in the level tree (footsteps, boss ambient fire) compile during level load and are less likely to hitch mid-fight.
 
@@ -104,15 +125,83 @@ To force pipeline compile ahead of gameplay:
 
 ## Fix: VfxWarmup during checkpoint fade
 
-`VfxWarmup` (autoload) warms shared combat VFX plus each level's `WorldLocal.vfx_warmup_scenes` during `ResettingCheckpoint`, behind the black fade. Checkpoint respawns skip warmup for the same `level_id`.
+### Hook point
 
-Shared scenes (all levels): explosions, enemy death, dash, fireball, bazooka bullet.
+`ResettingCheckpoint` is the right place to warm VFX:
 
-Hit flash overlays: `HitFlash3D.warm_render()` runs on every `EnemyLocal` and `PlayerLocal` already in the level tree (uses their real meshes, not a proxy cube).
+- Runs on **every level start** (`AwaitWorldLocalReady` → `ResettingCheckpoint` → `playing`).
+- Runs again on death (`GameOverLost` → `ResettingCheckpoint`).
+- Already calls `ScreenFade.fade_to_black()` — compile cost is hidden behind the black screen.
 
-Boss levels (`world_boss_scene.tscn`, `world_boss_scene_sword.tscn`): skeleton boss VFX added via `vfx_warmup_scenes` on `WorldLocal`.
+The title screen is **not** a good hook: no 3D render context, and level-specific VFX are unknown there.
+
+### Behaviour
+
+`VfxWarmup` (autoload) warms shared combat VFX plus each level's `WorldLocal.vfx_warmup_scenes` during `ResettingCheckpoint`.
+
+- Warmup runs on the **first visit** to a level per session (keyed by `level_id`).
+- Checkpoint respawns on the same level **skip** warmup.
+- `ResettingCheckpoint` **blocks** transition to `playing` until warmup finishes (`_warmup_done`). The black screen may last longer than the normal fade timers — that is intentional on a cold cache.
+
+### Shared scenes (all levels)
+
+Defined in `SHARED_WARMUP_SCENES` in `vfx_warmup.gd`:
+
+- `small_explosion.tscn`, `explosion.tscn`
+- `enemy_damage.tscn`, `puff_disappear.tscn`
+- `dash_particles.tscn`, `ghost.tscn`, `dash.tscn`
+- `fireball_spawn.tscn`, `fireball.tscn`
+- `bazooka_bullet_local.tscn`
+
+Scenes are deduplicated when merged with per-level extras.
+
+### Per-level scenes
+
+`WorldLocal` exports `vfx_warmup_scenes: Array[PackedScene]`.
+
+Boss levels (`world_boss_scene.tscn`, `world_boss_scene_sword.tscn`) include skeleton boss VFX plus `boss_axe_enrage_burst.tscn`.
 
 To add warmup for a new level, assign extra `PackedScene`s to `WorldLocal.vfx_warmup_scenes` in the editor.
+
+### Hit flash overlays
+
+`HitFlash3D.warm_render()` runs on every `EnemyLocal` and `PlayerLocal` already in the level tree. It applies the overlay at full strength on their **real meshes**, awaits 2 frames, then clears — no tween or SFX.
+
+A proxy cube is **not** sufficient: hit-flash pipelines are mesh-dependent, so boss meshes need to be warmed on the actual in-scene actors.
+
+### What each warmup instance does
+
+For each scene in the manifest, `vfx_warmup.gd`:
+
+1. Instantiates and adds the node under `WorldLocal`.
+2. Strips the root script, disables processing, pauses `AnimationPlayer` nodes (prevents `ghost.tscn` from `queue_free` during warmup).
+3. Silences `AudioStreamPlayer` / `AudioStreamPlayer3D` nodes.
+4. Disables `Area3D` monitoring (no accidental hits).
+5. Spawns off-camera (behind the active camera + vertical offset).
+6. Sets `emitting = true` on all particle nodes, awaits **2 frames**, then `queue_free()`.
+
+After all scenes, hit flashes are warmed per actor.
+
+---
+
+## Troubleshooting with Pipeline compilations
+
+Useful patterns observed while debugging:
+
+| Observation | Likely cause | Fix |
+|-------------|--------------|-----|
+| First bazooka hit on boss: **Surface +1** | Hit flash overlay on boss mesh not warmed | `HitFlash3D.warm_render()` on in-scene actors (implemented) |
+| First dash: **Surface +2** (e.g. 27 → 29) | `ghost.tscn` afterimage meshes not warmed | Added `ghost.tscn` to shared list |
+| Surface climbs during fade, flat during combat | Warmup working | — |
+| Surface climbs on every dash after fade | Scene not in warmup list, or not drawn for 2 frames | Add to shared or per-level list; check visibility |
+| Only `shader_cache` cleared, no hitch returns | Metal driver cache still warm | Also clear `com.apple.metal` (see script above) |
+
+---
+
+## Known gaps
+
+- **Enemies spawned mid-level** (e.g. wave spawners) are not in the level tree at warmup time. Their hit-flash pipelines may still compile on first damage unless we add spawn-time warmup or a representative mesh probe.
+- **Shader Baker** and **Godot pipeline cache** (below) reduce repeat cost but do not replace first-run warmup on a new machine.
 
 ---
 
@@ -132,9 +221,9 @@ Helps **second and later** launches on the same machine. First launch on a new m
 
 ## Workaround for local testing
 
-- To test cold-cache behaviour, clear **both** Godot `shader_cache` and the app's `com.apple.metal` folder (see commands above).
-- To test whether warmup works, use **Pipeline compilations → Surface** instead of deleting caches every run.
-- Editor runs use `org.godotengine.godot` Metal cache — behaviour differs from exported `.app` builds.
+- **Cold-cache test:** run `./scripts/clear_shader_caches_mac.sh` (or manual commands above). Quit the game and editor first.
+- **Warmup test (faster iteration):** use **Pipeline compilations → Surface** — no cache wipe needed. Surface should spike during the checkpoint fade, not on first dash/shot.
+- **Editor vs export:** editor runs use `org.godotengine.godot` Metal cache — behaviour differs from exported `.app` builds. Use `--editor` on the script when testing in-editor.
 
 ---
 
