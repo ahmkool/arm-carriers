@@ -21,6 +21,8 @@ const MENU_MUSIC_DELAY_SECONDS := 1.5
 @onready var _level_start_prompt: Label = $LevelStartChoiceRoot/PanelContainer/MarginContainer/VBoxContainer/PromptLabel
 @onready var _menu_music: AudioStreamPlayer = $AudioStreamPlayer
 @onready var _playtest_notice_label: Label = $PlaytestNoticeRoot/PanelContainer/MarginContainer/VBoxContainer/NoticeLabel
+@onready var _shader_compiling_root: Control = $ShaderCompilingRoot
+@onready var _playtest_notice_root: Control = $PlaytestNoticeRoot
 
 
 func _ready() -> void:
@@ -47,6 +49,8 @@ func _ready() -> void:
 		_level_picker_focus,
 		_continue_button,
 		_level_start_prompt,
+		_shader_compiling_root,
+		_playtest_notice_root,
 	)
 	SessionFlow.start()
 	_begin_menu_music()

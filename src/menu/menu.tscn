@@ -855,3 +855,43 @@ stream = ExtResource("12_ep4cv")
 volume_db = -14.197
 bus = &"Music"
 parameters/looping = true
+
+[node name="ShaderCompilingRoot" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="Dim" type="ColorRect" parent="ShaderCompilingRoot"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0, 0, 0, 0.82)
+
+[node name="ShaderCompilingInfo" type="MarginContainer" parent="ShaderCompilingRoot"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -335.0
+offset_top = -155.0
+offset_right = 335.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="PanelContainer" type="PanelContainer" parent="ShaderCompilingRoot/ShaderCompilingInfo"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ShaderCompilingRoot/ShaderCompilingInfo/PanelContainer"]
+layout_mode = 2
+text = "Installing + loading ..."

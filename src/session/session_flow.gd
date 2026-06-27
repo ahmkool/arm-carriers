@@ -25,6 +25,10 @@ var credits_menu_focus: Control
 var level_picker_focus: Control
 var level_start_choice_focus: Control
 var level_start_choice_prompt: Label
+var shader_compiling_root: Control
+var playtest_notice_root: Control
+
+var _pending_apply_save := false
 
 
 func _ready() -> void:
@@ -34,6 +38,7 @@ func _ready() -> void:
 	_register_state("creditsmenu", CreditsMenuState.new())
 	_register_state("mainmenu", MainMenuState.new())
 	_register_state("levelstartchoice", LevelStartChoiceState.new())
+	_register_state("shadercompiling", ShaderCompilingState.new())
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -58,6 +63,8 @@ func register_menu_ui(
 	level_focus: Control,
 	level_start_focus: Control,
 	level_start_prompt: Label,
+	shader_compiling: Control,
+	playtest_notice: Control,
 ) -> void:
 	press_start_root = press_start
 	home_menu_root = home_menu
@@ -72,6 +79,8 @@ func register_menu_ui(
 	level_picker_focus = level_focus
 	level_start_choice_focus = level_start_focus
 	level_start_choice_prompt = level_start_prompt
+	shader_compiling_root = shader_compiling
+	playtest_notice_root = playtest_notice
 	_connect_menu_cancel()
 
 
@@ -95,22 +104,39 @@ func request_level(level_scene_path: String, level_id: String = "") -> void:
 	if level_scene_path.is_empty():
 		push_warning("SessionFlow: empty level scene path.")
 		return
-	var resolved_level_id := GameSave.resolve_level_id(level_scene_path, level_id)
-	_pending_level_path = level_scene_path
-	_pending_level_id = resolved_level_id
-	var saved_checkpoint_id := GameSave.get_saved_checkpoint(resolved_level_id)
-	if saved_checkpoint_id.is_empty():
-		load_level_with_choice(false)
-		return
-	pending_saved_checkpoint_id = saved_checkpoint_id
-	transition_to("levelstartchoice")
+	_begin_level_request(level_scene_path, level_id)
 
 
 func load_level_with_choice(apply_save: bool) -> void:
 	if _pending_level_path.is_empty():
 		push_warning("SessionFlow: no pending level to load.")
 		return
-	GameSave.set_apply_save_on_next_load(apply_save)
+	_pending_apply_save = apply_save
+	transition_to("shadercompiling")
+
+
+func _begin_level_request(level_scene_path: String, level_id: String) -> void:
+	var resolved_level_id := GameSave.resolve_level_id(level_scene_path, level_id)
+	_pending_level_path = level_scene_path
+	_pending_level_id = resolved_level_id
+	var saved_checkpoint_id := GameSave.get_saved_checkpoint(resolved_level_id)
+	if not saved_checkpoint_id.is_empty():
+		pending_saved_checkpoint_id = saved_checkpoint_id
+		transition_to("levelstartchoice")
+		return
+	_pending_apply_save = false
+	transition_to("shadercompiling")
+
+
+func start_pending_level_load() -> void:
+	_begin_pending_level_load()
+
+
+func _begin_pending_level_load() -> void:
+	await _wait_for_shader_message_display()
+	if _pending_level_path.is_empty():
+		return
+	GameSave.set_apply_save_on_next_load(_pending_apply_save)
 	load_level(_pending_level_path)
 	_clear_pending_level()
 
@@ -157,12 +183,15 @@ func quit_game() -> void:
 
 func show_menu_screen(screen_name: String) -> void:
 	var key := screen_name.to_lower()
+	var is_shader_compiling := key == "shadercompiling"
 	set_press_start_visible(key == "pressstart")
 	set_home_menu_visible(key == "homemenu")
 	set_settings_menu_visible(key == "settingsmenu")
 	set_credits_menu_visible(key == "creditsmenu")
 	set_main_menu_visible(key == "mainmenu")
 	set_level_start_choice_visible(key == "levelstartchoice")
+	set_shader_compiling_root_visible(is_shader_compiling)
+	set_playtest_notice_visible(not is_shader_compiling)
 
 
 func set_press_start_visible(visible: bool) -> void:
@@ -199,6 +228,18 @@ func set_level_start_choice_visible(visible: bool) -> void:
 	if level_start_choice_root == null:
 		return
 	level_start_choice_root.visible = visible
+
+
+func set_shader_compiling_root_visible(visible: bool) -> void:
+	if shader_compiling_root == null:
+		return
+	shader_compiling_root.visible = visible
+
+
+func set_playtest_notice_visible(visible: bool) -> void:
+	if playtest_notice_root == null:
+		return
+	playtest_notice_root.visible = visible
 
 
 func set_menu_navigation_active(active: bool, focus: Control = null) -> void:
@@ -245,6 +286,15 @@ func _clear_pending_level() -> void:
 	_pending_level_path = ""
 	_pending_level_id = ""
 	pending_saved_checkpoint_id = ""
+	_pending_apply_save = false
+
+
+func _wait_for_shader_message_display() -> void:
+	var tree := get_tree()
+	if tree == null:
+		return
+	await tree.process_frame
+	await tree.process_frame
 
 
 func _register_state(state_name: String, state: SessionState) -> void:
