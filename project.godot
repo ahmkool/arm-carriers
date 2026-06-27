@@ -30,6 +30,7 @@ GameplayInput="*res://src/autoload/gameplay_input.gd"
 GameplaySettings="*res://src/autoload/gameplay_settings.gd"
 ScreenFade="*res://src/ui/screen_fade.gd"
 SessionFlow="*res://src/session/session_flow.gd"
+VfxWarmup="*res://src/vfx/vfx_warmup.gd"
 
 [debug_draw_3d]
 

@@ -9,6 +9,7 @@ var _checkpoint_reset_timer: float = 0.0
 var _world_reset_timer: float = 0.0
 var _checkpoint_reset_applied: bool = false
 var _world_reset_applied: bool = false
+var _warmup_done: bool = false
 
 func enter():
 	ScreenFade.fade_to_black(CHECKPOINT_FADE_DURATION)
@@ -17,9 +18,35 @@ func enter():
 	_world_reset_timer = CHECKPOINT_FADE_DURATION + RESET_CHECKPOINT_DELAY
 	_checkpoint_reset_applied = false
 	_world_reset_applied = false
+	_warmup_done = not _needs_vfx_warmup()
+	if _warmup_done:
+		return
+	_begin_vfx_warmup()
 
 func exit():
 	ScreenFade.fade_from_black(CHECKPOINT_FADE_DURATION)
+
+func _needs_vfx_warmup() -> bool:
+	var world_local := world as WorldLocal
+	if world_local == null:
+		return false
+	return VfxWarmup.needs_warmup(world_local)
+
+
+func _begin_vfx_warmup() -> void:
+	_run_vfx_warmup()
+
+
+func _run_vfx_warmup() -> void:
+	var world_local := world as WorldLocal
+	if world_local == null:
+		_warmup_done = true
+		return
+	await VfxWarmup.warm_for_world(world_local)
+	if not is_inside_tree():
+		return
+	_warmup_done = true
+
 
 func _hide_boss_health_bar() -> void:
 	var bar := world.get_node_or_null(BOSS_HEALTH_BAR_PATH) as BossHealthBar
@@ -128,6 +155,8 @@ func physics_update(delta: float) -> void:
 
 	_world_reset_timer -= delta
 	if _world_reset_timer > 0.0:
+		return
+	if not _warmup_done:
 		return
 	_world_reset_applied = true
 	_apply_world_reset()

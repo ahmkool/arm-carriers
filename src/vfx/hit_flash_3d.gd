@@ -23,6 +23,22 @@ func trigger() -> void:
 	_start_flash_tween()
 
 
+func warm_render() -> void:
+	if _meshes.is_empty():
+		_cache_meshes()
+	if _meshes.is_empty():
+		return
+	_kill_tween()
+	_apply_overlay()
+	var tree := get_tree()
+	if tree == null:
+		_clear_overlays()
+		return
+	await tree.process_frame
+	await tree.process_frame
+	_clear_overlays()
+
+
 func _cache_meshes() -> void:
 	_meshes.clear()
 	var root := get_parent()

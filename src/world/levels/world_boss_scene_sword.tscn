@@ -1,4 +1,4 @@
-[gd_scene load_steps=33 format=3 uid="uid://cpxq3ainb4mw4"]
+[gd_scene load_steps=40 format=3 uid="uid://cpxq3ainb4mw4"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_ighex"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_mshma"]
@@ -26,6 +26,13 @@
 [ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="24_3joeb"]
 [ext_resource type="Texture2D" uid="uid://ckiqqxl7keelk" path="res://assets/sprites/ui/icons/skeleton_boss_icon.png" id="25_p04qc"]
 [ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="26_nqwc1"]
+[ext_resource type="PackedScene" uid="uid://2ob2mq7ml03x" path="res://src/vfx/boss_axe_enrage_burst.tscn" id="27_warm1"]
+[ext_resource type="PackedScene" uid="uid://susir3wmwvnc" path="res://src/vfx/enemy/skeleton_boss/axe_slam_impact.tscn" id="28_warm2"]
+[ext_resource type="PackedScene" uid="uid://jxnxavck3bqb" path="res://src/vfx/enemy/skeleton_boss/axe_slam_impact_far.tscn" id="29_warm3"]
+[ext_resource type="PackedScene" uid="uid://27loyh5k4cu" path="res://src/vfx/enemy/skeleton_boss/axe_slash_flame.tscn" id="30_warm4"]
+[ext_resource type="PackedScene" uid="uid://ev5r0in8i8yx" path="res://src/vfx/enemy/skeleton_boss/axe_stub.tscn" id="31_warm5"]
+[ext_resource type="PackedScene" uid="uid://y6u10ge22ied" path="res://src/vfx/enemy/skeleton_boss/axe_fire_slash_trail.tscn" id="32_warm6"]
+[ext_resource type="PackedScene" uid="uid://det1nlqshcx21" path="res://src/vfx/enemy/skeleton_boss/step.tscn" id="33_warm7"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_tg0np")
@@ -51,6 +58,7 @@ polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(5, 4, 3), PackedInt32Arr
 
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("1_ighex")
+vfx_warmup_scenes = Array[PackedScene]([ExtResource("27_warm1"), ExtResource("28_warm2"), ExtResource("29_warm3"), ExtResource("30_warm4"), ExtResource("31_warm5"), ExtResource("32_warm6"), ExtResource("33_warm7")])
 
 [node name="CameraFollowRig" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)

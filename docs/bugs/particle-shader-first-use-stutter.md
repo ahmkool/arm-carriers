@@ -2,7 +2,7 @@
 
 This document explains why new or runtime-spawned particle effects can freeze gameplay for a few seconds the **first** time they appear, why clearing Godot's `shader_cache` alone does not reproduce the hitch, and what we can do about it.
 
-**Related code:** `src/vfx/`, `src/weapon/bazooka_bullet_local.gd`, `src/game/states/local/resetting_checkpoint.gd`, `src/ui/screen_fade.gd`
+**Related code:** `src/vfx/vfx_warmup.gd`, `src/vfx/`, `src/weapon/bazooka_bullet_local.gd`, `src/game/states/local/resetting_checkpoint.gd`, `src/ui/screen_fade.gd`
 
 **Engine:** Godot 4.5, Forward+ (see `project.godot` features)
 
@@ -62,6 +62,8 @@ Launch the **exported** `.app`, trigger each VFX once. Stutters should return on
 
 In the Godot debugger while running: **Monitors → Pipeline compilations**. A spike in **Surface** or **Draw** at the same moment as the hitch confirms shader/pipeline compile, not asset I/O.
 
+After warmup, **Surface** should rise during the checkpoint fade, not during combat. **Draw** should stay at **0**.
+
 ---
 
 ## Effects most at risk in this project
@@ -75,6 +77,8 @@ Runtime-spawned scenes (preload alone is not enough):
 | `src/vfx/enemy_damage.tscn` | `enemy/state/dead.gd` |
 | `src/vfx/puff_disappear.tscn` | `enemy/state/dead.gd` |
 | `src/vfx/dash_particles.tscn` | `player/state/dashing.gd` |
+| `src/vfx/ghost.tscn` | `player/state/dashing.gd` (dash afterimage meshes) |
+| `src/vfx/dash.tscn` | `player/state/dashing.gd` (audio only) |
 | `src/vfx/fireball_spawn.tscn` | `enemy/mage/fireball_emitter.gd` |
 | `src/vfx/fireball.tscn` | `fireball_spawn.gd` |
 | `src/vfx/boss_axe_enrage_burst.tscn` | `boss_axe_fire_visual.gd` |
@@ -82,7 +86,7 @@ Runtime-spawned scenes (preload alone is not enough):
 
 Effects already in the level tree (footsteps, boss ambient fire) compile during level load and are less likely to hitch mid-fight.
 
-Bazooka bullet scene note: `SpawnExplosion` starts with `emitting = false`, so the muzzle burst compiles on **first shot**, not when the bullet scene loads.
+Bazooka bullet scene note: `SpawnExplosion` starts with `emitting = false`, so the muzzle burst compiles on **first shot**, not when the bullet scene loads. The shared warmup list includes `bazooka_bullet_local.tscn` to cover this.
 
 ---
 
@@ -96,33 +100,29 @@ To force pipeline compile ahead of gameplay:
 - **`visible = false` often does not compile.**
 - A **SubViewport that never draws to the screen** also does not warm up ([godotengine/godot#103308](https://github.com/godotengine/godot/issues/103308)).
 
-Good hook points in this project:
+---
 
-- `ResettingCheckpoint` — already calls `ScreenFade.fade_to_black()`; compile cost can be hidden behind the fade.
-- Level load / `AwaitWorldLocalReady` — before `playing` state.
-- Menu idle time — optional, but less ideal than level-load warmup.
+## Fix: VfxWarmup during checkpoint fade
+
+`VfxWarmup` (autoload) warms shared combat VFX plus each level's `WorldLocal.vfx_warmup_scenes` during `ResettingCheckpoint`, behind the black fade. Checkpoint respawns skip warmup for the same `level_id`.
+
+Shared scenes (all levels): explosions, enemy death, dash, fireball, bazooka bullet.
+
+Hit flash overlays: `HitFlash3D.warm_render()` runs on every `EnemyLocal` and `PlayerLocal` already in the level tree (uses their real meshes, not a proxy cube).
+
+Boss levels (`world_boss_scene.tscn`, `world_boss_scene_sword.tscn`): skeleton boss VFX added via `vfx_warmup_scenes` on `WorldLocal`.
+
+To add warmup for a new level, assign extra `PackedScene`s to `WorldLocal.vfx_warmup_scenes` in the editor.
 
 ---
 
-## Possible fixes (not implemented)
+## Other mitigations
 
-### 1. VFX warmup during black screen (recommended)
-
-Autoload or helper that, while the screen is faded out:
-
-1. Iterates a manifest of runtime VFX scenes.
-2. Spawns each off-camera, enables particles, awaits 2 frames, `queue_free()`.
-3. Disables or stubs audio on warmed instances so SFX does not play.
-
-### 2. Hidden decoy copies on persistent nodes
-
-Attach invisible copies of high-frequency effects (dash, bazooka muzzle) to the player or weapon. Disable scripts on decoys. Documented in [Godot pipeline compilations](https://docs.godotengine.org/en/stable/tutorials/performance/pipeline_compilations.html).
-
-### 3. Enable Shader Baker on export
+### Shader Baker on export
 
 `export_presets.cfg` currently has `shader_baker/enabled=false` for macOS and Windows. Enabling it bakes intermediate shaders into the PCK at export time (faster first compile of GLSL → MIL). It does **not** remove the Metal driver pipeline step on a player's first run.
 
-### 4. Enable Godot pipeline cache
+### Godot pipeline cache
 
 Project setting: `rendering/rendering_device/pipeline_cache/enable = true`
 
@@ -133,7 +133,7 @@ Helps **second and later** launches on the same machine. First launch on a new m
 ## Workaround for local testing
 
 - To test cold-cache behaviour, clear **both** Godot `shader_cache` and the app's `com.apple.metal` folder (see commands above).
-- To test whether a warmup fix works, use **Pipeline compilations** monitors instead of deleting caches every run.
+- To test whether warmup works, use **Pipeline compilations → Surface** instead of deleting caches every run.
 - Editor runs use `org.godotengine.godot` Metal cache — behaviour differs from exported `.app` builds.
 
 ---

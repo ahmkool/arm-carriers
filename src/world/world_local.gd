@@ -3,6 +3,7 @@ extends Node3D
 
 @export var level_id: String = ""
 @export var skip_save: bool = false
+@export var vfx_warmup_scenes: Array[PackedScene] = []
 
 @onready var players = $Players
 @onready var enemies = $Enemies
