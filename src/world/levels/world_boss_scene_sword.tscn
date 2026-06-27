@@ -15,7 +15,7 @@
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="13_dtdsr"]
 [ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="14_6xnkn"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="15_bapg7"]
-[ext_resource type="MeshLibrary" uid="uid://d3kkksaa5a6ce" path="res://assets/mesh_library/tiles_Color1.tres" id="16_v5acb"]
+[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="16_v5acb"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="17_ighex"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="18_rtgpx"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="19_8r0eg"]

@@ -19,7 +19,7 @@
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="17_dlxly"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="18_boc2i"]
 [ext_resource type="PackedScene" uid="uid://cje8utfev8m5t" path="res://src/enemy/enemy_flying_skull.tscn" id="18_p83lq"]
-[ext_resource type="MeshLibrary" uid="uid://d3kkksaa5a6ce" path="res://assets/mesh_library/tiles_Color1.tres" id="19_b52ox"]
+[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="19_b52ox"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="20_oa1uu"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="21_r7gsi"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="22_jydnb"]

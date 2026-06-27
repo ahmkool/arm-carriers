@@ -28,6 +28,7 @@ func _begin_hit_reaction() -> void:
 	_apply_knockback_velocity()
 	if player.footsteps_particles:
 		player.footsteps_particles.emitting = false
+	player.spawn_damage_vfx()
 	player.play_hit_animation()
 
 

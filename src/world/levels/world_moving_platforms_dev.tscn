@@ -9,7 +9,7 @@
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="7_4m0io"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="8_g34p6"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="9_k5j0r"]
-[ext_resource type="MeshLibrary" uid="uid://d3kkksaa5a6ce" path="res://assets/mesh_library/tiles_Color1.tres" id="10_ni4tr"]
+[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="10_ni4tr"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="11_w0nnt"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="12_12ts1"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="13_7064v"]

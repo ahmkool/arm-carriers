@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="17_l8vg1"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="18_vtpf7"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_x7fwy"]
-[ext_resource type="MeshLibrary" uid="uid://uc5bydn6cfes" path="res://assets/mesh_library/tiles_Color6.tres" id="19_6qsxp"]
+[ext_resource type="MeshLibrary" uid="uid://nskho8hh0n1l" path="res://assets/mesh_library/tiles_Color6_no_shadows.tres" id="19_6qsxp"]
 [ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="19_eq7uj"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="19_trwi5"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="20_3ft82"]

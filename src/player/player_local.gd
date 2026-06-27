@@ -9,6 +9,8 @@ extends CharacterBody3D
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const DAMAGE_SOUND := preload("res://assets/sounds/damage.wav")
+const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
+const DAMAGE_VFX_KNOCKBACK_OFFSET := 2.0
 
 ## Matches `LocomotionBlend` (AnimationNodeBlend2) in mannequin_medium.tscn: input 0 = idle, 1 = run.
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/LocomotionBlend/blend_amount"
@@ -103,7 +105,8 @@ func _on_health_damaged(_amount: int, remaining: int, source_position: Vector3) 
 	_request_taking_damage_state()
 
 
-func _on_health_died(_source_position: Vector3 = Vector3.ZERO) -> void:
+func _on_health_died(source_position: Vector3 = Vector3.ZERO) -> void:
+	_store_damage_source_position(source_position)
 	die(_animate_on_dead_enter)
 
 
@@ -190,6 +193,32 @@ func play_damage_sound() -> void:
 	sfx.stream = DAMAGE_SOUND
 	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
 	sfx.play()
+
+
+func has_damage_source_position() -> bool:
+	return _has_damage_source_position
+
+
+func get_damage_source_position() -> Vector3:
+	return _damage_source_position
+
+
+func spawn_damage_vfx() -> void:
+	var world := get_tree().current_scene
+	if world == null:
+		return
+	var fx := DAMAGE_VFX_SCENE.instantiate()
+	if has_damage_source_position():
+		fx.set_damage_source(get_damage_source_position())
+	world.add_child(fx)
+	fx.global_position = _get_damage_vfx_spawn_position()
+
+
+func _get_damage_vfx_spawn_position() -> Vector3:
+	var away := get_hit_knockback_direction()
+	if away.length_squared() < 0.0001:
+		return global_position
+	return global_position + away * DAMAGE_VFX_KNOCKBACK_OFFSET
 
 
 func play_hit_animation() -> void:

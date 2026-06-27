@@ -16,7 +16,7 @@
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_3b7p5"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="17_xwysy"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_gblro"]
-[ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="19_bk7ov"]
+[ext_resource type="MeshLibrary" uid="uid://ck1qun6nlwpwr" path="res://assets/mesh_library/tiles_Color7_no_shadows.tres" id="19_bk7ov"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="20_l0jcd"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_ws40m"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="22_k8huu"]

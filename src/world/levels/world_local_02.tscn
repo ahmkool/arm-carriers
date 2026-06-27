@@ -15,7 +15,7 @@
 [ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="19_khskr"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
-[ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="21_jq7lx"]
+[ext_resource type="MeshLibrary" uid="uid://ck1qun6nlwpwr" path="res://assets/mesh_library/tiles_Color7_no_shadows.tres" id="21_jq7lx"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_jq7lx"]
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="22_khskr"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]

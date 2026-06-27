@@ -740,7 +740,7 @@ draw_pass_1 = SubResource("CylinderMesh_cd20w")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("36_bb3bq")
-max_hp = 30
+max_hp = 90
 
 [node name="BossPhaseController" type="Node" parent="."]
 script = ExtResource("37_phase")

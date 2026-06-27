@@ -18,7 +18,7 @@
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="16_o40vb"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="17_lbdak"]
 [ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="17_talnx"]
-[ext_resource type="MeshLibrary" uid="uid://bemun23mbufjy" path="res://assets/mesh_library/tiles_Color7.tres" id="18_i8avp"]
+[ext_resource type="MeshLibrary" uid="uid://ck1qun6nlwpwr" path="res://assets/mesh_library/tiles_Color7_no_shadows.tres" id="18_i8avp"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="19_uhkbd"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="20_lp1j3"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="21_c3fv4"]

@@ -722,6 +722,7 @@ level_scene_path = "res://src/world/levels/world_local_02.tscn"
 level_id = "res://src/world/levels/world_local_02.tscn"
 
 [node name="Level3Button" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Level 3 (hard)"
@@ -857,7 +858,6 @@ bus = &"Music"
 parameters/looping = true
 
 [node name="ShaderCompilingRoot" type="Control" parent="."]
-visible = false
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -883,15 +883,18 @@ anchor_left = 0.5
 anchor_top = 1.0
 anchor_right = 0.5
 anchor_bottom = 1.0
-offset_left = -335.0
-offset_top = -155.0
-offset_right = 335.0
+offset_left = -217.5
+offset_top = -106.0
+offset_right = 217.5
 grow_horizontal = 2
 grow_vertical = 0
 
 [node name="PanelContainer" type="PanelContainer" parent="ShaderCompilingRoot/ShaderCompilingInfo"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="ShaderCompilingRoot/ShaderCompilingInfo/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="ShaderCompilingRoot/ShaderCompilingInfo/PanelContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ShaderCompilingRoot/ShaderCompilingInfo/PanelContainer/MarginContainer"]
 layout_mode = 2
 text = "Installing + loading ..."
