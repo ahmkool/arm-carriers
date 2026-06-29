@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://gvy3f4f5rsw8"
-path="res://.godot/imported/trailer_title.png-b95dea8484f5273e29acae60c89e0b14.ctex"
+uid="uid://bgyvsevekcvna"
+path="res://.godot/imported/vertical_capsule_2.png-365aa0122650368bfcaa16458782b408.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/marketing/trailer_title.png"
-dest_files=["res://.godot/imported/trailer_title.png-b95dea8484f5273e29acae60c89e0b14.ctex"]
+source_file="res://assets/marketing/vertical_capsule_2.png"
+dest_files=["res://.godot/imported/vertical_capsule_2.png-365aa0122650368bfcaa16458782b408.ctex"]
 
 [params]
 
