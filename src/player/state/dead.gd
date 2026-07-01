@@ -5,7 +5,7 @@ func enter() -> void:
 	if not player._animate_on_dead_enter:
 		return
 	player.spawn_damage_vfx()
-	player.play_damage_sound()
+	#player.play_damage_sound()
 	player.play_dead_animation()
 
 func physics_update(delta: float) -> void:

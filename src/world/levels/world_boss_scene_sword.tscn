@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://cpxq3ainb4mw4"]
+[gd_scene load_steps=39 format=3 uid="uid://cpxq3ainb4mw4"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_ighex"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_mshma"]
@@ -13,7 +13,6 @@
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="11_dytow"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="12_0x60v"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="13_dtdsr"]
-[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="14_6xnkn"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="15_bapg7"]
 [ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="16_v5acb"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="17_ighex"]
@@ -165,7 +164,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7182007, 0, -0.3605957)
 shape = SubResource("BoxShape3D_qrvdl")
 
 [node name="GridMap2" type="GridMap" parent="Level"]
-mesh_library = ExtResource("14_6xnkn")
+mesh_library = ExtResource("16_v5acb")
 data = {
 "cells": PackedInt32Array(10, 65535, 655469, 0, 3, 655469, 1, 65532, 655469, 4, 65530, 655469, 9, 65530, 655469, 7, 65534, 655469, 4, 5, 655469, 8, 2, 655469, 11, 65530, 655469, 4, 2, 1048685, 1, 65534, 1048685, 5, 65532, 1048685, 8, 65531, 1048685, 6, 1, 109, 3, 65534, 109, 11, 65532, 109, 9, 65533, 109, 10, 2, 109, 7, 65533, 110, 8, 1, 110, 5, 4, 110, 65535, 1, 110, 65530, 4, 110, 65533, 65534, 110, 3, 65529, 110, 65535, 65531, 110, 65534, 65534, 110, 11, 65533, 106, 2, 1, 106, 65532, 4, 113, 0, 65535, 106, 3, 1, 106, 7, 65535, 106, 12, 65530, 106, 2, 2, 113, 1, 65535, 113, 3, 65535, 119, 8, 65535, 119, 12, 65534, 124, 6, 65529, 124, 2, 65529, 63)
 }

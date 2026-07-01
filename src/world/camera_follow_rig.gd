@@ -90,7 +90,7 @@ func compute_desired_follow_position() -> Vector3:
 
 	var midpoint := _get_midpoint(player_positions)
 	var spread := _get_max_distance_from(midpoint, player_positions)
-	var zoom_amount = min(spread * zoom_per_unit, max_zoom_out)
+	var zoom_amount = min(spread * _get_effective_zoom_per_unit(), max_zoom_out)
 	return midpoint + follow_offset + follow_offset.normalized() * zoom_amount
 
 
@@ -160,3 +160,14 @@ func _get_max_distance_from(point: Vector3, positions: Array[Vector3]) -> float:
 	for position in positions:
 		max_distance = maxf(max_distance, point.distance_to(position))
 	return max_distance
+
+
+func _get_effective_zoom_per_unit() -> float:
+	if not _is_portrait_screen():
+		return zoom_per_unit
+	return zoom_per_unit * 3.5
+
+
+func _is_portrait_screen() -> bool:
+	var size := get_viewport().get_visible_rect().size
+	return size.y > size.x

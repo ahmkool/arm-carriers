@@ -2,6 +2,7 @@ class_name Fireball
 extends Node3D
 
 const DISAPPEAR_LEAD_SECONDS := 0.5
+const HIT_SOUND := preload("res://assets/sounds/explosion/Small Explosion 2_1.wav")
 
 @export var lifetime_seconds := 5.0
 
@@ -42,5 +43,20 @@ func _on_body_collision(body: Node3D) -> void:
 	_spent = true
 	set_physics_process(false)
 	CameraFeedback.add_trauma_hurt()
-	Health.apply_damage(player, 9999, global_position)
+	var damage_landed := Health.apply_damage(player, 9999, global_position)
+	if damage_landed:
+		_play_hit_sfx()
 	queue_free()
+
+
+func _play_hit_sfx() -> void:
+	var scene_root := get_tree().current_scene
+	if scene_root == null:
+		return
+	var sfx := AudioStreamPlayer3D.new()
+	scene_root.add_child(sfx)
+	sfx.global_position = global_position
+	sfx.bus = "SFX"
+	sfx.stream = HIT_SOUND
+	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
+	sfx.play()

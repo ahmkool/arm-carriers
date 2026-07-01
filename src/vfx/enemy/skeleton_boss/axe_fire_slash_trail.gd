@@ -5,6 +5,7 @@ const LIFETIME_SEC := 8.0
 const MOVE_SPEED_MAX := 5.0
 const MOVE_SPEED_START_RATIO := 0.04
 const DAMAGE := 1
+const HIT_SOUND := preload("res://assets/sounds/damage.wav")
 
 var _direction := Vector3.FORWARD
 var _elapsed := 0.0
@@ -44,7 +45,19 @@ func _on_body_collision(body: Node3D) -> void:
 		return
 	_damaged_player_ids.append(player_id)
 	CameraFeedback.add_trauma_hurt()
-	Health.apply_damage(player, DAMAGE, global_position)
+	if not Health.apply_damage(player, DAMAGE, global_position):
+		return
+	_play_hit_sfx()
+
+
+func _play_hit_sfx() -> void:
+	var sfx := AudioStreamPlayer3D.new()
+	add_child(sfx)
+	sfx.global_position = global_position
+	sfx.bus = "SFX"
+	sfx.stream = HIT_SOUND
+	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
+	sfx.play()
 
 
 func _process(delta: float) -> void:

@@ -15,6 +15,7 @@ var _is_offensive := true
 		_sync_hit_box_to_offensive_state()
 @export var hitbox_damage: int = 1
 
+const BODY_HIT_SOUND := preload("res://assets/sounds/punch/Punch 3_1.wav")
 const DEATH_FREE_DELAY_SECONDS := 10.0
 ## Higher = faster turn toward a facing direction (roughly “how many times per second” to ease toward the target).
 const ROTATION_SMOOTH_LAMBDA := 12.0
@@ -394,7 +395,19 @@ func _on_hit_box_body_entered(body):
 	if player == null:
 		return
 	CameraFeedback.add_trauma_hurt()
-	Health.apply_damage(player, hitbox_damage)
+	if not Health.apply_damage(player, hitbox_damage, global_position):
+		return
+	_play_body_hit_sfx()
+
+
+func _play_body_hit_sfx() -> void:
+	var sfx := AudioStreamPlayer3D.new()
+	add_child(sfx)
+	sfx.global_position = global_position
+	sfx.bus = "SFX"
+	sfx.stream = BODY_HIT_SOUND
+	sfx.finished.connect(sfx.queue_free, CONNECT_ONE_SHOT)
+	sfx.play()
 
 
 func update_locomotion_blend() -> void:

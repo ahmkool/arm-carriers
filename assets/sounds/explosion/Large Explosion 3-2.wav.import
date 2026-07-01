@@ -1,0 +1,24 @@
+[remap]
+
+importer="wav"
+type="AudioStreamWAV"
+uid="uid://c0lglkhif42vo"
+path="res://.godot/imported/Large Explosion 3-2.wav-8cbafcab3144be99fc43739130bf955d.sample"
+
+[deps]
+
+source_file="res://assets/sounds/explosion/Large Explosion 3-2.wav"
+dest_files=["res://.godot/imported/Large Explosion 3-2.wav-8cbafcab3144be99fc43739130bf955d.sample"]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop_mode=0
+edit/loop_begin=0
+edit/loop_end=-1
+compress/mode=2
