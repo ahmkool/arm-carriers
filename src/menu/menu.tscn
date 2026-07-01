@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=24 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="13_discord"]
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="14_twinstick"]
 [ext_resource type="Script" uid="uid://c3th7pdltvvb5" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
+[ext_resource type="Script" uid="uid://dportraitrecord01" path="res://src/ui/portrait_recording_setting_control.gd" id="16_portrait"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -510,6 +511,18 @@ theme_override_constants/outline_size = 8
 theme_override_font_sizes/font_size = 32
 text = "Full screen"
 
+[node name="PortraitRecordingRow" type="HBoxContainer" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+alignment = 1
+
+[node name="PortraitRecordingCheck" type="CheckButton" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer/PortraitRecordingRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/outline_size = 8
+theme_override_font_sizes/font_size = 32
+text = "Portrait (1080×1920)"
+
 [node name="BackButton" type="Button" parent="SettingsMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
@@ -527,6 +540,10 @@ checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/TwinstickRo
 [node name="FullscreenSettingControl" type="Node" parent="SettingsMenuRoot" node_paths=PackedStringArray("checkbox")]
 script = ExtResource("15_fullscreen")
 checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/FullscreenRow/FullscreenCheck")
+
+[node name="PortraitRecordingSettingControl" type="Node" parent="SettingsMenuRoot" node_paths=PackedStringArray("checkbox")]
+script = ExtResource("16_portrait")
+checkbox = NodePath("../PanelContainer/MarginContainer/VBoxContainer/PortraitRecordingRow/PortraitRecordingCheck")
 
 [node name="CreditsMenuRoot" type="Control" parent="."]
 layout_mode = 1

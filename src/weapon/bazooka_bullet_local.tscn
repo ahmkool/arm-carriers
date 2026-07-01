@@ -1,7 +1,8 @@
-[gd_scene load_steps=19 format=4 uid="uid://e4fut737hp5k"]
+[gd_scene load_steps=21 format=4 uid="uid://e4fut737hp5k"]
 
-[ext_resource type="AudioStream" uid="uid://cpbsul3eh5ppn" path="res://assets/sounds/bazooka_shot.wav" id="2_60kgx"]
+[ext_resource type="AudioStream" uid="uid://dcrh0u7xbpjo1" path="res://assets/sounds/explosion/Small Explosion 2_1.wav" id="2_ddrq0"]
 [ext_resource type="Script" uid="uid://yjj2r26g3u46" path="res://src/weapon/bazooka_bullet_local.gd" id="2_u6gl8"]
+[ext_resource type="AudioStream" uid="uid://c7na4fyb2oor5" path="res://assets/sounds/explosion/Small Explosion Realistic 2_1.wav" id="3_33dcg"]
 [ext_resource type="Texture2D" uid="uid://cnkv2y3rchd23" path="res://assets/sprites/particles/flame_01_a.png" id="3_60kgx"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_tlok2"]
@@ -46,6 +47,11 @@ _surfaces = [{
 }]
 blend_shape_mode = 0
 shadow_mesh = SubResource("ArrayMesh_1djbo")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_n5m6u"]
+streams_count = 2
+stream_0/stream = ExtResource("2_ddrq0")
+stream_1/stream = ExtResource("3_33dcg")
 
 [sub_resource type="Curve" id="Curve_u6gl8"]
 _data = [Vector2(0, 0.86688226), 0.0, 0.0, 0, 0, Vector2(0.41853034, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.040151), 0.0, 0.0, 0, 0]
@@ -122,7 +128,7 @@ mesh = SubResource("ArrayMesh_rvese")
 skeleton = NodePath("")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("2_60kgx")
+stream = SubResource("AudioStreamRandomizer_n5m6u")
 autoplay = true
 bus = &"SFX"
 

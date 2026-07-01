@@ -6,14 +6,15 @@ const FADE_TO_CHECKPOINT_DURATION := 0.75
 
 func enter() -> void:
 	GameplayInput.lock()
-	var info_message := world.get_node("UI/InfoMessage")
-	InfoMessagePresenter.hide_feedback_controls(info_message)
-	info_message.show()
-	info_message.get_node("PanelContainer/MarginContainer/VBoxContainer/InfoLabel").text = "Game Over !"
+	var you_died_screen := world.get_node("UI/YouDiedScreen") as YouDiedScreen
+	you_died_screen.show_and_animate()
 	_begin_return_to_checkpoint_sequence()
 
 
 func exit() -> void:
+	var you_died_screen := world.get_node_or_null("UI/YouDiedScreen") as YouDiedScreen
+	if you_died_screen != null:
+		you_died_screen.hide_screen()
 	GameplayInput.unlock()
 
 

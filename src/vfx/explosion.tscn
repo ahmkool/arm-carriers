@@ -1,7 +1,9 @@
-[gd_scene load_steps=23 format=3 uid="uid://d1d5co1b7ui5x"]
+[gd_scene load_steps=26 format=3 uid="uid://d1d5co1b7ui5x"]
 
 [ext_resource type="Script" uid="uid://cdaovyj106v1e" path="res://src/vfx/explosion.gd" id="1_dvbte"]
-[ext_resource type="AudioStream" uid="uid://5hmxanehcf2g" path="res://assets/sounds/explosion.wav" id="2_01vq6"]
+[ext_resource type="AudioStream" uid="uid://bamoi1ibwuqbt" path="res://assets/sounds/explosion/Medium Explosion 4_1.wav" id="2_10ly8"]
+[ext_resource type="AudioStream" uid="uid://dbicfdnr04epj" path="res://assets/sounds/explosion/Medium Explosion 9_7.wav" id="3_eo72l"]
+[ext_resource type="AudioStream" uid="uid://ojxpyijf0w35" path="res://assets/sounds/explosion/Medium Explosion 8_1.wav" id="4_10ly8"]
 
 [sub_resource type="Curve" id="Curve_83ytm"]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
@@ -105,6 +107,12 @@ alpha_curve = SubResource("CurveTexture_oqtms")
 [sub_resource type="SphereShape3D" id="SphereShape3D_hitbx"]
 radius = 3.5
 
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_k5ltb"]
+streams_count = 3
+stream_0/stream = ExtResource("2_10ly8")
+stream_1/stream = ExtResource("3_eo72l")
+stream_2/stream = ExtResource("4_10ly8")
+
 [node name="Explosion" type="Node3D"]
 script = ExtResource("1_dvbte")
 damage = 3
@@ -146,7 +154,7 @@ collision_mask = 11
 shape = SubResource("SphereShape3D_hitbx")
 
 [node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
-stream = ExtResource("2_01vq6")
+stream = SubResource("AudioStreamRandomizer_k5ltb")
 autoplay = true
 bus = &"SFX"
 
