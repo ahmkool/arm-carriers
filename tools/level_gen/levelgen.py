@@ -25,6 +25,7 @@ LIBRARIES = {
     1: ("assets/mesh_library/tiles_Color1_no_shadows.tres", "uid://denn6v2rnn43l"),  # green
     6: ("assets/mesh_library/tiles_Color6_no_shadows.tres", "uid://nskho8hh0n1l"),  # orange
     7: ("assets/mesh_library/tiles_Color7_no_shadows.tres", "uid://ck1qun6nlwpwr"),  # pink
+    "dungeon": ("src/world/elements/dungeon/dungeon_tiles.tres", None),  # stone
 }
 WEAPONS = {
     "bazooka": ("uid://cq5v348mrgy7q", "res://src/weapon/bazooka.tscn"),
@@ -35,6 +36,23 @@ TRIGGER = "AllPlayersAreaTrigger"
 EVENTS = "Level/Events/"
 AREAS = "Level/Areas/"
 GROUPS = "Enemies/"
+
+
+ENVIRONMENT_SKY = """background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3"""
+ENVIRONMENT_DARK = """background_mode = 1
+background_color = Color(0, 0, 0, 1)
+sky = SubResource("Sky_level")
+reflected_light_source = 2
+ambient_light_source = 2
+ambient_light_color = Color(0.32, 0.38, 0.6, 1)
+ambient_light_energy = 0.32
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.7
+glow_bloom = 0.05"""
 
 
 def rect(x0, x1, z0, z1):
@@ -121,6 +139,8 @@ class Level:
         self.nodes = []
         self.connections = []
         self.extra_ext = []
+        self.environment = ENVIRONMENT_SKY
+        self.has_sun = True
         self.bridge_scene = ("uid://chaj7v8uajl4q", "res://src/world/elements/bridge_platform.tscn")
         self.boxes = {}
         self.curve = None
@@ -153,12 +173,17 @@ class Level:
         self.node("UI", ".", instance="ui")
         self._add_hint_box()
         self.node("WorldEnvironment", ".", "WorldEnvironment", props={"environment": 'SubResource("Environment_sky")'})
-        self.node("DirectionalLight3D", ".", "DirectionalLight3D", props={
-            "transform": "Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)",
-            "shadow_enabled": "true", "shadow_normal_bias": "5.0", "shadow_blur": "2.0"})
+        self._add_sun()
         self.node("GameStateMachine", ".", instance="gsm")
         self.node("Players", ".", instance="players")
         self.node("Enemies", ".", "Node")
+
+    def _add_sun(self):
+        if not self.has_sun:
+            return
+        self.node("DirectionalLight3D", ".", "DirectionalLight3D", props={
+            "transform": "Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)",
+            "shadow_enabled": "true", "shadow_normal_bias": "5.0", "shadow_blur": "2.0"})
 
     def _add_hint_box(self):
         if not self.hint:
@@ -312,6 +337,47 @@ class Level:
             cells[(int(wx // 2), -1, int(wz // 2))] = (rng.choice(trees), 0)
         return cells
 
+    def use_dark_environment(self):
+        """Call before add_shell: black background, faint blue ambient, no sun, gates instead of bridges."""
+        self.environment = ENVIRONMENT_DARK
+        self.has_sun = False
+        self.bridge_scene = (None, "res://src/world/elements/dungeon/dungeon_gate.tscn")
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/dungeon/dungeon_brazier.tscn", "brazier"))
+        self.extra_ext.append(("Script", None, "res://src/world/elements/dungeon/carrier_light.gd", "carrier_light"))
+
+    def add_dungeon_terrain(self, floor, pits, pillars, fall_z, fall_y=-17):
+        """Stone floor with walls generated around it. Pits stay open: nothing but black below."""
+        cells = {(x, -1, z): (self.items["Floor"], 0) for x, z in floor}
+        cells.update(self._dungeon_walls(floor, pits))
+        cells.update({(x, -1, z): (self.items["Pillar"], 0) for x, z in pillars})
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.node("Events", "Level", "Node")
+        self.node("CarrierLight", "Level", "OmniLight3D", props={
+            "transform": tf(1.5, 4, 6), "script": 'ExtResource("carrier_light")', "light_color": "Color(1, 0.86, 0.68, 1)",
+            "light_energy": "1.6", "shadow_enabled": "true", "omni_range": "13.0", "omni_attenuation": "0.9"})
+
+    def _dungeon_walls(self, floor, pits):
+        """Walls on the camera side stay low so they never hide what stands behind them."""
+        open_cells = floor | pits
+        around = {(x + dx, z + dz) for x, z in open_cells for dx in (-1, 0, 1) for dz in (-1, 0, 1)}
+        cells = {}
+        for x, z in around - open_cells:
+            is_camera_side = (x, z - 1) in open_cells
+            name = "WallLow" if is_camera_side else "WallTall"
+            cells[(x, -1, z)] = (self.items[name], 0)
+        return cells
+
+    def add_braziers(self, cells):
+        self.node("Braziers", "Level", "Node")
+        for index, (cx, cz) in enumerate(cells, 1):
+            wx, wz = world(cx, cz)
+            self.node(f"Brazier{index}", "Level/Braziers", instance="brazier", props={"transform": tf(wx, -1, wz)})
+
     def set_bridges(self, bridges):
         count = 0
         self.bridges = bridges
@@ -423,10 +489,7 @@ panorama = ExtResource("sky")
 sky_material = SubResource("PanoramaSkyMaterial_sky")
 
 [sub_resource type="Environment" id="Environment_sky"]
-background_mode = 2
-sky = SubResource("Sky_level")
-ambient_light_sky_contribution = 0.4
-ambient_light_energy = 0.3
+{self.environment}
 
 [sub_resource type="Curve" id="Curve_survival"]
 _limits = [0.0, 3.0, 0.0, 1.0]

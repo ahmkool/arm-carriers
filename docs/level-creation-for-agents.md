@@ -119,6 +119,18 @@ This caused most of the problems, so check it for every section.
 - **Telling scenery from play space:** the top cloud sheet has `sky_opacity = 0.34`, which hazes everything below it. Without it, distant islands look walkable.
 - **Bridges:** `add_sky` switches the level to `sky_bridge_platform.tscn`, a plank on small clouds. While lowered it is invisible and has no collision, then it rises and grows into place. Don't use `bridge_platform.tscn` with a low `fall_y`: its lowered block stays solid and is above the kill plane, so a player who steps into the gap lands on it and survives. It's safe in water levels because the kill plane is higher than the block.
 
+## Other environments: dark dungeon
+
+`tools/level_gen/example_dungeon_prototype.py` builds walled rooms lit by fire. Copy it as a starting point. `Level(palette="dungeon")`, then `use_dark_environment()` before `add_shell()`, and `add_dungeon_terrain(floor, pits, pillars, fall_z)` instead of `add_terrain`. The art is in `src/world/elements/dungeon/`, including its mesh library, because `.gitignore` excludes `assets/mesh_library/`.
+
+- **Walls:** generated around every open cell. Those on the camera side are low so they don't hide the players. This camera looks down steeply, so tall walls only hide about 40% of their height behind them.
+- **Gates:** `dungeon_gate.tscn` reuses the bridge events and is placed with `set_bridges`. "Open" sinks it into the floor, "close" raises it. The floor under a gate stays in the navmesh, so chasers would likely press against a shut gate if the players are on the other side (read from the setup, not tested). Only make a group offensive once the gate behind the players is shut.
+- **Weapon:** rockets fly through terrain by default, so a bazooka can hit through walls unless `detonate_on_terrain` is set. Fireballs should pass through walls too, going by their collision settings (not tested). These prototypes use the sword.
+- **Metal needs something to reflect.** With a black world, the sword's blade renders almost black. The dark environment keeps the sky panorama as a reflection source, without showing it as the background. That also tints metal teal, so give new iron props low `metallic`.
+- **Light placement:** the camera sees what faces south and up, so put a brazier on the camera side of an enemy. One placed behind it leaves a dark silhouette.
+- **Keep pits and solids distinct.** Pure black should only ever mean a pit or the void. Pillar and wall tops need visible stone: nearly black tops looked exactly like a hole.
+- **Test brightness from real pixels:** `check_enemies_readable` in `verify_dungeon_prototype.gd` averages the screen around each nearby enemy, with the HUD hidden. The 0.05 threshold is a judgement call, so also look at the screenshots. `check_players_not_behind_walls` casts a ray from the camera to each carrier's head.
+
 ## Testing
 
 ### Running the game
