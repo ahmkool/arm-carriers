@@ -1,0 +1,276 @@
+[gd_scene load_steps=42 format=4 uid="uid://b233jj18vexbf"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_srxcd"]
+[ext_resource type="PackedScene" uid="uid://2ob2mq7ml03x" path="res://src/vfx/boss_axe_enrage_burst.tscn" id="2_i3g4w"]
+[ext_resource type="PackedScene" uid="uid://susir3wmwvnc" path="res://src/vfx/enemy/skeleton_boss/axe_slam_impact.tscn" id="3_7ai3p"]
+[ext_resource type="PackedScene" uid="uid://jxnxavck3bqb" path="res://src/vfx/enemy/skeleton_boss/axe_slam_impact_far.tscn" id="4_tia6x"]
+[ext_resource type="PackedScene" uid="uid://27loyh5k4cu" path="res://src/vfx/enemy/skeleton_boss/axe_slash_flame.tscn" id="5_ahyxp"]
+[ext_resource type="PackedScene" uid="uid://ev5r0in8i8yx" path="res://src/vfx/enemy/skeleton_boss/axe_stub.tscn" id="6_bjbre"]
+[ext_resource type="PackedScene" uid="uid://y6u10ge22ied" path="res://src/vfx/enemy/skeleton_boss/axe_fire_slash_trail.tscn" id="7_y1hkw"]
+[ext_resource type="PackedScene" uid="uid://det1nlqshcx21" path="res://src/vfx/enemy/skeleton_boss/step.tscn" id="8_q68pk"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="9_06sr0"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="10_fjdd0"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="11_mvr0m"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="12_o4j28"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="13_c6kmq"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="14_1mvgb"]
+[ext_resource type="PackedScene" uid="uid://bl4uchw4icfei" path="res://src/enemy/enemy_boss.tscn" id="15_xu6ec"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="16_ahkvy"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="17_nhp0a"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_8k55b"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="20_0arcv"]
+[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="21_8arsl"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="22_2rr6c"]
+[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="23_i6vya"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="24_v0ktq"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="25_dod2t"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="26_pmm73"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="27_ba6rt"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="28_fsesi"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="29_sfljt"]
+[ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="30_x68nw"]
+[ext_resource type="Texture2D" uid="uid://ckiqqxl7keelk" path="res://assets/sprites/ui/icons/skeleton_boss_icon.png" id="31_0rijm"]
+[ext_resource type="Texture2D" uid="uid://inw5vn1jp7eb" path="res://assets/models/world/dungeon/dungeon_block/textures/dungeon_world_Material_BaseColor.png" id="32_srxcd"]
+[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="32_tg4d5"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
+panorama = ExtResource("13_c6kmq")
+
+[sub_resource type="Sky" id="Sky_8eeh1"]
+sky_material = SubResource("PanoramaSkyMaterial_j5fge")
+
+[sub_resource type="Environment" id="Environment_msrya"]
+background_mode = 2
+sky = SubResource("Sky_8eeh1")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
+size = Vector3(63, 1, 59)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qrvdl"]
+size = Vector3(7.4364014, 3, 8)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_js042"]
+resource_name = "Material"
+cull_mode = 2
+albedo_color = Color(0.9063318, 0.9063318, 0.9063318, 1)
+roughness = 0.5
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qmqqh"]
+_surfaces = [{
+"aabb": AABB(-10, -10, -10, 20, 20, 20),
+"format": 34896613377,
+"index_count": 564,
+"index_data": PackedByteArray("MgACAAAAAAACAAQAMgABAAIAMwACAAEAFQAyAAAAMwADAAIAAgADAAQAMwABAAYAAQAyADQAAQA0AAYANQA0ADIAFQA2ADIANQAyADYAMwAGADcAOAADADMAOAAzADcABgAIADcAOAA3ADkAOQA3AAgABgAHAAgANAAHAAYANAAFAAcABQA0ADUACQAIAAcAOgAHAAUAOgAJAAcABQA1AAoAOgAFAAoAOwAIAAkAOQAIADsAPAAJADoAOgAKAD0APAA6AD0AOwAJAAwAPAAMAAkAPgA5ADsAPAA9AD8AQAAMADwAPwBAADwADwA7AAwADwA+ADsAQAAPAAwAPgALADkADwAOAD4ACwA+AA4ADwArAA4AQAArAA8AOQALAEEAOQBBADgACwAOAEIADgArACoAQgAOACoAQwALAEIAQwBBAAsARAA4AEEAOABEAAMAQQBDAA0AJQBDAEIAJQANAEMAJQBCACgAQgAqACgAGwADAEQARABBAEUAQQANAEUAGwBEAEUAGwAEAAMARgAoACoARwAEABsAGwBFACAARwAbACAARQAiACAARQANACIASAAgACIARwAgAEgADQAjACIAJQAjAA0ASAAiAEkASQAiACMASgAjACUASgAlACgASgAoAEYASgAmACMASQAjACYAJgBKAEsARgBLAEoASQAmACcAJgBLACcASQAnAEwASABJAEwASABMAE0ARwBIAE0AJwAhAEwATQBMACEASwAkACcAJwAkACEASwAsACQATgAsAEsARgBOAEsATwAkACwAHgAhACQATwAeACQATQAhABwAHAAhAB4ATgAuACwALgBPACwALQBOAEYATgAvAC4ATgAtAC8ALQBGACkARgAqACkAKQAqACsAUAAtACkAUAAvAC0AKQArAFEAUAApAFEAQABRACsAUgBRAEAAUgBQAFEAPwBSAEAAUAAwAC8AUgAwAFAAPwAxAFIAUgAxADAAMAAfAC8ALgAvAB8AUwAwADEAUwAfADAAPwARADEAEQBTADEALgAfAFQALgBUAE8AVQAfAFMAVQBUAB8AEQBWAFMAVgBVAFMAVABXAE8AVABVAFcAVwAeAE8AVwBYAB4AHAAeAFgAVQBZAFcAWABXAFkAVgAdAFUAVQAdAFkAHQBWABMAEQATAFYAHABYAFoAWABZAFoAHABaABoATQAcABoAEQAQABMAPwAQABEAPwA9ABAACgAQAD0ACgASABAAEwAQABIANQASAAoAWwATABIAHQATAFsANQAUABIAWwASABQANgAUADUAXAAdAFsAXABZAB0AFgBbABQAFgBcAFsANgAWABQAWQBcABkAFgAZAFwAWQAZAFoANgAXABYAFgAXABkANgAVABcAWgAZABgAFwAYABkAWgAYABoAXQAXABUAXQAYABcAXQAVAAAAXgAaABgAXgAYAF0ATQAaAF4ARwBNAF4AXgBdAF8AXgBfAEcAXQAAAF8ARwBfAAQAAAAEAF8A"),
+"lods": [11.807688, PackedByteArray("AAABAAIAAwACAAEAAAACAAQAAgADAAQAAQAAAAUAAwABAAYAAQAFAAYABQAHAAYABgAHAAgABgAIAAMACQAHAAUACQAIAAcACgAFAAAACQAFAAoACwADAAgACAAJAAwAAwALAA0ADgALAAgADQALAA4ADwAIAAwADwAOAAgADAAJABAACQAKABAAEQAPAAwADAAQABEACgASABAAEQAQABMAEwAQABIACgAUABIAEwASABQAFQAUAAoACgAAABUAFQAWABQAFgATABQAFQAXABYAGAAVAAAAGAAXABUAGAAAAAQAFgAXABkAFwAYABkAFgAZABMAGgAYAAQAGQAYABoAGgAEABsAGwAEAAMAHAAZABoAGwAcABoAGQAdABMAGwADAA0AHQAZAB4AHAAeABkAEwAdAB8AHwAdAB4AEQATAB8AGwAgABwAGwANACAAIAAhABwAHAAhAB4ADQAiACAAIAAiACEADQAjACIAHgAhACQAJQAjAA0AJQANAA4AIgAjACYAJgAjACUAIgAnACEAIgAmACcAJwAkACEAJgAlACgAJQAOACgAKQAnACYAJgAoACkADgAqACgAKQAoACoADgArACoAKQAqACsADwArAA4AJwAsACQAHgAkACwAKQAtACcALQAsACcALgAeACwALQAuACwALgAfAB4ALQAvAC4ALgAvAB8AMAAtACkAMAAvAC0AMAApACsAMAAfAC8AMQAwACsAHwAwADEAMQArAA8AEQAfADEAEQAxAA8A")],
+"name": "Material",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 96,
+"vertex_data": PackedByteArray("HPoM/ckAAAAM/Rz6yQAAAOz87PyMAQAAcv7s/BIDAADs/HL+EgMAABz68gLJAAAADP3iBckAAADs/BIDjAEAAHL+EgMSAwAA7PyMARIDAADiBfICyQAAAP//4gUc+gAADP3JAOIFAABy/uz87PwAAHL+EgPs/AAADP3JABz6AAASA4wBEgMAAPICyQDiBQAAEgMSA4wBAACMARIDEgMAAPIC4gXJAAAA4gUM/ckAAADyAhz6yQAAABID7PyMAQAAEgNy/hIDAACMAez8EgMAAPICNf/iBQAADP01/+IFAADyAjX/HPoAAAAA4gXiBQAAjAHs/Oz8AACMARID7PwAAAz9Nf8c+gAAEgNy/uz8AADs/HL+7PwAAOz87Pxy/gAAEgPs/HL+AAAM/Rz6Nf8AABz6DP01/wAA4gUM/TX/AAAM/eIFNf8AABz68gI1/wAA7PwSA3L+AADs/IwB7PwAAPICHPo1/wAA4gXyAjX/AADyAuIFNf8AABIDEgNy/gAAEgOMAez8AADyAskAHPoAABz6HPoAAAAANf8c+vICAAAc+uIFAAAAAOIF4gUAAAAA4gUc+gAAAAA1/+IF8gIAAP//HPriBQAA///iBeIFAAAc+skA8gIAADX/8gLiBQAAHPoAAOIFAADiBckA8gIAADX/8gIc+gAA4gUAAOIFAAAc+gAAHPoAAP//HPoc+gAANf/iBQz9AAA1/xz6DP0AADX/DP3iBQAANf8M/Rz6AAAc+uIF//8AABz6///iBQAAHPr//xz6AAAc+jX/DP0AABz6HPr//wAA4gUc+v//AADiBTX/DP0AAOIF//8c+gAA4gXiBf//AADJABz6DP0AAOIFyQAM/QAAHPrJAAz9AADiBQAAHPoAAMkA8gIc+gAAyQDiBQz9AAAAAOIFHPoAAMkA8gLiBQAAAAAc+hz6AADJAAz9HPoAAAAAHPriBQAAyQAM/eIFAADJAOIF8gIAAMkAHPryAgAA4gU1//ICAADiBf//4gUAABz6Nf/yAgAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_shqic"]
+resource_name = "dungeon_world_Cube"
+_surfaces = [{
+"aabb": AABB(-10, -10, -10, 20, 20, 20),
+"attribute_data": PackedByteArray("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"),
+"format": 34896613399,
+"index_count": 564,
+"index_data": PackedByteArray("kgACAJMAkgABAAIAlAAOAJUAlAANAA4AlgCQAI4AlgCXAJAAEgAUAJgAEgATABQAmQAoAJoAmQCbACgAnAAZABoAnAAYABkAHgAfACAAnQCFAJ4AnQCCAIUAnwAiAKAAnwAhACIAoQAFAAQAoQCiAAUAGwAcAKMAGwAdABwApAApAKUApACmACkApwAtAC4ApwAsAC0AMgAzADQAqAAqAKkAqACqACoAqwAXABYAqwAVABcArACNAK0ArACKAI0ArgA2AK8ArgA1ADYAsAA8AD0AsACxADwARwBJALIARwBIAEkATQBOAE8AJwArALMAJwC0ACsAtQBMAEsAtQBKAEwAtgBAALcAtgA+AEAAuABSALkAuABRAFIAugCIAIYAugC7AIgALwAwALwALwAxADAAVgBXAFgAvQALAAoAvQC+AAsAWQBbAL8AWQBaAFsAwAByAMEAwADCAHIAwwBgAGEAwwBfAGAAxACRAMUAxACPAJEAxgARAMcAxgAPABEAZQBmAGcAcQB0AMgAcQDJAHQAygBeAF0AygBcAF4AywAJAMwAywAIAAkAzQAlAM4AzQAmACUAzwCDAIQAzwDQAIMAaABqANEAaABpAGoAbgBvAHAA0gBzANMA0gDUAHMA1QB3AHgA1QB2AHcA1gBEANcA1gBDAEQA2AA5ANkA2AA6ADkA2gCLAIwA2gDbAIsAYgBjANwAYgBkAGMAfAB9AH4A3QCJAN4A3QCHAIkA3wBVAOAA3wBTAFUA4QBGAEUA4QDiAEYAeQB6AOMAeQB7AHoA5AB1AOUA5ADmAHUA5wBtAGwA5wBrAG0AfwCAAIEA6ADpAOoA6ADrAOkA7ADtAO4A7ADvAO0A8ADxAPIA8ADzAPEA9AD1APYA9AD3APUA+AAkAPkA+AAjACQAAwD6AAYAAwD7APoA/AD9AP4A/AD/AP0AAAEBAQIBAAEDAQEBBAEFAQYBBAEHAQUBCAEJAQoBCAELAQkBDAENAQ4BDAEPAQ0BEAERARIBEAETAREBFAEVARYBFAEXARUBGAEZARoBGAEbARkBHAEdAR4BHAEfAR0BIAEhASIBIAEjASEBJAElASYBJAEnASUBKAEpASoBKAErASkBLAEtAS4BLAEvAS0BMAE4ADEBMAE3ADgAOwAyAUEAOwAzATIBNAE1ATYBNAE3ATUBOAE5AToBOAE7ATkBPAE9AT4BPAE/AT0BQAFBAUIBQAFDAUEBRAFQAEUBRAFUAFAAQgBGAT8AQgBHAUYBSAFJAUoBSAFLAUkBTAFNAU4BTAFPAU0BUAFRAVIBUAFTAVEBVAFVAVYBVAFXAVUBWAEMAFkBWAEQAAwABwBaAQAABwBbAVoBXAFdAV4BXAFfAV0BYAFhAWIBYAFjAWEBZAFlAWYBZAFnAWUBaAFpAWoBaAFrAWkBbAFtAW4BbAFvAW0BcAFxAXIBcAFzAXEBdAF1AXYBdAF3AXUBeAF5AXoBeAF7AXkBfAF9AX4BfAF/AX0B"),
+"lods": [11.807688, PackedByteArray("AAABAAIAAQAAAAMAAQADAAQAAwAFAAQABgADAAAABgAAAAcABwAIAAYABgAIAAkABwAKAAgABwALAAoADAANAA4ADwAMAA4ADwAQAAwADwARABAAEgATABQAEgAUABUAEgAVABYAFQAXABYAGAAZABoAGAAaABsAGwAcABgAGwAdABwAHgAfACAAIQAiACMAIQAjACQAIQAkACUAJAAmACUAJwAoACkAKAAnACoAKwAnACkAKgAnACsALAAtAC4ALwAsAC4ALwAwACwALwAxADAAMgAzADQANQA2ADcANQA3ADgANQA4ADkAOAA6ADkAOwA8AD0AOwA9AD4AOwA+AD8APwA+AEAAPwBBADsAPwBCAEEAQgBDAEEAQQBDAEQAQgBFAEMAQgBGAEUARwBIAEkARwBJAEoARwBKAEsASgBMAEsATQBOAE8AUABRAFIAUwBQAFIAUwBUAFAAUwBVAFQAVgBXAFgAWQBaAFsAWQBbAFwAWQBcAF0AXABeAF0AXwBgAGEAYgBfAGEAYgBjAF8AYgBkAGMAZQBmAGcAaABpAGoAaABqAGsAaABrAGwAawBtAGwAbgBvAHAAcQByAHMAcgBxAHQAdQBxAHMAdABxAHUAdgB3AHgAeQB2AHgAeQB6AHYAeQB7AHoAfAB9AH4AfwCAAIEAggCDAIQAggCFAIMAhACGAIIAhACHAIYAhwCIAIYAhwCJAIgAigCLAIwAigCNAIsAjgCKAIwAjgCMAI8AjwCQAI4AjwCRAJAA")],
+"material": SubResource("StandardMaterial3D_js042"),
+"name": "Material",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 384,
+"vertex_data": PackedByteArray("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")
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_qmqqh")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_i3g4w"]
+albedo_texture = ExtResource("32_srxcd")
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("1_srxcd")
+vfx_warmup_scenes = Array[PackedScene]([ExtResource("2_i3g4w"), ExtResource("3_7ai3p"), ExtResource("4_tia6x"), ExtResource("5_ahyxp"), ExtResource("6_bjbre"), ExtResource("7_y1hkw"), ExtResource("8_q68pk")])
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("9_06sr0")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("10_fjdd0")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("11_mvr0m")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("12_o4j28")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#ff8888]Survival level[/color]
+
+In this level you will have to survive
+for 2 minutes. It will start slow but
+enemies will be more and more frequent"
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_msrya")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7, 3, -3)
+script = ExtResource("14_1mvgb")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
+
+[node name="EnemyBoss" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("15_xu6ec")]
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("16_ahkvy")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.988089, 5.3963223, 23.060114)
+script = ExtResource("17_nhp0a")
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/AllPlayersAreaTrigger"), NodePath("../../Level/BeginOpenBridge")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
+script = ExtResource("18_8k55b")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.878174, 3.3051434, 8.1536255)
+shape = SubResource("BoxShape3D_65eof")
+
+[node name="Decoration" type="Node" parent="Level"]
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.683435, 0, 10.898489)
+script = ExtResource("20_0arcv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AllPlayersAreaTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7182007, 1.7714233, -0.3605957)
+shape = SubResource("BoxShape3D_qrvdl")
+
+[node name="BeginOpenBridge" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.683435, 0, 24.898489)
+script = ExtResource("20_0arcv")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/BeginOpenBridge"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.7182007, 0, -0.3605957)
+shape = SubResource("BoxShape3D_qrvdl")
+
+[node name="GridMap2" type="GridMap" parent="Level"]
+visible = false
+mesh_library = ExtResource("21_8arsl")
+data = {
+"cells": PackedInt32Array(10, 65535, 655469, 1, 65532, 655469, 4, 65530, 655469, 9, 65530, 655469, 7, 65534, 655469, 4, 5, 655469, 8, 2, 655469, 11, 65530, 655469, 4, 2, 1048685, 1, 65534, 1048685, 5, 65532, 1048685, 8, 65531, 1048685, 6, 1, 109, 3, 65534, 109, 11, 65532, 109, 9, 65533, 109, 10, 2, 109, 7, 65533, 110, 8, 1, 110, 5, 4, 110, 65535, 1, 110, 65530, 4, 110, 65533, 65534, 110, 3, 65529, 110, 65535, 65531, 110, 65534, 65534, 110, 11, 65533, 106, 2, 1, 106, 65532, 4, 113, 0, 65535, 106, 3, 1, 106, 7, 65535, 106, 12, 65530, 106, 2, 2, 113, 1, 65535, 113, 3, 65535, 119, 8, 65535, 119, 12, 65534, 124, 6, 65529, 124, 2, 65529, 63, 0, 3, 655469, 10, 3, 1441855, 65530, 65534, 655421, 12, 65529, 1048637, 65531, 4, 1048685, 1, 6, 109, 65534, 4, 109, 65533, 0, 1441901, 11, 0, 1441901)
+}
+
+[node name="BridgePlatform" parent="Level" instance=ExtResource("22_2rr6c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.493914, -1.9927697, 19.506092)
+
+[node name="BridgePlatform2" parent="Level" instance=ExtResource("22_2rr6c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.493914, -1.9927697, 16.506092)
+
+[node name="Weapon" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.324318, 2.3595505, 0)
+
+[node name="Bazooka" parent="Weapon" instance=ExtResource("23_i6vya")]
+
+[node name="Events" type="Node" parent="."]
+
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("24_v0ktq")
+enemy_group = NodePath("../../Enemies/EnemyGroup")
+
+[node name="CloseBridge1" type="Node" parent="Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("25_dod2t")
+platforms = [NodePath("../../Level/BridgePlatform"), NodePath("../../Level/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeEnemiesGroup2Offensive")
+
+[node name="OpenBridge1" type="Node" parent="Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("25_dod2t")
+platforms = [NodePath("../../Level/BridgePlatform"), NodePath("../../Level/BridgePlatform2")]
+metadata/_custom_type_script = "uid://craclr3fqyunt"
+
+[node name="LevelFinishedEvent" type="Node" parent="Events"]
+script = ExtResource("26_pmm73")
+
+[node name="Players" parent="." instance=ExtResource("27_ba6rt")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1276536, 0)
+
+[node name="GameStateMachine" parent="." instance=ExtResource("28_fsesi")]
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("29_sfljt")
+message_string = "[color=#ff8888]Boss level[/color]
+
+In this level you will fight against a boss. Good luck !"
+
+[node name="ShowBossHealthBar" type="Node" parent="." node_paths=PackedStringArray("fight_trigger", "enemy_group")]
+script = ExtResource("30_x68nw")
+fight_trigger = NodePath("../Level/AllPlayersAreaTrigger")
+enemy_group = NodePath("../Enemies/EnemyGroup")
+boss_icon = ExtResource("31_0rijm")
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("32_tg4d5")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="dungeon_world" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.172651, -8.978837, 5.4848967)
+
+[node name="Cube" type="MeshInstance3D" parent="dungeon_world"]
+mesh = SubResource("ArrayMesh_shqic")
+skeleton = NodePath("")
+surface_material_override/0 = SubResource("StandardMaterial3D_i3g4w")
+
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Events/LevelFinishedEvent" method="trigger"]
+[connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Events/CloseBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/BeginOpenBridge" to="Events/OpenBridge1" method="trigger"]

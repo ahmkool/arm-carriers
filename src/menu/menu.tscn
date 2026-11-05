@@ -9,13 +9,13 @@
 [ext_resource type="Texture2D" uid="uid://dl2qpx3g8wne3" path="res://assets/sprites/menu/players.png" id="5_ep4cv"]
 [ext_resource type="Texture2D" uid="uid://cpsr4ads7c6mx" path="res://assets/sprites/menu/skeletons.png" id="6_u4pfo"]
 [ext_resource type="Texture2D" uid="uid://xt4pg84h817t" path="res://assets/sprites/menu/skeleton_ground.png" id="7_g1jg8"]
-[ext_resource type="Texture2D" uid="uid://biv0lpvm51c77" path="res://assets/sprites/menu/logo.png" id="8_fnvh6"]
+[ext_resource type="Texture2D" uid="uid://ct73wwtyxturx" path="res://assets/sprites/menu/logo.png" id="8_fnvh6"]
 [ext_resource type="Script" uid="uid://bpkqqvswd3wr7" path="res://src/ui/audio_volume_controls.gd" id="12_audio"]
 [ext_resource type="AudioStream" uid="uid://o55a1qhogedi" path="res://assets/music/Peritune_Zephyr_Fields_loop.mp3" id="12_ep4cv"]
 [ext_resource type="Script" uid="uid://dh661lcrspyjf" path="res://src/ui/discord_link_button.gd" id="13_discord"]
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="14_twinstick"]
-[ext_resource type="Script" uid="uid://c3th7pdltvvb5" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
-[ext_resource type="Script" uid="uid://dportraitrecord01" path="res://src/ui/portrait_recording_setting_control.gd" id="16_portrait"]
+[ext_resource type="Script" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
+[ext_resource type="Script" path="res://src/ui/portrait_recording_setting_control.gd" id="16_portrait"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -255,6 +255,8 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_top = 30.0
+offset_bottom = 30.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("6_u4pfo")
@@ -276,13 +278,12 @@ layout_mode = 1
 anchors_preset = 5
 anchor_left = 0.5
 anchor_right = 0.5
-offset_left = -350.0
-offset_top = 60.0
-offset_right = 350.0
-offset_bottom = 360.0
+offset_left = -360.0
+offset_right = 360.0
+offset_bottom = 402.0
 grow_horizontal = 2
 texture = ExtResource("8_fnvh6")
-expand_mode = 1
+expand_mode = 2
 stretch_mode = 4
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
@@ -721,6 +722,30 @@ text = "Level 2 (medium)"
 script = ExtResource("2_56xr1")
 level_scene_path = "uid://omin38ccge2r"
 level_id = "res://src/world/levels/world_local_level_2.tscn"
+
+[node name="BazookaLevelButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Bazooka gauntlet (medium)"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_local_bazooka.tscn"
+level_id = "res://src/world/levels/world_local_bazooka.tscn"
+
+[node name="SwordLevelButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Sword gauntlet (medium)"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_local_sword.tscn"
+level_id = "res://src/world/levels/world_local_sword.tscn"
+
+[node name="SawLevelButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = "Saw gauntlet (medium)"
+script = ExtResource("2_56xr1")
+level_scene_path = "res://src/world/levels/world_local_saw.tscn"
+level_id = "res://src/world/levels/world_local_saw.tscn"
 
 [node name="TrailerSceneButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

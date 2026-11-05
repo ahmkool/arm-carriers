@@ -1,0 +1,10 @@
+---
+description: Creating or generating game levels — workflow, tools, weapon design limits and in-game testing
+alwaysApply: false
+---
+
+# Creating levels
+
+When asked to create or substantially change a level, read `docs/level-authoring.md` for the scene structure, then follow `docs/level-creation-for-agents.md`. Tools are in `tools/level_gen`.
+
+Never report a level as working from logic checks alone: test it in the running game, check what is on screen, look at the screenshots, and say what still needs a person to play it.

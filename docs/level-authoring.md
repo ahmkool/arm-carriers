@@ -7,6 +7,7 @@ This document explains how Arm Carriers levels are built, using `world_local.tsc
 - [checkpoint-save-system.md](checkpoint-save-system.md) — how checkpoint progress is saved and restored
 - [camera-focal-point-events.md](camera-focal-point-events.md) — sustained camera framing during combat
 - [level-completion-save-system.md](level-completion-save-system.md) — marking levels as completed
+- [level-creation-for-agents.md](level-creation-for-agents.md) — generating and testing levels without the editor, with per-weapon design notes
 
 ---
 
@@ -262,6 +263,7 @@ Level 2 groups triggers under `Level/Areas`; level 1 places them directly under 
 
 - Add a `Weapon` node at the world root.
 - Instance a weapon scene (reference levels use `src/weapon/bazooka.tscn`).
+- Each weapon needs its own layout: see the weapon table in [level-creation-for-agents.md](level-creation-for-agents.md) for carry distance, bridge width and spawn markers.
 - Default start position near player spawn (e.g. `(-7.89, 0.59, 0)`).
 - `WorldLocal.get_active_weapon()` returns the first `BigWeapon` child.
 
