@@ -1,22 +1,22 @@
-[gd_resource type="AnimationNodeBlendTree" load_steps=8 format=3]
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_uqpbf"]
-animation = &"Player/Idle_A"
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2xs3w"]
-animation = &"Player/Running_A"
-
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_locomotion"]
+[gd_resource type="AnimationNodeBlendTree" load_steps=8 format=3 uid="uid://7o55iid4m84n"]
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_v15yf"]
 animation = &"Player/Death_A"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dead_pose"]
-animation = &"Player/Death_A_Pose"
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_dead"]
 
 [sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_dead"]
 
-[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_dead"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dead_pose"]
+animation = &"Player/Death_A_Pose"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_uqpbf"]
+animation = &"Player/Idle_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_locomotion"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2xs3w"]
+animation = &"Player/Running_A"
 
 [resource]
 graph_offset = Vector2(263.0577, 298.56)

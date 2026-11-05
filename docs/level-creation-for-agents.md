@@ -31,7 +31,7 @@ Also, nothing here tests difficulty or fun. Only a person playing can. Say so wh
    ```
 
    Keep the JSON between runs: it also holds the scene's uid. Re-bake whenever the floor changes.
-4. **Add a menu button** in `src/menu/menu.tscn`: copy an existing level button, and give it a unique node name, `level_scene_path` and `level_id`. Edit the text and insert one block; don't re-save the whole scene.
+4. **Add the level to the level select**: add an entry to a tab in `src/menu/level_select/level_select_catalog.gd`. Each tab fits about three posters.
 5. **Test in the running game.** Copy `verify_saw_gauntlet.gd`, keep its helpers, and rewrite `_run()`:
 
    ```bash
@@ -39,7 +39,7 @@ Also, nothing here tests difficulty or fun. Only a person playing can. Say so wh
    ```
 
    ```bash
-   MENU_BUTTON=MyLevelButton tools/level_gen/godot.sh test tools/level_gen/verify_menu_button.gd res://src/menu/menu.tscn /tmp/my_level_shots
+   MENU_LEVEL=res://src/world/levels/my_level.tscn tools/level_gen/godot.sh test tools/level_gen/verify_menu_button.gd res://src/menu/menu.tscn /tmp/my_level_shots
    ```
 
 6. **Look at every screenshot.** Then report what passed, and what was scripted rather than truly tested.
@@ -142,7 +142,7 @@ In the driver:
 
 ## Known issues in the game
 
-- **Menu height:** the level picker runs from 108 to 972 of 1080 px with the current buttons, so one or two more may need scrolling or a rearrange.
+- **Level select space:** each tab in `level_select_catalog.gd` has room for about three posters. Beyond that, add a tab.
 
 ## Code style
 

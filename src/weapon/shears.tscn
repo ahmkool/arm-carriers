@@ -1,0 +1,129 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_big"]
+[ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="2_pick"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="3_move"]
+[ext_resource type="Script" path="res://src/weapon/shears/shears_specifics.gd" id="4_shears"]
+
+[sub_resource type="BoxShape3D" id="Box_pick"]
+size = Vector3(2.2, 1.8, 2.4)
+
+[sub_resource type="BoxShape3D" id="Box_body"]
+size = Vector3(1, 1, 6)
+
+[sub_resource type="BoxShape3D" id="Box_jaw"]
+size = Vector3(6, 4, 8)
+
+[sub_resource type="StandardMaterial3D" id="Mat_blade"]
+albedo_color = Color(0.5, 0.54, 0.6, 1)
+metallic = 0.35
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="Mat_handle"]
+albedo_color = Color(0.45, 0.16, 0.12, 1)
+roughness = 0.7
+
+[sub_resource type="PrismMesh" id="Mesh_blade"]
+material = SubResource("Mat_blade")
+left_to_right = 0.0
+size = Vector3(0.7, 5, 0.1)
+
+[sub_resource type="BoxMesh" id="Mesh_handle"]
+material = SubResource("Mat_handle")
+size = Vector3(0.22, 0.22, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_hinge"]
+material = SubResource("Mat_handle")
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.35
+
+[node name="Shears" type="RigidBody3D"]
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("1_big")
+
+[node name="PickAndDropHandler" type="Node3D" parent="."]
+script = ExtResource("2_pick")
+hide_arms_type = 3
+
+[node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/ShooterPickArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+shape = SubResource("Box_pick")
+
+[node name="DirectionSetterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/DirectionSetterPickArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5)
+shape = SubResource("Box_pick")
+
+[node name="ShooterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.5)
+
+[node name="LookVector" type="Node3D" parent="PickAndDropHandler"]
+
+[node name="Source" type="Node3D" parent="PickAndDropHandler/LookVector"]
+
+[node name="Target" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0, 0)
+
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("3_move")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+min_carrier_distance = 2.4
+max_carrier_distance = 7.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Box_body")
+
+[node name="WeaponSpecifics" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler", "weapon_movement")]
+script = ExtResource("4_shears")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+weapon_movement = NodePath("../WeaponMovement")
+
+[node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
+
+[node name="BladeTips" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8, 0, 0)
+
+[node name="Rig" type="Node3D" parent="WeaponSpecifics"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="Hinge" type="MeshInstance3D" parent="WeaponSpecifics/Rig"]
+mesh = SubResource("Mesh_hinge")
+
+[node name="BladeShooter" type="Node3D" parent="WeaponSpecifics/Rig"]
+
+[node name="Mesh" type="MeshInstance3D" parent="WeaponSpecifics/Rig/BladeShooter"]
+transform = Transform3D(0, 1, 0, 0, 0, 1, 1, 0, 0, 2.5, 0, 0)
+mesh = SubResource("Mesh_blade")
+
+[node name="BladeSetter" type="Node3D" parent="WeaponSpecifics/Rig"]
+
+[node name="Mesh" type="MeshInstance3D" parent="WeaponSpecifics/Rig/BladeSetter"]
+transform = Transform3D(0, 1, 0, 0, 0, -1, -1, 0, 0, 2.5, 0, 0)
+mesh = SubResource("Mesh_blade")
+
+[node name="HandleShooter" type="MeshInstance3D" parent="WeaponSpecifics/Rig"]
+mesh = SubResource("Mesh_handle")
+
+[node name="HandleSetter" type="MeshInstance3D" parent="WeaponSpecifics/Rig"]
+mesh = SubResource("Mesh_handle")
+
+[node name="JawArea" type="Area3D" parent="WeaponSpecifics/Rig"]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/Rig/JawArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.5, 0, 0)
+shape = SubResource("Box_jaw")
+
+[connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]
+[connection signal="body_entered" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_entered_direction_setter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_exited_direction_setter_zone"]

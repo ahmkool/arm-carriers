@@ -3,7 +3,7 @@ extends MenuPanelJuice
 ## Main menu panels and buttons. Starting the action also fires the bazooka in the menu art.
 
 const SCREEN_ROOTS: Array[String] = ["HomeMenuRoot", "SettingsMenuRoot", "CreditsMenuRoot", "MainMenuRoot", "LevelStartChoiceRoot"]
-const LAUNCH_ROOTS: Array[String] = ["MainMenuRoot", "LevelStartChoiceRoot"]
+const LAUNCH_ROOTS: Array[String] = ["MainMenuRoot"]
 const LAUNCH_FADE_SECONDS := 0.4
 
 @onready var _menu: Control = get_parent()

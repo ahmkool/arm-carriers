@@ -345,7 +345,7 @@ Copy from a reference level:
 11. Place **EndLevelArea** and wire to **LevelSucceeded**.
 12. Add **weapon** and **music** if needed.
 13. **Playtest** from the editor: confirm spawn, checkpoint reset (pause → last checkpoint), and level complete.
-14. **Register** the scene in `src/menu/menu.tscn` (level button `level_id` / `level_scene_path`).
+14. **Register** the scene in `src/menu/level_select/level_select_catalog.gd` so players can pick it.
 
 ---
 

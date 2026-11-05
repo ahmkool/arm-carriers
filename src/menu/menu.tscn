@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=27 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -18,6 +18,7 @@
 [ext_resource type="Script" path="res://src/ui/portrait_recording_setting_control.gd" id="16_portrait"]
 [ext_resource type="Script" path="res://src/menu/menu_backdrop_juice.gd" id="17_backdrop_juice"]
 [ext_resource type="Script" path="res://src/menu/menu_ui_juice.gd" id="18_ui_juice"]
+[ext_resource type="Script" path="res://src/menu/level_select/level_target_select.gd" id="19_level_select"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -647,6 +648,16 @@ autowrap_mode = 3
 layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Back"
+
+[node name="LevelSelectRoot" type="Control" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("19_level_select")
 
 [node name="LevelStartChoiceRoot" type="Control" parent="."]
 visible = false

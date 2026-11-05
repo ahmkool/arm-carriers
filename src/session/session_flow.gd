@@ -19,6 +19,7 @@ var home_menu_root: Control
 var settings_menu_root: Control
 var credits_menu_root: Control
 var main_menu_root: Control
+var level_select_root: LevelTargetSelect
 var level_start_choice_root: Control
 var menu_navigator: GamepadMenuNavigator
 var home_menu_focus: Control
@@ -39,6 +40,7 @@ func _ready() -> void:
 	_register_state("settingsmenu", SettingsMenuState.new())
 	_register_state("creditsmenu", CreditsMenuState.new())
 	_register_state("mainmenu", MainMenuState.new())
+	_register_state("levelselect", LevelSelectState.new())
 	_register_state("levelstartchoice", LevelStartChoiceState.new())
 	_register_state("shadercompiling", ShaderCompilingState.new())
 
@@ -57,6 +59,7 @@ func register_menu_ui(
 	settings_menu: Control,
 	credits_menu: Control,
 	main_menu: Control,
+	level_select: LevelTargetSelect,
 	level_start_choice: Control,
 	navigator: GamepadMenuNavigator,
 	home_focus: Control,
@@ -73,6 +76,7 @@ func register_menu_ui(
 	settings_menu_root = settings_menu
 	credits_menu_root = credits_menu
 	main_menu_root = main_menu
+	level_select_root = level_select
 	level_start_choice_root = level_start_choice
 	menu_navigator = navigator
 	home_menu_focus = home_focus
@@ -187,14 +191,16 @@ func quit_game() -> void:
 func show_menu_screen(screen_name: String) -> void:
 	var key := screen_name.to_lower()
 	var is_shader_compiling := key == "shadercompiling"
+	var is_choosing_level := key == "levelselect" or key == "levelstartchoice"
 	set_press_start_visible(key == "pressstart")
 	set_home_menu_visible(key == "homemenu")
 	set_settings_menu_visible(key == "settingsmenu")
 	set_credits_menu_visible(key == "creditsmenu")
 	set_main_menu_visible(key == "mainmenu")
+	set_level_select_visible(is_choosing_level)
 	set_level_start_choice_visible(key == "levelstartchoice")
 	set_shader_compiling_root_visible(is_shader_compiling)
-	set_playtest_notice_visible(not is_shader_compiling)
+	set_playtest_notice_visible(not is_shader_compiling and not is_choosing_level)
 
 
 func set_press_start_visible(visible: bool) -> void:
@@ -225,6 +231,12 @@ func set_main_menu_visible(visible: bool) -> void:
 	if main_menu_root == null:
 		return
 	main_menu_root.visible = visible
+
+
+func set_level_select_visible(visible: bool) -> void:
+	if level_select_root == null:
+		return
+	level_select_root.visible = visible
 
 
 func set_level_start_choice_visible(visible: bool) -> void:
@@ -282,7 +294,7 @@ func _on_menu_cancel() -> void:
 		return
 	if _current_state_name == "levelstartchoice":
 		_clear_pending_level()
-		transition_to("mainmenu")
+		transition_to("levelselect")
 
 
 func _clear_pending_level() -> void:

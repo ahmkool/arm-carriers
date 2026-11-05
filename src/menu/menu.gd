@@ -7,6 +7,7 @@ const MENU_MUSIC_DELAY_SECONDS := 1.5
 @onready var _settings_menu_root: Control = $SettingsMenuRoot
 @onready var _credits_menu_root: Control = $CreditsMenuRoot
 @onready var _main_menu_root: Control = $MainMenuRoot
+@onready var _level_select: LevelTargetSelect = $LevelSelectRoot
 @onready var _level_start_choice_root: Control = $LevelStartChoiceRoot
 @onready var _menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
 @onready var _play_button: Button = $HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/PlayButton
@@ -41,6 +42,7 @@ func _ready() -> void:
 		_settings_menu_root,
 		_credits_menu_root,
 		_main_menu_root,
+		_level_select,
 		_level_start_choice_root,
 		_menu_navigator,
 		_play_button,
@@ -64,7 +66,7 @@ func _begin_menu_music() -> void:
 
 
 func _on_play_pressed() -> void:
-	SessionFlow.transition_to("mainmenu")
+	SessionFlow.transition_to("levelselect")
 
 
 func _on_settings_pressed() -> void:
@@ -88,8 +90,15 @@ func _on_quit_pressed() -> void:
 
 
 func _on_continue_from_checkpoint_pressed() -> void:
-	SessionFlow.load_level_with_choice(true)
+	_launch_chosen_level(true)
 
 
 func _on_from_beginning_pressed() -> void:
-	SessionFlow.load_level_with_choice(false)
+	_launch_chosen_level(false)
+
+
+func _launch_chosen_level(apply_save: bool) -> void:
+	SessionFlow.set_menu_navigation_active(false)
+	SessionFlow.set_level_start_choice_visible(false)
+	await _level_select.play_launch()
+	SessionFlow.load_level_with_choice(apply_save)

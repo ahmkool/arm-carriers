@@ -28,6 +28,9 @@ const HORDE_FEET_POINT := Vector2(0.12, 0.95)
 ## Barrel axis from breech to muzzle in the illustration.
 const FIRE_DIRECTION := Vector2(-0.97, -0.23)
 const RECOIL_IMPULSE := 420.0
+const AIM_TILT_LEFT := -1.5
+const AIM_TILT_RIGHT := 6.0
+const LOGO_TUCKED_OFFSET := Vector2(0.0, -560.0)
 
 const STOMP_INTERVAL_MIN := 6.0
 const STOMP_INTERVAL_MAX := 11.0
@@ -155,6 +158,45 @@ func fire_bazooka() -> void:
 	_burst_smoke(muzzle, FIRE_DIRECTION, 14, Color(0.72, 0.66, 0.6, 0.9), 0.4)
 	_burst_sparks(muzzle, FIRE_DIRECTION, 26)
 	_play_detached(SOUND_SHOT, -13.0, randf_range(0.95, 1.08))
+
+
+func muzzle_position() -> Vector2:
+	return _players.point(MUZZLE_POINT)
+
+
+## Swings the carriers to aim across the sky: 0 is the left of the screen, 1 the right, negative is at rest.
+func aim_players(screen_ratio: float) -> void:
+	if screen_ratio < 0.0:
+		_players.tilt.target = 0.0
+		return
+	_players.tilt.target = lerpf(AIM_TILT_LEFT, AIM_TILT_RIGHT, screen_ratio)
+
+
+## Moves the logo out of the sky while the level select is using it.
+func tuck_logo(tucked: bool) -> void:
+	var offset := LOGO_TUCKED_OFFSET if tucked else Vector2.ZERO
+	var tween := create_tween()
+	tween.tween_property(_logo, "entry_offset", offset, 0.34).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN_OUT)
+
+
+## The rocket hitting its target: a bigger shake, flash and boom than firing it.
+func blast_at(point: Vector2) -> void:
+	_add_trauma(1.0)
+	_flash_screen(0.75)
+	_burst_smoke(point, Vector2.UP, 30, Color(0.42, 0.36, 0.32, 0.95), 2.4)
+	_burst_smoke(point, Vector2.DOWN, 22, Color(1.0, 0.6, 0.2, 0.95), 1.7)
+	_burst_sparks(point, Vector2.UP, 90)
+	_play_detached(SOUND_LOGO_SLAM, -7.0, 0.82)
+
+
+## A stamp or other heavy thing landing on the menu.
+func thump() -> void:
+	_add_trauma(0.4)
+	_play_detached(SOUND_PLAYERS_LAND, -8.0, 0.75)
+
+
+func play_sfx(stream: AudioStream, volume_db: float, pitch: float) -> void:
+	_play_detached(stream, volume_db, pitch)
 
 
 ## Speeds up whatever is left of the intro once the player is already in a menu.

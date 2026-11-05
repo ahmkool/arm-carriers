@@ -1,8 +1,6 @@
 extends Node
-## Checks a level's menu button fits on screen and loads its level. Set MENU_BUTTON to the node name.
-## Run against res://src/menu/menu.tscn through godot.sh.
-
-const BOX := "MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer/"
+## Checks a level has a poster in the level select and that firing at it loads the level.
+## Set MENU_LEVEL to the level's scene path. Run against res://src/menu/menu.tscn through godot.sh.
 
 
 func _ready() -> void:
@@ -10,15 +8,30 @@ func _ready() -> void:
 	await get_tree().create_timer(3.0).timeout
 	var menu := get_tree().current_scene
 	menu.call("_on_play_pressed")
-	await get_tree().create_timer(1.5).timeout
-	var panel := menu.get_node("MainMenuRoot/PanelContainer") as Control
-	var button := menu.get_node(BOX + OS.get_environment("MENU_BUTTON")) as Button
-	var rect := panel.get_global_rect()
-	var fits := rect.position.y >= 0.0 and rect.end.y <= get_viewport().get_visible_rect().size.y
-	print(("PASS " if fits and button.is_visible_in_tree() else "FAIL ") + "menu fits: panel %.0f to %.0f" % [rect.position.y, rect.end.y])
+	await get_tree().create_timer(1.0).timeout
+	var scene_id := OS.get_environment("MENU_LEVEL")
+	var slot := _find_catalog_slot(scene_id)
+	if slot.is_empty():
+		print("FAIL no poster for ", scene_id, " in level_select_catalog.gd")
+		get_tree().quit(1)
+		return
+	print("PASS poster found in tab ", LevelSelectCatalog.GROUPS[slot[0]]["name"])
+	var level_select := menu.get_node("LevelSelectRoot")
+	level_select.call("_show_group", slot[0], slot[1])
+	await get_tree().create_timer(1.0).timeout
 	get_tree().root.get_texture().get_image().save_png(OS.get_environment("VERIFY_OUT") + "/menu.png")
-	button.pressed.emit()
+	level_select.call("_fire")
 	_wait_for_level(menu.get_node("LevelStartChoiceRoot") as Control)
+
+
+## Returns the tab and poster index, or an empty array when the level has no poster.
+func _find_catalog_slot(scene_id: String) -> Array:
+	for group_index in LevelSelectCatalog.GROUPS.size():
+		var levels: Array = LevelSelectCatalog.GROUPS[group_index]["levels"]
+		var poster_index := levels.find_custom(func(level): return level["scene"] == scene_id)
+		if poster_index >= 0:
+			return [group_index, poster_index]
+	return []
 
 
 func _wait_for_level(save_prompt: Control) -> void:
@@ -32,12 +45,12 @@ func _wait_for_level(save_prompt: Control) -> void:
 		await get_tree().process_frame
 	var world := get_tree().current_scene as WorldLocal
 	if world == null:
-		print("FAIL button did not load a level")
+		print("FAIL firing did not load a level")
 		get_tree().quit(1)
 		return
 	world.skip_save = true
 	GameSave.untrack_manager(world.checkpoint_manager)
-	print("PASS button loads ", world.scene_file_path)
+	print("PASS firing loads ", world.scene_file_path)
 	await get_tree().create_timer(1.5).timeout
 	print("RESULT fails=0")
 	get_tree().quit(0)
