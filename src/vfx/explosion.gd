@@ -17,6 +17,7 @@ const VOLUME_MAX_DB := 0.0
 
 
 func _ready() -> void:
+	ImpactFeedback.play_explosion()
 	# _randomize_explosion_sfx()
 	debris.emitting = true
 	fire.emitting = true

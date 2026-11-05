@@ -44,9 +44,9 @@ func _on_body_collision(body: Node3D) -> void:
 	if _damaged_player_ids.has(player_id):
 		return
 	_damaged_player_ids.append(player_id)
-	CameraFeedback.add_trauma_hurt()
 	if not Health.apply_damage(player, DAMAGE, global_position):
 		return
+	CameraFeedback.add_trauma_hurt()
 	_play_hit_sfx()
 
 

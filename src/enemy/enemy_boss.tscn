@@ -701,6 +701,7 @@ script = ExtResource("33_32wiu")
 
 [node name="Dead" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("34_jh6sl")
+knockback_speed = 0.0
 
 [node name="Attacking" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("10_bypgp")

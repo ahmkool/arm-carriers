@@ -1,8 +1,11 @@
 extends Node
 
-const TRAUMA_SHOT := 1.5
-const TRAUMA_DASH := 0.9
+const TRAUMA_SHOT := 0.55
+const TRAUMA_DASH := 0.25
 const TRAUMA_HURT := 0.42
+const TRAUMA_SWORD_HIT := 0.45
+const TRAUMA_EXPLOSION := 0.9
+const TRAUMA_BOSS_MOMENT := 1.0
 
 ## Fullscreen darken scales with trauma²; keep low — large values read as a “black flash”.
 @export var vignette_enabled: bool = false
@@ -57,6 +60,18 @@ func add_trauma_dash() -> void:
 
 func add_trauma_hurt() -> void:
 	add_trauma(TRAUMA_HURT)
+
+
+func add_trauma_sword_hit() -> void:
+	add_trauma(TRAUMA_SWORD_HIT)
+
+
+func add_trauma_explosion() -> void:
+	add_trauma(TRAUMA_EXPLOSION)
+
+
+func add_trauma_boss_moment() -> void:
+	add_trauma(TRAUMA_BOSS_MOMENT)
 
 
 func _refresh_pivot() -> void:

@@ -12,6 +12,7 @@ point_count = 4
 curve = SubResource("Curve_fgwed")
 
 [sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xkvds"]
+resource_local_to_scene = true
 spread = 180.0
 initial_velocity_min = 2.0
 initial_velocity_max = 4.0

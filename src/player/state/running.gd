@@ -1,8 +1,13 @@
 extends PlayerState
 
 const STEP_INTERVAL_SEC := 0.38
+const CARRY_STEP_PITCH := 0.8
+const CARRY_STEP_VOLUME_BOOST_DB := 2.5
+const CARRY_STEP_DUST_DENSITY := 0.25
 
 var _step_timer := 0.0
+var _base_step_volume_db := 0.0
+var _has_base_step_volume := false
 
 
 func enter() -> void:
@@ -57,4 +62,18 @@ func _update_footsteps(delta: float) -> void:
 func _play_footstep() -> void:
 	if not player.footsteps_sound:
 		return
+	_remember_base_step_volume()
+	var is_carrying := player.carrying_weapon_data.is_carrying()
+	player.footsteps_sound.pitch_scale = CARRY_STEP_PITCH if is_carrying else 1.0
+	player.footsteps_sound.volume_db = _base_step_volume_db + (CARRY_STEP_VOLUME_BOOST_DB if is_carrying else 0.0)
 	player.footsteps_sound.play()
+	if not is_carrying:
+		return
+	ImpactFeedback.spawn_dust(player.global_position, CARRY_STEP_DUST_DENSITY)
+
+
+func _remember_base_step_volume() -> void:
+	if _has_base_step_volume:
+		return
+	_base_step_volume_db = player.footsteps_sound.volume_db
+	_has_base_step_volume = true

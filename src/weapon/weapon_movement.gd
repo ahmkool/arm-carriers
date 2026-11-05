@@ -20,11 +20,16 @@ var _previous_carrier_count: int = 0
 var _prev_shooter_feet: Vector3 = Vector3.ZERO
 var _prev_direction_setter_feet: Vector3 = Vector3.ZERO
 var _has_prev_dual_carry_positions: bool = false
+var _carry_feedback: CarryFeedback
 
 
 func _ready() -> void:
 	# Run after player movement so solo-carry range clamping sticks each frame.
 	process_priority = -10
+	_carry_feedback = CarryFeedback.new()
+	_carry_feedback.name = CarryFeedback.NODE_NAME
+	_carry_feedback.setup(self)
+	add_child(_carry_feedback)
 
 
 func _physics_process(delta: float) -> void:
@@ -321,6 +326,8 @@ func _resolve_carrier_distance_violation(
 
 	var leader: PlayerLocal = _resolve_distance_leader(shooter, direction_setter, axis, expanding)
 	var follower: PlayerLocal = direction_setter if leader == shooter else shooter
+	if expanding:
+		_carry_feedback.notify_tether_strain(leader, follower)
 	var leader_prev: Vector3 = _prev_shooter_feet if leader == shooter else _prev_direction_setter_feet
 	var leader_move: Vector3 = _flat_delta(leader.global_position, leader_prev)
 	var target_follower_pos: Vector3 = _follower_target_feet(

@@ -1,0 +1,9 @@
+[gd_scene format=3 uid="uid://c7ck1mec3syhb"]
+
+[node name="root" type="Node3D"]
+
+[node name="TestMesh" type="MeshInstance3D" parent="."]
+
+[node name="TestLight" type="OmniLight3D" parent="."]
+
+[node name="TestCamera" type="Camera3D" parent="."]

@@ -2,6 +2,8 @@ class_name SessionFlowNode
 extends Node
 
 const MENU_SCENE_PATH := "res://src/menu/menu.tscn"
+## Lets the menu's launch effects play before the level load blocks the main thread.
+const LEVEL_LAUNCH_DELAY_SECONDS := 0.5
 
 var current: SessionState
 var _states: Dictionary = {}
@@ -133,6 +135,7 @@ func start_pending_level_load() -> void:
 
 
 func _begin_pending_level_load() -> void:
+	await get_tree().create_timer(LEVEL_LAUNCH_DELAY_SECONDS).timeout
 	await _wait_for_shader_message_display()
 	if _pending_level_path.is_empty():
 		return

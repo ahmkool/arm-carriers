@@ -44,16 +44,18 @@ func reset_to_full() -> void:
 	restored.emit()
 
 
-func take_damage(amount: int, source_position: Vector3 = Vector3.ZERO) -> void:
+## Returns true only when the damage landed (target alive and not invulnerable).
+func take_damage(amount: int, source_position: Vector3 = Vector3.ZERO) -> bool:
 	if not is_alive():
-		return
+		return false
 	if is_invulnerable():
-		return
+		return false
 	var applied := mini(amount, current_hp)
 	current_hp -= applied
 	damaged.emit(applied, current_hp, source_position)
 	if current_hp <= 0:
 		died.emit(source_position)
+	return true
 
 
 static func from_target(target: Node) -> Health:
@@ -64,5 +66,4 @@ static func apply_damage(target: Node, amount: int, source_position: Vector3 = V
 	var health := from_target(target)
 	if health == null:
 		return false
-	health.take_damage(amount, source_position)
-	return true
+	return health.take_damage(amount, source_position)

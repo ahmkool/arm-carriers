@@ -2,7 +2,7 @@ class_name HitFlash3D
 extends Node
 
 const OVERLAY_SHADER := preload("res://src/shaders/hit_flash_overlay.gdshader")
-const FLASH_DURATION_SEC := 0.5
+const FLASH_DURATION_SEC := 0.14
 
 var _meshes: Array[MeshInstance3D] = []
 var _overlay: ShaderMaterial

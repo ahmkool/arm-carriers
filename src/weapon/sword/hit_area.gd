@@ -7,6 +7,11 @@ extends Area3D
 
 const PITCH_MIN := 0.88
 const PITCH_MAX := 1.12
+const SLASH_SCENE := preload("res://src/vfx/sword_slash.tscn")
+const SLASH_HEIGHT := 1.0
+## Each further enemy hit in one dash raises the pitch, up to `COMBO_PITCH_MAX_STEPS`.
+const COMBO_PITCH_STEP := 1.12
+const COMBO_PITCH_MAX_STEPS := 5
 
 
 func _on_hit_area_body_entered(body: Node) -> void:
@@ -26,12 +31,26 @@ func _try_apply_damage(body: Node) -> void:
 		return
 	if not Health.apply_damage(body, damage, _get_damage_source_position()):
 		return
-	_play_hit_sfx()
+	_play_hit_sfx(body as Node3D, sword_specifics.register_dash_hit())
+	_spawn_slash(body as Node3D)
+	ImpactFeedback.play_sword_hit()
 
 
-func _play_hit_sfx() -> void:
-	_hit_sfx.pitch_scale = randf_range(PITCH_MIN, PITCH_MAX)
-	_hit_sfx.play()
+## Each hit gets its own player, so several hits in one tick don't cut each other off.
+func _play_hit_sfx(enemy: Node3D, previous_hits: int) -> void:
+	var combo_steps := mini(previous_hits, COMBO_PITCH_MAX_STEPS)
+	var pitch := randf_range(PITCH_MIN, PITCH_MAX) * pow(COMBO_PITCH_STEP, combo_steps)
+	ImpactFeedback.play_sfx(_hit_sfx.stream, enemy.global_position, pitch, _hit_sfx.volume_db)
+
+
+func _spawn_slash(enemy: Node3D) -> void:
+	var scene_root := get_tree().current_scene
+	if scene_root == null:
+		return
+	var slash := SLASH_SCENE.instantiate() as SwordSlash
+	scene_root.add_child(slash)
+	slash.global_position = enemy.global_position + Vector3.UP * SLASH_HEIGHT
+	slash.align_to(sword_specifics.travel_direction)
 
 
 func _get_damage_source_position() -> Vector3:

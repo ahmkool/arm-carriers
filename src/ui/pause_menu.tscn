@@ -1,4 +1,4 @@
-[gd_scene load_steps=30 format=3 uid="uid://c8pausemenu01"]
+[gd_scene load_steps=31 format=3 uid="uid://c8pausemenu01"]
 
 [ext_resource type="Script" uid="uid://bfq14wxdjuanp" path="res://src/ui/pause_menu.gd" id="1_pause"]
 [ext_resource type="Theme" uid="uid://wgaw3undqvio" path="res://assets/theme/pause_menu_theme.tres" id="2_pause_theme"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="7_twinstick"]
 [ext_resource type="Script" path="res://src/ui/fullscreen_setting_control.gd" id="8_fullscreen"]
 [ext_resource type="Script" uid="uid://dportraitrecord01" path="res://src/ui/portrait_recording_setting_control.gd" id="9_portrait"]
+[ext_resource type="Script" path="res://src/ui/pause/pause_menu_juice.gd" id="10_pause_juice"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_continue_normal"]
 bg_color = Color(0.45, 0.82, 0.35, 1)
@@ -187,6 +188,9 @@ menu_root_path = NodePath("../Layer/MenuRoot")
 default_focus_path = NodePath("../Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer/ContinueButton")
 emit_cancel_on_back = true
 listen_for_unhandled_input = false
+
+[node name="PauseMenuJuice" type="Node" parent="."]
+script = ExtResource("10_pause_juice")
 
 [node name="Layer" type="CanvasLayer" parent="."]
 

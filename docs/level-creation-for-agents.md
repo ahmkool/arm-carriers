@@ -60,7 +60,7 @@ The carry distance decides how wide bridges and lanes need to be.
 |---|---|---|---|
 | **Attack** | Fire button, rocket explodes on an enemy or fireball | Dash; the blade hits only while a dash is moving it | None needed: always on |
 | **Damage** | Kills within 3.5 m | 3 per hit (kills 3 HP enemies) | 3 per hit, 1 s per-enemy cooldown |
-| **Reach** | Unlimited; rockets fly through terrain | Blade about 7.5 m long | Disc about 3.3 m wide, between the carriers |
+| **Reach** | 60 m, then a harmless pop; rockets fly through terrain (set `detonate_on_terrain` on the rocket scene to change that) | Blade about 7.5 m long | Disc about 3.3 m wide, between the carriers |
 | **Other** | Rocket speed 5 m/s, 0.75 s cooldown; can shoot down fireballs | Dash covers about 2 m | Carriers exposed on both sides of the disc |
 | **Carry distance** | 1.6 to 4.2 m | 1.6 to 3.2 m (settled at about 2 m when tested) | 5.5 to 7 m |
 | **Designs that suit it** | Tight packs, shooting across gaps and pits | Open arenas, everything reachable on foot | Funnels that bunch enemies, pits and rails to straddle |
@@ -142,7 +142,6 @@ In the driver:
 
 ## Known issues in the game
 
-- **Missed rockets never despawn:** `bazooka_bullet_local.gd` only frees a rocket after it detonates. Not fixed.
 - **Menu height:** the level picker runs from 108 to 972 of 1080 px with the current buttons, so one or two more may need scrolling or a rearrange.
 
 ## Code style

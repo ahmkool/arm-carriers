@@ -1,0 +1,21 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://src/vfx/sword_slash.gd" id="1_slash"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_slash"]
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(1, 0.96, 0.82, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_slash"]
+material = SubResource("StandardMaterial3D_slash")
+radial_segments = 8
+rings = 4
+
+[node name="SwordSlash" type="Node3D"]
+script = ExtResource("1_slash")
+
+[node name="Mesh" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("SphereMesh_slash")

@@ -8,6 +8,7 @@ const _PAUSE_BLOCKED_STATE_NAMES: Array[String] = [
 
 @onready var _menu_root: Control = $Layer/MenuRoot
 @onready var _pause_flow: PauseFlowNode = $PauseFlow
+@onready var _juice: PauseMenuJuice = $PauseMenuJuice
 @onready var _menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
 @onready var _main_root: Control = $Layer/MenuRoot/PauseMainRoot
 @onready var _options_root: Control = $Layer/MenuRoot/PauseOptionsRoot
@@ -140,11 +141,13 @@ func _set_paused(should_pause: bool) -> void:
 	if tree == null:
 		return
 	tree.paused = should_pause
-	_menu_root.visible = should_pause
 	if not should_pause:
 		_menu_navigator.set_active(false)
+		_juice.close()
 		return
+	_menu_root.visible = false
 	_pause_flow.start()
+	_juice.open()
 	_menu_navigator.set_active(true)
 
 

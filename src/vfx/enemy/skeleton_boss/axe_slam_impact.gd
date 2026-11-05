@@ -42,9 +42,9 @@ func _apply_damage_to_body(body: Node) -> void:
 		return
 	if player.is_dead:
 		return
-	CameraFeedback.add_trauma_hurt()
 	if not Health.apply_damage(player, damage, global_position):
 		return
+	CameraFeedback.add_trauma_hurt()
 	_play_hit_sfx()
 
 

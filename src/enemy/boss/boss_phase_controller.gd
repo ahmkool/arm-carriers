@@ -44,6 +44,7 @@ func _bind_health() -> void:
 
 func _on_health_died(_source_position: Vector3 = Vector3.ZERO) -> void:
 	_stop_enrage_visuals()
+	ImpactFeedback.play_boss_moment()
 
 
 func _get_health() -> Health:
@@ -105,6 +106,7 @@ func _enter_phase(phase_index: int) -> void:
 	_triggered_phases[phase_index] = true
 	_current_phase = phase_index
 	_apply_phase_visuals(phase_index)
+	ImpactFeedback.play_boss_moment()
 	phase_changed.emit(phase_index)
 
 

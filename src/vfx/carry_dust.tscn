@@ -1,0 +1,48 @@
+[gd_scene load_steps=6 format=3]
+
+[sub_resource type="Curve" id="Curve_scale"]
+_data = [Vector2(0, 0.7), 0.0, 0.0, 0, 0, Vector2(0.15, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_scale"]
+curve = SubResource("Curve_scale")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dust"]
+resource_local_to_scene = true
+spread = 180.0
+flatness = 0.85
+initial_velocity_min = 1.0
+initial_velocity_max = 2.6
+gravity = Vector3(0, 0.4, 0)
+damping_min = 3.0
+damping_max = 5.0
+scale_min = 0.14
+scale_max = 0.3
+scale_curve = SubResource("CurveTexture_scale")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dust"]
+albedo_color = Color(0.68, 0.62, 0.53, 1)
+roughness = 1.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_dust"]
+material = SubResource("StandardMaterial3D_dust")
+radial_segments = 8
+rings = 4
+
+[node name="CarryDust" type="GPUParticles3D"]
+emitting = false
+amount = 14
+lifetime = 0.55
+one_shot = true
+explosiveness = 0.9
+randomness = 0.5
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_dust")
+draw_pass_1 = SubResource("SphereMesh_dust")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 1.0
+one_shot = true
+autostart = true
+
+[connection signal="timeout" from="Timer" to="." method="queue_free"]

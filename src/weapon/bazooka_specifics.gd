@@ -29,6 +29,7 @@ func _check_firing_bullet(carry_info: CarryInfo) -> void:
 	if not Input.is_action_just_pressed(carry_info.main_carrier.action_shoot):
 		return
 	if _fire_cooldown_remaining > 0.0:
+		_play_dry_click(carry_info.main_carrier)
 		return
 	_request_fire_bullet()
 
@@ -44,3 +45,18 @@ func _request_fire_bullet() -> void:
 	bullet.velocity = muzzle.global_transform.basis.z * 5.0
 	_fire_cooldown_remaining = FIRE_COOLDOWN_SEC
 	CameraFeedback.add_trauma_shot()
+	_play_recoil()
+
+
+func _play_recoil() -> void:
+	var feedback := CarryFeedback.from_weapon(get_parent())
+	if feedback == null:
+		return
+	feedback.play_recoil(muzzle.global_transform.basis.z, muzzle.global_position)
+
+
+func _play_dry_click(shooter: PlayerLocal) -> void:
+	var feedback := CarryFeedback.from_weapon(get_parent())
+	if feedback == null:
+		return
+	feedback.play_dry_click(shooter, muzzle.global_position)

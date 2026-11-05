@@ -29,6 +29,12 @@ func _ready() -> void:
 	_arm_right = _require_arm_mesh(arm_right_path, "arm_right_path")
 
 
+func is_carrying() -> bool:
+	if can_carry_status == CanCarryStatus.CARRYING_SHOOTER:
+		return true
+	return can_carry_status == CanCarryStatus.CARRYING_DIRECTION_SETTER
+
+
 func _physics_process(_delta: float) -> void:
 	_process_weapon_carrying()
 	_update_arms_visibility()

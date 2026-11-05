@@ -16,6 +16,10 @@ var _is_offensive := true
 @export var hitbox_damage: int = 1
 
 const BODY_HIT_SOUND := preload("res://assets/sounds/punch/Punch 3_1.wav")
+const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
+## How far off the navmesh a knockback step may land. The navmesh is inset from ledges,
+## so a small margin lets enemies near its edge move without being pushed off a drop.
+const KNOCKBACK_NAV_TOLERANCE := 0.25
 const DEATH_FREE_DELAY_SECONDS := 10.0
 ## Higher = faster turn toward a facing direction (roughly “how many times per second” to ease toward the target).
 const ROTATION_SMOOTH_LAMBDA := 12.0
@@ -43,6 +47,9 @@ var behavior: EnemyBehavior
 var _hit_flash: HitFlash3D
 var _damage_source_position := Vector3.ZERO
 var _has_damage_source_position := false
+var _knockback_velocity := Vector3.ZERO
+var _knockback_duration := 0.0
+var _knockback_time_remaining := 0.0
 
 signal died
 
@@ -77,6 +84,7 @@ func _on_health_damaged(_amount: int, remaining: int, source_position: Vector3) 
 	if _hit_flash == null:
 		_hit_flash = _get_or_create_hit_flash()
 	_hit_flash.trigger()
+	spawn_damage_vfx()
 	_request_taking_damage_state()
 
 
@@ -350,6 +358,67 @@ func die(damage_source_position: Variant = null) -> void:
 	enemy_state_machine.transition_to("dead")
 
 
+func spawn_damage_vfx() -> void:
+	var world := get_tree().current_scene
+	if world == null:
+		return
+	var fx := DAMAGE_VFX_SCENE.instantiate()
+	if has_damage_source_position():
+		fx.set_damage_source(get_damage_source_position())
+	world.add_child(fx)
+	fx.global_position = global_position
+
+
+func begin_knockback(knockback_speed: float, duration: float) -> void:
+	_knockback_time_remaining = 0.0
+	if knockback_speed <= 0.0 or duration <= 0.0:
+		return
+	var direction := _get_knockback_direction()
+	if direction.length_squared() < 0.0001:
+		return
+	_knockback_velocity = direction * knockback_speed
+	_knockback_duration = duration
+	_knockback_time_remaining = duration
+
+
+## Sets horizontal velocity for this physics tick, easing out to zero over the knockback.
+func apply_knockback(delta: float, keep_on_navmesh: bool) -> void:
+	velocity.x = 0.0
+	velocity.z = 0.0
+	if _knockback_time_remaining <= 0.0:
+		return
+	var step_velocity := _knockback_velocity * (_knockback_time_remaining / _knockback_duration)
+	_knockback_time_remaining = maxf(0.0, _knockback_time_remaining - delta)
+	if keep_on_navmesh and not _is_on_navmesh(global_position + step_velocity * delta):
+		_knockback_time_remaining = 0.0
+		return
+	velocity.x = step_velocity.x
+	velocity.z = step_velocity.z
+
+
+func _get_knockback_direction() -> Vector3:
+	if not _has_damage_source_position:
+		return Vector3.ZERO
+	var away := global_position - _damage_source_position
+	away.y = 0.0
+	if away.length_squared() < 0.0001:
+		return Vector3.ZERO
+	return away.normalized()
+
+
+## Stops ground enemies leaving walkable space: one stranded off a ledge would stay alive
+## forever and block survival groups from completing.
+func _is_on_navmesh(world_position: Vector3) -> bool:
+	if navigation_agent == null:
+		return false
+	var map_rid := navigation_agent.get_navigation_map()
+	if not map_rid.is_valid():
+		return false
+	var closest := NavigationServer3D.map_get_closest_point(map_rid, world_position)
+	var flat_offset := Vector2(closest.x - world_position.x, closest.z - world_position.z)
+	return flat_offset.length() <= KNOCKBACK_NAV_TOLERANCE
+
+
 func has_damage_source_position() -> bool:
 	return _has_damage_source_position
 
@@ -394,9 +463,9 @@ func _on_hit_box_body_entered(body):
 	var player := body as PlayerLocal
 	if player == null:
 		return
-	CameraFeedback.add_trauma_hurt()
 	if not Health.apply_damage(player, hitbox_damage, global_position):
 		return
+	CameraFeedback.add_trauma_hurt()
 	_play_body_hit_sfx()
 
 

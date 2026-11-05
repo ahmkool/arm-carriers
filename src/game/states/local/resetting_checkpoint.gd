@@ -25,6 +25,17 @@ func enter():
 
 func exit():
 	ScreenFade.fade_from_black(CHECKPOINT_FADE_DURATION)
+	_play_weapon_lock_in()
+
+
+func _play_weapon_lock_in() -> void:
+	var world_local := world as WorldLocal
+	if world_local == null:
+		return
+	var feedback := CarryFeedback.from_weapon(world_local.get_active_weapon())
+	if feedback == null:
+		return
+	feedback.play_lock_in(CHECKPOINT_FADE_DURATION)
 
 func _needs_vfx_warmup() -> bool:
 	var world_local := world as WorldLocal

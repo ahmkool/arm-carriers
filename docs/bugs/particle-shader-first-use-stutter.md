@@ -97,6 +97,10 @@ Runtime-spawned scenes (preload alone is not enough):
 | `src/vfx/puff_disappear.tscn` | `enemy/state/dead.gd` | Shared list |
 | `src/vfx/dash_particles.tscn` | `player/state/dashing.gd` | Shared list |
 | `src/vfx/ghost.tscn` | `player/state/dashing.gd` (dash afterimage meshes) | Shared list |
+| `src/vfx/carry_dust.tscn` | `autoload/impact_feedback.gd` | Shared list |
+| `src/vfx/saw_sparks.tscn` | `weapon/saw/saw_specifics.gd` | Shared list |
+| `src/vfx/sword_trail.tscn` | `weapon/sword_specifics.gd` | Shared list |
+| `src/vfx/sword_slash.tscn` | `weapon/sword/hit_area.gd` | Shared list |
 | `src/vfx/dash.tscn` | `player/state/dashing.gd` (audio only) | Shared list |
 | `src/vfx/fireball_spawn.tscn` | `enemy/mage/fireball_emitter.gd` | Shared list |
 | `src/vfx/fireball.tscn` | `fireball_spawn.gd` | Shared list |

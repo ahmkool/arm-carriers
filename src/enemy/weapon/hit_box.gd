@@ -17,9 +17,9 @@ func _on_body_entered(body: Node) -> void:
 	var player := body as PlayerLocal
 	if player == null:
 		return
-	CameraFeedback.add_trauma_hurt()
 	if not Health.apply_damage(player, damage, global_position):
 		return
+	CameraFeedback.add_trauma_hurt()
 	_play_hit_sfx()
 
 
