@@ -4,7 +4,7 @@ extends CharacterBody3D
 @export var device_id: int
 @export var player_id: int
 @export var damage_invulnerability_seconds := 1.0
-@export var health_bar_icon: Texture2D
+@export var character_scene: PackedScene
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
@@ -12,13 +12,13 @@ const DAMAGE_SOUND := preload("res://assets/sounds/damage.wav")
 const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
 const DAMAGE_VFX_KNOCKBACK_OFFSET := 2.0
 
-## Matches `LocomotionBlend` (AnimationNodeBlend2) in mannequin_medium.tscn: input 0 = idle, 1 = run.
+## Matches `LocomotionBlend` (AnimationNodeBlend2) in player_animation_tree.tres: input 0 = idle, 1 = run.
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/LocomotionBlend/blend_amount"
 const ANIM_PARAM_DEAD_BLEND := &"parameters/DeadBlend/blend_amount"
 const ANIM_PARAM_DEAD_ONESHOT_REQUEST := &"parameters/DeadOneShot/request"
 
-@onready var animation_tree: AnimationTree = $Mannequin_Medium/AnimationTree
-@onready var animation_player: AnimationPlayer = $Mannequin_Medium/AnimationPlayer
+@onready var animation_tree: AnimationTree = character.animation_tree
+@onready var animation_player: AnimationPlayer = character.animation_player
 @onready var carrying_weapon_data: CarryingWeaponData = $CarryingWeaponData
 @onready var weapon_carrier_pin_joint = $WeaponCarrierPinJoint
 @onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
@@ -38,12 +38,29 @@ var _resume_state_after_hit := &"idle"
 var _damage_source_position := Vector3.ZERO
 var _has_damage_source_position := false
 var _hit_flash: HitFlash3D
+var character: PlayerCharacter
+var health_bar_icon: Texture2D:
+	get:
+		return character.health_bar_icon
 var is_dead: bool:
 	get:
 		return is_in_dead_state()
 
 @onready var player_state_machine: PlayerStateMachine = $PlayerStateMachine
 @onready var health: Health = $Health
+
+## Runs before any child's _ready, because CarryingWeaponData reads the arms from the character there.
+func _enter_tree() -> void:
+	if character != null:
+		return
+	if character_scene == null:
+		push_error("PlayerLocal '%s': character_scene is not set" % name)
+		get_tree().quit(1)
+		return
+	character = character_scene.instantiate() as PlayerCharacter
+	add_child(character)
+	move_child(character, 0)
+
 
 func _ready():
 	print("PlayerLocal ready, device_id: ", device_id)

@@ -3,9 +3,6 @@ extends Node
 
 @onready var player_node = $".."
 
-@export var arm_left_path: NodePath = ^"Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmLeft"
-@export var arm_right_path: NodePath = ^"Mannequin_Medium/Rig_Medium/Skeleton3D/Mannequin_Medium_ArmRight"
-
 signal weapon_dropped()
 
 const RELOAD_SOUND := preload("res://assets/sounds/ammo/reload.wav")
@@ -25,8 +22,8 @@ var _arm_right: MeshInstance3D
 
 
 func _ready() -> void:
-	_arm_left = _require_arm_mesh(arm_left_path, "arm_left_path")
-	_arm_right = _require_arm_mesh(arm_right_path, "arm_right_path")
+	_arm_left = _require_arm_mesh(player_node.character.arm_left, "arm_left")
+	_arm_right = _require_arm_mesh(player_node.character.arm_right, "arm_right")
 
 
 func is_carrying() -> bool:
@@ -115,23 +112,13 @@ func _update_arms_visibility() -> void:
 	_arm_right.hide()
 
 
-func _require_arm_mesh(path: NodePath, export_name: String) -> MeshInstance3D:
-	if path.is_empty():
-		_fail_missing_arm(export_name, path, "path is empty")
-		return null
-	var mesh := player_node.get_node_or_null(path) as MeshInstance3D
+func _require_arm_mesh(mesh: MeshInstance3D, export_name: String) -> MeshInstance3D:
 	if mesh != null:
 		return mesh
-	_fail_missing_arm(export_name, path, "node is missing or not a MeshInstance3D")
+	push_error("CarryingWeaponData on '%s': PlayerCharacter.%s is not set" % [player_node.name, export_name])
+	get_tree().quit(1)
 	return null
 
-
-func _fail_missing_arm(export_name: String, path: NodePath, reason: String) -> void:
-	push_error(
-		"CarryingWeaponData on '%s': %s (%s) — %s"
-		% [player_node.name, export_name, path, reason]
-	)
-	get_tree().quit(1)
 
 func _process_carrying() -> bool:
 	if can_carry_status != CanCarryStatus.CARRYING_SHOOTER and can_carry_status != CanCarryStatus.CARRYING_DIRECTION_SETTER:

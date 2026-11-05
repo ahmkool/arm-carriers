@@ -1,0 +1,56 @@
+[gd_resource type="AnimationLibrary" load_steps=26 format=3]
+
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="3_jysfc"]
+[ext_resource type="Animation" uid="uid://bb6rh8o22vtqk" path="res://assets/animations_source/animations/Death_A_Pose.res" id="4_aj4gt"]
+[ext_resource type="Animation" uid="uid://qr28d1kys3cu" path="res://assets/animations_source/animations/Death_B.res" id="5_aktf2"]
+[ext_resource type="Animation" uid="uid://d4mqxy7yj4eeb" path="res://assets/animations_source/animations/Death_B_Pose.res" id="6_a5owv"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="7_6ett6"]
+[ext_resource type="Animation" uid="uid://dgye3dqqmpauj" path="res://assets/animations_source/animations/Hit_B.res" id="8_aorp8"]
+[ext_resource type="Animation" uid="uid://c3ppuhivk30bj" path="res://assets/animations_source/animations/Idle_A.res" id="9_hme17"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="10_xasir"]
+[ext_resource type="Animation" uid="uid://bvdi208mt7bf3" path="res://assets/animations_source/animations/Interact.res" id="11_i1t0g"]
+[ext_resource type="Animation" uid="uid://cvofd306jejsk" path="res://assets/animations_source/animations/Jump_Full_Long.res" id="12_ot3sy"]
+[ext_resource type="Animation" uid="uid://ch1jryo7lq8ll" path="res://assets/animations_source/animations/Jump_Full_Short.res" id="13_qaa0h"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="14_5f6tk"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="15_q3i2u"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="16_eexss"]
+[ext_resource type="Animation" uid="uid://ckorprw785c6n" path="res://assets/animations_source/animations/PickUp.res" id="17_pv3xa"]
+[ext_resource type="Animation" uid="uid://5o0p7x5ts3yq" path="res://assets/animations_source/animations/Running_A.res" id="18_oj203"]
+[ext_resource type="Animation" uid="uid://h8eb8s8erx3o" path="res://assets/animations_source/animations/Running_B.res" id="19_33lik"]
+[ext_resource type="Animation" uid="uid://4ddywlnww1vh" path="res://assets/animations_source/animations/Spawn_Air.res" id="20_057bj"]
+[ext_resource type="Animation" uid="uid://ce0wp8fauyjy7" path="res://assets/animations_source/animations/Spawn_Ground.res" id="21_4p5kx"]
+[ext_resource type="Animation" uid="uid://cyc51jqqiv405" path="res://assets/animations_source/animations/T-Pose.res" id="22_qwya5"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="23_p5d3c"]
+[ext_resource type="Animation" uid="uid://dmeewkkixxoei" path="res://assets/animations_source/animations/Use_Item.res" id="24_msp48"]
+[ext_resource type="Animation" uid="uid://400p0viws1y" path="res://assets/animations_source/animations/Walking_A.res" id="25_i6xv0"]
+[ext_resource type="Animation" uid="uid://b66k543srtgf6" path="res://assets/animations_source/animations/Walking_B.res" id="26_wvssc"]
+[ext_resource type="Animation" uid="uid://blfigfpjocmqx" path="res://assets/animations_source/animations/Walking_C.res" id="27_wtbnh"]
+
+[resource]
+_data = {
+&"Death_A": ExtResource("3_jysfc"),
+&"Death_A_Pose": ExtResource("4_aj4gt"),
+&"Death_B": ExtResource("5_aktf2"),
+&"Death_B_Pose": ExtResource("6_a5owv"),
+&"Hit_A": ExtResource("7_6ett6"),
+&"Hit_B": ExtResource("8_aorp8"),
+&"Idle_A": ExtResource("9_hme17"),
+&"Idle_B": ExtResource("10_xasir"),
+&"Interact": ExtResource("11_i1t0g"),
+&"Jump_Full_Long": ExtResource("12_ot3sy"),
+&"Jump_Full_Short": ExtResource("13_qaa0h"),
+&"Jump_Idle": ExtResource("14_5f6tk"),
+&"Jump_Land": ExtResource("15_q3i2u"),
+&"Jump_Start": ExtResource("16_eexss"),
+&"PickUp": ExtResource("17_pv3xa"),
+&"Running_A": ExtResource("18_oj203"),
+&"Running_B": ExtResource("19_33lik"),
+&"Spawn_Air": ExtResource("20_057bj"),
+&"Spawn_Ground": ExtResource("21_4p5kx"),
+&"T-Pose": ExtResource("22_qwya5"),
+&"Throw": ExtResource("23_p5d3c"),
+&"Use_Item": ExtResource("24_msp48"),
+&"Walking_A": ExtResource("25_i6xv0"),
+&"Walking_B": ExtResource("26_wvssc"),
+&"Walking_C": ExtResource("27_wtbnh")
+}

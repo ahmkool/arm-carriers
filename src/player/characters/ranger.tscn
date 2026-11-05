@@ -1,0 +1,29 @@
+[gd_scene load_steps=6 format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/Kaykit/characters/Ranger.glb" id="1_model"]
+[ext_resource type="Script" path="res://src/player/characters/player_character.gd" id="2_script"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/ranger_icon.png" id="3_icon"]
+[ext_resource type="AnimationLibrary" path="res://src/player/characters/player_animation_library.tres" id="4_library"]
+[ext_resource type="AnimationNodeBlendTree" path="res://src/player/characters/player_animation_tree.tres" id="5_tree"]
+
+[node name="Ranger" node_paths=PackedStringArray("arm_left", "arm_right") instance=ExtResource("1_model")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+script = ExtResource("2_script")
+arm_left = NodePath("Rig_Medium/Skeleton3D/Ranger_ArmLeft")
+arm_right = NodePath("Rig_Medium/Skeleton3D/Ranger_ArmRight")
+health_bar_icon = ExtResource("3_icon")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+deterministic = true
+libraries = {
+&"Player": ExtResource("4_library")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="."]
+tree_root = ExtResource("5_tree")
+anim_player = NodePath("../AnimationPlayer")
+parameters/LocomotionBlend/blend_amount = 0.0
+parameters/DeadOneShot/active = false
+parameters/DeadOneShot/internal_active = false
+parameters/DeadOneShot/request = 0
+parameters/DeadBlend/blend_amount = 0.0

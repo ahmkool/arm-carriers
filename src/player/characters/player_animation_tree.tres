@@ -1,0 +1,38 @@
+[gd_resource type="AnimationNodeBlendTree" load_steps=8 format=3]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_uqpbf"]
+animation = &"Player/Idle_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_2xs3w"]
+animation = &"Player/Running_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_locomotion"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_v15yf"]
+animation = &"Player/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dead_pose"]
+animation = &"Player/Death_A_Pose"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_dead"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_dead"]
+
+[resource]
+graph_offset = Vector2(263.0577, 298.56)
+nodes/output/position = Vector2(990, 310)
+nodes/IdleAnimation/node = SubResource("AnimationNodeAnimation_uqpbf")
+nodes/IdleAnimation/position = Vector2(40, 140)
+nodes/RunAnimation/node = SubResource("AnimationNodeAnimation_2xs3w")
+nodes/RunAnimation/position = Vector2(40, 340)
+nodes/LocomotionBlend/node = SubResource("AnimationNodeBlend2_locomotion")
+nodes/LocomotionBlend/position = Vector2(340, 240)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_v15yf")
+nodes/Animation/position = Vector2(298, 601)
+nodes/DeadPose/node = SubResource("AnimationNodeAnimation_dead_pose")
+nodes/DeadPose/position = Vector2(294, 416)
+nodes/DeadOneShot/node = SubResource("AnimationNodeOneShot_dead")
+nodes/DeadOneShot/position = Vector2(565, 423)
+nodes/DeadBlend/node = SubResource("AnimationNodeBlend2_dead")
+nodes/DeadBlend/position = Vector2(710, 280)
+node_connections = [&"output", 0, &"DeadBlend", &"LocomotionBlend", 0, &"IdleAnimation", &"LocomotionBlend", 1, &"RunAnimation", &"DeadOneShot", 0, &"DeadPose", &"DeadOneShot", 1, &"Animation", &"DeadBlend", 0, &"LocomotionBlend", &"DeadBlend", 1, &"DeadOneShot"]
