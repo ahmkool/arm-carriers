@@ -108,6 +108,17 @@ This caused most of the problems, so check it for every section.
 - **Decoration:** use grass only (`Grass_*`), since those items have no collision. That GridMap has 2 m cells, not 3 m.
 - **Fall area:** the box must cover the whole level and extend past it. Leave its y values as they are.
 
+## Other environments: sky
+
+`tools/level_gen/example_sky_prototype.py` builds a level on floating islands, with no water. Copy it as a starting point. The camera looks steeply down, so the environment is mostly what's visible *below* the play space. The panorama's lower half is flat colour, so depth has to come from the scene.
+
+- **Clouds:** `Level.add_sky(floor)` adds `src/world/elements/sky/cloud_layers.tscn`, three drifting sheets at different depths. Their parallax is what makes it feel high up. Water and clouds are alternatives: leave `water_x` unset in `add_terrain`.
+- **Cliffs:** `add_sky` also extends cliffs downward. They used to end where the water hid them.
+- **Falling:** pass `fall_y=-17` to `add_terrain` so the kill plane sits about 11 m under the islands, and players visibly drop before the game over.
+- **Scenery:** `add_distant_island` adds islands with no collision and a slow bob. Keep them far out and deep (about 55 m or more to the side, 26 m or more down), since deeper objects drift toward the centre of the screen.
+- **Telling scenery from play space:** the top cloud sheet has `sky_opacity = 0.34`, which hazes everything below it. Without it, distant islands look walkable.
+- **Bridges:** `add_sky` switches the level to `sky_bridge_platform.tscn`, a plank on small clouds. While lowered it is invisible and has no collision, then it rises and grows into place. Don't use `bridge_platform.tscn` with a low `fall_y`: its lowered block stays solid and is above the kill plane, so a player who steps into the gap lands on it and survives. It's safe in water levels because the kill plane is higher than the block.
+
 ## Testing
 
 ### Running the game
@@ -137,6 +148,8 @@ In the driver:
 - **Survival spawners can still be mid-spawn** after you kill everything. Keep killing in a loop until `signal_emitted` is true.
 - **Enemy node names change after a reset.** Re-created enemies get generated names, so look them up from the group's children.
 - **Aim at the middle of a hit area.** Use the `CollisionShape3D`'s position; the `Area3D` origin can be at the end of the blade.
+- **A driver that fails to compile doesn't stop the game.** It runs until the time limit with no results, so check for `SCRIPT ERROR` in the output first. GDScript can't infer a type from values like `list[0].global_position.y`: declare it (`var safe: bool = ...`).
+- **Check that threats can actually act.** Stationary mages only fire within `cast_max_distance`: test that some are in range, or a section can quietly have no danger. Also space rocket packs in metres, since whole cells are too far apart for one blast.
 - **Save prompt:** if the level has saved progress, its menu button opens Continue / From beginning instead of loading. Don't press "From beginning" in a test: the level then starts over without the player's save, and new checkpoints could overwrite it.
 - **Harmless output:** RID leak errors on exit come from quitting mid-game, and `--script` bakes print compile errors about autoloads.
 

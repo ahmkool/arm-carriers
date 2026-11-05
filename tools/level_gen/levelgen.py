@@ -120,6 +120,8 @@ class Level:
         self.follow_offset = follow_offset
         self.nodes = []
         self.connections = []
+        self.extra_ext = []
+        self.bridge_scene = ("uid://chaj7v8uajl4q", "res://src/world/elements/bridge_platform.tscn")
         self.boxes = {}
         self.curve = None
         self.platforms = {}
@@ -252,11 +254,12 @@ class Level:
             cells[(int(wx // 2), -1, int(wz // 2))] = (rng.choice(grass), rng.choice([0, 10, 16, 22]))
         return cells
 
-    def add_terrain(self, floor, mouths, decoration_count, fall_z, water_x, water_z):
+    def add_terrain(self, floor, mouths, decoration_count, fall_z, water_x=None, water_z=None, fall_y=-6.726822):
+        """Leave water_x as None for a level without water. Lower fall_y for a longer visible drop."""
         floor_cells = _encode_cells(self.build_floor(floor, mouths))
         deco_cells = _encode_cells(self.build_decoration(floor, decoration_count))
         self.node("Level", ".", "Node")
-        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, -6.726822, 0), "script": 'ExtResource("fall")'})
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})
         self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
             "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
         self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
@@ -265,8 +268,49 @@ class Level:
                           'data = {\n"cells": PackedInt32Array(' + floor_cells + ')\n}\nmetadata/_editor_floor_ = Vector3(0, -1, 0)')
         self.nodes.append('[node name="Decoration" type="GridMap" parent="Level"]\nmesh_library = ExtResource("tiles")\n'
                           'data = {\n"cells": PackedInt32Array(' + deco_cells + ')\n}\nmetadata/_editor_floor_ = Vector3(0, -1, 0)')
-        self.node("Water", "Level", instance="water", props={"transform": tf(water_x, -4.6065345, water_z, "2, 0, 0, 0, 1, 0, 0, 0, 1.7")})
+        if water_x is not None:
+            self.node("Water", "Level", instance="water", props={"transform": tf(water_x, -4.6065345, water_z, "2, 0, 0, 0, 1, 0, 0, 0, 1.7")})
         self.node("Events", "Level", "Node")
+
+    def add_sky(self, floor, tiers=2):
+        """Replaces water: cloud layers, plus deeper cliffs so islands don't end where the sea used to hide them."""
+        self.bridge_scene = (None, "res://src/world/elements/sky/sky_bridge_platform.tscn")
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/sky/cloud_layers.tscn", "clouds"))
+        self.extra_ext.append(("Script", None, "res://src/world/elements/sky/floating_bob.gd", "bob"))
+        self.node("CloudLayers", "Level", instance="clouds")
+        self.nodes.append(self._grid_map("IslandCliffs", "Level", self._deep_cliffs(floor, tiers), 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+
+    def _deep_cliffs(self, floor, tiers):
+        cells = {}
+        walls = {key: tile for key, tile in self.build_floor(floor, set()).items() if key[1] == -3}
+        for tier in range(1, tiers + 1):
+            cells.update({(x, y - 2 * tier, z): tile for (x, y, z), tile in walls.items()})
+        return cells
+
+    def _grid_map(self, name, parent, cells, settings):
+        return (f'[node name="{name}" type="GridMap" parent="{parent}"]\nmesh_library = ExtResource("tiles")\n{settings}\n'
+                'data = {\n"cells": PackedInt32Array(' + _encode_cells(cells) + ')\n}\nmetadata/_editor_floor_ = Vector3(0, -1, 0)')
+
+    def add_distant_island(self, name, position, floor, tree_count):
+        """Decorative island far below the play space, with no collision and a slow bob."""
+        x, y, z = position
+        path = f"Level/DistantIslands/{name}"
+        self.node(name, "Level/DistantIslands", "Node3D", props={"transform": tf(x, y, z), "script": 'ExtResource("bob")'})
+        no_collision = 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'
+        terrain = self.build_floor(floor, set())
+        terrain.update(self._deep_cliffs(floor, 1))
+        self.nodes.append(self._grid_map("Terrain", path, terrain, no_collision))
+        self.nodes.append(self._grid_map("Trees", path, self._island_trees(floor, tree_count), "collision_layer = 0\ncollision_mask = 0"))
+
+    def _island_trees(self, floor, count):
+        rng = random.Random(len(floor) * 31 + count)
+        trees = [self.items[f"Tree_{n}"] for n in ("1_A", "2_A", "3_A", "4_A", "5_A", "6_A")]
+        interior = [c for c in sorted(floor) if all((c[0] + dx, c[1] + dz) in floor for dx in (-1, 0, 1) for dz in (-1, 0, 1))]
+        cells = {}
+        for cell in rng.sample(interior, min(count, len(interior))):
+            wx, wz = world(*cell)
+            cells[(int(wx // 2), -1, int(wz // 2))] = (rng.choice(trees), 0)
+        return cells
 
     def set_bridges(self, bridges):
         count = 0
@@ -357,7 +401,7 @@ class Level:
             ("Script", "uid://dgghjmfpume34", "res://src/world/fall_area.gd", "fall"),
             ("MeshLibrary", self.lib_uid, "res://" + self.lib_path, "tiles"),
             ("PackedScene", "uid://c2hrlod45sfxd", "res://src/world/elements/water.tscn", "water"),
-            ("PackedScene", "uid://chaj7v8uajl4q", "res://src/world/elements/bridge_platform.tscn", "bridge"),
+            ("PackedScene", self.bridge_scene[0], self.bridge_scene[1], "bridge"),
             ("Script", "uid://craclr3fqyunt", "res://src/events/toggle_bridge_event.gd", "toggle_bridge"),
             ("Script", "uid://d2pnle1sbun8v", "res://src/events/change_enemies_behavior.gd", "change_behavior"),
             ("Script", "uid://cpybi6smjnan5", "res://src/events/level_finished_event.gd", "finished"),
@@ -366,7 +410,7 @@ class Level:
             ("Script", "uid://dm0qyuvkt2r20", "res://src/world/elements/all_players_area_trigger.gd", "all_players"),
             ("PackedScene", weapon_uid, weapon_path, self.weapon),
             ("AudioStream", "uid://bp1ug7cyuchid", "res://assets/music/PerituneMaterial_Amenoshita.mp3", "music"),
-        ]
+        ] + self.extra_ext
 
     def _sub_resources(self, nav_body):
         start, end = self.curve
@@ -410,11 +454,16 @@ point_count = 2
         uid_attr = f' uid="{baked["uid"]}"' if baked else ""
         nav_body = f'vertices = {baked["vertices"]}\npolygons = {baked["polygons"]}\n' if baked else ""
         parts = [f"[gd_scene format=3{uid_attr}]\n"]
-        parts += [f'[ext_resource type="{t}" uid="{u}" path="{p}" id="{i}"]' for t, u, p, i in self._external_resources()]
+        parts += [_ext_line(*entry) for entry in self._external_resources()]
         parts += ["", self._sub_resources(nav_body), "\n\n".join(self.nodes), ""]
         parts += [f'[connection signal="{s}" from="{f}" to="{t}" method="{m}"]' for s, f, t, m in self.connections]
         Path(out).write_text("\n".join(parts) + "\n")
         print("wrote", out)
+
+
+def _ext_line(kind, uid, path, ext_id):
+    uid_attr = f' uid="{uid}"' if uid else ""
+    return f'[ext_resource type="{kind}"{uid_attr} path="{path}" id="{ext_id}"]'
 
 
 def fmt_decimal(value):

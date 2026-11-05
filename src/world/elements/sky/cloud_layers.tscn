@@ -1,0 +1,56 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/sky/cloud_layer.gdshader" id="1_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_base"]
+render_priority = -3
+shader = ExtResource("1_shader")
+shader_parameter/sky_color = Color(0.3, 0.6, 0.92, 1)
+shader_parameter/shade_color = Color(0.62, 0.78, 0.95, 1)
+shader_parameter/sky_opacity = 1.0
+shader_parameter/coverage = 0.46
+shader_parameter/softness = 0.16
+shader_parameter/noise_scale = 0.012
+shader_parameter/drift = Vector2(0.5, 0.12)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_middle"]
+render_priority = -2
+shader = ExtResource("1_shader")
+shader_parameter/coverage = 0.4
+shader_parameter/softness = 0.11
+shader_parameter/noise_scale = 0.022
+shader_parameter/drift = Vector2(1.1, 0.25)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wisps"]
+render_priority = -1
+shader = ExtResource("1_shader")
+shader_parameter/shade_color = Color(0.88, 0.94, 1, 1)
+shader_parameter/sky_color = Color(0.5, 0.72, 0.95, 1)
+shader_parameter/sky_opacity = 0.34
+shader_parameter/coverage = 0.24
+shader_parameter/softness = 0.1
+shader_parameter/noise_scale = 0.05
+shader_parameter/drift = Vector2(2.4, 0.5)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_layer"]
+size = Vector2(1000, 1000)
+
+[node name="CloudLayers" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -70, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_base")
+
+[node name="Middle" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -38, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_middle")
+
+[node name="Wisps" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_wisps")

@@ -37,4 +37,10 @@ const GROUPS: Array[Dictionary] = [
 			{"title": "Boss", "difficulty": 3, "label": "Boss", "art": Art.BOSS, "scene": "res://src/world/levels/world_boss_scene_saw.tscn"},
 		],
 	},
+	{
+		"name": "Prototypes",
+		"levels": [
+			{"title": "Sky Islands", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky.tscn"},
+		],
+	},
 ]
