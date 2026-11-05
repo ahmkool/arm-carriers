@@ -1,0 +1,144 @@
+[gd_scene load_steps=16 format=3]
+
+[ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_big"]
+[ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="2_pick"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="3_move"]
+[ext_resource type="Script" path="res://src/weapon/siege_bow/siege_bow_specifics.gd" id="4_bow"]
+[ext_resource type="PackedScene" path="res://src/weapon/siege_bow/siege_arrow_visual.tscn" id="5_arrow"]
+
+[sub_resource type="BoxShape3D" id="Box_pick"]
+size = Vector3(2.2, 1.8, 2)
+
+[sub_resource type="BoxShape3D" id="Box_body"]
+size = Vector3(1, 1, 3)
+
+[sub_resource type="StandardMaterial3D" id="Mat_wood"]
+albedo_color = Color(0.45, 0.28, 0.14, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_string"]
+albedo_color = Color(0.92, 0.88, 0.75, 1)
+roughness = 0.8
+
+[sub_resource type="StandardMaterial3D" id="Mat_guide"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.95, 0.6, 0.35)
+
+[sub_resource type="BoxMesh" id="Mesh_side_handle"]
+material = SubResource("Mat_wood")
+size = Vector3(1, 0.2, 0.2)
+
+[sub_resource type="BoxMesh" id="Mesh_limb"]
+material = SubResource("Mat_wood")
+size = Vector3(2.4, 0.26, 0.3)
+
+[sub_resource type="BoxMesh" id="Mesh_string"]
+material = SubResource("Mat_string")
+size = Vector3(0.06, 0.06, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_guide"]
+material = SubResource("Mat_guide")
+size = Vector3(0.5, 0.02, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_grip"]
+material = SubResource("Mat_wood")
+top_radius = 0.3
+bottom_radius = 0.3
+height = 0.5
+
+[node name="SiegeBow" type="RigidBody3D"]
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("1_big")
+
+[node name="PickAndDropHandler" type="Node3D" parent="."]
+script = ExtResource("2_pick")
+hide_arms_type = 3
+
+[node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/ShooterPickArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+shape = SubResource("Box_pick")
+
+[node name="DirectionSetterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/DirectionSetterPickArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
+shape = SubResource("Box_pick")
+
+[node name="ShooterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.5)
+
+[node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
+
+[node name="LookVector" type="Node3D" parent="PickAndDropHandler"]
+
+[node name="Source" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="Target" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("3_move")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+min_carrier_distance = 2.6
+max_carrier_distance = 8.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("Box_body")
+
+[node name="WeaponSpecifics" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler", "weapon_movement")]
+script = ExtResource("4_bow")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+weapon_movement = NodePath("../WeaponMovement")
+
+[node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
+
+[node name="Ahead" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 12)
+
+[node name="Grip" type="Node3D" parent="WeaponSpecifics"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.5)
+
+[node name="GripMesh" type="MeshInstance3D" parent="WeaponSpecifics/Grip"]
+mesh = SubResource("Mesh_grip")
+
+[node name="LimbRight" type="Node3D" parent="WeaponSpecifics/Grip"]
+
+[node name="Mesh" type="MeshInstance3D" parent="WeaponSpecifics/Grip/LimbRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 0, 0)
+mesh = SubResource("Mesh_limb")
+
+[node name="LimbLeft" type="Node3D" parent="WeaponSpecifics/Grip"]
+
+[node name="Mesh" type="MeshInstance3D" parent="WeaponSpecifics/Grip/LimbLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 0, 0)
+mesh = SubResource("Mesh_limb")
+
+[node name="StringRight" type="MeshInstance3D" parent="WeaponSpecifics/Grip"]
+mesh = SubResource("Mesh_string")
+
+[node name="StringLeft" type="MeshInstance3D" parent="WeaponSpecifics/Grip"]
+mesh = SubResource("Mesh_string")
+
+[node name="HandleFront" type="MeshInstance3D" parent="WeaponSpecifics/Grip"]
+mesh = SubResource("Mesh_side_handle")
+
+[node name="HandleBack" type="MeshInstance3D" parent="WeaponSpecifics/Grip"]
+mesh = SubResource("Mesh_side_handle")
+
+[node name="NockedArrow" parent="WeaponSpecifics/Grip" instance=ExtResource("5_arrow")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 0, 0)
+
+[node name="AimGuide" type="MeshInstance3D" parent="WeaponSpecifics/Grip"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, 0)
+mesh = SubResource("Mesh_guide")
+
+[connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]
+[connection signal="body_entered" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_entered_direction_setter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_exited_direction_setter_zone"]

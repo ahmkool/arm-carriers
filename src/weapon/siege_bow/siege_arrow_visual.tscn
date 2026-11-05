@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3]
+
+[sub_resource type="StandardMaterial3D" id="Mat_shaft"]
+albedo_color = Color(0.85, 0.75, 0.55, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="Mat_head"]
+albedo_color = Color(0.5, 0.54, 0.6, 1)
+metallic = 0.35
+roughness = 0.45
+
+[sub_resource type="StandardMaterial3D" id="Mat_fletching"]
+albedo_color = Color(0.8, 0.2, 0.15, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_shaft"]
+material = SubResource("Mat_shaft")
+size = Vector3(0.16, 0.16, 8.5)
+
+[sub_resource type="PrismMesh" id="Mesh_head"]
+material = SubResource("Mat_head")
+size = Vector3(0.6, 0.8, 0.14)
+
+[sub_resource type="BoxMesh" id="Mesh_fletching"]
+material = SubResource("Mat_fletching")
+size = Vector3(0.6, 0.06, 0.7)
+
+[node name="SiegeArrowVisual" type="Node3D"]
+
+[node name="Shaft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.25)
+mesh = SubResource("Mesh_shaft")
+
+[node name="Head" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0, 1, 0, -1, 0, 0, 0, -8.9)
+mesh = SubResource("Mesh_head")
+
+[node name="Fletching" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.06, -0.45)
+mesh = SubResource("Mesh_fletching")
