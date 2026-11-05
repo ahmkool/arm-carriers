@@ -286,6 +286,7 @@ toggle_full_screen={
 3d_physics/layer_2="enemy"
 3d_physics/layer_3="level"
 3d_physics/layer_4="weapons"
+3d_physics/layer_5="weapon_blades"
 
 [rendering]
 

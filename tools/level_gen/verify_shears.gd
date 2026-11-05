@@ -140,6 +140,8 @@ func check_mages_in_range(label: String) -> void:
 	check(label, in_range.size() > 0 and visible_count(in_range) == in_range.size(), "%d/%d in range on screen" % [visible_count(in_range), in_range.size()])
 
 
+## Enemies stay in their Spawning state this long before they start chasing.
+const SPAWN_APPEAR_SEC := 2.3
 var snaps: Array = []
 var shears: Node3D
 var specifics: Node3D
@@ -166,6 +168,128 @@ func hp(enemy: EnemyLocal) -> int:
 
 func open_fully(shooter: PlayerLocal, setter: PlayerLocal) -> void:
 	await hold([action(shooter, "left"), action(setter, "right")], 1.2)
+	await wait(0.2)
+
+
+func _in_reach_between_blades(enemy: EnemyLocal) -> bool:
+	var local := (specifics.get_node("Rig") as Node3D).to_local(enemy.global_position)
+	return local.x > 0.0 and Vector2(local.x, local.z).length() <= 5.5 and past_blade(enemy) < 0.3
+
+
+func _print_horde(horde: Array, label: String) -> void:
+	for enemy in horde:
+		var local := (specifics.get_node("Rig") as Node3D).to_local(enemy.global_position)
+		print("INFO horde %s: hinge x=%.1f z=%.1f past=%.2f nearest player=%.2f state=%s" % [label, local.x, local.z, past_blade(enemy), _player_distance(enemy), enemy.get_node("EnemyStateMachine").current_state.name])
+
+
+func spawn_chaser(local_to_hinge: Vector3) -> EnemyLocal:
+	var enemy := spawn_enemy(local_to_hinge)
+	enemy.is_offensive = true
+	return enemy
+
+
+## Positive when the enemy's centre is outside the blade line at its distance from the hinge.
+func past_blade(enemy: EnemyLocal) -> float:
+	var rig := specifics.get_node("Rig") as Node3D
+	var local := rig.to_local(enemy.global_position)
+	return absf(local.z) - maxf(local.x, 0.0) * tan(specifics._half_angle)
+
+
+func kill_all(enemies: Array) -> void:
+	for enemy in enemies:
+		if is_instance_valid(enemy):
+			Health.apply_damage(enemy, 999, enemy.global_position)
+
+
+func _test_blade_collision(shooter: PlayerLocal, setter: PlayerLocal) -> void:
+	await open_fully(shooter, setter)
+	var trapped := spawn_chaser(Vector3(3.5, 0, 1.2))
+	await wait(SPAWN_APPEAR_SEC)
+	var worst := -INF
+	var moved := 0.0
+	var start := trapped.global_position
+	for _i in 240:
+		await get_tree().physics_frame
+		worst = maxf(worst, past_blade(trapped))
+		moved = maxf(moved, trapped.global_position.distance_to(start))
+	print("INFO trapped enemy: worst past blade=%.2f moved=%.2f speed=%.2f" % [worst, moved, trapped.velocity.length()])
+	check("the test enemy really chases", moved > 0.3, "moved %.2f" % moved)
+	check("enemy chasing a carrier can't walk through a blade", worst < 0.75, "worst %.2f" % worst)
+	await shot("shears_trapped.png")
+	kill_all([trapped])
+
+	await hold([action(shooter, "right"), action(setter, "left")], 0.7)
+	await wait(0.2)
+	var outside := spawn_chaser(Vector3(3.0, 0, 1.3))
+	await get_tree().physics_frame
+	await wait(SPAWN_APPEAR_SEC)
+	var side_before := signf((specifics.get_node("Rig") as Node3D).to_local(outside.global_position).z)
+	await hold([action(shooter, "left"), action(setter, "right")], 1.0)
+	var excess: float = past_blade(outside)
+	var side_after := signf((specifics.get_node("Rig") as Node3D).to_local(outside.global_position).z)
+	print("INFO swept enemy: past blade=%.2f side %d -> %d" % [excess, side_before, side_after])
+	check("an opening blade pushes an enemy instead of passing through it", excess > 0.0 and side_before == side_after, "past %.2f" % excess)
+	kill_all([outside])
+
+	await wait(0.2)
+	await open_fully(shooter, setter)
+	var dashed := spawn_chaser(Vector3(4.0, 0, 1.0))
+	await wait(SPAWN_APPEAR_SEC)
+	snaps.clear()
+	var furthest := [-INF]
+	var watch := func():
+		if is_instance_valid(dashed) and hp(dashed) > 0:
+			furthest[0] = maxf(furthest[0], past_blade(dashed))
+	get_tree().physics_frame.connect(watch)
+	Input.action_press(action(shooter, "right"))
+	Input.action_press(action(setter, "left"))
+	await wait(0.05)
+	Input.action_press(action(shooter, "dash"))
+	Input.action_press(action(setter, "dash"))
+	await wait(0.1)
+	Input.action_release(action(shooter, "dash"))
+	Input.action_release(action(setter, "dash"))
+	await wait(0.5)
+	Input.action_release(action(shooter, "right"))
+	Input.action_release(action(setter, "left"))
+	get_tree().physics_frame.disconnect(watch)
+	print("INFO dash close: snaps=%s furthest past blade=%.2f gap=%.2f" % [snaps, furthest[0], gap()])
+	check("a dash close cuts without the blade passing the enemy", snaps.size() == 1 and snaps[0][1] == 1 and furthest[0] < 0.75, "%s furthest %.2f" % [snaps, furthest[0]])
+	kill_all([dashed])
+
+	await open_fully(shooter, setter)
+	var survivor := spawn_chaser(Vector3(3.0, 0, 0.0))
+	await wait(SPAWN_APPEAR_SEC)
+	snaps.clear()
+	await hold([action(setter, "left")], 1.1)
+	check("a survivor of a weak cut stays alive", hp(survivor) > 0, "hp %d %s" % [hp(survivor), snaps])
+	var after_cut := survivor.global_position
+	await wait(2.5)
+	var walked := survivor.global_position.distance_to(after_cut)
+	print("INFO survivor squeezed by shut blades walked %.2f m" % walked)
+	check("a survivor squeezed by shut blades isn't stuck", hp(survivor) <= 0 or walked > 0.3, "walked %.2f" % walked)
+	await shot("shears_survivor.png")
+	kill_all([survivor])
+
+	await open_fully(shooter, setter)
+	var horde: Array = []
+	for i in 6:
+		horde.append(spawn_chaser(Vector3(6.3, 0, -2.5 + i)))
+	await wait(SPAWN_APPEAR_SEC + 3.0)
+	var inside := horde.filter(func(e): return _in_reach_between_blades(e))
+	_print_horde(horde, "after 3 s")
+	await wait(7.0)
+	_print_horde(horde, "after 10 s")
+	inside = horde.filter(func(e): return _in_reach_between_blades(e))
+	print("INFO horde: %d of %d between the blades after 3 s" % [inside.size(), horde.size()])
+	await shot("shears_funnel.png")
+	snaps.clear()
+	await hold([action(shooter, "right"), action(setter, "left")], 0.7)
+	print("INFO horde snap: %s" % [snaps])
+	check("a snap on the funnelled horde hits at least one enemy", snaps.size() == 1 and snaps[0][1] >= 1, str(snaps))
+	await wait(0.3)
+	await shot("shears_funnel_snap.png")
+	kill_all(horde)
 	await wait(0.2)
 
 
@@ -245,6 +369,8 @@ func _run() -> void:
 	snaps.clear()
 	await hold([action(shooter, "right"), action(setter, "left")], 0.7)
 	check("a stroke with nothing in the jaws still snaps", snaps.size() == 1 and snaps[0][1] == 0, str(snaps))
+
+	await _test_blade_collision(shooter, setter)
 
 	setter.carrying_weapon_data.can_carry_status = CarryingWeaponData.CanCarryStatus.NO_WEAPON_AVAILABLE
 	await wait(0.6)
