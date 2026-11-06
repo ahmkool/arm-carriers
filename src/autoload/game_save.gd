@@ -5,6 +5,8 @@ const SAVE_VERSION := 2
 
 var _levels: Dictionary = {}
 var _completed: Dictionary = {}
+## Character name per device_id, from the character select. Empty until both players picked.
+var _character_picks: Array[String] = []
 var _tracked_manager: CheckpointManager
 var _tracked_level_id: String = ""
 var _apply_save_on_next_load := true
@@ -70,6 +72,15 @@ func clear_level_completion(level_id: String) -> void:
 	save_to_disk()
 
 
+func get_character_picks() -> Array[String]:
+	return _character_picks.duplicate()
+
+
+func set_character_picks(names: Array[String]) -> void:
+	_character_picks = names.duplicate()
+	save_to_disk()
+
+
 func clear_all() -> void:
 	_levels.clear()
 	_completed.clear()
@@ -121,6 +132,7 @@ func save_to_disk() -> void:
 		"version": SAVE_VERSION,
 		"levels": _levels.duplicate(),
 		"completed": _completed.duplicate(),
+		"characters": _character_picks.duplicate(),
 	}
 	var json_text := JSON.stringify(data, "\t")
 	var file := FileAccess.open(SAVE_PATH, FileAccess.WRITE)
@@ -133,6 +145,7 @@ func save_to_disk() -> void:
 func _load_from_disk() -> void:
 	_levels.clear()
 	_completed.clear()
+	_character_picks.clear()
 	if not FileAccess.file_exists(SAVE_PATH):
 		return
 	var file := FileAccess.open(SAVE_PATH, FileAccess.READ)
@@ -150,6 +163,14 @@ func _load_from_disk() -> void:
 	_levels = (data["levels"] as Dictionary).duplicate()
 	if data.has("completed") and data["completed"] is Dictionary:
 		_completed = (data["completed"] as Dictionary).duplicate()
+	_load_character_picks(data.get("characters", []))
+
+
+func _load_character_picks(saved: Variant) -> void:
+	if not saved is Array:
+		return
+	for entry in saved:
+		_character_picks.append(str(entry))
 
 
 func _on_checkpoint_changed(

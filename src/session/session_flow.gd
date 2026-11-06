@@ -19,6 +19,7 @@ var home_menu_root: Control
 var settings_menu_root: Control
 var credits_menu_root: Control
 var main_menu_root: Control
+var character_select_root: CharacterSelect
 var level_select_root: LevelTargetSelect
 var level_start_choice_root: Control
 var menu_navigator: GamepadMenuNavigator
@@ -32,6 +33,8 @@ var shader_compiling_root: Control
 var playtest_notice_root: Control
 
 var _pending_apply_save := false
+## Where the character select goes once both players are ready.
+var _after_character_select := "levelselect"
 
 
 func _ready() -> void:
@@ -40,6 +43,7 @@ func _ready() -> void:
 	_register_state("settingsmenu", SettingsMenuState.new())
 	_register_state("creditsmenu", CreditsMenuState.new())
 	_register_state("mainmenu", MainMenuState.new())
+	_register_state("characterselect", CharacterSelectState.new())
 	_register_state("levelselect", LevelSelectState.new())
 	_register_state("levelstartchoice", LevelStartChoiceState.new())
 	_register_state("shadercompiling", ShaderCompilingState.new())
@@ -59,6 +63,7 @@ func register_menu_ui(
 	settings_menu: Control,
 	credits_menu: Control,
 	main_menu: Control,
+	character_select: CharacterSelect,
 	level_select: LevelTargetSelect,
 	level_start_choice: Control,
 	navigator: GamepadMenuNavigator,
@@ -76,6 +81,7 @@ func register_menu_ui(
 	settings_menu_root = settings_menu
 	credits_menu_root = credits_menu
 	main_menu_root = main_menu
+	character_select_root = character_select
 	level_select_root = level_select
 	level_start_choice_root = level_start_choice
 	menu_navigator = navigator
@@ -104,6 +110,23 @@ func transition_to(state_name: String) -> void:
 	current = _states[key]
 	_current_state_name = key
 	current.enter()
+
+
+## Play skips the character select once the players have saved picks.
+func play() -> void:
+	if CharacterRoster.has_picks():
+		transition_to("levelselect")
+		return
+	open_character_select("levelselect")
+
+
+func open_character_select(next_state: String) -> void:
+	_after_character_select = next_state
+	transition_to("characterselect")
+
+
+func finish_character_select() -> void:
+	transition_to(_after_character_select)
 
 
 func request_level(level_scene_path: String, level_id: String = "") -> void:
@@ -192,15 +215,17 @@ func show_menu_screen(screen_name: String) -> void:
 	var key := screen_name.to_lower()
 	var is_shader_compiling := key == "shadercompiling"
 	var is_choosing_level := key == "levelselect" or key == "levelstartchoice"
+	var is_choosing_characters := key == "characterselect"
 	set_press_start_visible(key == "pressstart")
 	set_home_menu_visible(key == "homemenu")
 	set_settings_menu_visible(key == "settingsmenu")
 	set_credits_menu_visible(key == "creditsmenu")
 	set_main_menu_visible(key == "mainmenu")
+	set_character_select_visible(is_choosing_characters)
 	set_level_select_visible(is_choosing_level)
 	set_level_start_choice_visible(key == "levelstartchoice")
 	set_shader_compiling_root_visible(is_shader_compiling)
-	set_playtest_notice_visible(not is_shader_compiling and not is_choosing_level)
+	set_playtest_notice_visible(not is_shader_compiling and not is_choosing_level and not is_choosing_characters)
 
 
 func set_press_start_visible(visible: bool) -> void:
@@ -231,6 +256,12 @@ func set_main_menu_visible(visible: bool) -> void:
 	if main_menu_root == null:
 		return
 	main_menu_root.visible = visible
+
+
+func set_character_select_visible(visible: bool) -> void:
+	if character_select_root == null:
+		return
+	character_select_root.visible = visible
 
 
 func set_level_select_visible(visible: bool) -> void:

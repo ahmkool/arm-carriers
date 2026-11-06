@@ -23,6 +23,7 @@ bus_layout="res://default_bus_layout.tres"
 
 AudioSettings="*res://src/autoload/audio_settings.gd"
 CameraFeedback="*res://src/autoload/camera_feedback.gd"
+CharacterRoster="*res://src/autoload/character_roster.gd"
 DevSettings="*res://src/autoload/dev_settings.gd"
 DisplaySettings="*res://src/autoload/display_settings.gd"
 GameSave="*res://src/autoload/game_save.gd"

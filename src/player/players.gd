@@ -67,6 +67,9 @@ func _get_checkpoint_manager() -> Node:
 
 
 func _get_character_scene_for_device(device_id: int) -> PackedScene:
+	var picked := CharacterRoster.scene_for_device(device_id)
+	if picked != null:
+		return picked
 	if device_id < 0 or device_id >= character_scenes.size():
 		_fail_invalid_character_scene(device_id, "device_id is out of range for character_scenes")
 		return null

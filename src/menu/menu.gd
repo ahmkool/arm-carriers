@@ -7,10 +7,12 @@ const MENU_MUSIC_DELAY_SECONDS := 1.5
 @onready var _settings_menu_root: Control = $SettingsMenuRoot
 @onready var _credits_menu_root: Control = $CreditsMenuRoot
 @onready var _main_menu_root: Control = $MainMenuRoot
+@onready var _character_select: CharacterSelect = $CharacterSelectRoot
 @onready var _level_select: LevelTargetSelect = $LevelSelectRoot
 @onready var _level_start_choice_root: Control = $LevelStartChoiceRoot
 @onready var _menu_navigator: GamepadMenuNavigator = $GamepadMenuNavigator
 @onready var _play_button: Button = $HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/PlayButton
+@onready var _characters_button: Button = $HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/CharactersButton
 @onready var _settings_button: Button = $HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/SettingsButton
 @onready var _credits_button: Button = $HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/CreditsButton
 @onready var _quit_button: Button = $HomeMenuRoot/PanelContainer/MarginContainer/VBoxContainer/QuitButton
@@ -29,6 +31,7 @@ const MENU_MUSIC_DELAY_SECONDS := 1.5
 func _ready() -> void:
 	_playtest_notice_label.text = PlaytestFeedback.HOME_MENU_NOTICE
 	_play_button.pressed.connect(_on_play_pressed)
+	_characters_button.pressed.connect(_on_characters_pressed)
 	_settings_button.pressed.connect(_on_settings_pressed)
 	_credits_button.pressed.connect(_on_credits_pressed)
 	_quit_button.pressed.connect(_on_quit_pressed)
@@ -42,6 +45,7 @@ func _ready() -> void:
 		_settings_menu_root,
 		_credits_menu_root,
 		_main_menu_root,
+		_character_select,
 		_level_select,
 		_level_start_choice_root,
 		_menu_navigator,
@@ -66,7 +70,11 @@ func _begin_menu_music() -> void:
 
 
 func _on_play_pressed() -> void:
-	SessionFlow.transition_to("levelselect")
+	SessionFlow.play()
+
+
+func _on_characters_pressed() -> void:
+	SessionFlow.open_character_select("homemenu")
 
 
 func _on_settings_pressed() -> void:
