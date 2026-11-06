@@ -82,6 +82,8 @@ Add an optional exported **`level_id`** string on **`WorldLocal`** (e.g. `"world
 
 `CheckpointManager` (or `WorldLocal` in `_ready`) passes this id into `GameSave` when applying progress.
 
+> **Since save version 3** the key is `<level_id>@<weapon_id>`: see "Save keys" in [level-authoring.md](level-authoring.md#save-keys). The rest of this document predates that.
+
 **Convention:** Menu buttons and save keys must use the **same** string. If buttons use `res://src/world/levels/world_local.tscn`, either save with that path or set `level_id` on the scene and use that everywhere.
 
 ### 3. Checkpoint identity — `Checkpoint`

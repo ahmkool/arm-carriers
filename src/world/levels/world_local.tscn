@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=4 uid="uid://dj2pg5uao6elb"]
+[gd_scene load_steps=45 format=4 uid="uid://dj2pg5uao6elb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_1chlw"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_dvbv8"]
@@ -25,6 +25,7 @@
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="24_iv26f"]
 [ext_resource type="Texture2D" uid="uid://btl10tqrvruqw" path="res://assets/models/weapon/wooden_sign_forest_green_kaykit_modular_forest_texture.png" id="26_ndvwn"]
 
+[ext_resource type="Script" path="res://src/world/elements/ground/ground_variation.gd" id="ground_variation"]
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("2_j5fge")
 
@@ -36,6 +37,13 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 2.5
+ssao_power = 1.8
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.08
 
 [sub_resource type="Curve" id="Curve_qrvdl"]
 _limits = [0.0, 3.0, 0.0, 1.0]
@@ -140,6 +148,7 @@ environment = SubResource("Environment_msrya")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+light_color = Color(1, 0.97, 0.9, 1)
 shadow_enabled = true
 shadow_normal_bias = 5.0
 shadow_blur = 2.0
@@ -904,6 +913,10 @@ volume_db = -20.14
 autoplay = true
 bus = &"Music"
 parameters/looping = true
+
+[node name="GroundVariation" type="Node" parent="Level" node_paths=PackedStringArray("grid_maps")]
+script = ExtResource("ground_variation")
+grid_maps = [NodePath("../NavigationRegion3D/GridMapFloor")]
 
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]

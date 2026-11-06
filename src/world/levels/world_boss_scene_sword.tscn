@@ -1,4 +1,4 @@
-[gd_scene load_steps=39 format=3 uid="uid://cpxq3ainb4mw4"]
+[gd_scene load_steps=40 format=3 uid="uid://cpxq3ainb4mw4"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_ighex"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_mshma"]
@@ -33,6 +33,7 @@
 [ext_resource type="PackedScene" uid="uid://y6u10ge22ied" path="res://src/vfx/enemy/skeleton_boss/axe_fire_slash_trail.tscn" id="32_warm6"]
 [ext_resource type="PackedScene" uid="uid://det1nlqshcx21" path="res://src/vfx/enemy/skeleton_boss/step.tscn" id="33_warm7"]
 
+[ext_resource type="Script" path="res://src/world/elements/ground/ground_variation.gd" id="ground_variation"]
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_tg0np")
 
@@ -44,6 +45,13 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 2.5
+ssao_power = 1.8
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.08
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
 size = Vector3(63, 1, 59)
@@ -104,6 +112,7 @@ environment = SubResource("Environment_msrya")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+light_color = Color(1, 0.97, 0.9, 1)
 shadow_enabled = true
 
 [node name="Enemies" type="Node" parent="."]
@@ -238,6 +247,10 @@ volume_db = -20.14
 autoplay = true
 bus = &"Music"
 parameters/looping = true
+
+[node name="GroundVariation" type="Node" parent="." node_paths=PackedStringArray("grid_maps")]
+script = ExtResource("ground_variation")
+grid_maps = [NodePath("../Level/GridMap2"), NodePath("../Level/NavigationRegion3D/GridMap")]
 
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Events/LevelFinishedEvent" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Events/CloseBridge1" method="trigger"]

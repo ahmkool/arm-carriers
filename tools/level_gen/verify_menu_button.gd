@@ -20,7 +20,11 @@ func _ready() -> void:
 	level_select.call("_show_group", slot[0], slot[1])
 	await get_tree().create_timer(1.0).timeout
 	get_tree().root.get_texture().get_image().save_png(OS.get_environment("VERIFY_OUT") + "/menu.png")
-	level_select.call("_fire")
+	## A level with several weapons opens the weapon choice first; fire its default weapon.
+	level_select.call("_pick_poster")
+	await get_tree().process_frame
+	if level_select.get("_choosing_weapon"):
+		level_select.call("_fire_chosen_weapon")
 	_wait_for_level(menu.get_node("LevelStartChoiceRoot") as Control)
 
 

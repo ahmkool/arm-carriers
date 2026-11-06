@@ -1,4 +1,4 @@
-[gd_scene load_steps=25 format=3 uid="uid://dk7q0rc7vx1xk"]
+[gd_scene load_steps=26 format=3 uid="uid://dk7q0rc7vx1xk"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_3qru1"]
 [ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="22_ui"]
@@ -21,6 +21,7 @@
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="20_dkuhd"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="21_v7j8u"]
 
+[ext_resource type="Script" path="res://src/world/elements/ground/ground_variation.gd" id="ground_variation"]
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_1j3st")
 
@@ -32,6 +33,13 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 2.5
+ssao_power = 1.8
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.08
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
 size = Vector3(56.4718, 1, 76.77945)
@@ -54,6 +62,7 @@ environment = SubResource("Environment_msrya")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+light_color = Color(1, 0.97, 0.9, 1)
 shadow_enabled = true
 
 [node name="GameStateMachine" type="Node" parent="."]
@@ -129,3 +138,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.7785845, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.324318, 2.3595505, 0)
 
 [node name="Bazooka" parent="Weapon" instance=ExtResource("21_v7j8u")]
+
+[node name="GroundVariation" type="Node" parent="." node_paths=PackedStringArray("grid_maps")]
+script = ExtResource("ground_variation")
+grid_maps = [NodePath("../Level/GridMap")]

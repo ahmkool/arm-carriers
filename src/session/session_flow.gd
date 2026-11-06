@@ -129,11 +129,13 @@ func finish_character_select() -> void:
 	transition_to(_after_character_select)
 
 
-func request_level(level_scene_path: String, level_id: String = "") -> void:
+## `weapon_id` is the WeaponCatalog weapon to carry. It also picks the save key, so pass it even
+## when it is the scene's own weapon. Empty plays the scene's weapon under the bare level id.
+func request_level(level_scene_path: String, level_id: String = "", weapon_id: String = "") -> void:
 	if level_scene_path.is_empty():
 		push_warning("SessionFlow: empty level scene path.")
 		return
-	_begin_level_request(level_scene_path, level_id)
+	_begin_level_request(level_scene_path, level_id, weapon_id)
 
 
 func load_level_with_choice(apply_save: bool) -> void:
@@ -144,8 +146,10 @@ func load_level_with_choice(apply_save: bool) -> void:
 	transition_to("shadercompiling")
 
 
-func _begin_level_request(level_scene_path: String, level_id: String) -> void:
-	var resolved_level_id := GameSave.resolve_level_id(level_scene_path, level_id)
+func _begin_level_request(level_scene_path: String, level_id: String, weapon_id: String) -> void:
+	var base_level_id := GameSave.resolve_level_id(level_scene_path, level_id)
+	var resolved_level_id := GameSave.level_key(base_level_id, weapon_id)
+	LevelLoadout.set_weapon(weapon_id)
 	_pending_level_path = level_scene_path
 	_pending_level_id = resolved_level_id
 	var saved_checkpoint_id := GameSave.get_saved_checkpoint(resolved_level_id)

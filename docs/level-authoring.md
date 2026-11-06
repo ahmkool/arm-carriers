@@ -269,6 +269,40 @@ Level 2 groups triggers under `Level/Areas`; level 1 places them directly under 
 
 On checkpoint reset, the weapon is placed between the two checkpoint markers with both players forced into carry state (unless `is_carrying_weapon` is false on the checkpoint).
 
+### Playing a level with another weapon
+
+Every level in `level_select_catalog.gd` can be played with every `WeaponCatalog` weapon (`src/autoload/weapon_catalog.gd`), with two limits:
+
+- `"requires": "ranged"` offers only weapons with `"ranged": true` (bazooka, catapult, pulse rifle, siege bow). Use it when some enemies can't be reached on foot, for example ones on other platforms. Levels built for a ranged weapon have it by default, because nobody has checked they can be beaten with melee. Remove it once you have.
+- `"exclude": ["<weapon id>", …]` removes weapons known not to work in that level.
+
+`"weapon"` is the weapon placed in the scene. It is listed first and picked by default, and it is the only weapon that uses the checkpoint markers as authored. `LevelSelectCatalog.weapons_for(level)` gives the final list.
+
+A poster with one weapon fires straight away. A poster with several opens a weapon choice. The players aim at one of the weapon tags under the poster (up to four per row, so arrows move around them) and fire. A tag shows a red tick once that weapon has beaten the level.
+
+When the chosen weapon isn't the scene's own, `WorldLocal` replaces the `Weapon` child in `_enter_tree`. Progress is saved per level and weapon, see [Save keys](#save-keys).
+
+**Where a swapped weapon's carriers stand.** The checkpoint markers suit only the authored weapon. Each checkpoint uses the first of these that fits:
+
+1. `Checkpoint/WeaponSpawns/<weapon_id>/PositionDirectionSetter` and `PositionShooter`, if the checkpoint has them.
+2. The weapon's `setter_offset` / `shooter_offset` from the checkpoint's origin, if both carriers have floor there.
+3. The same gap front and back (along the checkpoint's -Z), centred on the checkpoint.
+4. The same, moved back so the front carrier stands on the checkpoint.
+
+"Floor" means level geometry (physics layer 3) at the height under the checkpoint's own setter marker, within 0.6 m. A sunk bridge segment or a lower floor doesn't count. Add `WeaponSpawns` markers only where none of these fit.
+
+**Testing:** `VERIFY_WEAPONS=catalog tools/level_gen/godot.sh test tools/level_gen/verify_weapon_swap.gd <scene> <out_dir> 600` loads the level with each of its poster weapons and respawns at every checkpoint. At each one it checks that both carriers stand on the floor, carry the weapon and don't trigger a game over. It doesn't prove the level can be beaten with that weapon, so play it once.
+
+**Weapon icons** are rendered from the weapon scenes by `tools/weapons/render_weapon_icons.gd` into `assets/sprites/ui/icons/weapons/<id>.png`. It needs a window: `~/Downloads/Godot_4_5.app/Contents/MacOS/Godot --path . --script tools/weapons/render_weapon_icons.gd`. A new weapon needs an `"icon"` path in `WeaponCatalog` and a rerun. The siege bow and shears icons come out rough, probably because their scripts pose the limbs and blades at runtime.
+
+### Save keys
+
+Checkpoint progress and completion are saved under `<level id>@<weapon id>`, for example `res://src/world/levels/world_boss_scene.tscn@saw`. The level id is `WorldLocal.level_id`, or the scene path if that's empty. The weapon id is the `WeaponCatalog` id of the weapon being carried, so a level played with its own weapon also has the `@` suffix. A level with no weapon, or with one not in the catalog, uses the bare level id.
+
+`WorldLocal.get_level_id()` builds the key in game, and `LevelSelectCatalog.save_id()` builds it in the menu. Both must agree, so a new weapon must be added to `WeaponCatalog` before a level uses it.
+
+Saves older than version 3 used the bare level id. `SaveMigration` (`src/autoload/save_migration.gd`) renames them on load: each level maps to the weapon placed in its scene, and the old sword and saw boss scenes map to `world_boss_scene.tscn@sword` / `@saw`. The renaming happens in memory, and the file is rewritten on the next save. Renaming or merging a level scene means adding its old key to that table. `tools/level_gen/verify_save_keys.gd` checks that every poster's old progress migrates.
+
 ---
 
 ## End condition

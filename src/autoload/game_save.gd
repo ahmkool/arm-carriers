@@ -1,7 +1,9 @@
 extends Node
 
 const SAVE_PATH := "user://save.json"
-const SAVE_VERSION := 2
+## 3: progress is kept per level and weapon ("<level id>@<weapon id>"); see SaveMigration.
+const SAVE_VERSION := 3
+const WEAPON_SEPARATOR := "@"
 
 var _levels: Dictionary = {}
 var _completed: Dictionary = {}
@@ -20,6 +22,14 @@ static func resolve_level_id(level_scene_path: String, level_id: String) -> Stri
 	if not level_id.is_empty():
 		return level_id
 	return level_scene_path
+
+
+## The key a level's progress is saved under when played with this weapon.
+## A level without a weapon keeps its bare id.
+static func level_key(level_id: String, weapon_id: String) -> String:
+	if weapon_id.is_empty():
+		return level_id
+	return level_id + WEAPON_SEPARATOR + weapon_id
 
 
 func set_apply_save_on_next_load(apply: bool) -> void:
@@ -164,6 +174,15 @@ func _load_from_disk() -> void:
 	if data.has("completed") and data["completed"] is Dictionary:
 		_completed = (data["completed"] as Dictionary).duplicate()
 	_load_character_picks(data.get("characters", []))
+	_migrate_from(int(data.get("version", 1)))
+
+
+## Renames keys in memory only; the file is rewritten in the new format on the next save.
+func _migrate_from(version: int) -> void:
+	if version >= SAVE_VERSION:
+		return
+	_levels = SaveMigration.migrate_v2_keys(_levels)
+	_completed = SaveMigration.migrate_v2_keys(_completed)
 
 
 func _load_character_picks(saved: Variant) -> void:

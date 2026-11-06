@@ -30,9 +30,11 @@ GameSave="*res://src/autoload/game_save.gd"
 GameplayInput="*res://src/autoload/gameplay_input.gd"
 GameplaySettings="*res://src/autoload/gameplay_settings.gd"
 ImpactFeedback="*res://src/autoload/impact_feedback.gd"
+LevelLoadout="*res://src/autoload/level_loadout.gd"
 ScreenFade="*res://src/ui/screen_fade.gd"
 SessionFlow="*res://src/session/session_flow.gd"
 VfxWarmup="*res://src/vfx/vfx_warmup.gd"
+WeaponCatalog="*res://src/autoload/weapon_catalog.gd"
 
 [debug_draw_3d]
 

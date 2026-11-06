@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://c551rkwptexeq"]
+[gd_scene load_steps=29 format=3 uid="uid://c551rkwptexeq"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_2yqsx"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_sdrds"]
@@ -22,6 +22,7 @@
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="22_sdrds"]
 [ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="23_ui"]
 
+[ext_resource type="Script" path="res://src/world/elements/ground/ground_variation.gd" id="ground_variation"]
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_606gc")
 
@@ -33,6 +34,13 @@ background_mode = 2
 sky = SubResource("Sky_8eeh1")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 2.5
+ssao_power = 1.8
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.08
 
 [sub_resource type="Curve" id="Curve_m3hw7"]
 _limits = [0.0, 3.0, 0.0, 1.0]
@@ -94,6 +102,7 @@ environment = SubResource("Environment_msrya")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+light_color = Color(1, 0.97, 0.9, 1)
 shadow_enabled = true
 
 [node name="Enemies" type="Node" parent="."]
@@ -241,6 +250,10 @@ script = ExtResource("22_4nm5s")
 message_string = "[color=#ff8888]Survival level[/color]
 
 In this level you will have to survive for [color=#ff8888]2 minutes[/color]. It will start slow but enemies will be more and more frequent."
+
+[node name="GroundVariation" type="Node" parent="." node_paths=PackedStringArray("grid_maps")]
+script = ExtResource("ground_variation")
+grid_maps = [NodePath("../Level/GridMap"), NodePath("../Level/GridMap2")]
 
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Events/LevelFinishedEvent" method="trigger"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Events/CloseBridge1" method="trigger"]

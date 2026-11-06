@@ -1,7 +1,8 @@
 class_name LevelTargetSelect
 extends Control
 ## Level select: wanted posters hang in the menu's sky and the players shoot the one they want.
-## Left/right aims between posters, up/down switches weapon tab, accept fires the bazooka.
+## Left/right aims between posters, up/down switches tab, accept picks a poster. A level that can
+## be played with several weapons then asks for one: left/right picks it, accept fires, cancel backs out.
 
 const LEFT_ACTIONS: Array[StringName] = [&"ui_left", &"p0_left", &"p1_left"]
 const RIGHT_ACTIONS: Array[StringName] = [&"ui_right", &"p0_right", &"p1_right"]
@@ -35,13 +36,17 @@ const ROCKET_FLIGHT_SECONDS := 0.62
 const AFTER_BLAST_SECONDS := 0.32
 const INPUT_LOCK_SECONDS := 0.18
 const ENTER_STAGGER_SECONDS := 0.07
-const HINT_TEXT := "Left / Right: aim\nUp / Down: weapon\nEnter / A: FIRE!"
+const HINT_TEXT := "Left / Right: aim\nUp / Down: tab\nEnter / A: pick"
+const WEAPON_HINT_TEXT := "Arrows: weapon\nEnter / A: FIRE!\nEsc / B: back"
+const DIMMED_POSTER_ALPHA := 0.4
 
 ## Survive the menu scene reloading after a level, so players return where they left off.
 static var _remembered_group := 0
 static var _remembered_poster := 0
 static var _seen_completed: Dictionary = {}
 static var _seen_baseline_taken := false
+## Last weapon fired per level scene, picked first next time.
+static var _remembered_weapons: Dictionary = {}
 
 
 class Crosshair:
@@ -83,6 +88,9 @@ var _tabs: Array[Button] = []
 var _group_index := 0
 var _poster_index := 0
 var _input_enabled := false
+var _choosing_weapon := false
+var _weapon_index := 0
+var _hint: Label
 var _launching := false
 var _input_unlock_time := 0.0
 var _time := 0.0
@@ -122,6 +130,8 @@ func _draw() -> void:
 func open() -> void:
 	_take_completion_baseline()
 	_launching = false
+	_choosing_weapon = false
+	_hint.text = HINT_TEXT
 	_input_enabled = true
 	_input_unlock_time = _now() + INPUT_LOCK_SECONDS
 	_rocket.visible = false
@@ -164,14 +174,14 @@ func _build_rail() -> void:
 	var back := _make_rail_button("Back", 28)
 	back.pressed.connect(_go_back)
 	_style_tab(back, false)
-	var hint := Label.new()
-	hint.text = HINT_TEXT
-	hint.add_theme_font_override("font", FONT)
-	hint.add_theme_font_size_override("font_size", 28)
-	hint.add_theme_color_override("font_color", Color(0.98, 0.95, 0.86))
-	hint.add_theme_color_override("font_outline_color", Color(0.1, 0.16, 0.26))
-	hint.add_theme_constant_override("outline_size", 12)
-	_rail.add_child(hint)
+	_hint = Label.new()
+	_hint.text = HINT_TEXT
+	_hint.add_theme_font_override("font", FONT)
+	_hint.add_theme_font_size_override("font_size", 28)
+	_hint.add_theme_color_override("font_color", Color(0.98, 0.95, 0.86))
+	_hint.add_theme_color_override("font_outline_color", Color(0.1, 0.16, 0.26))
+	_hint.add_theme_constant_override("outline_size", 12)
+	_rail.add_child(_hint)
 
 
 func _make_rail_button(text: String, font_size: int) -> Button:
@@ -228,10 +238,10 @@ func _clear_posters() -> void:
 
 func _add_poster(level: Dictionary, index: int, count: int) -> void:
 	var poster := LevelPoster.new()
-	var scene_id: String = level["scene"]
-	var completed := GameSave.is_level_completed(scene_id)
-	var is_new_win := completed and not _seen_completed.has(scene_id)
-	poster.setup(level, completed and not is_new_win)
+	var completed_weapons := _completed_weapons(level)
+	var new_wins := _unseen_wins(level, completed_weapons)
+	var is_new_win := not new_wins.is_empty()
+	poster.setup(level, not completed_weapons.is_empty() and not is_new_win, completed_weapons)
 	var center_x := _poster_center_x(index, count)
 	poster.rest_position = Vector2(center_x - LevelPoster.POSTER_SIZE.x * 0.5, _rope_y(center_x) + 4.0)
 	poster.mouse_entered.connect(_on_poster_hovered.bind(poster))
@@ -242,9 +252,29 @@ func _add_poster(level: Dictionary, index: int, count: int) -> void:
 	poster.play_enter(ENTER_STAGGER_SECONDS * index)
 	if not is_new_win:
 		return
-	_seen_completed[scene_id] = true
+	for save_id in new_wins:
+		_seen_completed[save_id] = true
 	poster.stamp_landed.connect(_backdrop.thump)
 	poster.play_stamp_slam()
+
+
+func _completed_weapons(level: Dictionary) -> Array[String]:
+	var result: Array[String] = []
+	for weapon_id in LevelSelectCatalog.weapons_for(level):
+		if GameSave.is_level_completed(LevelSelectCatalog.save_id(level, weapon_id)):
+			result.append(weapon_id)
+	return result
+
+
+## Save keys of wins earned since the level select last showed them, so their stamp slams in.
+func _unseen_wins(level: Dictionary, completed_weapons: Array[String]) -> Array[String]:
+	var result: Array[String] = []
+	for weapon_id in completed_weapons:
+		var save_id := LevelSelectCatalog.save_id(level, weapon_id)
+		if _seen_completed.has(save_id):
+			continue
+		result.append(save_id)
+	return result
 
 
 func _poster_center_x(index: int, count: int) -> float:
@@ -292,11 +322,14 @@ func _style_tab(button: Button, selected: bool) -> void:
 func _poll_input() -> void:
 	if not _can_read_input():
 		return
+	if _choosing_weapon:
+		_poll_weapon_input()
+		return
 	if _any_just_pressed(CANCEL_ACTIONS):
 		_go_back()
 		return
 	if _any_just_pressed(ACCEPT_ACTIONS):
-		_fire()
+		_pick_poster()
 		return
 	if _any_just_pressed(LEFT_ACTIONS):
 		_move_poster(-1)
@@ -309,6 +342,26 @@ func _poll_input() -> void:
 		return
 	if _any_just_pressed(DOWN_ACTIONS):
 		_move_group(1)
+
+
+func _poll_weapon_input() -> void:
+	if _any_just_pressed(CANCEL_ACTIONS):
+		_leave_weapon_choice()
+		return
+	if _any_just_pressed(ACCEPT_ACTIONS):
+		_fire_chosen_weapon()
+		return
+	if _any_just_pressed(LEFT_ACTIONS):
+		_move_weapon(-1)
+		return
+	if _any_just_pressed(RIGHT_ACTIONS):
+		_move_weapon(1)
+		return
+	if _any_just_pressed(UP_ACTIONS):
+		_move_weapon_row(-1)
+		return
+	if _any_just_pressed(DOWN_ACTIONS):
+		_move_weapon_row(1)
 
 
 func _can_read_input() -> bool:
@@ -342,17 +395,97 @@ func _go_back() -> void:
 	SessionFlow.transition_to("homemenu")
 
 
+## A level with one weapon fires straight away; otherwise the players pick the weapon first.
+func _pick_poster() -> void:
+	var level := _posters[_poster_index].level
+	var weapons := LevelSelectCatalog.weapons_for(level)
+	if weapons.size() == 1:
+		_fire(weapons[0])
+		return
+	_enter_weapon_choice(level)
+
+
+func _enter_weapon_choice(level: Dictionary) -> void:
+	_choosing_weapon = true
+	_input_unlock_time = _now() + INPUT_LOCK_SECONDS
+	_hint.text = WEAPON_HINT_TEXT
+	_set_other_posters_dimmed(true)
+	_focus_weapon(_remembered_weapon_index(level))
+	_play_tick(1.2)
+
+
+func _leave_weapon_choice() -> void:
+	_choosing_weapon = false
+	_hint.text = HINT_TEXT
+	_posters[_poster_index].set_weapon_focus(-1)
+	_set_other_posters_dimmed(false)
+	_select_poster(_poster_index)
+	_play_tick(0.8)
+
+
+func _move_weapon(direction: int) -> void:
+	var count := LevelSelectCatalog.weapons_for(_posters[_poster_index].level).size()
+	_focus_weapon(posmod(_weapon_index + direction, count))
+	_play_tick(1.6)
+
+
+## Jumps between the rows of weapon tags; the short second row catches the last tag.
+func _move_weapon_row(direction: int) -> void:
+	var count := LevelSelectCatalog.weapons_for(_posters[_poster_index].level).size()
+	var target_row := _weapon_index / LevelPoster.TAGS_PER_ROW + direction
+	var last_row := (count - 1) / LevelPoster.TAGS_PER_ROW
+	if target_row < 0 or target_row > last_row:
+		return
+	var target := _weapon_index + direction * LevelPoster.TAGS_PER_ROW
+	_focus_weapon(mini(target, count - 1))
+	_play_tick(1.6)
+
+
+## Puts the highlight and the crosshair on one weapon tag of the chosen poster.
+func _focus_weapon(index: int) -> void:
+	_weapon_index = index
+	var poster := _posters[_poster_index]
+	poster.set_weapon_focus(index)
+	var target := poster.weapon_tag_point(index)
+	_crosshair_x.target = target.x
+	_crosshair_y.target = target.y
+
+
+func _remembered_weapon_index(level: Dictionary) -> int:
+	var weapons := LevelSelectCatalog.weapons_for(level)
+	var remembered: String = _remembered_weapons.get(level["scene"], "")
+	return maxi(weapons.find(remembered), 0)
+
+
+func _set_other_posters_dimmed(dimmed: bool) -> void:
+	for index in _posters.size():
+		if index == _poster_index:
+			continue
+		_posters[index].modulate.a = DIMMED_POSTER_ALPHA if dimmed else 1.0
+
+
+func _fire_chosen_weapon() -> void:
+	var level := _posters[_poster_index].level
+	_fire(LevelSelectCatalog.weapons_for(level)[_weapon_index])
+
+
 ## Asks about saved progress before the shot, so the rocket is always the last thing that happens.
-func _fire() -> void:
+func _fire(weapon_id: String) -> void:
 	_input_enabled = false
+	_choosing_weapon = false
 	_crosshair.visible = false
+	var level := _posters[_poster_index].level
+	_remembered_weapons[level["scene"]] = weapon_id
 	_send_away_all_but_target()
-	var scene_id: String = _posters[_poster_index].level["scene"]
-	if not GameSave.get_saved_checkpoint(scene_id).is_empty():
-		SessionFlow.request_level(scene_id, scene_id)
+	if not GameSave.get_saved_checkpoint(LevelSelectCatalog.save_id(level, weapon_id)).is_empty():
+		_request_level(level, weapon_id)
 		return
 	await play_launch()
-	SessionFlow.request_level(scene_id, scene_id)
+	_request_level(level, weapon_id)
+
+
+func _request_level(level: Dictionary, weapon_id: String) -> void:
+	SessionFlow.request_level(level["scene"], level["scene"], weapon_id)
 
 
 func _send_away_all_but_target() -> void:
@@ -454,9 +587,8 @@ func _take_completion_baseline() -> void:
 
 func _add_completed_to_seen(levels: Array) -> void:
 	for level in levels:
-		if not GameSave.is_level_completed(level["scene"]):
-			continue
-		_seen_completed[level["scene"]] = true
+		for weapon_id in _completed_weapons(level):
+			_seen_completed[LevelSelectCatalog.save_id(level, weapon_id)] = true
 
 
 func _play_tick(pitch: float) -> void:
@@ -468,14 +600,14 @@ func _now() -> float:
 
 
 func _on_tab_pressed(index: int) -> void:
-	if not _input_enabled or index == _group_index:
+	if not _input_enabled or _choosing_weapon or index == _group_index:
 		return
 	_show_group(index, 0)
 	_play_tick(1.0)
 
 
 func _on_poster_hovered(poster: LevelPoster) -> void:
-	if not _input_enabled:
+	if not _input_enabled or _choosing_weapon:
 		return
 	var index := _posters.find(poster)
 	if index == _poster_index:
@@ -492,8 +624,19 @@ func _on_poster_gui_input(event: InputEvent, poster: LevelPoster) -> void:
 	var click := event as InputEventMouseButton
 	if click.button_index != MOUSE_BUTTON_LEFT or not click.pressed:
 		return
-	_poster_index = _posters.find(poster)
-	_fire()
+	_click_poster(_posters.find(poster))
+
+
+## Clicking the poster being armed fires its chosen weapon; clicking another one backs out first.
+func _click_poster(index: int) -> void:
+	if not _choosing_weapon:
+		_poster_index = index
+		_pick_poster()
+		return
+	if index == _poster_index:
+		_fire_chosen_weapon()
+		return
+	_leave_weapon_choice()
 
 
 func _on_visibility_changed() -> void:

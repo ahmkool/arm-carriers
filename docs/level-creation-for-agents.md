@@ -31,7 +31,7 @@ Also, nothing here tests difficulty or fun. Only a person playing can. Say so wh
    ```
 
    Keep the JSON between runs: it also holds the scene's uid. Re-bake whenever the floor changes.
-4. **Add the level to the level select**: add an entry to a tab in `src/menu/level_select/level_select_catalog.gd`. Each tab fits about three posters.
+4. **Add the level to the level select**: add an entry to a tab in `src/menu/level_select/level_select_catalog.gd`, with `"weapon": "<the scene's weapon id>"`. Add `"requires": "ranged"` if some enemies can't be reached on foot. Each tab fits about three posters. Every other weapon is offered too, so run the swap test described in "Playing a level with another weapon" in [level-authoring.md](level-authoring.md).
 5. **Test in the running game.** Copy `verify_saw_gauntlet.gd`, keep its helpers, and rewrite `_run()`:
 
    ```bash
@@ -227,7 +227,8 @@ In the driver:
 
 ## Known issues in the game
 
-- **Level select space:** each tab in `level_select_catalog.gd` has room for about three posters. Beyond that, add a tab.
+- **Level select space:** each tab in `level_select_catalog.gd` has room for about three posters. Beyond that, add a tab. A poster fits seven weapon tags under it, in two rows.
+- **Simulating menu input in a driver:** send `InputEventAction` through `Input.parse_input_event`. `Input.action_press` was missed by the level select for some actions (`ui_left` never registered), probably a frame-timing issue.
 
 ## Code style
 

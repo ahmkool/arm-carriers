@@ -29,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="sword"]
 [ext_resource type="AudioStream" uid="uid://cxmjucdq3rvw1" path="res://assets/music/PerituneMaterial_EpicBattle_J.mp3" id="music"]
 
+[ext_resource type="Script" path="res://src/world/elements/ground/ground_variation.gd" id="ground_variation"]
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
 panorama = ExtResource("sky")
 
@@ -40,6 +41,13 @@ background_mode = 2
 sky = SubResource("Sky_level")
 ambient_light_sky_contribution = 0.4
 ambient_light_energy = 0.3
+ssao_enabled = true
+ssao_radius = 1.5
+ssao_intensity = 2.5
+ssao_power = 1.8
+adjustment_enabled = true
+adjustment_contrast = 1.05
+adjustment_saturation = 1.08
 
 [sub_resource type="Curve" id="Curve_survival"]
 _limits = [0.0, 3.0, 0.0, 1.0]
@@ -111,6 +119,7 @@ environment = SubResource("Environment_sky")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+light_color = Color(1, 0.97, 0.9, 1)
 shadow_enabled = true
 shadow_normal_bias = 5.0
 shadow_blur = 2.0
@@ -552,6 +561,10 @@ script = ExtResource("launch_message")
 message_string = "[color=#ff8888]Sword usage[/color]
 
 Use dash to swing and attack with the sword !"
+
+[node name="GroundVariation" type="Node" parent="." node_paths=PackedStringArray("grid_maps")]
+script = ExtResource("ground_variation")
+grid_maps = [NodePath("../Level/NavigationRegion3D/GridMapFloor"), NodePath("../Level/Decoration")]
 
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]

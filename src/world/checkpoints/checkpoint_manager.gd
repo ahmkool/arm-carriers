@@ -85,13 +85,27 @@ func get_progress_order(checkpoint: Checkpoint) -> int:
 func get_spawn_transform() -> Transform3D:
 	if current_checkpoint == null:
 		return Transform3D.IDENTITY
-	return current_checkpoint.get_spawn_transform()
+	var weapon_id := _swapped_weapon_id()
+	if weapon_id.is_empty():
+		return current_checkpoint.get_spawn_transform()
+	return current_checkpoint.get_weapon_spawn_transform(weapon_id)
 
 
 func get_shooter_transform() -> Transform3D:
 	if current_checkpoint == null:
 		return Transform3D.IDENTITY
-	return current_checkpoint.get_shooter_transform()
+	var weapon_id := _swapped_weapon_id()
+	if weapon_id.is_empty():
+		return current_checkpoint.get_shooter_transform()
+	return current_checkpoint.get_weapon_shooter_transform(weapon_id)
+
+
+## Set when the level is played with a swapped-in weapon; the markers suit only the authored one.
+func _swapped_weapon_id() -> String:
+	var world := get_parent() as WorldLocal
+	if world == null:
+		return ""
+	return world.get_swapped_weapon_id()
 
 
 func _refresh_checkpoints() -> void:

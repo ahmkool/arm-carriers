@@ -21,6 +21,16 @@ const MAX_DIFFICULTY := 4
 const JAGGED_PIXELS := 5.0
 const EDGE_STEPS := 8
 const STAMP_DELAY_SECONDS := 0.55
+## Weapon tags hang on cords below the poster, one per weapon the level can be played with,
+## in rows of up to TAGS_PER_ROW. The second row sits between the first row's tags.
+const TAGS_PER_ROW := 4
+const TAG_RADIUS := 31.0
+const TAG_GAP := 12.0
+const TAG_DROP := 26.0
+const TAG_ROW_STEP := 74.0
+const TAG_FOCUS_SCALE := 1.18
+const TAG_FOCUS_RING := Color(1.0, 0.86, 0.45)
+const CHECK_RADIUS := 12.0
 
 var level: Dictionary
 var rest_position := Vector2.ZERO
@@ -32,11 +42,22 @@ var _time := 0.0
 var _outline: PackedVector2Array
 var _stamped := false
 var _stamp_scale := 1.0
+var _weapon_ids: Array = []
+var _weapon_icons: Array[Texture2D] = []
+var _completed_weapons: Dictionary = {}
+var _focused_weapon := -1
+var _focus_pulse := 0.0
 
 
-func setup(p_level: Dictionary, stamped: bool) -> void:
+## `completed_weapons` holds the ids of the weapons that have beaten this level.
+func setup(p_level: Dictionary, stamped: bool, completed_weapons: Array[String]) -> void:
 	level = p_level
 	_stamped = stamped
+	_weapon_ids = LevelSelectCatalog.weapons_for(level)
+	for weapon_id in _weapon_ids:
+		_weapon_icons.append(WeaponCatalog.icon(weapon_id))
+	for weapon_id in completed_weapons:
+		_completed_weapons[weapon_id] = true
 	size = POSTER_SIZE
 	pivot_offset = Vector2(POSTER_SIZE.x * 0.5, 0.0)
 	mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
@@ -53,6 +74,7 @@ func _process(delta: float) -> void:
 	scale = Vector2.ONE * _size_spring.value
 	rotation_degrees = _swing_spring.value + sin(_time * 1.5) * 1.4
 	self_modulate = Color.WHITE if _selected else Color(0.86, 0.86, 0.86)
+	_step_focus_pulse(step_delta)
 
 
 func _draw() -> void:
@@ -62,6 +84,7 @@ func _draw() -> void:
 	_draw_difficulty()
 	_draw_peg()
 	_draw_stamp()
+	_draw_weapon_tags()
 
 
 func set_selected(selected: bool) -> void:
@@ -70,6 +93,18 @@ func set_selected(selected: bool) -> void:
 		return
 	_size_spring.velocity += 1.6
 	_swing_spring.velocity += 40.0 * (1.0 if randf() < 0.5 else -1.0)
+
+
+## Highlights one weapon tag while the players pick a weapon; -1 clears it.
+func set_weapon_focus(index: int) -> void:
+	_focused_weapon = index
+	_focus_pulse = 0.0
+	queue_redraw()
+
+
+## Where a weapon tag hangs, in the parent's coordinates, following the poster's swing and scale.
+func weapon_tag_point(index: int) -> Vector2:
+	return get_transform() * _tag_center(index)
 
 
 func center_point() -> Vector2:
@@ -155,8 +190,18 @@ func _draw_difficulty() -> void:
 	for index in MAX_DIFFICULTY:
 		var earned := index < difficulty
 		_draw_skull(Vector2(start_x + index * SKULL_SPACING, 318.0), INK if earned else Color(INK, 0.2))
-	var label: String = level["label"]
-	draw_string(FONT, Vector2(0.0, 380.0), label.to_upper(), HORIZONTAL_ALIGNMENT_CENTER, POSTER_SIZE.x, 28, INK)
+	draw_string(FONT, Vector2(0.0, 380.0), _label_text(), HORIZONTAL_ALIGNMENT_CENTER, POSTER_SIZE.x, 28, _label_color())
+
+
+## While the players pick a weapon, the label names it, since the tags below can be covered.
+func _label_text() -> String:
+	if _focused_weapon < 0:
+		return String(level["label"]).to_upper()
+	return "WITH " + WeaponCatalog.display_name(_weapon_ids[_focused_weapon]).to_upper()
+
+
+func _label_color() -> Color:
+	return STAMP_RED if _focused_weapon >= 0 else INK
 
 
 func _draw_skull(at: Vector2, color: Color) -> void:
@@ -183,6 +228,60 @@ func _draw_stamp() -> void:
 	var baseline := FONT.get_ascent(font_size) * 0.5 - 5.0
 	draw_string(FONT, Vector2(-130.0, baseline), text, HORIZONTAL_ALIGNMENT_CENTER, 260.0, font_size, STAMP_RED)
 	draw_set_transform(Vector2.ZERO)
+
+
+func _step_focus_pulse(delta: float) -> void:
+	if _focused_weapon < 0:
+		return
+	_focus_pulse += delta
+	queue_redraw()
+
+
+func _tag_center(index: int) -> Vector2:
+	var row := index / TAGS_PER_ROW
+	var column := index % TAGS_PER_ROW
+	var in_row := mini(_weapon_ids.size() - row * TAGS_PER_ROW, TAGS_PER_ROW)
+	var row_width := in_row * TAG_RADIUS * 2.0 + (in_row - 1) * TAG_GAP
+	var x := (POSTER_SIZE.x - row_width) * 0.5 + TAG_RADIUS + column * (TAG_RADIUS * 2.0 + TAG_GAP)
+	return Vector2(x, POSTER_SIZE.y + TAG_DROP + TAG_RADIUS + row * TAG_ROW_STEP)
+
+
+## Cords first, so the second row's cords pass behind the first row's tags.
+func _draw_weapon_tags() -> void:
+	for index in _weapon_ids.size():
+		var center := _tag_center(index)
+		draw_line(Vector2(center.x, POSTER_SIZE.y - 8.0), center, INK, 3.0, true)
+	for index in _weapon_ids.size():
+		_draw_weapon_tag(index)
+
+
+func _draw_weapon_tag(index: int) -> void:
+	var center := _tag_center(index)
+	var focused := index == _focused_weapon
+	var radius := TAG_RADIUS * (TAG_FOCUS_SCALE + sin(_focus_pulse * 6.0) * 0.04 if focused else 1.0)
+	draw_circle(center + Vector2(4.0, 5.0), radius, PAPER_SHADOW, true, -1.0, true)
+	draw_circle(center, radius, PAPER, true, -1.0, true)
+	draw_arc(center, radius, 0.0, TAU, 40, INK, 3.0, true)
+	_draw_tag_icon(index, center, radius)
+	if focused:
+		draw_arc(center, radius + 5.0, 0.0, TAU, 40, TAG_FOCUS_RING, 6.0, true)
+	if _completed_weapons.has(_weapon_ids[index]):
+		_draw_check(center + Vector2(radius, radius) * 0.7)
+
+
+func _draw_tag_icon(index: int, center: Vector2, radius: float) -> void:
+	var icon := _weapon_icons[index]
+	if icon == null:
+		return
+	var side := radius * 1.7
+	draw_texture_rect(icon, Rect2(center - Vector2(side, side) * 0.5, Vector2(side, side)), false)
+
+
+## The red tick that says this weapon has beaten the level.
+func _draw_check(at: Vector2) -> void:
+	draw_circle(at, CHECK_RADIUS, STAMP_RED, true, -1.0, true)
+	var points := PackedVector2Array([at + Vector2(-7.0, 0.0), at + Vector2(-2.0, 6.0), at + Vector2(8.0, -6.0)])
+	draw_polyline(points, PAPER, 4.0, true)
 
 
 func _build_torn_outline(random_seed: int) -> PackedVector2Array:
