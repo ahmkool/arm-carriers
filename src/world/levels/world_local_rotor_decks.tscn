@@ -1,0 +1,1042 @@
+[gd_scene format=3 uid="uid://bnp1u4ognf8a6"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/sky_decks/deck_tiles.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky_decks/rotor_ferry.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="bazooka"]
+[ext_resource type="AudioStream" uid="uid://dxb245ts7cdnt" path="res://assets/music/PeriTune_Ticking_Labyrinth.mp3" id="music"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky/cloud_layers.tscn" id="clouds"]
+[ext_resource type="Script" path="res://src/world/elements/sky/floating_bob.gd" id="bob"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky_decks/deck_rotor.tscn" id="rotor"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("sky")
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="Curve" id="Curve_survival"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3.0), 0.0, 0.0, 0, 0, Vector2(1, 3.0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(400, 1, 400)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ride"]
+size = Vector3(7.5, 3, 7.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(21, 3, 9)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(-11.741001, -0.49, -152.698, -11.741001, -0.49, -135.448, -8.991001, -0.49, -135.448, -8.991001, -0.49, -152.698, -8.741001, -0.49, -132.448, 11.508999, -0.49, -132.448, 11.508999, -0.49, -135.198, 14.508999, -0.49, -135.448, 14.508999, -0.49, -152.698, 11.758999, -0.49, -152.698, 11.508999, -0.49, -155.448, -8.741001, -0.49, -155.448, -8.741001, -0.49, -110.698, -8.741001, -0.49, -81.448, 11.508999, -0.49, -81.448, 11.508999, -0.49, -110.698, -23.741001, -0.49, -84.198, -23.741001, -0.49, -81.448, -18.491001, -0.49, -81.448, -18.491001, -0.49, -84.198, -26.491001, -0.49, -104.698, -26.491001, -0.49, -84.448, -15.491001, -0.49, -84.448, -15.491001, -0.49, -104.698, -18.491001, -0.49, -104.948, -18.491001, -0.49, -107.698, -23.741001, -0.49, -107.698, -23.741001, -0.49, -104.948, 21.258999, -0.49, -81.448, 26.508999, -0.49, -81.448, 26.508999, -0.49, -84.198, 21.008999, -0.49, -84.448, 18.258999, -0.49, -104.698, 18.258999, -0.49, -84.448, 21.008999, -0.49, -104.698, 26.508999, -0.49, -104.948, 26.508999, -0.49, -107.698, 21.258999, -0.49, -107.698, 29.508999, -0.49, -84.448, 29.508999, -0.49, -104.698, -1.9910011, -0.49, -30.447998, -1.7410011, -0.49, -38.697998, -3.4910011, -0.49, -38.947998, -14.991001, -0.49, -33.447998, -14.741001, -0.49, -30.447998, -3.4910011, -0.49, -51.197998, -1.7410011, -0.49, -51.447998, -1.9910011, -0.49, -59.697998, -14.741001, -0.49, -59.697998, -14.991001, -0.49, -56.697998, -17.741001, -0.49, -56.697998, -17.741001, -0.49, -33.447998, 4.508999, -0.49, -51.447998, 4.758999, -0.49, -59.697998, 6.258999, -0.49, -38.947998, 4.508999, -0.49, -38.697998, 4.758999, -0.49, -30.447998, 17.508999, -0.49, -30.447998, 17.508999, -0.49, -33.197998, 6.258999, -0.49, -51.197998, 17.508999, -0.49, -56.947998, 17.508999, -0.49, -59.697998, 20.508999, -0.49, -33.447998, 20.508999, -0.49, -56.697998, -11.741001, -0.49, 32.552002, 14.508999, -0.49, 32.552002, 14.508999, -0.49, 29.802002, -11.991001, -0.49, 29.552002, 14.508999, -0.49, -5.947998, 14.508999, -0.49, -8.697998, -11.741001, -0.49, -8.697998, -11.991001, -0.49, -5.697998, -14.741001, -0.49, -5.697998, -14.741001, -0.49, 29.552002, 17.508999, -0.49, 29.552002, 17.508999, -0.49, -5.697998)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1), PackedInt32Array(6, 5, 4), PackedInt32Array(8, 7, 9), PackedInt32Array(9, 7, 6), PackedInt32Array(9, 6, 10), PackedInt32Array(10, 6, 11), PackedInt32Array(11, 6, 2), PackedInt32Array(2, 6, 4), PackedInt32Array(11, 2, 3), PackedInt32Array(15, 14, 12), PackedInt32Array(12, 14, 13), PackedInt32Array(19, 18, 16), PackedInt32Array(16, 18, 17), PackedInt32Array(24, 23, 20), PackedInt32Array(20, 23, 22), PackedInt32Array(20, 22, 19), PackedInt32Array(20, 19, 21), PackedInt32Array(27, 26, 24), PackedInt32Array(24, 26, 25), PackedInt32Array(20, 27, 24), PackedInt32Array(19, 16, 21), PackedInt32Array(29, 28, 30), PackedInt32Array(30, 28, 31), PackedInt32Array(34, 31, 32), PackedInt32Array(32, 31, 33), PackedInt32Array(36, 35, 37), PackedInt32Array(37, 35, 34), PackedInt32Array(35, 39, 34), PackedInt32Array(34, 39, 38), PackedInt32Array(34, 38, 30), PackedInt32Array(34, 30, 31), PackedInt32Array(41, 40, 42), PackedInt32Array(42, 40, 43), PackedInt32Array(43, 40, 44), PackedInt32Array(46, 45, 47), PackedInt32Array(47, 45, 49), PackedInt32Array(47, 49, 48), PackedInt32Array(43, 51, 42), PackedInt32Array(42, 51, 45), PackedInt32Array(45, 51, 49), PackedInt32Array(49, 51, 50), PackedInt32Array(46, 47, 52), PackedInt32Array(52, 47, 53), PackedInt32Array(55, 54, 56), PackedInt32Array(56, 54, 58), PackedInt32Array(56, 58, 57), PackedInt32Array(52, 53, 59), PackedInt32Array(59, 53, 60), PackedInt32Array(60, 53, 61), PackedInt32Array(60, 63, 59), PackedInt32Array(59, 63, 54), PackedInt32Array(54, 63, 58), PackedInt32Array(58, 63, 62), PackedInt32Array(41, 55, 40), PackedInt32Array(40, 55, 56), PackedInt32Array(65, 64, 66), PackedInt32Array(66, 64, 67), PackedInt32Array(69, 68, 70), PackedInt32Array(70, 68, 71), PackedInt32Array(71, 67, 72), PackedInt32Array(72, 67, 73), PackedInt32Array(68, 75, 71), PackedInt32Array(71, 75, 74), PackedInt32Array(71, 74, 66), PackedInt32Array(71, 66, 67)]
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
+
+[node name="EnemyLocal1a" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -1.4995)
+is_offensive = false
+
+[node name="EnemyLocal1b" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.5472, 0, -2.5492)
+is_offensive = false
+
+[node name="EnemyLocal1c" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -6.4478, 0, -2.5492)
+is_offensive = false
+
+[node name="EnemyLocal2a" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -1.4995)
+is_offensive = false
+
+[node name="EnemyLocal2b" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.4499, 0, -2.5492)
+is_offensive = false
+
+[node name="EnemyLocal2c" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 2.5492, 0, -2.5492)
+is_offensive = false
+
+[node name="EnemyLocal3a" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -1.4995)
+is_offensive = false
+
+[node name="EnemyLocal3b" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 9.4468, 0, -2.5492)
+is_offensive = false
+
+[node name="EnemyLocal3c" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 11.5462, 0, -2.5492)
+is_offensive = false
+
+[node name="EnemyGroup2" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup2"]
+
+[node name="EnemyLocal1" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.4965, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyLocal4" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 13.4955, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyLocal6" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -13.4955, 0, -46.4845)
+is_offensive = false
+
+[node name="EnemyLocal7" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 16.4945, 0, -46.4845)
+is_offensive = false
+
+[node name="EnemyLocal8" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.4965, 0, -40.4865)
+is_offensive = false
+
+[node name="EnemyLocal9" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 13.4955, 0, -40.4865)
+is_offensive = false
+
+[node name="EnemyLocal10" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -52.4825)
+is_offensive = false
+
+[node name="EnemyLocal11" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -52.4825)
+is_offensive = false
+
+[node name="EnemyGroup3" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup3"]
+
+[node name="EnemyMage1" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -88.4705)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup3/InstancedEnemies/EnemyMage1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 4.0
+
+[node name="EnemyMage2" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -97.4675)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup3/InstancedEnemies/EnemyMage2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 4.0
+
+[node name="EnemyMage3" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -97.4675)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup3/InstancedEnemies/EnemyMage3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 4.0
+
+[node name="EnemyMage4" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -88.4705)
+is_offensive = false
+
+[node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup3/InstancedEnemies/EnemyMage4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 4.0
+
+[node name="EnemyLocal1" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -103.4655)
+is_offensive = false
+
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -103.4655)
+is_offensive = false
+
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -100.4665)
+is_offensive = false
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 22.4925)
+script = ExtResource("checkpoint")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 4.4985)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CallFerry1")]
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup2")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -55.4815)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CallFerry2")]
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup3")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup2")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -103.4655)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CallFerry3")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup3")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger3")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -17, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -40)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-9, 65501, 0, -9, 65502, 0, -9, 65503, 0, -9, 65504, 0, -9, 65505, 0, -9, 65506, 0, -9, 65507, 0, -8, 65500, 0, -8, 65501, 0, -8, 65502, 0, -8, 65503, 0, -8, 65504, 0, -8, 65505, 0, -8, 65506, 0, -8, 65507, 0, -8, 65508, 0, -7, 65500, 0, -7, 65501, 0, -7, 65502, 0, -7, 65503, 0, -7, 65504, 0, -7, 65505, 0, -7, 65506, 0, -7, 65507, 0, -7, 65508, 0, -6, 65501, 0, -6, 65502, 0, -6, 65503, 0, -6, 65504, 0, -6, 65505, 0, -6, 65506, 0, -6, 65507, 0, -6, 65517, 0, -6, 65518, 0, -6, 65519, 0, -6, 65520, 0, -6, 65521, 0, -6, 65522, 0, -6, 65523, 0, -6, 65524, 0, -5, 65516, 0, -5, 65517, 0, -5, 65518, 0, -5, 65519, 0, -5, 65520, 0, -5, 65521, 0, -5, 65522, 0, -5, 65523, 0, -5, 65524, 0, -5, 65525, 0, -5, 65534, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -5, 2, 0, -5, 3, 0, -5, 4, 0, -5, 5, 0, -5, 6, 0, -5, 7, 0, -5, 8, 0, -5, 9, 0, -4, 65485, 0, -4, 65486, 0, -4, 65487, 0, -4, 65488, 0, -4, 65489, 0, -4, 65490, 0, -4, 65516, 0, -4, 65517, 0, -4, 65518, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -4, 3, 0, -4, 4, 0, -4, 5, 0, -4, 6, 0, -4, 7, 0, -4, 8, 0, -4, 9, 0, -4, 10, 0, -3, 65484, 0, -3, 65485, 0, -3, 65486, 0, -3, 65487, 0, -3, 65488, 0, -3, 65489, 0, -3, 65490, 0, -3, 65491, 0, -3, 65499, 0, -3, 65500, 0, -3, 65501, 0, -3, 65502, 0, -3, 65503, 0, -3, 65504, 0, -3, 65505, 0, -3, 65506, 0, -3, 65507, 0, -3, 65508, 0, -3, 65516, 0, -3, 65517, 0, -3, 65518, 0, -3, 65519, 0, -3, 65520, 0, -3, 65521, 0, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -3, 4, 0, -3, 5, 0, -3, 6, 0, -3, 7, 0, -3, 8, 0, -3, 9, 0, -3, 10, 0, -2, 65484, 0, -2, 65485, 0, -2, 65486, 0, -2, 65487, 0, -2, 65488, 0, -2, 65489, 0, -2, 65490, 0, -2, 65491, 0, -2, 65499, 0, -2, 65500, 0, -2, 65501, 0, -2, 65502, 0, -2, 65503, 0, -2, 65504, 0, -2, 65505, 0, -2, 65506, 0, -2, 65507, 0, -2, 65508, 0, -2, 65516, 0, -2, 65517, 0, -2, 65518, 0, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -2, 4, 0, -2, 5, 0, -2, 6, 0, -2, 7, 0, -2, 8, 0, -2, 9, 0, -2, 10, 0, -1, 65484, 0, -1, 65485, 0, -1, 65486, 0, -1, 65487, 0, -1, 65488, 0, -1, 65489, 0, -1, 65490, 0, -1, 65491, 0, -1, 65499, 0, -1, 65500, 0, -1, 65501, 0, -1, 65502, 0, -1, 65503, 0, -1, 65504, 0, -1, 65505, 0, -1, 65506, 0, -1, 65507, 0, -1, 65508, 0, -1, 65516, 0, -1, 65517, 0, -1, 65518, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -1, 4, 0, -1, 5, 0, -1, 6, 0, -1, 7, 0, -1, 8, 0, -1, 9, 0, -1, 10, 0, -65536, 65484, 0, -65536, 65485, 0, -65536, 65486, 0, -65536, 65487, 0, -65536, 65488, 0, -65536, 65489, 0, -65536, 65490, 0, -65536, 65491, 0, -65536, 65499, 0, -65536, 65500, 0, -65536, 65501, 0, -65536, 65502, 0, -65536, 65503, 0, -65536, 65504, 0, -65536, 65505, 0, -65536, 65506, 0, -65536, 65507, 0, -65536, 65508, 0, -65536, 65516, 0, -65536, 65517, 0, -65536, 65518, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65536, 4, 0, -65536, 5, 0, -65536, 6, 0, -65536, 7, 0, -65536, 8, 0, -65536, 9, 0, -65536, 10, 0, -65535, 65484, 0, -65535, 65485, 0, -65535, 65486, 0, -65535, 65487, 0, -65535, 65488, 0, -65535, 65489, 0, -65535, 65490, 0, -65535, 65491, 0, -65535, 65499, 0, -65535, 65500, 0, -65535, 65501, 0, -65535, 65502, 0, -65535, 65503, 0, -65535, 65504, 0, -65535, 65505, 0, -65535, 65506, 0, -65535, 65507, 0, -65535, 65508, 0, -65535, 65516, 0, -65535, 65517, 0, -65535, 65518, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65535, 4, 0, -65535, 5, 0, -65535, 6, 0, -65535, 7, 0, -65535, 8, 0, -65535, 9, 0, -65535, 10, 0, -65534, 65484, 0, -65534, 65485, 0, -65534, 65486, 0, -65534, 65487, 0, -65534, 65488, 0, -65534, 65489, 0, -65534, 65490, 0, -65534, 65491, 0, -65534, 65499, 0, -65534, 65500, 0, -65534, 65501, 0, -65534, 65502, 0, -65534, 65503, 0, -65534, 65504, 0, -65534, 65505, 0, -65534, 65506, 0, -65534, 65507, 0, -65534, 65508, 0, -65534, 65516, 0, -65534, 65517, 0, -65534, 65518, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65534, 4, 0, -65534, 5, 0, -65534, 6, 0, -65534, 7, 0, -65534, 8, 0, -65534, 9, 0, -65534, 10, 0, -65533, 65484, 0, -65533, 65485, 0, -65533, 65486, 0, -65533, 65487, 0, -65533, 65488, 0, -65533, 65489, 0, -65533, 65490, 0, -65533, 65491, 0, -65533, 65499, 0, -65533, 65500, 0, -65533, 65501, 0, -65533, 65502, 0, -65533, 65503, 0, -65533, 65504, 0, -65533, 65505, 0, -65533, 65506, 0, -65533, 65507, 0, -65533, 65508, 0, -65533, 65516, 0, -65533, 65517, 0, -65533, 65518, 0, -65533, 65519, 0, -65533, 65520, 0, -65533, 65521, 0, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65533, 4, 0, -65533, 5, 0, -65533, 6, 0, -65533, 7, 0, -65533, 8, 0, -65533, 9, 0, -65533, 10, 0, -65532, 65485, 0, -65532, 65486, 0, -65532, 65487, 0, -65532, 65488, 0, -65532, 65489, 0, -65532, 65490, 0, -65532, 65516, 0, -65532, 65517, 0, -65532, 65518, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 0, -65532, 65525, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0, -65532, 3, 0, -65532, 4, 0, -65532, 5, 0, -65532, 6, 0, -65532, 7, 0, -65532, 8, 0, -65532, 9, 0, -65532, 10, 0, -65531, 65516, 0, -65531, 65517, 0, -65531, 65518, 0, -65531, 65519, 0, -65531, 65520, 0, -65531, 65521, 0, -65531, 65522, 0, -65531, 65523, 0, -65531, 65524, 0, -65531, 65525, 0, -65531, 65534, 0, -65531, 65535, 0, -65531, 0, 0, -65531, 1, 0, -65531, 2, 0, -65531, 3, 0, -65531, 4, 0, -65531, 5, 0, -65531, 6, 0, -65531, 7, 0, -65531, 8, 0, -65531, 9, 0, -65530, 65501, 0, -65530, 65502, 0, -65530, 65503, 0, -65530, 65504, 0, -65530, 65505, 0, -65530, 65506, 0, -65530, 65507, 0, -65530, 65517, 0, -65530, 65518, 0, -65530, 65519, 0, -65530, 65520, 0, -65530, 65521, 0, -65530, 65522, 0, -65530, 65523, 0, -65530, 65524, 0, -65529, 65500, 0, -65529, 65501, 0, -65529, 65502, 0, -65529, 65503, 0, -65529, 65504, 0, -65529, 65505, 0, -65529, 65506, 0, -65529, 65507, 0, -65529, 65508, 0, -65528, 65500, 0, -65528, 65501, 0, -65528, 65502, 0, -65528, 65503, 0, -65528, 65504, 0, -65528, 65505, 0, -65528, 65506, 0, -65528, 65507, 0, -65528, 65508, 0, -65527, 65501, 0, -65527, 65502, 0, -65527, 65503, 0, -65527, 65504, 0, -65527, 65505, 0, -65527, 65506, 0, -65527, 65507, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="DeckFrame" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196617, 65501, 4, -196617, 65502, 4, -196617, 65503, 4, -196617, 65504, 4, -196617, 65505, 4, -196617, 65506, 4, -196617, 65507, 4, -131081, 65507, 3, -65545, 65501, 2, -9, 65501, 1, -9, 65502, 1, -9, 65503, 1, -9, 65504, 1, -9, 65505, 1, -9, 65506, 1, -9, 65507, 1, -196616, 65500, 4, -196616, 65508, 4, -131080, 65508, 3, -65544, 65500, 2, -8, 65500, 1, -8, 65501, 1, -8, 65502, 1, -8, 65503, 1, -8, 65504, 1, -8, 65505, 1, -8, 65506, 1, -8, 65507, 1, -8, 65508, 1, -262151, 65500, 5, -262151, 65508, 5, -131079, 65508, 3, -65543, 65500, 2, -7, 65500, 1, -7, 65501, 1, -7, 65502, 1, -7, 65503, 1, -7, 65504, 1, -7, 65505, 1, -7, 65506, 1, -7, 65507, 1, -7, 65508, 1, -262150, 65501, 5, -262150, 65502, 5, -262150, 65503, 5, -262150, 65504, 5, -262150, 65505, 5, -262150, 65506, 5, -262150, 65507, 5, -196614, 65517, 4, -196614, 65518, 4, -196614, 65519, 4, -196614, 65520, 4, -196614, 65521, 4, -196614, 65522, 4, -196614, 65523, 4, -196614, 65524, 4, -131078, 65507, 3, -131078, 65524, 3, -65542, 65501, 2, -65542, 65517, 2, -6, 65501, 1, -6, 65502, 1, -6, 65503, 1, -6, 65504, 1, -6, 65505, 1, -6, 65506, 1, -6, 65507, 1, -6, 65517, 1, -6, 65518, 1, -6, 65519, 1, -6, 65520, 1, -6, 65521, 1, -6, 65522, 1, -6, 65523, 1, -6, 65524, 1, -196613, 65516, 4, -196613, 65525, 4, -196613, 65534, 4, -196613, 65535, 4, -196613, 0, 4, -196613, 1, 4, -196613, 2, 4, -196613, 3, 4, -196613, 4, 4, -196613, 5, 4, -196613, 6, 4, -196613, 7, 4, -196613, 8, 4, -196613, 9, 4, -131077, 65525, 3, -131077, 9, 3, -65541, 65516, 2, -65541, 65534, 2, -5, 65516, 1, -5, 65517, 1, -5, 65518, 1, -5, 65519, 1, -5, 65520, 1, -5, 65521, 1, -5, 65522, 1, -5, 65523, 1, -5, 65524, 1, -5, 65525, 1, -5, 65534, 1, -5, 65535, 1, -5, 0, 1, -5, 1, 1, -5, 2, 1, -5, 3, 1, -5, 4, 1, -5, 5, 1, -5, 6, 1, -5, 7, 1, -5, 8, 1, -5, 9, 1, -196612, 65485, 4, -196612, 65486, 4, -196612, 65487, 4, -196612, 65488, 4, -196612, 65489, 4, -196612, 65490, 4, -196612, 65533, 4, -196612, 10, 4, -131076, 65490, 3, -131076, 65525, 3, -131076, 10, 3, -65540, 65485, 2, -65540, 65516, 2, -65540, 65533, 2, -4, 65485, 1, -4, 65486, 1, -4, 65487, 1, -4, 65488, 1, -4, 65489, 1, -4, 65490, 1, -4, 65516, 1, -4, 65517, 1, -4, 65518, 1, -4, 65519, 1, -4, 65520, 1, -4, 65521, 1, -4, 65522, 1, -4, 65523, 1, -4, 65524, 1, -4, 65525, 1, -4, 65533, 1, -4, 65534, 1, -4, 65535, 1, -4, 0, 1, -4, 1, 1, -4, 2, 1, -4, 3, 1, -4, 4, 1, -4, 5, 1, -4, 6, 1, -4, 7, 1, -4, 8, 1, -4, 9, 1, -4, 10, 1, -196611, 65484, 4, -196611, 65491, 4, -196611, 65499, 4, -196611, 65500, 4, -196611, 65501, 4, -196611, 65502, 4, -196611, 65503, 4, -196611, 65504, 4, -196611, 65505, 4, -196611, 65506, 4, -196611, 65507, 4, -196611, 65508, 4, -131075, 65491, 3, -131075, 65508, 3, -131075, 65525, 3, -131075, 10, 3, -65539, 65484, 2, -65539, 65499, 2, -65539, 65516, 2, -65539, 65533, 2, -3, 65484, 1, -3, 65485, 1, -3, 65486, 1, -3, 65487, 1, -3, 65488, 1, -3, 65489, 1, -3, 65490, 1, -3, 65491, 1, -3, 65499, 1, -3, 65500, 1, -3, 65501, 1, -3, 65502, 1, -3, 65503, 1, -3, 65504, 1, -3, 65505, 1, -3, 65506, 1, -3, 65507, 1, -3, 65508, 1, -3, 65516, 1, -3, 65517, 1, -3, 65518, 1, -3, 65519, 1, -3, 65520, 1, -3, 65521, 1, -3, 65522, 1, -3, 65523, 1, -3, 65524, 1, -3, 65525, 1, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -3, 3, 1, -3, 4, 1, -3, 5, 1, -3, 6, 1, -3, 7, 1, -3, 8, 1, -3, 9, 1, -3, 10, 1, -262146, 65519, 5, -262146, 65520, 5, -262146, 65521, 5, -262146, 65522, 5, -131074, 65491, 3, -131074, 65508, 3, -131074, 65525, 3, -131074, 10, 3, -65538, 65484, 2, -65538, 65499, 2, -65538, 65516, 2, -65538, 65533, 2, -2, 65484, 1, -2, 65485, 1, -2, 65486, 1, -2, 65487, 1, -2, 65488, 1, -2, 65489, 1, -2, 65490, 1, -2, 65491, 1, -2, 65499, 1, -2, 65500, 1, -2, 65501, 1, -2, 65502, 1, -2, 65503, 1, -2, 65504, 1, -2, 65505, 1, -2, 65506, 1, -2, 65507, 1, -2, 65508, 1, -2, 65516, 1, -2, 65517, 1, -2, 65518, 1, -2, 65519, 1, -2, 65520, 1, -2, 65521, 1, -2, 65522, 1, -2, 65523, 1, -2, 65524, 1, -2, 65525, 1, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -2, 4, 1, -2, 5, 1, -2, 6, 1, -2, 7, 1, -2, 8, 1, -2, 9, 1, -2, 10, 1, -131073, 65491, 3, -131073, 65508, 3, -131073, 65518, 3, -131073, 65525, 3, -131073, 10, 3, -65537, 65484, 2, -65537, 65499, 2, -65537, 65516, 2, -65537, 65523, 2, -65537, 65533, 2, -1, 65484, 1, -1, 65485, 1, -1, 65486, 1, -1, 65487, 1, -1, 65488, 1, -1, 65489, 1, -1, 65490, 1, -1, 65491, 1, -1, 65499, 1, -1, 65500, 1, -1, 65501, 1, -1, 65502, 1, -1, 65503, 1, -1, 65504, 1, -1, 65505, 1, -1, 65506, 1, -1, 65507, 1, -1, 65508, 1, -1, 65516, 1, -1, 65517, 1, -1, 65518, 1, -1, 65523, 1, -1, 65524, 1, -1, 65525, 1, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -1, 4, 1, -1, 5, 1, -1, 6, 1, -1, 7, 1, -1, 8, 1, -1, 9, 1, -1, 10, 1, -196608, 65491, 3, -196608, 65508, 3, -196608, 65518, 3, -196608, 65525, 3, -196608, 10, 3, -131072, 65484, 2, -131072, 65499, 2, -131072, 65516, 2, -131072, 65523, 2, -131072, 65533, 2, -65536, 65484, 1, -65536, 65485, 1, -65536, 65486, 1, -65536, 65487, 1, -65536, 65488, 1, -65536, 65489, 1, -65536, 65490, 1, -65536, 65491, 1, -65536, 65499, 1, -65536, 65500, 1, -65536, 65501, 1, -65536, 65502, 1, -65536, 65503, 1, -65536, 65504, 1, -65536, 65505, 1, -65536, 65506, 1, -65536, 65507, 1, -65536, 65508, 1, -65536, 65516, 1, -65536, 65517, 1, -65536, 65518, 1, -65536, 65523, 1, -65536, 65524, 1, -65536, 65525, 1, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -65536, 4, 1, -65536, 5, 1, -65536, 6, 1, -65536, 7, 1, -65536, 8, 1, -65536, 9, 1, -65536, 10, 1, -196607, 65491, 3, -196607, 65508, 3, -196607, 65518, 3, -196607, 65525, 3, -196607, 10, 3, -131071, 65484, 2, -131071, 65499, 2, -131071, 65516, 2, -131071, 65523, 2, -131071, 65533, 2, -65535, 65484, 1, -65535, 65485, 1, -65535, 65486, 1, -65535, 65487, 1, -65535, 65488, 1, -65535, 65489, 1, -65535, 65490, 1, -65535, 65491, 1, -65535, 65499, 1, -65535, 65500, 1, -65535, 65501, 1, -65535, 65502, 1, -65535, 65503, 1, -65535, 65504, 1, -65535, 65505, 1, -65535, 65506, 1, -65535, 65507, 1, -65535, 65508, 1, -65535, 65516, 1, -65535, 65517, 1, -65535, 65518, 1, -65535, 65523, 1, -65535, 65524, 1, -65535, 65525, 1, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -65535, 4, 1, -65535, 5, 1, -65535, 6, 1, -65535, 7, 1, -65535, 8, 1, -65535, 9, 1, -65535, 10, 1, -262142, 65519, 4, -262142, 65520, 4, -262142, 65521, 4, -262142, 65522, 4, -196606, 65491, 3, -196606, 65508, 3, -196606, 65525, 3, -196606, 10, 3, -131070, 65484, 2, -131070, 65499, 2, -131070, 65516, 2, -131070, 65533, 2, -65534, 65484, 1, -65534, 65485, 1, -65534, 65486, 1, -65534, 65487, 1, -65534, 65488, 1, -65534, 65489, 1, -65534, 65490, 1, -65534, 65491, 1, -65534, 65499, 1, -65534, 65500, 1, -65534, 65501, 1, -65534, 65502, 1, -65534, 65503, 1, -65534, 65504, 1, -65534, 65505, 1, -65534, 65506, 1, -65534, 65507, 1, -65534, 65508, 1, -65534, 65516, 1, -65534, 65517, 1, -65534, 65518, 1, -65534, 65519, 1, -65534, 65520, 1, -65534, 65521, 1, -65534, 65522, 1, -65534, 65523, 1, -65534, 65524, 1, -65534, 65525, 1, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -65534, 4, 1, -65534, 5, 1, -65534, 6, 1, -65534, 7, 1, -65534, 8, 1, -65534, 9, 1, -65534, 10, 1, -327677, 65484, 5, -327677, 65491, 5, -327677, 65499, 5, -327677, 65500, 5, -327677, 65501, 5, -327677, 65502, 5, -327677, 65503, 5, -327677, 65504, 5, -327677, 65505, 5, -327677, 65506, 5, -327677, 65507, 5, -327677, 65508, 5, -196605, 65491, 3, -196605, 65508, 3, -196605, 65525, 3, -196605, 10, 3, -131069, 65484, 2, -131069, 65499, 2, -131069, 65516, 2, -131069, 65533, 2, -65533, 65484, 1, -65533, 65485, 1, -65533, 65486, 1, -65533, 65487, 1, -65533, 65488, 1, -65533, 65489, 1, -65533, 65490, 1, -65533, 65491, 1, -65533, 65499, 1, -65533, 65500, 1, -65533, 65501, 1, -65533, 65502, 1, -65533, 65503, 1, -65533, 65504, 1, -65533, 65505, 1, -65533, 65506, 1, -65533, 65507, 1, -65533, 65508, 1, -65533, 65516, 1, -65533, 65517, 1, -65533, 65518, 1, -65533, 65519, 1, -65533, 65520, 1, -65533, 65521, 1, -65533, 65522, 1, -65533, 65523, 1, -65533, 65524, 1, -65533, 65525, 1, -65533, 65533, 1, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1, -65533, 3, 1, -65533, 4, 1, -65533, 5, 1, -65533, 6, 1, -65533, 7, 1, -65533, 8, 1, -65533, 9, 1, -65533, 10, 1, -327676, 65485, 5, -327676, 65486, 5, -327676, 65487, 5, -327676, 65488, 5, -327676, 65489, 5, -327676, 65490, 5, -327676, 65533, 5, -327676, 10, 5, -196604, 65490, 3, -196604, 65525, 3, -196604, 10, 3, -131068, 65485, 2, -131068, 65516, 2, -131068, 65533, 2, -65532, 65485, 1, -65532, 65486, 1, -65532, 65487, 1, -65532, 65488, 1, -65532, 65489, 1, -65532, 65490, 1, -65532, 65516, 1, -65532, 65517, 1, -65532, 65518, 1, -65532, 65519, 1, -65532, 65520, 1, -65532, 65521, 1, -65532, 65522, 1, -65532, 65523, 1, -65532, 65524, 1, -65532, 65525, 1, -65532, 65533, 1, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1, -65532, 3, 1, -65532, 4, 1, -65532, 5, 1, -65532, 6, 1, -65532, 7, 1, -65532, 8, 1, -65532, 9, 1, -65532, 10, 1, -327675, 65516, 5, -327675, 65525, 5, -327675, 65534, 5, -327675, 65535, 5, -327675, 0, 5, -327675, 1, 5, -327675, 2, 5, -327675, 3, 5, -327675, 4, 5, -327675, 5, 5, -327675, 6, 5, -327675, 7, 5, -327675, 8, 5, -327675, 9, 5, -196603, 65525, 3, -196603, 9, 3, -131067, 65516, 2, -131067, 65534, 2, -65531, 65516, 1, -65531, 65517, 1, -65531, 65518, 1, -65531, 65519, 1, -65531, 65520, 1, -65531, 65521, 1, -65531, 65522, 1, -65531, 65523, 1, -65531, 65524, 1, -65531, 65525, 1, -65531, 65534, 1, -65531, 65535, 1, -65531, 0, 1, -65531, 1, 1, -65531, 2, 1, -65531, 3, 1, -65531, 4, 1, -65531, 5, 1, -65531, 6, 1, -65531, 7, 1, -65531, 8, 1, -65531, 9, 1, -327674, 65517, 5, -327674, 65518, 5, -327674, 65519, 5, -327674, 65520, 5, -327674, 65521, 5, -327674, 65522, 5, -327674, 65523, 5, -327674, 65524, 5, -262138, 65501, 4, -262138, 65502, 4, -262138, 65503, 4, -262138, 65504, 4, -262138, 65505, 4, -262138, 65506, 4, -262138, 65507, 4, -196602, 65507, 3, -196602, 65524, 3, -131066, 65501, 2, -131066, 65517, 2, -65530, 65501, 1, -65530, 65502, 1, -65530, 65503, 1, -65530, 65504, 1, -65530, 65505, 1, -65530, 65506, 1, -65530, 65507, 1, -65530, 65517, 1, -65530, 65518, 1, -65530, 65519, 1, -65530, 65520, 1, -65530, 65521, 1, -65530, 65522, 1, -65530, 65523, 1, -65530, 65524, 1, -262137, 65500, 4, -262137, 65508, 4, -196601, 65508, 3, -131065, 65500, 2, -65529, 65500, 1, -65529, 65501, 1, -65529, 65502, 1, -65529, 65503, 1, -65529, 65504, 1, -65529, 65505, 1, -65529, 65506, 1, -65529, 65507, 1, -65529, 65508, 1, -327672, 65500, 5, -327672, 65508, 5, -196600, 65508, 3, -131064, 65500, 2, -65528, 65500, 1, -65528, 65501, 1, -65528, 65502, 1, -65528, 65503, 1, -65528, 65504, 1, -65528, 65505, 1, -65528, 65506, 1, -65528, 65507, 1, -65528, 65508, 1, -327671, 65501, 5, -327671, 65502, 5, -327671, 65503, 5, -327671, 65504, 5, -327671, 65505, 5, -327671, 65506, 5, -327671, 65507, 5, -196599, 65507, 3, -131063, 65501, 2, -65527, 65501, 1, -65527, 65502, 1, -65527, 65503, 1, -65527, 65504, 1, -65527, 65505, 1, -65527, 65506, 1, -65527, 65507, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="CloudLayers" parent="Level" instance=ExtResource("clouds")]
+
+[node name="Rotors" type="Node3D" parent="Level"]
+
+[node name="Rotor1" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -25.4915, -1, -104.9655)
+
+[node name="Rotor2" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -26.9915, -1, -97.4675)
+
+[node name="Rotor3" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -26.9915, -1, -88.4705)
+
+[node name="Rotor4" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -25.4915, -1, -83.9715)
+
+[node name="Rotor5" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -23.9925, -1, -106.4645)
+
+[node name="Rotor6" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9935, -1, -106.4645)
+
+[node name="Rotor7" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -16.4945, -1, -56.9815)
+
+[node name="Rotor8" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -17.9945, -1, -52.4825)
+
+[node name="Rotor9" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -17.9945, -1, -43.4855)
+
+[node name="Rotor10" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -17.9945, -1, -34.4885)
+
+[node name="Rotor11" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -16.4945, -1, -32.9885)
+
+[node name="Rotor12" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, 1.4995)
+
+[node name="Rotor13" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, 10.4965)
+
+[node name="Rotor14" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, 19.4935)
+
+[node name="Rotor15" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, 28.4905)
+
+[node name="Rotor16" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, -151.4495)
+
+[node name="Rotor17" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, -142.4525)
+
+[node name="Rotor18" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -7.4975, -1, -155.9485)
+
+[node name="Rotor19" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, -106.4645)
+
+[node name="Rotor20" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, -97.4675)
+
+[node name="Rotor21" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, -88.4705)
+
+[node name="Rotor22" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -7.4975, -1, 32.9895)
+
+[node name="Rotor23" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -155.9485)
+
+[node name="Rotor24" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 32.9895)
+
+[node name="Rotor25" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 10.4965, -1, -155.9485)
+
+[node name="Rotor26" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, -106.4645)
+
+[node name="Rotor27" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, -97.4675)
+
+[node name="Rotor28" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, -88.4705)
+
+[node name="Rotor29" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 10.4965, -1, 32.9895)
+
+[node name="Rotor30" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -151.4495)
+
+[node name="Rotor31" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -142.4525)
+
+[node name="Rotor32" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, 1.4995)
+
+[node name="Rotor33" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, 10.4965)
+
+[node name="Rotor34" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, 19.4935)
+
+[node name="Rotor35" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, 28.4905)
+
+[node name="Rotor36" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 19.4935, -1, -56.9815)
+
+[node name="Rotor37" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.9935, -1, -52.4825)
+
+[node name="Rotor38" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.9935, -1, -43.4855)
+
+[node name="Rotor39" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.9935, -1, -34.4885)
+
+[node name="Rotor40" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 19.4935, -1, -32.9885)
+
+[node name="Rotor41" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 20.9925, -1, -106.4645)
+
+[node name="Rotor42" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.9915, -1, -106.4645)
+
+[node name="Rotor43" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 28.4905, -1, -104.9655)
+
+[node name="Rotor44" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.9905, -1, -97.4675)
+
+[node name="Rotor45" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 29.9905, -1, -88.4705)
+
+[node name="Rotor46" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 28.4905, -1, -83.9715)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="DistantDecks" type="Node" parent="Level"]
+
+[node name="DeckA" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, -26, 10)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65535, 0, -3, 0, 0, -3, 1, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196611, 65535, 4, -196611, 0, 4, -196611, 1, 4, -131075, 1, 3, -65539, 65535, 2, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -196610, 65534, 4, -196610, 2, 4, -131074, 2, 3, -65538, 65534, 2, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -131073, 2, 3, -65537, 65534, 2, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -196608, 2, 3, -131072, 65534, 2, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -196607, 2, 3, -131071, 65534, 2, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -327678, 65534, 5, -327678, 2, 5, -196606, 2, 3, -131070, 65534, 2, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -327677, 65535, 5, -327677, 0, 5, -327677, 1, 5, -196605, 1, 3, -131069, 65535, 2, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, 1.4995)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, -4.4985)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -5.9985)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, 7.4975)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 8.9975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -5.9985)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 8.9975)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9975, -1, -4.4985)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -5.9985)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9975, -1, 7.4975)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 8.9975)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, 1.4995)
+
+[node name="DeckB" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, -32, -16)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196612, 65534, 4, -196612, 65535, 4, -196612, 0, 4, -196612, 1, 4, -196612, 2, 4, -131076, 2, 3, -65540, 65534, 2, -4, 65534, 1, -4, 65535, 1, -4, 0, 1, -4, 1, 1, -4, 2, 1, -196611, 65533, 4, -196611, 3, 4, -131075, 3, 3, -65539, 65533, 2, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -3, 3, 1, -131074, 3, 3, -65538, 65533, 2, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -131073, 3, 3, -65537, 65533, 2, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -196608, 3, 3, -131072, 65533, 2, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -196607, 3, 3, -131071, 65533, 2, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -196606, 3, 3, -131070, 65533, 2, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -327677, 65533, 5, -327677, 3, 5, -196605, 3, 3, -131069, 65533, 2, -65533, 65533, 1, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1, -65533, 3, 1, -327676, 65534, 5, -327676, 65535, 5, -327676, 0, 5, -327676, 1, 5, -327676, 2, 5, -196604, 2, 3, -131068, 65534, 2, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, -4.4985)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10.4965, -1, -5.9985)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 1.4995)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 7.4975)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -10.4965, -1, 8.9975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -8.9975)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 11.9965)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -8.9975)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 11.9965)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -8.9975)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 11.9965)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -4.4985)
+
+[node name="Rotor13" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.4955, -1, -5.9985)
+
+[node name="Rotor14" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 1.4995)
+
+[node name="Rotor15" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 7.4975)
+
+[node name="Rotor16" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.4955, -1, 8.9975)
+
+[node name="DeckC" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, -34, -46)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196611, 65533, 4, -196611, 65534, 4, -196611, 65535, 4, -196611, 0, 4, -196611, 1, 4, -196611, 2, 4, -131075, 2, 3, -65539, 65533, 2, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -196610, 65532, 4, -196610, 3, 4, -131074, 3, 3, -65538, 65532, 2, -2, 65532, 1, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -131073, 3, 3, -65537, 65532, 2, -1, 65532, 1, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -196608, 3, 3, -131072, 65532, 2, -65536, 65532, 1, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -196607, 3, 3, -131071, 65532, 2, -65535, 65532, 1, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -196606, 3, 3, -131070, 65532, 2, -65534, 65532, 1, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -327677, 65532, 5, -327677, 3, 5, -196605, 3, 3, -131069, 65532, 2, -65533, 65532, 1, -65533, 65533, 1, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1, -65533, 3, 1, -327676, 65533, 5, -327676, 65534, 5, -327676, 65535, 5, -327676, 0, 5, -327676, 1, 5, -327676, 2, 5, -196604, 2, 3, -131068, 65533, 2, -65532, 65533, 1, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, -4.4985)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, 1.4995)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, 7.4975)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, -10.4965)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -11.9965)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 11.9965)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -11.9965)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 11.9965)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -11.9965)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 11.9965)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, -10.4965)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.4955, -1, -8.9975)
+
+[node name="Rotor13" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -4.4985)
+
+[node name="Rotor14" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 1.4995)
+
+[node name="Rotor15" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 7.4975)
+
+[node name="Rotor16" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.4955, -1, 8.9975)
+
+[node name="DeckD" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, -26, -70)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckD"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-2, 65535, 0, -2, 0, 0, -2, 1, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckD"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196610, 65535, 4, -196610, 0, 4, -196610, 1, 4, -131074, 1, 3, -65538, 65535, 2, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -196609, 65534, 4, -196609, 2, 4, -131073, 2, 3, -65537, 65534, 2, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -196608, 2, 3, -131072, 65534, 2, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -327679, 65534, 5, -327679, 2, 5, -196607, 2, 3, -131071, 65534, 2, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -327678, 65535, 5, -327678, 0, 5, -327678, 1, 5, -196606, 1, 3, -131070, 65535, 2, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -2.9995)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, 1.4995)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 5.9985)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.9995, -1, -4.4985)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.9995, -1, 7.4975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -5.9985)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 8.9975)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9985, -1, -4.4985)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9985, -1, 7.4975)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -2.9995)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9975, -1, 1.4995)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 5.9985)
+
+[node name="DeckE" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -62, -30, -98)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckE"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckE"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196612, 65534, 4, -196612, 65535, 4, -196612, 0, 4, -196612, 1, 4, -196612, 2, 4, -131076, 2, 3, -65540, 65534, 2, -4, 65534, 1, -4, 65535, 1, -4, 0, 1, -4, 1, 1, -4, 2, 1, -196611, 65533, 4, -196611, 3, 4, -131075, 3, 3, -65539, 65533, 2, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -3, 3, 1, -131074, 3, 3, -65538, 65533, 2, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -131073, 3, 3, -65537, 65533, 2, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -196608, 3, 3, -131072, 65533, 2, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -196607, 3, 3, -131071, 65533, 2, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -327678, 65533, 5, -327678, 3, 5, -196606, 3, 3, -131070, 65533, 2, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -327677, 65534, 5, -327677, 65535, 5, -327677, 0, 5, -327677, 1, 5, -327677, 2, 5, -196605, 2, 3, -131069, 65534, 2, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, -4.4985)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10.4965, -1, -5.9985)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 1.4995)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 7.4975)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -10.4965, -1, 8.9975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -8.9975)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 11.9965)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -8.9975)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 11.9965)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -8.9975)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 11.9965)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, -4.4985)
+
+[node name="Rotor13" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, 1.4995)
+
+[node name="Rotor14" parent="Level/DistantDecks/DeckE" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, 7.4975)
+
+[node name="DeckF" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 72, -34, -122)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckF"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-5, 65533, 0, -5, 65534, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -5, 2, 0, -5, 3, 0, -4, 65532, 0, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -4, 3, 0, -4, 4, 0, -3, 65532, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -3, 4, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -2, 4, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -1, 4, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65536, 4, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65535, 4, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65534, 4, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65533, 4, 0, -65532, 65532, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0, -65532, 3, 0, -65532, 4, 0, -65531, 65533, 0, -65531, 65534, 0, -65531, 65535, 0, -65531, 0, 0, -65531, 1, 0, -65531, 2, 0, -65531, 3, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckF"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196613, 65533, 4, -196613, 65534, 4, -196613, 65535, 4, -196613, 0, 4, -196613, 1, 4, -196613, 2, 4, -196613, 3, 4, -131077, 3, 3, -65541, 65533, 2, -5, 65533, 1, -5, 65534, 1, -5, 65535, 1, -5, 0, 1, -5, 1, 1, -5, 2, 1, -5, 3, 1, -196612, 65532, 4, -196612, 4, 4, -131076, 4, 3, -65540, 65532, 2, -4, 65532, 1, -4, 65533, 1, -4, 65534, 1, -4, 65535, 1, -4, 0, 1, -4, 1, 1, -4, 2, 1, -4, 3, 1, -4, 4, 1, -131075, 4, 3, -65539, 65532, 2, -3, 65532, 1, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -3, 3, 1, -3, 4, 1, -131074, 4, 3, -65538, 65532, 2, -2, 65532, 1, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -2, 4, 1, -131073, 4, 3, -65537, 65532, 2, -1, 65532, 1, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -1, 4, 1, -196608, 4, 3, -131072, 65532, 2, -65536, 65532, 1, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -65536, 4, 1, -196607, 4, 3, -131071, 65532, 2, -65535, 65532, 1, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -65535, 4, 1, -196606, 4, 3, -131070, 65532, 2, -65534, 65532, 1, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -65534, 4, 1, -196605, 4, 3, -131069, 65532, 2, -65533, 65532, 1, -65533, 65533, 1, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1, -65533, 3, 1, -65533, 4, 1, -327676, 65532, 5, -327676, 4, 5, -196604, 4, 3, -131068, 65532, 2, -65532, 65532, 1, -65532, 65533, 1, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1, -65532, 3, 1, -65532, 4, 1, -327675, 65533, 5, -327675, 65534, 5, -327675, 65535, 5, -327675, 0, 5, -327675, 1, 5, -327675, 2, 5, -327675, 3, 5, -196603, 3, 3, -131067, 65533, 2, -65531, 65533, 1, -65531, 65534, 1, -65531, 65535, 1, -65531, 0, 1, -65531, 1, 1, -65531, 2, 1, -65531, 3, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, -4.4985)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, 1.4995)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.9955, -1, 7.4975)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, -10.4965)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10.4965, -1, -11.9965)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 13.4955)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -10.4965, -1, 14.9955)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -11.9965)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 14.9955)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -11.9965)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 14.9955)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -11.9965)
+
+[node name="Rotor13" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 14.9955)
+
+[node name="Rotor14" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -10.4965)
+
+[node name="Rotor15" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.4955, -1, -11.9965)
+
+[node name="Rotor16" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 13.4955)
+
+[node name="Rotor17" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.4955, -1, 14.9955)
+
+[node name="Rotor18" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, -4.4985)
+
+[node name="Rotor19" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, 1.4995)
+
+[node name="Rotor20" parent="Level/DistantDecks/DeckF" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.9945, -1, 7.4975)
+
+[node name="CallFerry1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="RideFerry1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeEnemiesGroup2Offensive")
+
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/EnemyGroup2")
+
+[node name="CallFerry2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="RideFerry2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeEnemiesGroup3Offensive")
+
+[node name="MakeEnemiesGroup3Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/EnemyGroup3")
+
+[node name="CallFerry3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform3")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="RideFerry3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform3")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="FocusMagesSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesSW")
+
+[node name="FocusMagesSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesSE")
+
+[node name="FocusMagesNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesNW")
+
+[node name="FocusMagesNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesNE")
+
+[node name="UnfocusCamera" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="FocusPoints" type="Node3D" parent="Level"]
+
+[node name="FocusMagesSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.4905, 0, -61.4795)
+
+[node name="FocusMagesSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 0, -61.4795)
+
+[node name="FocusMagesNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.4905, 0, -109.4635)
+
+[node name="FocusMagesNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 0, -109.4635)
+
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -145.4515)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+shape = SubResource("BoxShape3D_end")
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -25.4915)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -76.4745)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -127.4575)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -13.4955)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger"]
+shape = SubResource("BoxShape3D_ride")
+
+[node name="AllPlayersAreaTrigger2" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -64.4785)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger2"]
+shape = SubResource("BoxShape3D_ride")
+
+[node name="AllPlayersAreaTrigger3" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -115.4615)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger3"]
+shape = SubResource("BoxShape3D_ride")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="Bazooka" parent="Weapon" instance=ExtResource("bazooka")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.593, 22.5)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/CallFerry1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/UnfocusCamera" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/CallFerry2" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/UnfocusCamera" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="Level/Events/CallFerry3" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="Level/Events/UnfocusCamera" method="trigger"]
+[connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/RideFerry1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/RideFerry2" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/RideFerry3" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesNE" method="trigger"]

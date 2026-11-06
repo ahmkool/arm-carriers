@@ -42,6 +42,21 @@ const GROUPS: Array[Dictionary] = [
 		"levels": [
 			{"title": "Sky Islands", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky.tscn"},
 			{"title": "Dark Dungeon", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_dark_dungeon.tscn"},
+			{"title": "Necromancer", "difficulty": 3, "label": "Boss", "art": Art.BOSS, "scene": "res://src/world/levels/world_local_necromancer_boss.tscn"},
+		],
+	},
+	{
+		"name": "Prototypes 2",
+		"levels": [
+			{"title": "Lava Forge", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_lava.tscn"},
+			{"title": "Rotor Decks", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks.tscn"},
+			{"title": "Space Station", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station.tscn"},
+		],
+	},
+	{
+		"name": "Prototypes 3",
+		"levels": [
+			{"title": "4GTN", "difficulty": 3, "label": "Boss", "art": Art.BOSS, "scene": "res://src/world/levels/world_local_katana_robot_boss.tscn"},
 		],
 	},
 ]

@@ -24,7 +24,7 @@ BRAZIERS = ((-3, -6), (3, -6), (-4, 2), (4, 2),
             (-2, -46), (2, -46))
 
 level = Level("src/world/levels/world_local_dark_dungeon.tscn", palette="dungeon", weapon="sword", floor_seed=1, deco_seed=1,
-              hint="[color=#ff8888]Sword usage[/color]\n\nUse dash to swing and attack with the sword !")
+              hint="[color=#ff8888]Sword usage[/color]\n\nUse dash to swing and attack with the sword !", music="entangle")
 level.use_dark_environment()
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
 level.boxes = {"fall": (400, 1, 400), "hall": (45, 3, 9), "crypt": (39, 3, 9), "end": (21, 3, 9)}
@@ -64,7 +64,6 @@ level.bridge_event("CloseBridge2", 2, True, "MakeEnemiesGroup3Offensive")
 level.offensive_event("MakeEnemiesGroup3Offensive", "EnemyGroup3")
 level.bridge_event("OpenBridge3", 3)
 level.node("LevelSucceeded", "Level/Events", "Node", props={"script": 'ExtResource("finished")'})
-level.add_focus({"Hall": (-7, 7, -11, -22), "Crypt": (-6, 6, -26, -38)})
 level.add_end_area(0, -45)
 level.add_bridge_nodes()
 level.add_triggers(((T, 0, -13, "hall"), (T + "2", 0, -28, "crypt")))
@@ -76,12 +75,9 @@ level.add_audio_and_hint()
 for group, number, cp_name in (("EnemyGroup", 1, "Checkpoint2"), ("EnemyGroup2", 2, "Checkpoint3"), ("EnemyGroup3", 3, "Checkpoint4")):
     level.connect("enemies_defeated", GROUPS + group, "CheckpointManager/" + cp_name, "_trigger_checkpoint")
     level.connect("enemies_defeated", GROUPS + group, EVENTS + f"OpenBridge{number}")
-    level.connect("enemies_defeated", GROUPS + group, EVENTS + "UnfocusCamera")
 level.connect("all_players_inside", "Level/EndLevelArea", EVENTS + "LevelSucceeded")
 level.connect("all_players_inside", AREAS + T, EVENTS + "CloseBridge1")
 level.connect("all_players_inside", AREAS + T + "2", EVENTS + "CloseBridge2")
-for corner in ("SW", "SE", "NW", "NE"):
-    level.connect("all_players_inside", AREAS + T, EVENTS + f"FocusHall{corner}")
-    level.connect("all_players_inside", AREAS + T + "2", EVENTS + f"FocusCrypt{corner}")
+# No camera framing: every enemy here can be walked to, so the normal zoom is enough.
 
 level.write(sys.argv[1:])

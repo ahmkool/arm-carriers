@@ -31,7 +31,7 @@
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="29_sjngx"]
 [ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="30_1ko0h"]
 [ext_resource type="Texture2D" uid="uid://ckiqqxl7keelk" path="res://assets/sprites/ui/icons/skeleton_boss_icon.png" id="31_vbokm"]
-[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="32_alglp"]
+[ext_resource type="AudioStream" uid="uid://beixrhjbhtoq" path="res://assets/music/PeriTune_Secret_Corridor.mp3" id="32_alglp"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("13_iiyx1")

@@ -1,26 +1,31 @@
-[gd_resource type="MeshLibrary" format=3]
+[gd_resource type="MeshLibrary" load_steps=12 format=3 uid="uid://d18yvusko13is"]
 
-[ext_resource type="Shader" path="res://src/world/elements/dungeon/dungeon_stone.gdshader" id="1_stone"]
+[ext_resource type="Shader" uid="uid://duosyj12enmkm" path="res://src/world/elements/dungeon/dungeon_stone.gdshader" id="1_stone"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
 render_priority = 0
 shader = ExtResource("1_stone")
 shader_parameter/stone_color = Color(0.3, 0.31, 0.36, 1)
+shader_parameter/grout_color = Color(0.07, 0.07, 0.09, 1)
 shader_parameter/top_color = Color(0.36, 0.37, 0.42, 1)
+shader_parameter/block_size = 1.5
+shader_parameter/grout_width = 0.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_0"]
+material = SubResource("ShaderMaterial_floor")
+size = Vector3(2.999, 1, 2.999)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0"]
+size = Vector3(2.999, 1, 2.999)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wall"]
 render_priority = 0
 shader = ExtResource("1_stone")
 shader_parameter/stone_color = Color(0.42, 0.42, 0.47, 1)
+shader_parameter/grout_color = Color(0.07, 0.07, 0.09, 1)
 shader_parameter/top_color = Color(0.46, 0.46, 0.5, 1)
 shader_parameter/block_size = 1.25
-
-[sub_resource type="BoxMesh" id="BoxMesh_0"]
-material = SubResource("ShaderMaterial_floor")
-size = Vector3(2.999, 1.0, 2.999)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_0"]
-size = Vector3(2.999, 1.0, 2.999)
+shader_parameter/grout_width = 0.05
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
 material = SubResource("ShaderMaterial_wall")
@@ -31,10 +36,10 @@ size = Vector3(2.999, 4.5, 2.999)
 
 [sub_resource type="BoxMesh" id="BoxMesh_2"]
 material = SubResource("ShaderMaterial_wall")
-size = Vector3(2.999, 1.0, 2.999)
+size = Vector3(2.999, 1, 2.999)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_2"]
-size = Vector3(2.999, 1.0, 2.999)
+size = Vector3(2.999, 1, 2.999)
 
 [sub_resource type="BoxMesh" id="BoxMesh_3"]
 material = SubResource("ShaderMaterial_wall")

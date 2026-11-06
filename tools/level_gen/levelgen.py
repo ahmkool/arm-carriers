@@ -26,11 +26,27 @@ LIBRARIES = {
     6: ("assets/mesh_library/tiles_Color6_no_shadows.tres", "uid://nskho8hh0n1l"),  # orange
     7: ("assets/mesh_library/tiles_Color7_no_shadows.tres", "uid://ck1qun6nlwpwr"),  # pink
     "dungeon": ("src/world/elements/dungeon/dungeon_tiles.tres", None),  # stone
+    "lava": ("src/world/elements/lava/lava_tiles.tres", None),  # basalt; built by build_lava_tiles.gd
+    "decks": ("src/world/elements/sky_decks/deck_tiles.tres", None),  # planks
+    "space": ("src/world/elements/space/space_tiles.tres", None),  # station plating; built by build_space_tiles.gd
 }
 WEAPONS = {
     "bazooka": ("uid://cq5v348mrgy7q", "res://src/weapon/bazooka.tscn"),
     "sword": ("uid://bgdgrubg87row", "res://src/weapon/sword.tscn"),
     "saw": ("uid://lilxckjevvd5", "res://src/weapon/saw.tscn"),
+    "pulse_rifle": ("uid://o1x22yp71o80", "res://src/weapon/pulse_rifle.tscn"),
+}
+## PeriTune tracks (peritune.com): free for games, but the audio files themselves must not be redistributed.
+MUSIC = {
+    "amenoshita": ("uid://bp1ug7cyuchid", "res://assets/music/PerituneMaterial_Amenoshita.mp3"),
+    "entangle": ("uid://buw0c1srev4kl", "res://assets/music/PerituneMaterial_Entangle.mp3"),
+    "dark_fairies": ("uid://da7v13g67if2i", "res://assets/music/Peritune_Dark_Fairies.mp3"),
+    "rituale_machina": ("uid://bsytwijbvocyp", "res://assets/music/PeriTune_Rituale_Machina.mp3"),
+    "relentless": ("uid://dgwtoe0amw7rc", "res://assets/music/PeriTune_Relentless.mp3"),
+    "ticking_labyrinth": ("uid://dxb245ts7cdnt", "res://assets/music/PeriTune_Ticking_Labyrinth.mp3"),
+    "rising_tension": ("uid://bkee2kcxygr38", "res://assets/music/PeriTune_Rising_Tension.mp3"),
+    "overworld_orchestra": ("uid://duaul8r11ug66", "res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3"),
+    "cyber_noir": ("uid://etr5pc8rj0ge", "res://assets/music/PerituneMaterial_Cyber_Noir.mp3"),
 }
 TRIGGER = "AllPlayersAreaTrigger"
 EVENTS = "Level/Events/"
@@ -53,6 +69,40 @@ tonemap_mode = 3
 glow_enabled = true
 glow_intensity = 0.7
 glow_bloom = 0.05"""
+ENVIRONMENT_LAVA = """background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 2
+ambient_light_color = Color(0.72, 0.66, 0.68, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.45
+glow_bloom = 0.04
+glow_hdr_threshold = 1.1"""
+ENVIRONMENT_SPACE = """background_mode = 2
+sky = SubResource("Sky_level")
+reflected_light_source = 2
+ambient_light_source = 2
+ambient_light_color = Color(0.42, 0.48, 0.66, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.04
+glow_hdr_threshold = 1.0"""
+SKY_SPACE = """[sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
+shader = ExtResource("space_sky")"""
+SKY_PANORAMA = """[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("sky")"""
+SKY_ASH = """[sub_resource type="ProceduralSkyMaterial" id="PanoramaSkyMaterial_sky"]
+sky_top_color = Color(0.46, 0.34, 0.3, 1)
+sky_horizon_color = Color(0.24, 0.1, 0.05, 1)
+ground_horizon_color = Color(0.24, 0.1, 0.05, 1)
+ground_bottom_color = Color(0.3, 0.13, 0.05, 1)"""
+ROTOR_BASIS = {"E": "1, 0, 0, 0, 1, 0, 0, 0, 1", "W": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
+               "N": "0, 0, 1, 0, 1, 0, -1, 0, 0", "S": "0, 0, -1, 0, 1, 0, 1, 0, 0"}  # the arm points this way
+LAVA_Y = -4.6  # lava_rock.gdshader's lava_y must match
+LAVA_FALL_Y = -9.6  # puts the top of the kill box at the lava's surface
 
 
 def rect(x0, x1, z0, z1):
@@ -128,8 +178,9 @@ def _missing_diagonal(cell, floor):
 class Level:
     """Collects a level's nodes, in the scene layout from docs/level-authoring.md."""
 
-    def __init__(self, out, palette, weapon, deco_seed, floor_seed, hint=None, follow_offset=None):
+    def __init__(self, out, palette, weapon, deco_seed, floor_seed, hint=None, follow_offset=None, music="amenoshita"):
         self.out = out
+        self.music = MUSIC[music]
         self.lib_path, self.lib_uid = LIBRARIES[palette]
         self.weapon = weapon
         self.floor_seed = floor_seed
@@ -141,10 +192,15 @@ class Level:
         self.extra_ext = []
         self.environment = ENVIRONMENT_SKY
         self.has_sun = True
+        self.sun_extra = {}
+        self.sky_material = SKY_PANORAMA
         self.bridge_scene = ("uid://chaj7v8uajl4q", "res://src/world/elements/bridge_platform.tscn")
         self.boxes = {}
         self.curve = None
         self.platforms = {}
+        self.melee_scene = "enemy"
+        self.mage_scene = "mage"
+        self.survival_scene = None  # the group's default (skeletons) unless set
         text = Path(self.lib_path).read_text()
         self.items = {re.sub(r"_Color\d+$", "", name): int(index)
                       for index, name in re.findall(r'^item/(\d+)/name = "([^"]+)"', text, re.M)}
@@ -183,7 +239,7 @@ class Level:
             return
         self.node("DirectionalLight3D", ".", "DirectionalLight3D", props={
             "transform": "Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)",
-            "shadow_enabled": "true", "shadow_normal_bias": "5.0", "shadow_blur": "2.0"})
+            "shadow_enabled": "true", "shadow_normal_bias": "5.0", "shadow_blur": "2.0", **self.sun_extra})
 
     def _add_hint_box(self):
         if not self.hint:
@@ -203,20 +259,22 @@ class Level:
 
     def melee(self, group, name, cx, cz):
         wx, wz = world(cx, cz)
-        self.node(name, f"Enemies/{group}/InstancedEnemies", instance="enemy", props={
+        self.node(name, f"Enemies/{group}/InstancedEnemies", instance=self.melee_scene, props={
             "transform": tf(wx, 0, wz, FACE_SOUTH), "is_offensive": "false"})
 
     def mage(self, group, name, cx, cz, cast_max=14.0, cooldown=3.0):
         """Stationary mage. Keep cast_max short enough that anything able to fire is on screen."""
         wx, wz = world(cx, cz)
         parent = f"Enemies/{group}/InstancedEnemies"
-        self.node(name, parent, instance="mage", props={"transform": tf(wx, 0, wz), "is_offensive": "false"})
+        self.node(name, parent, instance=self.mage_scene, props={"transform": tf(wx, 0, wz), "is_offensive": "false"})
         self.node("MageBehavior", f"{parent}/{name}", "Node", props={
             "script": 'ExtResource("mage_behavior")', "mobility": "1", "cast_max_distance": fmt_decimal(cast_max), "cast_cooldown": fmt_decimal(cooldown)})
 
     def survival_group(self, spawn_cells, duration):
-        self.node("SurvivalEnemyGroup", "Enemies", "Node3D", props={
-            "script": 'ExtResource("survival_group")', "spawn_interval_curve": 'SubResource("Curve_survival")', "fight_duration": fmt_decimal(duration)})
+        props = {"script": 'ExtResource("survival_group")', "spawn_interval_curve": 'SubResource("Curve_survival")', "fight_duration": fmt_decimal(duration)}
+        if self.survival_scene:
+            props["enemy_scene"] = f'ExtResource("{self.survival_scene}")'
+        self.node("SurvivalEnemyGroup", "Enemies", "Node3D", props=props)
         self.node("Enemies", "Enemies/SurvivalEnemyGroup", "Node3D")
         self.node("SpawnPoints", "Enemies/SurvivalEnemyGroup", "Node3D")
         for index, (cx, cz) in enumerate(spawn_cells, 1):
@@ -372,6 +430,172 @@ class Level:
             cells[(x, -1, z)] = (self.items[name], 0)
         return cells
 
+    def use_lava_environment(self):
+        """Call before add_shell: ash sky, a dim red sun, and bridges that rise out of the lava."""
+        self.environment = ENVIRONMENT_LAVA
+        self.sky_material = SKY_ASH
+        self.sun_extra = {"light_color": "Color(1, 0.86, 0.74, 1)", "light_energy": "0.8", "light_specular": "0.15"}
+        self.bridge_scene = (None, "res://src/world/elements/lava/lava_bridge_platform.tscn")
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/lava/lava_surface.tscn", "lava"))
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/lava/lava_embers.tscn", "embers"))
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/lava/lava_vent.tscn", "vent"))
+
+    def add_lava_terrain(self, floor, mouths, fall_z, outcrops=()):
+        """Basalt floor over a molten surface. Touching the lava is the fall: the kill box sits right at its surface."""
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, LAVA_FALL_Y, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", self.build_floor(floor, mouths), 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.node("LavaSurface", "Level", instance="lava", props={"transform": tf(0, LAVA_Y, fall_z)})
+        self.node("LavaEmbers", "Level", instance="embers", props={"transform": tf(1.5, LAVA_Y, 0)})
+        # Lit from below, so anything that stands above the lava picks up its colour. It can't reach the tops of tiles.
+        self.node("LavaGlow", "Level", "DirectionalLight3D", props={
+            "transform": "Transform3D(1, 0, 0, 0, 0.6, -0.8, 0, 0.8, 0.6, 0, 0, 0)",
+            "light_color": "Color(1, 0.42, 0.14, 1)", "light_energy": "0.55", "sky_mode": "1"})
+        self._add_outcrops(outcrops)
+        self.node("Events", "Level", "Node")
+
+    def _add_outcrops(self, outcrops):
+        """outcrops: (cx, cz, rock name, rotation). Scenery in the lava with no collision, three times the rocks' size."""
+        if not outcrops:
+            return
+        self.node("Outcrops", "Level", "Node3D", props={"transform": tf(0, LAVA_Y - 0.6, 0, "3, 0, 0, 0, 3, 0, 0, 0, 3")})
+        cells = {(round(cx / 3), 0, round(cz / 3)): (self.items[name], rot) for cx, cz, name, rot in outcrops}
+        self.nodes.append(self._grid_map("Rocks", "Level/Outcrops", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+
+    def add_vents(self, vents):
+        """vents: (cx, cz, phase) on the floor. Each burns whatever stands inside its marked circle when it erupts."""
+        self.node("Vents", "Level", "Node")
+        for index, (cx, cz, phase) in enumerate(vents, 1):
+            wx, wz = world(cx, cz)
+            self.node(f"LavaVent{index}", "Level/Vents", instance="vent", props={"transform": tf(wx, -1, wz), "phase": fmt_decimal2(phase)})
+
+    def add_lava_spouts(self, spouts):
+        """spouts: (cx, cz, phase) out in the lava. Harmless scenery, about twice the size of a vent."""
+        self.node("Spouts", "Level", "Node")
+        scale = "2, 0, 0, 0, 2, 0, 0, 0, 2"
+        for index, (cx, cz, phase) in enumerate(spouts, 1):
+            wx, wz = world(cx, cz)
+            self.node(f"LavaSpout{index}", "Level/Spouts", instance="vent", props={
+                "transform": tf(wx, LAVA_Y, wz, scale), "phase": fmt_decimal2(phase), "is_dangerous": "false", "period_seconds": "5.0"})
+
+    def use_rotor_decks(self):
+        """Call before add_shell: ferries instead of bridges, and the clouds and rotors these levels need."""
+        self.bridge_scene = (None, "res://src/world/elements/sky_decks/rotor_ferry.tscn")
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/sky/cloud_layers.tscn", "clouds"))
+        self.extra_ext.append(("Script", None, "res://src/world/elements/sky/floating_bob.gd", "bob"))
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/sky_decks/deck_rotor.tscn", "rotor"))
+
+    def add_deck_terrain(self, decks, lanes, fall_z, fall_y=-17):
+        """decks: list of cell sets. lanes: cells next to where a ferry docks, which get no rotor."""
+        floor = set().union(*decks)
+        cells = {(x, -1, z): (self.items["Deck"], 0) for x, z in floor}
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.nodes.append(self._grid_map("DeckFrame", "Level", self._deck_frame(floor), 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+        self.node("CloudLayers", "Level", instance="clouds")
+        self.node("Rotors", "Level", "Node3D")
+        self._add_rotors("Level/Rotors", _rotor_spots(floor, lanes), 0)
+        self.node("Events", "Level", "Node")
+
+    def _deck_frame(self, floor):
+        """Dark joists under each cell, one layer below the deck. A GridMap cell holds one item, so the beams along
+        outer edges go on further layers below, with their meshes lifted back up (see deck_tiles.tres)."""
+        cells = {(x, -1, z): (self.items["Joists"], 0) for x, z in floor}
+        for layer, (name, dx, dz) in enumerate((("EdgeN", 0, -1), ("EdgeS", 0, 1), ("EdgeW", -1, 0), ("EdgeE", 1, 0)), 2):
+            for x, z in floor:
+                if (x + dx, z + dz) not in floor:
+                    cells[(x, -layer, z)] = (self.items[name], 0)
+        return cells
+
+    def _add_rotors(self, parent, spots, index):
+        for wx, wz, side in spots:
+            index += 1
+            self.node(f"Rotor{index}", parent, instance="rotor", props={"transform": tf(wx, -1, wz, ROTOR_BASIS[side])})
+        return index
+
+    def add_distant_deck(self, name, position, shape):
+        """Scenery far below the play space, with no collision and a slow bob."""
+        x, y, z = position
+        path = f"Level/DistantDecks/{name}"
+        self.node(name, "Level/DistantDecks", "Node3D", props={"transform": tf(x, y, z), "script": 'ExtResource("bob")'})
+        settings = 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'
+        cells = {(cx, -1, cz): (self.items["Deck"], 0) for cx, cz in shape}
+        self.nodes.append(self._grid_map("Deck", path, cells, settings))
+        self.nodes.append(self._grid_map("Frame", path, self._deck_frame(shape), settings))
+        self._add_rotors(path, _rotor_spots(shape, set(), every=2, origin=(0, 0)), 0)
+
+    def use_space_station(self):
+        """Call before add_shell: starfield, a white sun, hard-light bridges, and robots instead of skeletons."""
+        self.environment = ENVIRONMENT_SPACE
+        self.sky_material = SKY_SPACE
+        self.sun_extra = {"light_color": "Color(1, 0.97, 0.92, 1)", "light_energy": "1.25"}
+        self.bridge_scene = (None, "res://src/world/elements/space/hard_light_bridge_platform.tscn")
+        self.melee_scene, self.mage_scene, self.survival_scene = "robot", "robot_gunner", "robot"
+        self.extra_ext += [
+            ("Shader", None, "res://src/world/elements/space/space_sky.gdshader", "space_sky"),
+            ("PackedScene", None, "res://src/enemy/enemy_robot.tscn", "robot"),
+            ("PackedScene", None, "res://src/enemy/enemy_robot_gunner.tscn", "robot_gunner"),
+            ("PackedScene", None, "res://src/world/elements/space/planet.tscn", "planet"),
+            ("PackedScene", None, "res://assets/models/space_base/rocks_B.gltf", "asteroid"),
+            ("Script", None, "res://src/world/elements/space/drifting_spin.gd", "drift"),
+            ("Script", None, "res://src/world/elements/sky/floating_bob.gd", "bob"),
+        ]
+
+    def add_station_terrain(self, decks, props, fall_z, fall_y=-17):
+        """decks: list of cell sets. props: {(cx, cz): (item, rotation)}; each stands on a plate and blocks movement."""
+        floor = set().union(*decks)
+        assert set(props) <= floor, sorted(set(props) - floor)
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", self._station_floor(floor, props), 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.nodes.append(self._grid_map("StationHull", "Level", self._station_hull(floor), 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+        self.node("Events", "Level", "Node")
+
+    def _station_floor(self, floor, props):
+        cells = {(x, -1, z): (self.items["Plate"], 0) for x, z in floor}
+        cells.update({(x, -1, z): (self.items[name], rot) for (x, z), (name, rot) in props.items()})
+        return cells
+
+    def _station_hull(self, floor):
+        """A keel under every plate, and glowing trims along outer edges. A GridMap cell holds one item, so the
+        trims go on lower layers with their meshes lifted back up (see build_space_tiles.gd)."""
+        cells = {(x, -2, z): (self.items["Hull"], 0) for x, z in floor}
+        for layer, (name, dx, dz) in enumerate((("TrimN", 0, -1), ("TrimS", 0, 1), ("TrimW", -1, 0), ("TrimE", 1, 0)), 3):
+            for x, z in floor:
+                if (x + dx, z + dz) not in floor:
+                    cells[(x, -layer, z)] = (self.items[name], 0)
+        return cells
+
+    def add_planet(self, position, radius):
+        x, y, z = position
+        self.node("Planet", "Level", instance="planet", props={"transform": tf(x, y, z, f"{radius}, 0, 0, 0, {radius}, 0, 0, 0, {radius}")})
+
+    def add_distant_station(self, name, position, shape, props):
+        """Scenery far below the play space, with no collision and a slow bob."""
+        x, y, z = position
+        path = f"Level/DistantStations/{name}"
+        self.node(name, "Level/DistantStations", "Node3D", props={"transform": tf(x, y, z), "script": 'ExtResource("bob")'})
+        settings = 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'
+        self.nodes.append(self._grid_map("Deck", path, self._station_floor(shape, props), settings))
+        self.nodes.append(self._grid_map("Hull", path, self._station_hull(shape), settings))
+
+    def add_asteroids(self, asteroids):
+        """asteroids: (x, y, z, scale). Scenery with no collision, tumbling slowly."""
+        self.node("Asteroids", "Level", "Node3D")
+        for index, (x, y, z, scale) in enumerate(asteroids, 1):
+            self.node(f"Asteroid{index}", "Level/Asteroids", instance="asteroid", props={
+                "transform": tf(x, y, z, f"{scale}, 0, 0, 0, {scale}, 0, 0, 0, {scale}"), "script": 'ExtResource("drift")'})
+
     def add_braziers(self, cells):
         self.node("Braziers", "Level", "Node")
         for index, (cx, cz) in enumerate(cells, 1):
@@ -475,15 +699,14 @@ class Level:
             ("Script", "uid://caypfr8giu78a", "res://src/events/camera_clear_focal_points_event.gd", "camera_clear"),
             ("Script", "uid://dm0qyuvkt2r20", "res://src/world/elements/all_players_area_trigger.gd", "all_players"),
             ("PackedScene", weapon_uid, weapon_path, self.weapon),
-            ("AudioStream", "uid://bp1ug7cyuchid", "res://assets/music/PerituneMaterial_Amenoshita.mp3", "music"),
+            ("AudioStream", self.music[0], self.music[1], "music"),
         ] + self.extra_ext
 
     def _sub_resources(self, nav_body):
         start, end = self.curve
         boxes = "\n\n".join(f'[sub_resource type="BoxShape3D" id="BoxShape3D_{key}"]\nsize = Vector3({x}, {y}, {z})'
                             for key, (x, y, z) in self.boxes.items())
-        return f"""[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
-panorama = ExtResource("sky")
+        return f"""{self.sky_material}
 
 [sub_resource type="Sky" id="Sky_level"]
 sky_material = SubResource("PanoramaSkyMaterial_sky")
@@ -524,6 +747,27 @@ point_count = 2
         print("wrote", out)
 
 
+def _rotor_spots(floor, lanes, every=3, origin=None):
+    """(world x, world z, side) along a deck's outer edges, at every few cells, skipping lanes."""
+    spots = []
+    sides = (("E", 1, 0), ("W", -1, 0), ("N", 0, -1), ("S", 0, 1))
+    for cell in sorted(floor):
+        for side, dx, dz in sides:
+            neighbour = (cell[0] + dx, cell[1] + dz)
+            along = cell[1] if dx else cell[0]
+            if neighbour in floor or cell in lanes or along % every:
+                continue
+            wx, wz = _local_or_world(cell, origin)
+            spots.append((wx + dx * 1.5, wz + dz * 1.5, side))
+    return spots
+
+
+def _local_or_world(cell, origin):
+    if origin is None:
+        return world(*cell)
+    return (cell[0] + 0.5) * CELL + origin[0], (cell[1] + 0.5) * CELL + origin[1]
+
+
 def _ext_line(kind, uid, path, ext_id):
     uid_attr = f' uid="{uid}"' if uid else ""
     return f'[ext_resource type="{kind}"{uid_attr} path="{path}" id="{ext_id}"]'
@@ -531,6 +775,10 @@ def _ext_line(kind, uid, path, ext_id):
 
 def fmt_decimal(value):
     return f"{float(value):.1f}"
+
+
+def fmt_decimal2(value):
+    return f"{float(value):.2f}"
 
 
 def checkpoint(name, cx, cz, opened=None, reset=None, defeated=None, react=None, done=None):

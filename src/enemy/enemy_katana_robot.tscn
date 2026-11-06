@@ -1,0 +1,384 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cg5dd74033rda" path="res://assets/characters/4gtn/4GTN.glb" id="glb"]
+[ext_resource type="PackedScene" uid="uid://cko6rh4pmdhl7" path="res://assets/models/weapon/enemies/4gtn_katana/4GTN_Katana.gltf" id="katana"]
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="enemy"]
+[ext_resource type="Script" path="res://src/enemy/behavior/katana_robot_behavior.gd" id="behavior"]
+[ext_resource type="Script" path="res://src/enemy/boss/katana_robot/katana_robot_moves.gd" id="moves"]
+[ext_resource type="Script" path="res://src/enemy/boss/katana_robot/katana_robot_attacking.gd" id="attacking"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="fsm"]
+[ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="idle"]
+[ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="running"]
+[ext_resource type="Script" uid="uid://bbgviimwhb8xd" path="res://src/enemy/state/falling.gd" id="falling"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="dead"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="health"]
+[ext_resource type="Script" uid="uid://djda3j3mx1537" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
+[ext_resource type="Script" uid="uid://0t4an2d6njhq" path="res://src/enemy/weapon/hit_box.gd" id="hit_box"]
+[ext_resource type="PackedScene" path="res://src/enemy/robot/plasma_bolt.tscn" id="plasma_bolt"]
+[ext_resource type="Texture2D" uid="uid://cnkv2y3rchd23" path="res://assets/sprites/particles/flame_01_a.png" id="flame"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Idle_A.res" id="a_idle"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Walking_A.res" id="a_walk"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Death_A.res" id="a_death"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_Block.res" id="a_taunt"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_1H_Slash.res" id="a_slash"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_1H_Stab.res" id="a_stab"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_2H_Slam.res" id="a_slam"]
+
+[sub_resource type="AnimationLibrary" id="Library"]
+_data = {
+&"Idle_A": ExtResource("a_idle"),
+&"Walking_A": ExtResource("a_walk"),
+&"Death_A": ExtResource("a_death"),
+&"Melee_Block": ExtResource("a_taunt"),
+&"Melee_1H_Slash": ExtResource("a_slash"),
+&"Melee_1H_Stab": ExtResource("a_stab"),
+&"Melee_2H_Slam": ExtResource("a_slam")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Idle"]
+animation = &"katana_robot/Idle_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Walk"]
+animation = &"katana_robot/Walking_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Death"]
+animation = &"katana_robot/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_TauntAnim"]
+animation = &"katana_robot/Melee_Block"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SlashAnim"]
+animation = &"katana_robot/Melee_1H_Slash"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_StabAnim"]
+animation = &"katana_robot/Melee_1H_Stab"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SlamAnim"]
+animation = &"katana_robot/Melee_2H_Slam"
+
+[sub_resource type="AnimationNodeBlend2" id="Node_BlendIdleRun"]
+
+[sub_resource type="AnimationNodeBlend2" id="Node_DeadBlend"]
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Taunt"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Slash"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Stab"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Slam"]
+fadein_time = 0.1
+fadeout_time = 0.3
+
+[sub_resource type="AnimationNodeTimeScale" id="Node_Speed"]
+
+[sub_resource type="AnimationNodeBlendTree" id="Tree"]
+nodes/output/position = Vector2(2400, 100)
+nodes/IdleAnim/node = SubResource("Node_Idle")
+nodes/IdleAnim/position = Vector2(0, 0)
+nodes/WalkAnim/node = SubResource("Node_Walk")
+nodes/WalkAnim/position = Vector2(0, 160)
+nodes/BlendIdleRun/node = SubResource("Node_BlendIdleRun")
+nodes/BlendIdleRun/position = Vector2(220, 60)
+nodes/TauntAnim/node = SubResource("Node_TauntAnim")
+nodes/TauntAnim/position = Vector2(220, 260)
+nodes/Taunt/node = SubResource("Node_Taunt")
+nodes/Taunt/position = Vector2(440, 60)
+nodes/SlashAnim/node = SubResource("Node_SlashAnim")
+nodes/SlashAnim/position = Vector2(440, 260)
+nodes/Slash/node = SubResource("Node_Slash")
+nodes/Slash/position = Vector2(660, 60)
+nodes/StabAnim/node = SubResource("Node_StabAnim")
+nodes/StabAnim/position = Vector2(660, 260)
+nodes/Stab/node = SubResource("Node_Stab")
+nodes/Stab/position = Vector2(880, 60)
+nodes/SlamAnim/node = SubResource("Node_SlamAnim")
+nodes/SlamAnim/position = Vector2(880, 260)
+nodes/Slam/node = SubResource("Node_Slam")
+nodes/Slam/position = Vector2(1100, 60)
+nodes/DeathAnim/node = SubResource("Node_Death")
+nodes/DeathAnim/position = Vector2(1100, 260)
+nodes/DeadBlend/node = SubResource("Node_DeadBlend")
+nodes/DeadBlend/position = Vector2(1320, 60)
+nodes/Speed/node = SubResource("Node_Speed")
+nodes/Speed/position = Vector2(1540, 60)
+node_connections = [&"output", 0, &"Speed", &"Speed", 0, &"DeadBlend", &"DeadBlend", 0, &"Slam", &"DeadBlend", 1, &"DeathAnim", &"Slam", 0, &"Stab", &"Slam", 1, &"SlamAnim", &"Stab", 0, &"Slash", &"Stab", 1, &"StabAnim", &"Slash", 0, &"Taunt", &"Slash", 1, &"SlashAnim", &"Taunt", 0, &"BlendIdleRun", &"Taunt", 1, &"TauntAnim", &"BlendIdleRun", 0, &"IdleAnim", &"BlendIdleRun", 1, &"WalkAnim"]
+
+[sub_resource type="CapsuleShape3D" id="BodyShape"]
+radius = 1.0
+height = 4.2
+
+[sub_resource type="CylinderShape3D" id="SlashShape"]
+radius = 3.3
+height = 3.0
+
+[sub_resource type="CapsuleShape3D" id="DashShape"]
+radius = 1.8
+height = 4.2
+
+[sub_resource type="CylinderShape3D" id="SlamShape"]
+radius = 2.3
+height = 2.0
+
+[sub_resource type="StandardMaterial3D" id="Material_telegraph"]
+resource_local_to_scene = true
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.22, 0.18, 0.12)
+
+[sub_resource type="CylinderMesh" id="Mesh_slash_telegraph"]
+material = SubResource("Material_telegraph")
+top_radius = 3.3
+bottom_radius = 3.3
+height = 0.03
+radial_segments = 40
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_slam_telegraph"]
+material = SubResource("Material_telegraph")
+top_radius = 2.3
+bottom_radius = 2.3
+height = 0.03
+radial_segments = 32
+rings = 1
+
+[sub_resource type="BoxMesh" id="Mesh_dash_lane"]
+material = SubResource("Material_telegraph")
+size = Vector3(2.8, 0.03, 1)
+
+[sub_resource type="BoxMesh" id="Mesh_wave_lane"]
+material = SubResource("Material_telegraph")
+size = Vector3(0.7, 0.03, 1)
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_footsteps"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.3
+scale_max = 0.5
+
+[sub_resource type="SphereMesh" id="Mesh_footsteps"]
+radius = 0.1
+height = 0.2
+radial_segments = 6
+rings = 3
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_blade"]
+emission_shape = 3
+emission_box_extents = Vector3(0.08, 1.5, 0.08)
+direction = Vector3(0, 1, 0)
+spread = 25.0
+gravity = Vector3(0, 0.8, 0)
+initial_velocity_min = 0.2
+initial_velocity_max = 0.7
+scale_min = 0.35
+scale_max = 0.7
+color = Color(0.6, 0.55, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_blade_glow"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("flame")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="Mesh_blade_glow"]
+material = SubResource("Material_blade_glow")
+size = Vector2(0.6, 0.6)
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_sparks"]
+emission_shape = 3
+emission_box_extents = Vector3(0.06, 1.5, 0.06)
+direction = Vector3(0, 1, 0)
+spread = 180.0
+gravity = Vector3(0, -4, 0)
+initial_velocity_min = 0.5
+initial_velocity_max = 2.0
+color = Color(0.75, 0.7, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_sparks"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+emission_enabled = true
+emission = Color(0.6, 0.55, 1, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="SphereMesh" id="Mesh_sparks"]
+material = SubResource("Material_sparks")
+radius = 0.04
+height = 0.08
+radial_segments = 6
+rings = 3
+
+[node name="EnemyKatanaRobot" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("enemy")
+speed = 2.6
+is_offensive = false
+
+[node name="Robot" parent="." instance=ExtResource("glb")]
+transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, 0, 0)
+
+[node name="Rig_Large" parent="Robot" index="0"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="KatanaHand" type="BoneAttachment3D" parent="Robot/Rig_Large/Skeleton3D"]
+bone_name = "handslot.r"
+
+[node name="Katana" parent="Robot/Rig_Large/Skeleton3D/KatanaHand" instance=ExtResource("katana")]
+
+[node name="BladeLight" type="OmniLight3D" parent="Robot/Rig_Large/Skeleton3D/KatanaHand/Katana"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, 0)
+light_color = Color(0.6, 0.55, 1, 1)
+light_energy = 0.0
+omni_range = 5.0
+
+[node name="FireParticles" type="GPUParticles3D" parent="Robot/Rig_Large/Skeleton3D/KatanaHand/Katana"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+cast_shadow = 0
+emitting = false
+amount = 40
+lifetime = 0.6
+process_material = SubResource("Particles_blade")
+draw_pass_1 = SubResource("Mesh_blade_glow")
+
+[node name="FireEmbers" type="GPUParticles3D" parent="Robot/Rig_Large/Skeleton3D/KatanaHand/Katana"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+cast_shadow = 0
+emitting = false
+amount = 24
+lifetime = 0.7
+process_material = SubResource("Particles_sparks")
+draw_pass_1 = SubResource("Mesh_sparks")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Robot"]
+libraries = {
+&"katana_robot": SubResource("Library")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="Robot"]
+active = false
+tree_root = SubResource("Tree")
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, 0)
+shape = SubResource("BodyShape")
+
+[node name="KatanaRobotBehavior" type="Node" parent="."]
+script = ExtResource("behavior")
+
+[node name="KatanaRobotMoves" type="Node" parent="."]
+script = ExtResource("moves")
+wave_scene = ExtResource("plasma_bolt")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("fsm")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("idle")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("running")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("falling")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("dead")
+knockback_speed = 0.0
+
+[node name="Attacking" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("attacking")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("Particles_footsteps")
+draw_pass_1 = SubResource("Mesh_footsteps")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("health")
+max_hp = 180
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("phase")
+fire_particles_path = NodePath("Robot/Rig_Large/Skeleton3D/KatanaHand/Katana/FireParticles")
+axe_fire_visual_path = NodePath("")
+
+[node name="SlashHitBox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, -3)
+collision_layer = 0
+monitoring = false
+monitorable = false
+script = ExtResource("hit_box")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SlashHitBox"]
+shape = SubResource("SlashShape")
+
+[node name="DashHitBox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.1, -0.6)
+collision_layer = 0
+monitoring = false
+monitorable = false
+script = ExtResource("hit_box")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="DashHitBox"]
+shape = SubResource("DashShape")
+
+[node name="SlamHitBox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -6.2)
+collision_layer = 0
+monitoring = false
+monitorable = false
+script = ExtResource("hit_box")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SlamHitBox"]
+shape = SubResource("SlamShape")
+
+[node name="WaveMuzzle" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -6.2)
+
+[node name="VFX" type="Node3D" parent="."]
+
+[node name="SlashTelegraph" type="MeshInstance3D" parent="VFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -3)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_slash_telegraph")
+
+[node name="DashLane" type="MeshInstance3D" parent="VFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_dash_lane")
+
+[node name="SlamTelegraph" type="MeshInstance3D" parent="VFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -6.2)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_slam_telegraph")
+
+[node name="WaveFan" type="Node3D" parent="VFX"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+visible = false
+
+[node name="Lane" type="MeshInstance3D" parent="VFX/WaveFan"]
+cast_shadow = 0
+mesh = SubResource("Mesh_wave_lane")
+
+[editable path="Robot"]

@@ -1,0 +1,27 @@
+[gd_scene load_steps=4 format=3 uid="uid://b3ko8orlji5ox"]
+
+[ext_resource type="Script" uid="uid://7vuhtsa6ov6r" path="res://src/weapon/pulse_rifle/pulse_bolt.gd" id="1_bolt"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_tracer"]
+shading_mode = 0
+albedo_color = Color(0.55, 0.97, 1, 1)
+emission_enabled = true
+emission = Color(0.3, 0.9, 1, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_tracer"]
+material = SubResource("StandardMaterial3D_tracer")
+radius = 0.07
+height = 1.4
+radial_segments = 8
+rings = 2
+
+[node name="PulseBolt" type="Node3D"]
+script = ExtResource("1_bolt")
+
+[node name="Tracer" type="Node3D" parent="."]
+
+[node name="Mesh" type="MeshInstance3D" parent="Tracer"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.7)
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_tracer")

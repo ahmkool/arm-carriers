@@ -1,0 +1,26 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cm4mxhbh52ywr" path="res://src/vfx/fireball.tscn" id="1_fireball"]
+[ext_resource type="Shader" uid="uid://cc2ar3gvopx6i" path="res://src/shaders/fireball_visual.gdshader" id="2_visual"]
+[ext_resource type="Texture2D" uid="uid://vbykkfhy2wij" path="res://assets/material/voronoi_1_voronoi.png" id="3_noise"]
+
+[sub_resource type="ShaderMaterial" id="Material_soul"]
+render_priority = 0
+shader = ExtResource("2_visual")
+shader_parameter/noise_tex = ExtResource("3_noise")
+shader_parameter/color_yellow = Color(0.75, 0.97, 1, 1)
+shader_parameter/color_orange = Color(0.12, 0.5, 0.95, 1)
+shader_parameter/noise_scale = 2.5
+shader_parameter/scroll_speed = 1.4
+shader_parameter/emission_strength = 3.0
+
+[sub_resource type="SphereMesh" id="Mesh_soul"]
+material = SubResource("Material_soul")
+
+[node name="SoulBolt" instance=ExtResource("1_fireball")]
+
+[node name="OmniLight3D" parent="." index="0"]
+light_color = Color(0.4, 0.75, 1, 1)
+
+[node name="MeshInstance3D" parent="Visuals" index="1"]
+mesh = SubResource("Mesh_soul")

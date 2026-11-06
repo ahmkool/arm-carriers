@@ -132,12 +132,22 @@ func check_view(label: String, enemies: Array, reach: float = 14.0) -> void:
 	var players_seen := visible_count(players())
 	var near := enemies.filter(func(e): return is_instance_valid(e) and e.is_alive() and _player_distance(e) <= reach)
 	var near_seen := visible_count(near)
-	check(label, players_seen == 2 and near_seen == near.size(), "players %d/2, enemies within %.0f m %d/%d, camera y=%.1f" % [players_seen, reach, near_seen, near.size(), get_viewport().get_camera_3d().global_position.y])
+	var detail := "players %d/2, enemies within %.0f m %d/%d, camera y=%.1f" % [players_seen, reach, near_seen, near.size(), get_viewport().get_camera_3d().global_position.y]
+	# At normal zoom (no framing), enemies at the edge of the view may be off screen: only the players must show.
+	if focal_count() == 0:
+		check(label + " (normal zoom: players on screen)", players_seen == 2, detail)
+		return
+	check(label, players_seen == 2 and near_seen == near.size(), detail)
 
 
 func check_mages_in_range(label: String) -> void:
 	var in_range := group_enemies("Enemies/EnemyGroup4").filter(_can_cast_at_a_player)
-	check(label, in_range.size() > 0 and visible_count(in_range) == in_range.size(), "%d/%d in range on screen" % [visible_count(in_range), in_range.size()])
+	var detail := "%d/%d in range on screen" % [visible_count(in_range), in_range.size()]
+	# At normal zoom, finding a mage that fires from off screen is part of the challenge: it only has to be a threat.
+	if focal_count() == 0:
+		check(label.replace("on screen", "(off screen allowed)"), in_range.size() > 0, detail)
+		return
+	check(label, in_range.size() > 0 and visible_count(in_range) == in_range.size(), detail)
 
 
 func bridge_y(index: int) -> float:
@@ -253,7 +263,7 @@ func _run() -> void:
 	check("arena trigger starts the fight", g2[0].is_offensive)
 	var closed1: bool = await wait_until(func(): return bridge_y(1) < -5.5, 8.0)
 	check("bridge 1 closes behind players", closed1)
-	check("arena: 4 focal points", focal_count() == 4, str(focal_count()))
+	check("arena: normal zoom, since every enemy here can be walked to", focal_count() == 0, str(focal_count()))
 	check_view("arena entry view", group_enemies("Enemies/EnemyGroup2"), 100.0)
 	await shot("saw_arena.png")
 	for spot in [[-4, -10, "south-west"], [4, -10, "south-east"], [-4, -19, "north-west"], [4, -19, "north-east"], [0, -14, "centre"]]:
@@ -283,7 +293,7 @@ func _run() -> void:
 	check("funnel trigger starts the fight", g3[0].is_offensive)
 	var closed2: bool = await wait_until(func(): return bridge_y(7) < -5.5, 8.0)
 	check("twin rails close behind players", closed2)
-	check("funnel: 4 focal points", focal_count() == 4, str(focal_count()))
+	check("funnel: normal zoom, since every enemy here can be walked to", focal_count() == 0, str(focal_count()))
 	check_view("funnel entry view", group_enemies("Enemies/EnemyGroup3"))
 	await shot("saw_funnel.png")
 	await wait(5.0)
@@ -331,7 +341,7 @@ func _run() -> void:
 	await walk("second twin rails, one carrier on each", 2.0, 7.0)
 	move_players(w(0, -67))
 	await wait(3.5)
-	check("finale: 4 focal points", focal_count() == 4, str(focal_count()))
+	check("finale: normal zoom, since every enemy here can be walked to", focal_count() == 0, str(focal_count()))
 	var live := func(): return world.get_node("Enemies/SurvivalEnemyGroup/Enemies").get_children().filter(func(c): return c is EnemyLocal and c.is_alive())
 	check_view("finale entry view", live.call())
 	await shot("saw_finale.png")

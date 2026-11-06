@@ -25,6 +25,8 @@ const TENSION_SPEED := 10.0
 
 const VISUAL_RECOVERY_SPEED := 12.0
 const RECOIL_KICK_METERS := 0.35
+const LIGHT_RECOIL_KICK_METERS := 0.07
+const LIGHT_FLASH_ENERGY := 3.0
 const BLOCKED_KICK_METERS := 0.1
 const BLOCKED_SQUASH := 0.05
 const DRY_CLICK_KICK_METERS := 0.04
@@ -100,6 +102,15 @@ func play_recoil(fire_direction: Vector3, muzzle_position: Vector3) -> void:
 		ImpactFeedback.spawn_dust(carrier.global_position, 0.6)
 		ImpactFeedback.rumble(carrier, 0.7, 0.4, 0.18)
 	_begin_shove(carriers, -fire_direction)
+
+
+## Per-shot feedback for rapid fire: a small kick and a short flash, with no dust or shove,
+## so a held trigger buzzes in the hands instead of shoving the carriers back every shot.
+func play_light_recoil(muzzle_position: Vector3, flash_color: Color) -> void:
+	_kick = minf(_kick, -LIGHT_RECOIL_KICK_METERS)
+	_spawn_muzzle_flash(muzzle_position, flash_color, LIGHT_FLASH_ENERGY)
+	for carrier in _get_carriers():
+		ImpactFeedback.rumble(carrier, 0.3, 0.1, 0.06)
 
 
 func play_blocked_dash(dasher: PlayerLocal) -> void:
@@ -287,13 +298,13 @@ func _apply_mesh_pose(index: int, offset: Vector3, pose_scale: Vector3) -> void:
 	mesh.scale = _rest_scales[index] * pose_scale
 
 
-func _spawn_muzzle_flash(at_position: Vector3) -> void:
+func _spawn_muzzle_flash(at_position: Vector3, color: Color = FLASH_COLOR, energy: float = FLASH_ENERGY) -> void:
 	var scene_root := get_tree().current_scene
 	if scene_root == null:
 		return
 	var flash := OmniLight3D.new()
-	flash.light_color = FLASH_COLOR
-	flash.light_energy = FLASH_ENERGY
+	flash.light_color = color
+	flash.light_energy = energy
 	flash.omni_range = FLASH_RANGE
 	scene_root.add_child(flash)
 	flash.global_position = at_position

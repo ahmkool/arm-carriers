@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/space/planet.gdshader" id="1_planet"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_planet"]
+render_priority = 0
+shader = ExtResource("1_planet")
+
+[sub_resource type="SphereMesh" id="SphereMesh_planet"]
+material = SubResource("ShaderMaterial_planet")
+radius = 1.0
+height = 2.0
+radial_segments = 96
+rings = 48
+
+[node name="Planet" type="MeshInstance3D"]
+cast_shadow = 0
+mesh = SubResource("SphereMesh_planet")

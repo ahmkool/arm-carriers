@@ -26,7 +26,7 @@
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="25_2toxr"]
 [ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="25_tco1a"]
 [ext_resource type="Script" uid="uid://ff5ixdrcsb45" path="res://src/world/elements/single_player_area_trigger.gd" id="25_xuff2"]
-[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="26_qfp5g"]
+[ext_resource type="AudioStream" uid="uid://beiveakkg3foc" path="res://assets/music/Peritune_Sword_Flash.mp3" id="26_qfp5g"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("7_eo5y3")

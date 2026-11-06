@@ -1,0 +1,338 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/characters/Necromancer.glb" id="glb"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/enemies/necromancer_scythe/Skeleton_Scythe.gltf" id="scythe"]
+[ext_resource type="Script" path="res://src/enemy/enemy_local.gd" id="enemy"]
+[ext_resource type="Script" path="res://src/enemy/behavior/necromancer_behavior.gd" id="behavior"]
+[ext_resource type="Script" path="res://src/enemy/boss/necromancer/necromancer_spells.gd" id="spells"]
+[ext_resource type="Script" path="res://src/enemy/boss/necromancer/necromancer_attacking.gd" id="attacking"]
+[ext_resource type="Script" path="res://src/enemy/state/enemy_state_machine.gd" id="fsm"]
+[ext_resource type="Script" path="res://src/enemy/state/idle.gd" id="idle"]
+[ext_resource type="Script" path="res://src/enemy/state/running.gd" id="running"]
+[ext_resource type="Script" path="res://src/enemy/state/falling.gd" id="falling"]
+[ext_resource type="Script" path="res://src/enemy/state/dead.gd" id="dead"]
+[ext_resource type="Script" path="res://src/components/health.gd" id="health"]
+[ext_resource type="Script" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
+[ext_resource type="Script" path="res://src/enemy/weapon/hit_box.gd" id="hit_box"]
+[ext_resource type="PackedScene" path="res://src/enemy/boss/necromancer/soul_bolt.tscn" id="bolt"]
+[ext_resource type="PackedScene" path="res://src/enemy/boss/necromancer/grave_eruption.tscn" id="grave"]
+[ext_resource type="PackedScene" path="res://src/enemy/spawn/enemy_spawner.tscn" id="spawner"]
+[ext_resource type="Texture2D" path="res://assets/sprites/particles/flame_01_a.png" id="flame"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/Idle_B.res" id="a_Idle_B"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/Walking_A.res" id="a_Walking_A"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/Death_A.res" id="a_Death_A"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/necromancer/Ranged_Magic_Shoot.res" id="a_Ranged_Magic_Shoot"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/necromancer/Ranged_Magic_Summon.res" id="a_Ranged_Magic_Summon"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/necromancer/Ranged_Magic_Raise.res" id="a_Ranged_Magic_Raise"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/necromancer/Melee_2H_Attack_Slice.res" id="a_Melee_2H_Attack_Slice"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/necromancer/Skeletons_Taunt.res" id="a_Skeletons_Taunt"]
+
+[sub_resource type="AnimationLibrary" id="Library"]
+_data = {
+&"Idle_B": ExtResource("a_Idle_B"),
+&"Walking_A": ExtResource("a_Walking_A"),
+&"Death_A": ExtResource("a_Death_A"),
+&"Ranged_Magic_Shoot": ExtResource("a_Ranged_Magic_Shoot"),
+&"Ranged_Magic_Summon": ExtResource("a_Ranged_Magic_Summon"),
+&"Ranged_Magic_Raise": ExtResource("a_Ranged_Magic_Raise"),
+&"Melee_2H_Attack_Slice": ExtResource("a_Melee_2H_Attack_Slice"),
+&"Skeletons_Taunt": ExtResource("a_Skeletons_Taunt")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Idle"]
+animation = &"necromancer/Idle_B"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Walk"]
+animation = &"necromancer/Walking_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Death"]
+animation = &"necromancer/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_ShootAnim"]
+animation = &"necromancer/Ranged_Magic_Shoot"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SummonAnim"]
+animation = &"necromancer/Ranged_Magic_Summon"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_RaiseAnim"]
+animation = &"necromancer/Ranged_Magic_Raise"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SwingAnim"]
+animation = &"necromancer/Melee_2H_Attack_Slice"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_TauntAnim"]
+animation = &"necromancer/Skeletons_Taunt"
+
+[sub_resource type="AnimationNodeBlend2" id="Node_BlendIdleRun"]
+
+[sub_resource type="AnimationNodeBlend2" id="Node_DeadBlend"]
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Shoot"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Summon"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Raise"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Swing"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Taunt"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeBlendTree" id="Tree"]
+nodes/output/position = Vector2(2200, 100)
+nodes/IdleAnim/node = SubResource("Node_Idle")
+nodes/IdleAnim/position = Vector2(200, 100)
+nodes/WalkAnim/node = SubResource("Node_Walk")
+nodes/WalkAnim/position = Vector2(380, 100)
+nodes/BlendIdleRun/node = SubResource("Node_BlendIdleRun")
+nodes/BlendIdleRun/position = Vector2(560, 100)
+nodes/ShootAnim/node = SubResource("Node_ShootAnim")
+nodes/ShootAnim/position = Vector2(740, 100)
+nodes/Shoot/node = SubResource("Node_Shoot")
+nodes/Shoot/position = Vector2(920, 100)
+nodes/SummonAnim/node = SubResource("Node_SummonAnim")
+nodes/SummonAnim/position = Vector2(1100, 100)
+nodes/Summon/node = SubResource("Node_Summon")
+nodes/Summon/position = Vector2(1280, 100)
+nodes/RaiseAnim/node = SubResource("Node_RaiseAnim")
+nodes/RaiseAnim/position = Vector2(1460, 100)
+nodes/Raise/node = SubResource("Node_Raise")
+nodes/Raise/position = Vector2(1640, 100)
+nodes/SwingAnim/node = SubResource("Node_SwingAnim")
+nodes/SwingAnim/position = Vector2(1820, 100)
+nodes/Swing/node = SubResource("Node_Swing")
+nodes/Swing/position = Vector2(2000, 100)
+nodes/TauntAnim/node = SubResource("Node_TauntAnim")
+nodes/TauntAnim/position = Vector2(2180, 100)
+nodes/Taunt/node = SubResource("Node_Taunt")
+nodes/Taunt/position = Vector2(2360, 100)
+nodes/DeathAnim/node = SubResource("Node_Death")
+nodes/DeathAnim/position = Vector2(2540, 100)
+nodes/DeadBlend/node = SubResource("Node_DeadBlend")
+nodes/DeadBlend/position = Vector2(2720, 100)
+node_connections = [&"output", 0, &"DeadBlend", &"BlendIdleRun", 0, &"IdleAnim", &"BlendIdleRun", 1, &"WalkAnim", &"Shoot", 0, &"BlendIdleRun", &"Shoot", 1, &"ShootAnim", &"Summon", 0, &"Shoot", &"Summon", 1, &"SummonAnim", &"Raise", 0, &"Summon", &"Raise", 1, &"RaiseAnim", &"Swing", 0, &"Raise", &"Swing", 1, &"SwingAnim", &"Taunt", 0, &"Swing", &"Taunt", 1, &"TauntAnim", &"DeadBlend", 0, &"Taunt", &"DeadBlend", 1, &"DeathAnim"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule"]
+radius = 0.5
+height = 3.7
+
+[sub_resource type="CylinderShape3D" id="SwingShape"]
+radius = 2.8
+height = 2.5
+
+[sub_resource type="StandardMaterial3D" id="Material_telegraph"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.5, 0.88, 1, 0.3)
+
+[sub_resource type="CylinderMesh" id="Mesh_telegraph"]
+material = SubResource("Material_telegraph")
+top_radius = 2.8
+bottom_radius = 2.8
+height = 0.03
+radial_segments = 32
+rings = 1
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_footsteps"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.3
+scale_max = 0.5
+
+[sub_resource type="SphereMesh" id="Mesh_footsteps"]
+radius = 0.08
+height = 0.16
+radial_segments = 6
+rings = 3
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_embers"]
+emission_shape = 1
+emission_sphere_radius = 1.3
+direction = Vector3(0, 1, 0)
+gravity = Vector3(0, 1.5, 0)
+initial_velocity_min = 0.3
+initial_velocity_max = 1.2
+color = Color(0.5, 0.9, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_embers"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+emission_enabled = true
+emission = Color(0.4, 0.85, 1, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="SphereMesh" id="Mesh_embers"]
+material = SubResource("Material_embers")
+radius = 0.05
+height = 0.1
+radial_segments = 6
+rings = 3
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_soulfire"]
+emission_shape = 1
+emission_sphere_radius = 0.45
+direction = Vector3(0, 1, 0)
+spread = 15.0
+gravity = Vector3(0, 1.5, 0)
+initial_velocity_min = 0.4
+initial_velocity_max = 1.0
+scale_min = 0.5
+scale_max = 1.0
+color = Color(0.45, 0.85, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_soulfire"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("flame")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="QuadMesh" id="Mesh_soulfire"]
+material = SubResource("Material_soulfire")
+size = Vector2(0.9, 0.9)
+
+[node name="EnemyNecromancer" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("enemy")
+speed = 2.5
+is_offensive = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)
+shape = SubResource("Capsule")
+
+[node name="NecromancerBehavior" type="Node" parent="."]
+script = ExtResource("behavior")
+
+[node name="NecromancerSpells" type="Node" parent="."]
+script = ExtResource("spells")
+bolt_scene = ExtResource("bolt")
+grave_scene = ExtResource("grave")
+minion_spawner_scene = ExtResource("spawner")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("fsm")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("idle")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("running")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("falling")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("dead")
+knockback_speed = 0.0
+
+[node name="Attacking" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("attacking")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("Particles_footsteps")
+draw_pass_1 = SubResource("Mesh_footsteps")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("health")
+max_hp = 45
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("phase")
+fire_particles_path = NodePath("Necromancer/Rig_Medium/Skeleton3D/ScytheHand/Scythe/FireParticles")
+axe_fire_visual_path = NodePath("")
+
+[node name="BoltMuzzle" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, -1.3)
+
+[node name="CastEmbers" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+cast_shadow = 0
+emitting = false
+amount = 40
+lifetime = 0.9
+process_material = SubResource("Particles_embers")
+draw_pass_1 = SubResource("Mesh_embers")
+
+[node name="BossLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.8, 1.4)
+light_color = Color(0.55, 0.8, 1, 1)
+light_energy = 1.4
+omni_range = 8.0
+
+[node name="SwingHitBox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -2.2)
+collision_layer = 0
+monitoring = false
+monitorable = false
+script = ExtResource("hit_box")
+damage = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SwingHitBox"]
+shape = SubResource("SwingShape")
+
+[node name="SwingTelegraph" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -2.2)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_telegraph")
+
+[node name="Necromancer" parent="." instance=ExtResource("glb")]
+transform = Transform3D(1.7, 0, 0, 0, 1.7, 0, 0, 0, 1.7, 0, 0, 0)
+
+[node name="Rig_Medium" parent="Necromancer" index="0"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="ScytheHand" type="BoneAttachment3D" parent="Necromancer/Rig_Medium/Skeleton3D"]
+bone_name = "handslot.r"
+
+[node name="Scythe" parent="Necromancer/Rig_Medium/Skeleton3D/ScytheHand" instance=ExtResource("scythe")]
+
+[node name="FireParticles" type="GPUParticles3D" parent="Necromancer/Rig_Medium/Skeleton3D/ScytheHand/Scythe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.05, 0.05)
+cast_shadow = 0
+emitting = false
+amount = 28
+lifetime = 0.7
+process_material = SubResource("Particles_soulfire")
+draw_pass_1 = SubResource("Mesh_soulfire")
+
+[node name="FireEmbers" type="GPUParticles3D" parent="Necromancer/Rig_Medium/Skeleton3D/ScytheHand/Scythe"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5, 1.05, 0.05)
+cast_shadow = 0
+emitting = false
+amount = 24
+lifetime = 0.9
+process_material = SubResource("Particles_embers")
+draw_pass_1 = SubResource("Mesh_embers")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Necromancer"]
+libraries = {
+&"necromancer": SubResource("Library")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="Necromancer"]
+active = false
+tree_root = SubResource("Tree")
+anim_player = NodePath("../AnimationPlayer")
+
+[editable path="Necromancer"]

@@ -23,7 +23,7 @@
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="19_ubt2r"]
 [ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="20_csgj2"]
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="21_v2ylt"]
-[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="22_6t3nx"]
+[ext_resource type="AudioStream" uid="uid://caqatmtrt6u34" path="res://assets/music/PerituneMaterial_EpicBattle2.mp3" id="22_6t3nx"]
 [ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="24_bhpbind"]
 [ext_resource type="Texture2D" uid="uid://ckiqqxl7keelk" path="res://assets/sprites/ui/icons/skeleton_boss_icon.png" id="25_bossicon"]
 [ext_resource type="PackedScene" uid="uid://2ob2mq7ml03x" path="res://src/vfx/boss_axe_enrage_burst.tscn" id="26_warm1"]

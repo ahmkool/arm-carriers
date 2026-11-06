@@ -69,6 +69,10 @@ The carry distance decides how wide bridges and lanes need to be.
 
 Sword or saw levels can't be sniped, so every enemy must be somewhere the carriers can walk to. Put a launch hint in sword and saw levels: `Level(..., hint="...")`.
 
+**Music:** give each level a track that fits its theme with `Level(..., music="entangle")`. The keys are in `MUSIC` in `tools/level_gen/levelgen.py`. Without it, the level gets the old shared default (Amenoshita). To add a track, download it from peritune.com into `assets/music/`, turn on `loop=true` in its `.import` file, and add its uid and path to `MUSIC`.
+
+**Footsteps** follow the floor under each player: grass, wood, stone or metal (`src/sound/footstep_surface.gd`). Hill tiles count as grass. A new tile set goes in `BY_MESH_LIBRARY` in that file. A new bridge or platform scene gets `metadata/footstep_surface = &"wood"` (or `stone` / `metal`) on its body. Without one, it sounds like grass.
+
 **Twin rails drop the sword's carriers.** Its 3.2 m limit leaves almost no footing either side of a 3 m gap: in testing, one carrier got pulled into it. A checkpoint on the centre line also walks them straight at the gap. Rails suit the saw, whose spacing matches the 6 m between them. The bazooka's limits weren't tried on rails.
 
 ## Enemies and players
@@ -90,8 +94,10 @@ This caused most of the problems, so check it for every section.
 
 - **Each weapon frames differently.** The camera follows the players plus the weapon's `CameraAddons` markers. Camera height was about 9 with the bazooka, 12.6 with the sword and 7.7 with the saw. The bazooka sees only about 12 m ahead.
 - **Raising it for one level:** `Level(..., follow_offset="Vector3(0, 11, 4.714)")`. Keep the 7:3 ratio of the default `(0, 7, 3)` to keep the same angle. The saw level uses this.
-- **Mage range:** the default `cast_max_distance` of 30 m shoots from far off-screen. Set it shorter, or frame the mages. 14 m worked with the sword's camera; the saw level needed 10 m.
-- **Arena framing:** add a focal point at all **four corners** with `add_focus`. Focal points on one side only shift the view, and pushed a player off the bottom of the screen while every enemy check passed. Clear them with `UnfocusCamera` when the group dies. Respawning clears them too, so the trigger must be able to fire again.
+- **Mage range:** the default `cast_max_distance` of 30 m is long. Set it so the mages do threaten the players: 14 m in the sword level, 10 m in the saw level. For mages that can be walked to, being off screen is fine (see below).
+- **Zoom out only for enemies that can't be walked to.** A framing (`add_focus`) zooms the camera out, and players should keep the normal zoom whenever they can reach every enemy on foot. Use one only for targets across a gap or on their own platform, such as packs to shoot before a bridge opens, or mages on islands. Enemies that come to the players are close enough to see. `tools/level_gen/report_framing_reach.gd` lists each framing in a level and how many enemies inside it can be walked to. Run it with `godot.sh test`.
+- **Mages may fire from off screen.** Working out where an unseen mage is shooting from is a difficulty the game wants. So at normal zoom, don't shorten a reachable mage's range or zoom out to show it. The test drivers only require that some mage is in range there. A mage the players can't walk to still gets a framing.
+- **Arena framing:** when one is needed, add a focal point at all **four corners** with `add_focus`. Focal points on one side only shift the view, and pushed a player off the bottom of the screen while every enemy check passed. Clear them with `UnfocusCamera` when the group dies. Respawning clears them too, so the trigger must be able to fire again.
 - **Zoom limit:** the camera stops zooming out at `max_zoom_out`, so a very long area won't fit on screen. For those, make sure threats are visible when they're close enough to hurt, rather than all at once.
 - **Don't spawn inside a trigger.** Triggers fire when a body enters, so one the players are already inside may not fire after a respawn (read from the code, not tested). Place it ahead of the spawn so it fires as they walk in.
 
@@ -130,6 +136,56 @@ This caused most of the problems, so check it for every section.
 - **Light placement:** the camera sees what faces south and up, so put a brazier on the camera side of an enemy. One placed behind it leaves a dark silhouette.
 - **Keep pits and solids distinct.** Pure black should only ever mean a pit or the void. Pillar and wall tops need visible stone: nearly black tops looked exactly like a hole.
 - **Test brightness from real pixels:** `check_enemies_readable` in `verify_dungeon_prototype.gd` averages the screen around each nearby enemy, with the HUD hidden. The 0.05 threshold is a judgement call, so also look at the screenshots. `check_players_not_behind_walls` casts a ray from the camera to each carrier's head.
+
+## Other environments: lava
+
+`tools/level_gen/example_lava_prototype.py` builds a saw level on basalt over a molten surface. Copy it as a starting point. `Level(palette="lava")`, then `use_lava_environment()` before `add_shell()`, and `add_lava_terrain(floor, mouths, fall_z, outcrops)` instead of `add_terrain`. The art is in `src/world/elements/lava/`. Its tiles are the normal hill tiles with a basalt material, built by `tools/level_gen/build_lava_tiles.gd`, so `build_floor` works as usual. Re-run that script only to change which tiles are included; the look is in `lava_rock.gdshader`.
+
+- **Touching the lava is the fall:** the kill box sits right at the surface (`LAVA_FALL_Y`), and `lava_surface.gd` throws up a splash.
+- **Bridges:** `lava_bridge_platform.tscn` is a basalt slab that rises out of the lava. While lowered it is hidden and has no collision. Twin rails work with the saw here too.
+- **Vents:** `add_vents` places `lava_vent.tscn`, one (cx, cz, phase) each. By default each runs a 4 s cycle: 1.3 s of warning, then 0.9 s of eruption. The rim on the ground has the same radius as the burn (1.45 m), measured from a body's origin, and it stays visible while the vent is quiet. Stagger `phase` to make waves. Vents burn enemies too, so keep waiting enemies and spawn points clear of them; the example asserts this.
+- **Scenery:** `add_lava_spouts` adds harmless, larger eruptions out in the lava, and `outcrops` adds rocks with no collision.
+- **Unshaded materials ignore `EMISSION`.** The lava and vents first rendered pure black because of this. Write glowing colours to `ALBEDO` in an `unshaded` shader; values above 1 still trigger the environment's glow.
+- **Lit from below:** emission doesn't light other objects, so `LavaGlow` is a shadowless directional light pointing up. It colours what stands above the lava and can't reach the tops of tiles. Too much of it, or a red sun, tints enemies into the ground.
+- **Keep the ground plain.** Glowing cracks are only on cliff faces. Walkable ground should be a calm neutral colour, so the only bright things on it are hazards.
+- **The saw's blade reflects the sky.** A dark sky turned it black, and a bright one or the sun's highlight blows it out to white, so check it from several camera distances. It still ranges from cream to white.
+- **Test vents without dying:** `burned` fires even for invulnerable players. `sweep_straight_walk` in `verify_lava_prototype.gd` uses that to walk across a vent field from several points in the cycle and count the clean crossings. Measure how many enemies the vents kill on their own, too, so a fight doesn't finish itself. In the prototype they burned 2 of 7 guards and 1 of 13 chasers while the carriers stood still.
+- **New class names:** a `class_name` in a new script isn't known until Godot rescans. Run `godot --headless --path . --import` once before a test driver uses it, or the driver fails to compile.
+
+## Other environments: rotor decks
+
+`tools/level_gen/example_rotor_decks_prototype.py` builds a sky level on wooden decks held up by propellers. Copy it as a starting point. `Level(palette="decks")`, then `use_rotor_decks()` before `add_shell()`, and `add_deck_terrain(decks, lanes, fall_z)` instead of `add_terrain`. The art is in `src/world/elements/sky_decks/`.
+
+- **Rotors go outside the deck.** The camera looks steeply down, so anything under a deck is hidden. They sit on outrigger arms, have no collision, and are placed along outer edges automatically. List cells in `lanes` where a rotor shouldn't go, such as beside a ferry's path. Then check that every deck still has some.
+- **Ferries replace bridges.** `rotor_ferry.tscn` is a `BridgePlatform` whose animation flies, so the normal events work with no new code. "Open" brings it from the far dock to the near one, and "close" flies it back. A trigger on the near dock runs the close event once both carriers are aboard. A checkpoint's `events_completed` snaps it back to the near dock after a death.
+- **Moving platforms:** set `callback_mode_process = 0` on the `AnimationPlayer`, so the `AnimatableBody3D` moves during physics. Carriers then ride it without sliding: in testing they stayed put and kept the bazooka.
+- **World-space shaders on moving things:** `wood_planks.gdshader` draws planks from world position, so decks of any shape tile. On something that moves, the boards stay still while it slides under them, so the ferry sets `local_space = true`. `check_boards_move_with_ferry` photographs the deck from a camera riding on it at both docks. It also runs the old behaviour as a control, to prove the measurement can fail.
+- **Fixed flight distance:** the ferry always flies 4 cells, and its animation holds that distance, so every gap must be 7 cells. Other gap sizes need a new animation.
+- **Don't frame the far deck while riding.** Focal points on the far deck pushed the carriers off screen mid-flight. The ring's chasers can be walked to anyway, so that deck has no framing now; only the mages' decks do.
+- **Gaps limit shooting:** a 7-cell gap is too wide to shoot across on screen. The first targets stood 30 m away, beyond what `max_zoom_out` can frame, so they moved onto the start deck.
+- **Rocket speed:** rockets fly at 5 m/s and a ferry at about 2.4 m/s, so a rocket fired mid-flight is slow to pull ahead. In one test, a rocket fired during the ride hadn't killed anything by the time the ferry landed.
+- **Test driver trap:** teleporting both carriers with `move_players` after they've turned can leave the weapon sideways, so a rocket misses for reasons unrelated to the level. Walk them there with real input before firing.
+- **Gridmap layers:** one cell holds one item, so `_deck_frame` stacks edge beams on lower layers and `deck_tiles.tres` lifts their meshes back up.
+
+## Other environments: space station
+
+`tools/level_gen/example_space_station_prototype.py` builds a pulse-rifle level on station decks above a gas giant. The rifle (`src/weapon/pulse_rifle.tscn`, `weapon="pulse_rifle"`) fires about 10 bolts a second while shoot is held, 1 damage each, and bolts fly through terrain and shoot down plasma. Its model is built by `tools/blender/build_pulse_rifle.py`. `tools/level_gen/example_katana_robot_boss.py` builds a boss arena on the same decks, against 4GTN (`src/enemy/enemy_katana_robot.tscn`), tested by `verify_katana_robot_boss.gd`. Copy it as a starting point. `Level(palette="space")`, then `use_space_station()` before `add_shell()`, and `add_station_terrain(decks, props, fall_z)` instead of `add_terrain`. The art is in `src/world/elements/space/`.
+
+- **Robots replace skeletons.** `use_space_station()` makes `melee`, `mage` and the survival group use `src/enemy/enemy_robot.tscn` (KayKit Robot One) and `enemy_robot_gunner.tscn` (Robot Two, with the cannon arm). They are the skeleton scenes with the model swapped: the Robots share the `Rig_Medium` rig, so the same animation clips drive them. Gunners fire `plasma_bolt` through `FireballEmitter.spawn_scene`; it behaves exactly like a fireball.
+- **Tiles:** `space_tiles.tres` is built by `tools/level_gen/build_space_tiles.gd` from the KayKit Space Base glTFs in `assets/models/space_base/`, scaled 1.5× to fit 3 m cells. Each prop item is a deck plate with the prop on it and box collision, so props block movement and the navmesh bakes around them. Re-run the script to add props.
+- **Bridges:** `hard_light_bridge_platform.tscn` projects across the gap ("open") and switches off ("close"). While off it is invisible and has no collision.
+- **Scenery:** `add_planet`, `add_distant_station` and `add_asteroids`, all without collision. The starfield is a sky shader that also covers the view below the decks.
+- **Plating brightness:** under the white sun the first panel colour washed out to near-white. Keep `panel_color` in `station_panels.gdshader` darker than about 0.45.
+
+## Boss fights: the necromancer
+
+`tools/level_gen/example_necromancer_boss.py` builds `world_local_necromancer_boss.tscn`, a dungeon arena with one gate. Copy it for a boss in a dark level. The boss is `src/enemy/enemy_necromancer.tscn`; its tuning is exported on `NecromancerBehavior` and `NecromancerSpells`.
+
+- **Moves:** a bolt volley, summoned skeletons and a scythe swing at close range. The boss blinks away from carriers who stay close. Below 50% HP it taunts, the scythe burns, and eruptions start under each carrier.
+- **Minions** live in a `NecromancerMinions` node outside the enemy group, so they don't count toward clearing it. They die with the boss, and are removed when a respawn resets it.
+- **Sword hits need the blade to cross the body.** `hit_area.gd` only deals damage when a body enters or leaves the blade during a strike. A body already inside the blade at the start of a dash can take no hit, and a wider capsule makes that more likely, so keep boss capsules narrow.
+- **Animations:** spell and melee clips aren't in the project's Rig_Medium glbs. Those in `assets/animations_source/animations/necromancer/` were extracted from `KayKit_Character_Animations_1.1` with `GLTFDocument` and saved as `.res`.
+- **Dev settings:** `boss_hp_multiplier` scales any enemy with a `BossPhaseController`, and is applied twice ([bug](bugs/dev-settings-double-apply.md)). Read the HP in the scene, not the one in the running game.
 
 ## Testing
 

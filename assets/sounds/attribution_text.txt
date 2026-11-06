@@ -1,7 +1,22 @@
+Kept in sync with the in-game credits (CreditsText in src/menu/menu.tscn).
+
+Footsteps (grass, wood, stone, metal): IndieSFX S054C Footsteps by Mark Sheeky -- www.indiesfx.co.uk -- IndieSFX Standard Licence (paid, no redistribution)
+Gun, explosion, punch, stab sounds: Combat Sounds Pack - Lite Edition by Place Holder Assets -- https://placeholder-assets.itch.io/combat-sounds-pack-lite-edition -- paid, no redistribution
+
 Ammo pickup #1 by zivs -- https://freesound.org/s/433770/ -- License: Attribution 4.0
 Fireball Cast 3 by LiamG_SFX -- https://freesound.org/s/334237/ -- License: Attribution 4.0
 Complex Mechanism Long by Sabacky -- https://freesound.org/s/807844/ -- License: Attribution 4.0
 Complex Mechanism Short by Sabacky -- https://freesound.org/s/807842/ -- License: Attribution 4.0
-Healing (Soft Ripple) by SilverIllusionist -- https://freesound.org/s/677080/ -- License: Attribution NonCommercial 4.0
+Healing (Ripple) by Dylan Kelk (SilverIllusionist) -- https://freesound.org/s/677080/ -- License: Attribution NonCommercial 4.0 -- NOT allowed in a paid release, replace before selling
+Field artillery gun (bazooka_shot.wav) by InMotionAudio -- https://freesound.org/s/702245/ -- CC0
+Hit Impact Sword 3 (damage/sword_hit.wav) by CogFireStudios -- https://freesound.org/s/547042/ -- CC0
+arrow_damage by braqoon -- https://freesound.org/s/161098/ -- CC0 (mixes qubodup 60030 and RandomationPictures 138481, not checked)
+Giant axe impact striking into dirt 4 by yodguard -- Pixabay (id 450258) -- Pixabay Content License
 
-Icons: https://juliocacko.itch.io/free-input-prompts
+Unknown source, fill in: ammo/reload.wav, damage.wav, explosion.wav (maybe own edit, see explosion.aup3), slash_1-4.wav
+
+Icons: JulioCacko -- https://juliocacko.itch.io/free-input-prompts -- CC0
+Font: Lilita One by Juan Montoreano -- SIL Open Font License
+Particles: Kenney and Picster via Brackeys VFX Bundle -- CC0
+Models: KayKit by Kay Lousberg -- CC0
+Music: PeriTune -- see assets/music/CREDITS.md

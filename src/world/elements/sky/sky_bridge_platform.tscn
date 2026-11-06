@@ -278,6 +278,7 @@ script = ExtResource("1_32cxk")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
 collision_layer = 4
 collision_mask = 0
+metadata/footstep_surface = &"wood"
 
 [node name="Visual" type="Node3D" parent="AnimatableBody3D"]
 

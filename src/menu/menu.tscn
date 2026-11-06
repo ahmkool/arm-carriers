@@ -631,16 +631,35 @@ size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 24
 text = "Developer: ahmkool
 
-Music: Peritune
+MUSIC
+PeriTune -- https://peritune.com/
 
-3D models for characters and terrain: Kaykit
+3D MODELS
+Characters, enemies, bosses, terrain and props: KayKit by Kay Lousberg -- www.kaylousberg.com
 
-Sound effects from Freesound:
+SOUND EFFECTS
+Footsteps: IndieSFX by Mark Sheeky -- www.indiesfx.co.uk
+Combat, gun and explosion sounds: Combat Sounds Pack - Lite Edition by Place Holder Assets
+
+From Freesound:
 Ammo pickup #1 by zivs -- https://freesound.org/s/433770/ -- License: Attribution 4.0
 Fireball Cast 3 by LiamG_SFX -- https://freesound.org/s/334237/ -- License: Attribution 4.0
 Complex Mechanism Long by Sabacky -- https://freesound.org/s/807844/ -- License: Attribution 4.0
 Complex Mechanism Short by Sabacky -- https://freesound.org/s/807842/ -- License: Attribution 4.0
-Healing (Soft Ripple) by SilverIllusionist -- https://freesound.org/s/677080/ -- License: Attribution NonCommercial 4.0
+Healing (Ripple) by Dylan Kelk (SilverIllusionist) -- https://freesound.org/s/677080/ -- License: Attribution NonCommercial 4.0
+Field artillery gun by InMotionAudio -- https://freesound.org/s/702245/ -- CC0
+Hit Impact Sword 3 by CogFireStudios -- https://freesound.org/s/547042/ -- CC0
+arrow_damage by braqoon -- https://freesound.org/s/161098/ -- CC0
+
+From Pixabay:
+Giant axe impact by yodguard
+
+VISUAL EFFECTS
+Particle textures by Kenney (kenney.nl) and Picster, via the Brackeys VFX Bundle
+
+INTERFACE
+Input prompt icons by JulioCacko -- https://juliocacko.itch.io/free-input-prompts
+Font: Lilita One by Juan Montoreano -- SIL Open Font License
 "
 autowrap_mode = 3
 

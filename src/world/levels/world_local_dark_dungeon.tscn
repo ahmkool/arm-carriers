@@ -1,4 +1,4 @@
-[gd_scene load_steps=0 format=3 uid="uid://b68d4wm5dmqc8"]
+[gd_scene format=3 uid="uid://b68d4wm5dmqc8"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
@@ -27,7 +27,7 @@
 [ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="sword"]
-[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="music"]
+[ext_resource type="AudioStream" uid="uid://buw0c1srev4kl" path="res://assets/music/PerituneMaterial_Entangle.mp3" id="music"]
 [ext_resource type="PackedScene" path="res://src/world/elements/dungeon/dungeon_brazier.tscn" id="brazier"]
 [ext_resource type="Script" path="res://src/world/elements/dungeon/carrier_light.gd" id="carrier_light"]
 
@@ -463,67 +463,6 @@ platform_animation_stagger_seconds = 0.5
 [node name="LevelSucceeded" type="Node" parent="Level/Events"]
 script = ExtResource("finished")
 
-[node name="FocusHallSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusHallSW")
-
-[node name="FocusHallSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusHallSE")
-
-[node name="FocusHallNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusHallNW")
-
-[node name="FocusHallNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusHallNE")
-
-[node name="FocusCryptSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusCryptSW")
-
-[node name="FocusCryptSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusCryptSE")
-
-[node name="FocusCryptNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusCryptNW")
-
-[node name="FocusCryptNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusCryptNE")
-
-[node name="UnfocusCamera" type="Node" parent="Level/Events"]
-script = ExtResource("camera_clear")
-
-[node name="FocusPoints" type="Node3D" parent="Level"]
-
-[node name="FocusHallSW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -31.4895)
-
-[node name="FocusHallSE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -31.4895)
-
-[node name="FocusHallNW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -64.4785)
-
-[node name="FocusHallNE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -64.4785)
-
-[node name="FocusCryptSW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 0, -76.4745)
-
-[node name="FocusCryptSE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -76.4745)
-
-[node name="FocusCryptNW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 0, -112.4625)
-
-[node name="FocusCryptNE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -112.4625)
-
 [node name="EndLevelArea" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -133.4555)
 script = ExtResource("all_players")
@@ -596,21 +535,10 @@ Use dash to swing and attack with the sword !"
 
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
-[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/UnfocusCamera" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/OpenBridge2" method="trigger"]
-[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/UnfocusCamera" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="Level/Events/OpenBridge3" method="trigger"]
-[connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="Level/Events/UnfocusCamera" method="trigger"]
 [connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/CloseBridge2" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusHallSW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusCryptSW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusHallSE" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusCryptSE" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusHallNW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusCryptNW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusHallNE" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusCryptNE" method="trigger"]

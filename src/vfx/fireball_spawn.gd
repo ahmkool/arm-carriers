@@ -3,6 +3,9 @@ extends Node3D
 
 const FIREBALL_SCENE := preload("res://src/vfx/fireball.tscn")
 
+## The projectile launched once the charge-up ends. It must use fireball.gd.
+@export var projectile_scene: PackedScene = FIREBALL_SCENE
+
 @onready var _focus: GPUParticles3D = $Focus
 @onready var _burst: GPUParticles3D = $GPUParticles3D
 @onready var _sfx: AudioStreamPlayer3D = $AudioStreamPlayer3D
@@ -29,7 +32,7 @@ func _spawn_fireball() -> void:
 
 	_play_spawn_burst()
 
-	var fireball := FIREBALL_SCENE.instantiate() as Fireball
+	var fireball := projectile_scene.instantiate() as Fireball
 	if fireball == null:
 		_schedule_cleanup()
 		return

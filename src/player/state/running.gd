@@ -65,8 +65,8 @@ func _play_footstep() -> void:
 	_remember_base_step_volume()
 	var is_carrying := player.carrying_weapon_data.is_carrying()
 	player.footsteps_sound.pitch_scale = CARRY_STEP_PITCH if is_carrying else 1.0
-	player.footsteps_sound.volume_db = _base_step_volume_db + (CARRY_STEP_VOLUME_BOOST_DB if is_carrying else 0.0)
-	player.footsteps_sound.play()
+	var step_volume_db := _base_step_volume_db + (CARRY_STEP_VOLUME_BOOST_DB if is_carrying else 0.0)
+	player.footsteps_sound.play_step(FootstepSurface.under(player), step_volume_db)
 	if not is_carrying:
 		return
 	ImpactFeedback.spawn_dust(player.global_position, CARRY_STEP_DUST_DENSITY)

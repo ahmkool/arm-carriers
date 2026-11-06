@@ -26,7 +26,7 @@ assert MOUTHS <= FLOOR
 
 level = Level("src/world/levels/world_local_saw.tscn", palette=7, weapon="saw", floor_seed=5, deco_seed=42,
               hint="[color=#ff8888]Saw usage[/color]\n\nThe saw is always spinning : steer it into enemies together !",
-              follow_offset="Vector3(0, 11, 4.714)")  # the saw has no camera-forward marker, so raise the camera
+              follow_offset="Vector3(0, 11, 4.714)", music="rising_tension")  # the saw has no camera-forward marker, so raise the camera
 level.curve = (2.5, 1.25)  # seconds between survival spawns, start to end
 level.boxes = {"fall": (340, 1, 360), "arena": (45, 3, 9), "funnel": (45, 3, 9), "lane": (33, 3, 9), "finale": (51, 3, 9), "end": (27, 3, 9)}
 level.add_shell()
@@ -79,7 +79,6 @@ level.bridge_event("CloseBridge4", 4, True, "MakeSurvivalGroupOffensive")
 level.offensive_event("MakeSurvivalGroupOffensive", "SurvivalEnemyGroup")
 level.bridge_event("OpenBridge5", 5)
 level.node("LevelSucceeded", "Level/Events", "Node", props={"script": 'ExtResource("finished")'})
-level.add_focus({"Arena": (-7, 7, -9, -20), "Funnel": (-7, 7, -23, -38), "Finale": (-8, 8, -65, -79)})
 level.add_end_area(0, -85)
 level.add_bridge_nodes()
 level.add_triggers(((T, 0, -11, "arena"), (T + "2", 0, -25, "funnel"), (T + "3", 0, -48, "lane"), (T + "4", 0, -67, "finale")))
@@ -88,18 +87,14 @@ level.add_weapon("Saw", tf(wx, 1.8726845, wz, "-4.371139e-08, 0, 1, 0, 1, 0, -1,
 level.add_audio_and_hint()
 
 # ---- Signals. ----
-PROGRESSION = (("EnemyGroup", 1, "Checkpoint2", False), ("EnemyGroup2", 2, "Checkpoint3", True), ("EnemyGroup3", 3, "Checkpoint4", True),
-               ("EnemyGroup4", 4, "Checkpoint5", False), ("SurvivalEnemyGroup", 5, "Checkpoint6", True))
-for group, number, cp_name, unfocus in PROGRESSION:
+# No camera framing: every enemy here can be walked to, so the normal zoom is enough.
+PROGRESSION = (("EnemyGroup", 1, "Checkpoint2"), ("EnemyGroup2", 2, "Checkpoint3"), ("EnemyGroup3", 3, "Checkpoint4"),
+               ("EnemyGroup4", 4, "Checkpoint5"), ("SurvivalEnemyGroup", 5, "Checkpoint6"))
+for group, number, cp_name in PROGRESSION:
     level.connect("enemies_defeated", GROUPS + group, "CheckpointManager/" + cp_name, "_trigger_checkpoint")
     level.connect("enemies_defeated", GROUPS + group, EVENTS + f"OpenBridge{number}")
-    if unfocus:
-        level.connect("enemies_defeated", GROUPS + group, EVENTS + "UnfocusCamera")
 level.connect("all_players_inside", "Level/EndLevelArea", EVENTS + "LevelSucceeded")
 for number, name in ((1, T), (2, T + "2"), (3, T + "3"), (4, T + "4")):
     level.connect("all_players_inside", AREAS + name, EVENTS + f"CloseBridge{number}")
-for label, name in (("Arena", T), ("Funnel", T + "2"), ("Finale", T + "4")):
-    for corner in ("SW", "SE", "NW", "NE"):
-        level.connect("all_players_inside", AREAS + name, EVENTS + f"Focus{label}{corner}")
 
 level.write(sys.argv[1:])

@@ -1,6 +1,6 @@
-extends OmniLight3D
+extends Node3D
 
-## A warm light that follows the two carriers, so they can always see what is around them.
+## Follows the two carriers: the dungeon's warm light, the lava level's embers.
 @export var height: float = 5.0
 @export var smoothing: float = 10.0
 

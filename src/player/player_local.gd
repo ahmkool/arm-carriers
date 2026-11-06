@@ -22,7 +22,7 @@ const ANIM_PARAM_DEAD_ONESHOT_REQUEST := &"parameters/DeadOneShot/request"
 @onready var carrying_weapon_data: CarryingWeaponData = $CarryingWeaponData
 @onready var weapon_carrier_pin_joint = $WeaponCarrierPinJoint
 @onready var footsteps_particles: GPUParticles3D = $FootstepsParticles
-@onready var footsteps_sound: AudioStreamPlayer3D = $FootstepsSound
+@onready var footsteps_sound: FootstepsSound = $FootstepsSound
 
 var action_left: String
 var action_right: String

@@ -132,12 +132,22 @@ func check_view(label: String, enemies: Array, reach: float = 14.0) -> void:
 	var players_seen := visible_count(players())
 	var near := enemies.filter(func(e): return is_instance_valid(e) and e.is_alive() and _player_distance(e) <= reach)
 	var near_seen := visible_count(near)
-	check(label, players_seen == 2 and near_seen == near.size(), "players %d/2, enemies within %.0f m %d/%d, camera y=%.1f" % [players_seen, reach, near_seen, near.size(), get_viewport().get_camera_3d().global_position.y])
+	var detail := "players %d/2, enemies within %.0f m %d/%d, camera y=%.1f" % [players_seen, reach, near_seen, near.size(), get_viewport().get_camera_3d().global_position.y]
+	# At normal zoom (no framing), enemies at the edge of the view may be off screen: only the players must show.
+	if focal_count() == 0:
+		check(label + " (normal zoom: players on screen)", players_seen == 2, detail)
+		return
+	check(label, players_seen == 2 and near_seen == near.size(), detail)
 
 
 func check_mages_in_range(label: String) -> void:
 	var in_range := group_enemies("Enemies/EnemyGroup3").filter(_can_cast_at_a_player)
-	check(label, in_range.size() > 0 and visible_count(in_range) == in_range.size(), "%d/%d in range on screen" % [visible_count(in_range), in_range.size()])
+	var detail := "%d/%d in range on screen" % [visible_count(in_range), in_range.size()]
+	# At normal zoom, finding a mage that fires from off screen is part of the challenge: it only has to be a threat.
+	if focal_count() == 0:
+		check(label.replace("on screen", "(off screen allowed)"), in_range.size() > 0, detail)
+		return
+	check(label, in_range.size() > 0 and visible_count(in_range) == in_range.size(), detail)
 
 
 func bridge_y(index: int) -> float:
@@ -303,7 +313,7 @@ func _run() -> void:
 	check("ring trigger starts the fight", g2[0].is_offensive)
 	var closed: bool = await wait_until(func(): return platform_state(1) == "visible=false solid=false", 6.0)
 	check("bridge disappears again when it closes", closed, platform_state(1))
-	check("ring: focal points active", focal_count() == 4, str(focal_count()))
+	check("ring: normal zoom, since every enemy here can be walked to", focal_count() == 0, str(focal_count()))
 	check_view("ring entry view", group_enemies("Enemies/EnemyGroup2"), 100.0)
 	await shot("sky_ring.png")
 	await clear_and_wait("Enemies/EnemyGroup2", "Checkpoint3", 3)

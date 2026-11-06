@@ -1,0 +1,101 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/lava/lava_vent.gd" id="1_vent"]
+[ext_resource type="Shader" path="res://src/world/elements/lava/lava_vent.gdshader" id="2_ground"]
+[ext_resource type="Shader" path="res://src/world/elements/lava/lava_column.gdshader" id="3_column"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ground"]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource("2_ground")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ground"]
+resource_local_to_scene = true
+material = SubResource("ShaderMaterial_ground")
+size = Vector2(2, 2)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_column"]
+render_priority = 2
+shader = ExtResource("3_column")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_column"]
+material = SubResource("ShaderMaterial_column")
+top_radius = 0.7
+bottom_radius = 1.35
+height = 7.0
+radial_segments = 20
+rings = 1
+cap_top = false
+cap_bottom = false
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_globs"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.1
+emission_ring_radius = 0.9
+emission_ring_inner_radius = 0.0
+direction = Vector3(0, 1, 0)
+spread = 16.0
+initial_velocity_min = 7.0
+initial_velocity_max = 13.0
+gravity = Vector3(0, -22, 0)
+scale_min = 0.6
+scale_max = 1.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_globs"]
+shading_mode = 0
+albedo_color = Color(1, 0.48, 0.08, 1)
+emission_enabled = true
+emission = Color(1, 0.42, 0.05, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="SphereMesh" id="SphereMesh_globs"]
+material = SubResource("StandardMaterial3D_globs")
+radius = 0.13
+height = 0.26
+radial_segments = 8
+rings = 4
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_reach"]
+height = 4.0
+radius = 2.6
+
+[node name="LavaVent" type="Node3D"]
+script = ExtResource("1_vent")
+
+[node name="Ground" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.04, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_ground")
+
+[node name="Column" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_column")
+
+[node name="Globs" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+cast_shadow = 0
+emitting = false
+amount = 26
+lifetime = 1.1
+visibility_aabb = AABB(-5, -2, -5, 10, 12, 10)
+process_material = SubResource("ParticleProcessMaterial_globs")
+draw_pass_1 = SubResource("SphereMesh_globs")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+light_color = Color(1, 0.45, 0.12, 1)
+omni_range = 9.0
+
+[node name="Reach" type="Area3D" parent="."]
+collision_layer = 0
+collision_mask = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Reach"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("CylinderShape3D_reach")
+
+[node name="Sound" type="AudioStreamPlayer3D" parent="."]
+volume_db = -14.0
+max_distance = 26.0
+bus = &"SFX"

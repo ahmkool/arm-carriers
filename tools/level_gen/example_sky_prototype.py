@@ -37,7 +37,7 @@ DISTANT_ISLANDS = (
     ("IslandG", (-72, -34, -130), rounded(-4, 4, -3, 3), 9),
 )
 
-level = Level("src/world/levels/world_local_sky.tscn", palette=1, weapon="bazooka", floor_seed=9, deco_seed=17)
+level = Level("src/world/levels/world_local_sky.tscn", palette=1, weapon="bazooka", floor_seed=9, deco_seed=17, music="overworld_orchestra")
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
 level.boxes = {"fall": (500, 1, 500), "firing": (21, 3, 10), "ring": (33, 3, 9), "causeway": (15, 3, 6), "end": (21, 3, 9)}
 level.add_shell()
@@ -83,7 +83,8 @@ level.bridge_event("CloseBridge2", 2, True, "MakeEnemiesGroup3Offensive")
 level.offensive_event("MakeEnemiesGroup3Offensive", "EnemyGroup3")
 level.bridge_event("OpenBridge3", 3)
 level.node("LevelSucceeded", "Level/Events", "Node", props={"script": 'ExtResource("finished")'})
-level.add_focus({"Range": (-5, 5, -5, -12), "Ring": (-5, 5, -8, -18), "Mages": (-8, 8, -21, -30)})
+# Framing only where enemies can't be walked to: the packs across the first gap, and the mages on their islands.
+level.add_focus({"Range": (-5, 5, -5, -12), "Mages": (-8, 8, -21, -30)})
 level.add_end_area(0, -36)
 level.add_bridge_nodes()
 level.add_triggers((("FiringLineTrigger", 0, -4, "firing"), (T, 0, -10, "ring"), (T + "2", 0, -23, "causeway")))
@@ -101,7 +102,6 @@ level.connect("all_players_inside", AREAS + T, EVENTS + "UnfocusCamera")
 level.connect("all_players_inside", AREAS + T + "2", EVENTS + "CloseBridge2")
 for corner in ("SW", "SE", "NW", "NE"):
     level.connect("all_players_inside", AREAS + "FiringLineTrigger", EVENTS + f"FocusRange{corner}")
-    level.connect("all_players_inside", AREAS + T, EVENTS + f"FocusRing{corner}")
     level.connect("all_players_inside", AREAS + T + "2", EVENTS + f"FocusMages{corner}")
 
 level.write(sys.argv[1:])

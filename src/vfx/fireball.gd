@@ -5,6 +5,8 @@ const DISAPPEAR_LEAD_SECONDS := 0.5
 const HIT_SOUND := preload("res://assets/sounds/explosion/Small Explosion 2_1.wav")
 
 @export var lifetime_seconds := 5.0
+## Lethal by default: a mage fireball kills a carrier outright.
+@export var damage := 9999
 
 @onready var _animation_player: AnimationPlayer = $AnimationPlayer
 
@@ -42,7 +44,7 @@ func _on_body_collision(body: Node3D) -> void:
 		return
 	_spent = true
 	set_physics_process(false)
-	var damage_landed := Health.apply_damage(player, 9999, global_position)
+	var damage_landed := Health.apply_damage(player, damage, global_position)
 	if damage_landed:
 		CameraFeedback.add_trauma_hurt()
 		_play_hit_sfx()

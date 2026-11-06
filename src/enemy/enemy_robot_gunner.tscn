@@ -1,0 +1,197 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://src/enemy/robot/plasma_bolt_spawn.tscn" id="plasma_spawn"]
+[ext_resource type="PackedScene" path="res://assets/characters/robot/Robot_Two.glb" id="robot_glb"]
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_bvua1"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="2_health"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="3_vqbib"]
+[ext_resource type="Animation" uid="uid://bb6rh8o22vtqk" path="res://assets/animations_source/animations/Death_A_Pose.res" id="4_1q3l4"]
+[ext_resource type="Animation" uid="uid://qr28d1kys3cu" path="res://assets/animations_source/animations/Death_B.res" id="5_78xoa"]
+[ext_resource type="Animation" uid="uid://d4mqxy7yj4eeb" path="res://assets/animations_source/animations/Death_B_Pose.res" id="6_sswjw"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="7_h33ba"]
+[ext_resource type="Animation" uid="uid://dgye3dqqmpauj" path="res://assets/animations_source/animations/Hit_B.res" id="8_s6vab"]
+[ext_resource type="Animation" uid="uid://c3ppuhivk30bj" path="res://assets/animations_source/animations/Idle_A.res" id="9_h3bcy"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="10_maabl"]
+[ext_resource type="Animation" uid="uid://bvdi208mt7bf3" path="res://assets/animations_source/animations/Interact.res" id="11_3t1tj"]
+[ext_resource type="Animation" uid="uid://cvofd306jejsk" path="res://assets/animations_source/animations/Jump_Full_Long.res" id="12_cra5e"]
+[ext_resource type="Animation" uid="uid://ch1jryo7lq8ll" path="res://assets/animations_source/animations/Jump_Full_Short.res" id="13_fntbb"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="14_8skd4"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="15_t7gym"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="16_6uxbq"]
+[ext_resource type="Animation" uid="uid://ckorprw785c6n" path="res://assets/animations_source/animations/PickUp.res" id="17_1lp4r"]
+[ext_resource type="Animation" uid="uid://5o0p7x5ts3yq" path="res://assets/animations_source/animations/Running_A.res" id="18_2nc7b"]
+[ext_resource type="Animation" uid="uid://h8eb8s8erx3o" path="res://assets/animations_source/animations/Running_B.res" id="19_8u26e"]
+[ext_resource type="Animation" uid="uid://4ddywlnww1vh" path="res://assets/animations_source/animations/Spawn_Air.res" id="20_yn84i"]
+[ext_resource type="Animation" uid="uid://ce0wp8fauyjy7" path="res://assets/animations_source/animations/Spawn_Ground.res" id="21_w3dta"]
+[ext_resource type="Animation" uid="uid://cyc51jqqiv405" path="res://assets/animations_source/animations/T-Pose.res" id="22_l4bta"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="23_ncu7b"]
+[ext_resource type="Animation" uid="uid://dmeewkkixxoei" path="res://assets/animations_source/animations/Use_Item.res" id="24_7ydln"]
+[ext_resource type="Animation" uid="uid://400p0viws1y" path="res://assets/animations_source/animations/Walking_A.res" id="25_ajc47"]
+[ext_resource type="Animation" uid="uid://b66k543srtgf6" path="res://assets/animations_source/animations/Walking_B.res" id="26_fn5vr"]
+[ext_resource type="Animation" uid="uid://blfigfpjocmqx" path="res://assets/animations_source/animations/Walking_C.res" id="27_qfk4c"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="29_t05eo"]
+[ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="30_ifkik"]
+[ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="31_tqit1"]
+[ext_resource type="Script" uid="uid://bbgviimwhb8xd" path="res://src/enemy/state/falling.gd" id="32_3m2io"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="33_chhk2"]
+[ext_resource type="Script" uid="uid://81vjno7uh7i4" path="res://src/enemy/state/casting.gd" id="34_iu716"]
+[ext_resource type="Script" uid="uid://0ntrlhws2o6g" path="res://src/enemy/mage/fireball_emitter.gd" id="35_ao3iy"]
+[ext_resource type="Script" uid="uid://c8k2hitdmg01" path="res://src/enemy/state/taking_damage.gd" id="36_hitdmg"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_82etc"]
+_data = {
+&"Death_A": ExtResource("3_vqbib"),
+&"Death_A_Pose": ExtResource("4_1q3l4"),
+&"Death_B": ExtResource("5_78xoa"),
+&"Death_B_Pose": ExtResource("6_sswjw"),
+&"Hit_A": ExtResource("7_h33ba"),
+&"Hit_B": ExtResource("8_s6vab"),
+&"Idle_A": ExtResource("9_h3bcy"),
+&"Idle_B": ExtResource("10_maabl"),
+&"Interact": ExtResource("11_3t1tj"),
+&"Jump_Full_Long": ExtResource("12_cra5e"),
+&"Jump_Full_Short": ExtResource("13_fntbb"),
+&"Jump_Idle": ExtResource("14_8skd4"),
+&"Jump_Land": ExtResource("15_t7gym"),
+&"Jump_Start": ExtResource("16_6uxbq"),
+&"PickUp": ExtResource("17_1lp4r"),
+&"Running_A": ExtResource("18_2nc7b"),
+&"Running_B": ExtResource("19_8u26e"),
+&"Spawn_Air": ExtResource("20_yn84i"),
+&"Spawn_Ground": ExtResource("21_w3dta"),
+&"T-Pose": ExtResource("22_l4bta"),
+&"Throw": ExtResource("23_ncu7b"),
+&"Use_Item": ExtResource("24_7ydln"),
+&"Walking_A": ExtResource("25_ajc47"),
+&"Walking_B": ExtResource("26_fn5vr"),
+&"Walking_C": ExtResource("27_qfk4c")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w0lih"]
+animation = &"animations/Idle_B"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_su138"]
+animation = &"animations/Running_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5bjus"]
+animation = &"animations/Throw"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4kt2u"]
+animation = &"animations/Death_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_5bjus"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_fwumm"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_fwumm"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_71lbu"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_r1oyk"]
+graph_offset = Vector2(2.5869083, -1.0811409)
+nodes/output/position = Vector2(1490, 140)
+nodes/DeadBlend/node = SubResource("AnimationNodeBlend2_fwumm")
+nodes/DeadBlend/position = Vector2(1220, 110)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_71lbu")
+nodes/OneShot/position = Vector2(1020, 710)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_4kt2u")
+nodes/Animation/position = Vector2(780, 750)
+nodes/BlendIdleRun/node = SubResource("AnimationNodeBlend2_5bjus")
+nodes/BlendIdleRun/position = Vector2(670, 110)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_w0lih")
+"nodes/Animation 2/position" = Vector2(340, 90)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_su138")
+"nodes/Animation 3/position" = Vector2(340, 270)
+"nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_5bjus")
+"nodes/Animation 4/position" = Vector2(520, 460)
+"nodes/OneShot 2/node" = SubResource("AnimationNodeOneShot_fwumm")
+"nodes/OneShot 2/position" = Vector2(970, 100)
+node_connections = [&"output", 0, &"DeadBlend", &"DeadBlend", 0, &"OneShot 2", &"DeadBlend", 1, &"OneShot", &"OneShot", 0, &"Animation", &"BlendIdleRun", 0, &"Animation 2", &"BlendIdleRun", 1, &"Animation 3", &"OneShot 2", 0, &"BlendIdleRun", &"OneShot 2", 1, &"Animation 4"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_uw1rm"]
+radius = 0.39160156
+height = 2.3062744
+
+[sub_resource type="Curve" id="Curve_36sbk"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_enemy_fs"]
+curve = SubResource("Curve_36sbk")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_c4hag"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_enemy_fs")
+
+[sub_resource type="SphereMesh" id="SphereMesh_w0lih"]
+
+[node name="EnemyRobotGunner" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_bvua1")
+
+[node name="Robot" parent="." instance=ExtResource("robot_glb")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Robot"]
+libraries = {
+&"animations": SubResource("AnimationLibrary_82etc")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="Robot"]
+active = false
+tree_root = SubResource("AnimationNodeBlendTree_r1oyk")
+anim_player = NodePath("../AnimationPlayer")
+parameters/DeadBlend/blend_amount = 0.0
+parameters/OneShot/active = false
+parameters/OneShot/internal_active = false
+parameters/OneShot/request = 0
+parameters/BlendIdleRun/blend_amount = 0.0
+"parameters/OneShot 2/active" = false
+"parameters/OneShot 2/internal_active" = false
+"parameters/OneShot 2/request" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
+shape = SubResource("CapsuleShape3D_uw1rm")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("29_t05eo")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("30_ifkik")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("31_tqit1")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("32_3m2io")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("33_chhk2")
+
+[node name="Casting" type="Node" parent="EnemyStateMachine" node_paths=PackedStringArray("fireball_emitter")]
+script = ExtResource("34_iu716")
+fireball_emitter = NodePath("../../FireballEmitter")
+
+[node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("36_hitdmg")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("ParticleProcessMaterial_c4hag")
+draw_pass_1 = SubResource("SphereMesh_w0lih")
+
+[node name="FireballEmitter" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2430093, -1.111675)
+script = ExtResource("35_ao3iy")
+speed = 5.0
+spawn_scene = ExtResource("plasma_spawn")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("2_health")

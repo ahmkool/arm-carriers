@@ -1,4 +1,4 @@
-[gd_scene load_steps=0 format=3 uid="uid://cl1kjkb63y3bo"]
+[gd_scene format=3 uid="uid://cl1kjkb63y3bo"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
@@ -27,7 +27,7 @@
 [ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="sword"]
-[ext_resource type="AudioStream" uid="uid://bp1ug7cyuchid" path="res://assets/music/PerituneMaterial_Amenoshita.mp3" id="music"]
+[ext_resource type="AudioStream" uid="uid://cxmjucdq3rvw1" path="res://assets/music/PerituneMaterial_EpicBattle_J.mp3" id="music"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
 panorama = ExtResource("sky")
@@ -473,67 +473,6 @@ platform_animation_stagger_seconds = 0.5
 [node name="LevelSucceeded" type="Node" parent="Level/Events"]
 script = ExtResource("finished")
 
-[node name="FocusArenaSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusArenaSW")
-
-[node name="FocusArenaSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusArenaSE")
-
-[node name="FocusArenaNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusArenaNW")
-
-[node name="FocusArenaNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusArenaNE")
-
-[node name="FocusFinaleSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusFinaleSW")
-
-[node name="FocusFinaleSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusFinaleSE")
-
-[node name="FocusFinaleNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusFinaleNW")
-
-[node name="FocusFinaleNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
-script = ExtResource("camera_focus")
-focal_point = NodePath("../../FocusPoints/FocusFinaleNE")
-
-[node name="UnfocusCamera" type="Node" parent="Level/Events"]
-script = ExtResource("camera_clear")
-
-[node name="FocusPoints" type="Node3D" parent="Level"]
-
-[node name="FocusArenaSW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 0, -22.4925)
-
-[node name="FocusArenaSE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -22.4925)
-
-[node name="FocusArenaNW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 0, -52.4825)
-
-[node name="FocusArenaNE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -52.4825)
-
-[node name="FocusFinaleSW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, 0, -136.4545)
-
-[node name="FocusFinaleSE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.4825, 0, -136.4545)
-
-[node name="FocusFinaleNW" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, 0, -172.4425)
-
-[node name="FocusFinaleNE" type="Node3D" parent="Level/FocusPoints"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.4825, 0, -172.4425)
-
 [node name="EndLevelArea" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 0, -187.4375)
 script = ExtResource("all_players")
@@ -618,21 +557,11 @@ Use dash to swing and attack with the sword !"
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/OpenBridge2" method="trigger"]
-[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/UnfocusCamera" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="Level/Events/OpenBridge3" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="CheckpointManager/Checkpoint5" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/OpenBridge4" method="trigger"]
-[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/UnfocusCamera" method="trigger"]
 [connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusArenaSW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusArenaSE" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusArenaNW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/FocusArenaNE" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/CloseBridge2" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/CloseBridge3" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusFinaleSW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusFinaleSE" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusFinaleNW" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusFinaleNE" method="trigger"]

@@ -4,13 +4,15 @@ extends Marker3D
 const FIREBALL_SPAWN_SCENE := preload("res://src/vfx/fireball_spawn.tscn")
 
 @export var speed := 8.0
+## What appears at the muzzle and then launches the projectile. Robots fire plasma instead of fire.
+@export var spawn_scene: PackedScene = FIREBALL_SPAWN_SCENE
 
 func spawn_fireball() -> void:
 	var direction := _get_launch_direction()
 	if direction.length_squared() < 0.0001:
 		return
 
-	var spawn := FIREBALL_SPAWN_SCENE.instantiate() as FireballSpawn
+	var spawn := spawn_scene.instantiate() as FireballSpawn
 	if spawn == null:
 		return
 

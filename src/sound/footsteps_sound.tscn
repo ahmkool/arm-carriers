@@ -1,26 +1,101 @@
-[gd_scene load_steps=10 format=3 uid="uid://bp1b8kp6ixbl3"]
+[gd_scene format=3 uid="uid://bp1b8kp6ixbl3"]
 
-[ext_resource type="AudioStream" uid="uid://x1mcwljo2p72" path="res://assets/sounds/grass/GrassStep01.wav" id="1_7o2mi"]
-[ext_resource type="AudioStream" uid="uid://472ex6ic3avy" path="res://assets/sounds/grass/GrassStep02.wav" id="2_grass02"]
-[ext_resource type="AudioStream" uid="uid://crn380ryx24bg" path="res://assets/sounds/grass/GrassStep03.wav" id="3_grass03"]
-[ext_resource type="AudioStream" uid="uid://djtf2484fpk55" path="res://assets/sounds/grass/GrassStep04.wav" id="4_grass04"]
-[ext_resource type="AudioStream" uid="uid://cvde87oyuw4r1" path="res://assets/sounds/grass/GrassStep05.wav" id="5_grass05"]
-[ext_resource type="AudioStream" uid="uid://bdqsxwrrnkikx" path="res://assets/sounds/grass/GrassStep06.wav" id="6_grass06"]
-[ext_resource type="AudioStream" uid="uid://2frwk20o2xsb" path="res://assets/sounds/grass/GrassStep07.wav" id="7_grass07"]
-[ext_resource type="AudioStream" uid="uid://deubd8okb4826" path="res://assets/sounds/grass/GrassStep08.wav" id="8_grass08"]
+[ext_resource type="Script" uid="uid://degmik36d86kd" path="res://src/sound/footsteps_sound.gd" id="script"]
+[ext_resource type="AudioStream" uid="uid://x1mcwljo2p72" path="res://assets/sounds/grass/GrassStep01.wav" id="grass_01"]
+[ext_resource type="AudioStream" uid="uid://472ex6ic3avy" path="res://assets/sounds/grass/GrassStep02.wav" id="grass_02"]
+[ext_resource type="AudioStream" uid="uid://crn380ryx24bg" path="res://assets/sounds/grass/GrassStep03.wav" id="grass_03"]
+[ext_resource type="AudioStream" uid="uid://djtf2484fpk55" path="res://assets/sounds/grass/GrassStep04.wav" id="grass_04"]
+[ext_resource type="AudioStream" uid="uid://cvde87oyuw4r1" path="res://assets/sounds/grass/GrassStep05.wav" id="grass_05"]
+[ext_resource type="AudioStream" uid="uid://bdqsxwrrnkikx" path="res://assets/sounds/grass/GrassStep06.wav" id="grass_06"]
+[ext_resource type="AudioStream" uid="uid://2frwk20o2xsb" path="res://assets/sounds/grass/GrassStep07.wav" id="grass_07"]
+[ext_resource type="AudioStream" uid="uid://deubd8okb4826" path="res://assets/sounds/grass/GrassStep08.wav" id="grass_08"]
+[ext_resource type="AudioStream" uid="uid://bn2hcces3xthk" path="res://assets/sounds/wood/WoodStep01.wav" id="wood_01"]
+[ext_resource type="AudioStream" uid="uid://3yypoynoe0t8" path="res://assets/sounds/wood/WoodStep02.wav" id="wood_02"]
+[ext_resource type="AudioStream" uid="uid://dp5x0y272tqig" path="res://assets/sounds/wood/WoodStep03.wav" id="wood_03"]
+[ext_resource type="AudioStream" uid="uid://dtosdsye01ndg" path="res://assets/sounds/wood/WoodStep04.wav" id="wood_04"]
+[ext_resource type="AudioStream" uid="uid://cln4lg3tpadg5" path="res://assets/sounds/wood/WoodStep05.wav" id="wood_05"]
+[ext_resource type="AudioStream" uid="uid://lwdpxyaer0km" path="res://assets/sounds/wood/WoodStep06.wav" id="wood_06"]
+[ext_resource type="AudioStream" uid="uid://c5mq6u5dkx6iv" path="res://assets/sounds/wood/WoodStep07.wav" id="wood_07"]
+[ext_resource type="AudioStream" uid="uid://bc80qchpven5d" path="res://assets/sounds/wood/WoodStep08.wav" id="wood_08"]
+[ext_resource type="AudioStream" uid="uid://m3y20tfg4n66" path="res://assets/sounds/wood/WoodStep09.wav" id="wood_09"]
+[ext_resource type="AudioStream" uid="uid://gyhnlk82a2fx" path="res://assets/sounds/wood/WoodStep10.wav" id="wood_10"]
+[ext_resource type="AudioStream" uid="uid://dt2y6oadsdoph" path="res://assets/sounds/wood/WoodStep11.wav" id="wood_11"]
+[ext_resource type="AudioStream" uid="uid://df7qgixq2kx26" path="res://assets/sounds/wood/WoodStep12.wav" id="wood_12"]
+[ext_resource type="AudioStream" uid="uid://dlo5vssj3bb3w" path="res://assets/sounds/stone/HardStep01.wav" id="stone_01"]
+[ext_resource type="AudioStream" uid="uid://bkwt6qfa07ol6" path="res://assets/sounds/stone/HardStep02.wav" id="stone_02"]
+[ext_resource type="AudioStream" uid="uid://dsnlwqnirq4ig" path="res://assets/sounds/stone/HardStep03.wav" id="stone_03"]
+[ext_resource type="AudioStream" uid="uid://bw11ejkitjpdl" path="res://assets/sounds/stone/HardStep04.wav" id="stone_04"]
+[ext_resource type="AudioStream" uid="uid://2sc61c7pnf6g" path="res://assets/sounds/stone/HardStep05.wav" id="stone_05"]
+[ext_resource type="AudioStream" uid="uid://lr1v672mu5wf" path="res://assets/sounds/stone/HardStep06.wav" id="stone_06"]
+[ext_resource type="AudioStream" uid="uid://dbr2p6httlgk7" path="res://assets/sounds/stone/HardStep07.wav" id="stone_07"]
+[ext_resource type="AudioStream" uid="uid://dnb77n051v3rn" path="res://assets/sounds/stone/HardStep08.wav" id="stone_08"]
+[ext_resource type="AudioStream" uid="uid://ehj3urh1x2yr" path="res://assets/sounds/stone/HardStep09.wav" id="stone_09"]
+[ext_resource type="AudioStream" uid="uid://cf2ywneta70vu" path="res://assets/sounds/stone/HardStep10.wav" id="stone_10"]
+[ext_resource type="AudioStream" uid="uid://cvyrbveo4v6tw" path="res://assets/sounds/stone/HardStep11.wav" id="stone_11"]
+[ext_resource type="AudioStream" uid="uid://bkvo3x6oingrr" path="res://assets/sounds/stone/HardStep12.wav" id="stone_12"]
+[ext_resource type="AudioStream" uid="uid://2kwl4xui5xge" path="res://assets/sounds/metal/GridStep01.wav" id="metal_01"]
+[ext_resource type="AudioStream" uid="uid://bnww5t8iojmw" path="res://assets/sounds/metal/GridStep02.wav" id="metal_02"]
+[ext_resource type="AudioStream" uid="uid://dy4k8ptpe15px" path="res://assets/sounds/metal/GridStep03.wav" id="metal_03"]
+[ext_resource type="AudioStream" uid="uid://y7se6g1wccns" path="res://assets/sounds/metal/GridStep04.wav" id="metal_04"]
+[ext_resource type="AudioStream" uid="uid://bjgehigve57b1" path="res://assets/sounds/metal/GridStep05.wav" id="metal_05"]
+[ext_resource type="AudioStream" uid="uid://j5yis1xw1nx7" path="res://assets/sounds/metal/GridStep06.wav" id="metal_06"]
 
-[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_br3kr"]
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_grass"]
 streams_count = 8
-stream_0/stream = ExtResource("1_7o2mi")
-stream_1/stream = ExtResource("2_grass02")
-stream_2/stream = ExtResource("3_grass03")
-stream_3/stream = ExtResource("4_grass04")
-stream_4/stream = ExtResource("5_grass05")
-stream_5/stream = ExtResource("6_grass06")
-stream_6/stream = ExtResource("7_grass07")
-stream_7/stream = ExtResource("8_grass08")
+stream_0/stream = ExtResource("grass_01")
+stream_1/stream = ExtResource("grass_02")
+stream_2/stream = ExtResource("grass_03")
+stream_3/stream = ExtResource("grass_04")
+stream_4/stream = ExtResource("grass_05")
+stream_5/stream = ExtResource("grass_06")
+stream_6/stream = ExtResource("grass_07")
+stream_7/stream = ExtResource("grass_08")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_wood"]
+streams_count = 12
+stream_0/stream = ExtResource("wood_01")
+stream_1/stream = ExtResource("wood_02")
+stream_2/stream = ExtResource("wood_03")
+stream_3/stream = ExtResource("wood_04")
+stream_4/stream = ExtResource("wood_05")
+stream_5/stream = ExtResource("wood_06")
+stream_6/stream = ExtResource("wood_07")
+stream_7/stream = ExtResource("wood_08")
+stream_8/stream = ExtResource("wood_09")
+stream_9/stream = ExtResource("wood_10")
+stream_10/stream = ExtResource("wood_11")
+stream_11/stream = ExtResource("wood_12")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_stone"]
+streams_count = 12
+stream_0/stream = ExtResource("stone_01")
+stream_1/stream = ExtResource("stone_02")
+stream_2/stream = ExtResource("stone_03")
+stream_3/stream = ExtResource("stone_04")
+stream_4/stream = ExtResource("stone_05")
+stream_5/stream = ExtResource("stone_06")
+stream_6/stream = ExtResource("stone_07")
+stream_7/stream = ExtResource("stone_08")
+stream_8/stream = ExtResource("stone_09")
+stream_9/stream = ExtResource("stone_10")
+stream_10/stream = ExtResource("stone_11")
+stream_11/stream = ExtResource("stone_12")
+
+[sub_resource type="AudioStreamRandomizer" id="AudioStreamRandomizer_metal"]
+streams_count = 6
+stream_0/stream = ExtResource("metal_01")
+stream_1/stream = ExtResource("metal_02")
+stream_2/stream = ExtResource("metal_03")
+stream_3/stream = ExtResource("metal_04")
+stream_4/stream = ExtResource("metal_05")
+stream_5/stream = ExtResource("metal_06")
 
 [node name="FootstepsSound" type="AudioStreamPlayer3D"]
-stream = SubResource("AudioStreamRandomizer_br3kr")
-bus = &"SFX"
+stream = SubResource("AudioStreamRandomizer_grass")
 volume_db = -10.0
+bus = &"SFX"
+script = ExtResource("script")
+grass_steps = SubResource("AudioStreamRandomizer_grass")
+wood_steps = SubResource("AudioStreamRandomizer_wood")
+stone_steps = SubResource("AudioStreamRandomizer_stone")
+metal_steps = SubResource("AudioStreamRandomizer_metal")
