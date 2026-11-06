@@ -20,6 +20,9 @@ const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
 ## How far off the navmesh a knockback step may land. The navmesh is inset from ledges,
 ## so a small margin lets enemies near its edge move without being pushed off a drop.
 const KNOCKBACK_NAV_TOLERANCE := 0.25
+## How far the end of a path may stop short of the target, flat, before the target counts as unreachable.
+## Generous, because the navmesh stops about half a metre short of every edge.
+const UNREACHABLE_TARGET_MARGIN := 1.5
 const DEATH_FREE_DELAY_SECONDS := 10.0
 ## Higher = faster turn toward a facing direction (roughly “how many times per second” to ease toward the target).
 const ROTATION_SMOOTH_LAMBDA := 12.0
@@ -282,13 +285,48 @@ func get_path_direction_to(target_global_position: Vector3) -> Vector3:
 	if navigation_agent == null:
 		return _get_direct_path_direction_to(target_global_position)
 	navigation_agent.target_position = target_global_position
-	if navigation_agent.is_navigation_finished():
+	var next_pos := _next_path_point_ahead()
+	var finished := navigation_agent.is_navigation_finished() or _is_at_path_end()
+	if finished and not _path_reaches(target_global_position):
+		return Vector3.ZERO
+	if finished:
 		return _get_direct_path_direction_to(target_global_position)
-	var next_pos := navigation_agent.get_next_path_position()
 	var direction := Vector3(next_pos.x - global_position.x, 0.0, next_pos.z - global_position.z)
 	if direction.length_squared() > 0.0001:
 		return direction.normalized()
 	return _get_direct_path_direction_to(target_global_position)
+
+
+## False when the path ends well short of the target: the target is somewhere the navmesh doesn't reach, such as a
+## moving platform or across a gap. The enemy then waits at the end of its path instead of walking off the edge.
+func _path_reaches(target_global_position: Vector3) -> bool:
+	var path := navigation_agent.get_current_navigation_path()
+	if path.is_empty():
+		return true
+	var end := path[path.size() - 1]
+	return Vector2(end.x - target_global_position.x, end.z - target_global_position.z).length() <= UNREACHABLE_TARGET_MARGIN
+
+
+## The agent's own "finished" is measured in 3D, so with the navmesh above the floor it may never come.
+func _is_at_path_end() -> bool:
+	var path := navigation_agent.get_current_navigation_path()
+	if path.is_empty():
+		return false
+	var end := path[path.size() - 1]
+	return Vector2(end.x - global_position.x, end.z - global_position.z).length() <= navigation_agent.target_desired_distance
+
+
+## The agent only moves past a path point once it is within path_desired_distance of it in 3D. The navmesh is baked
+## about 0.5 m above the floor, so an enemy whose feet sit a little lower never reaches its first point (its own spot)
+## and steers at random, straight into holes. This skips points that are already reached when measured flat.
+func _next_path_point_ahead() -> Vector3:
+	var next_pos := navigation_agent.get_next_path_position()
+	var path := navigation_agent.get_current_navigation_path()
+	for i in range(navigation_agent.get_current_navigation_path_index(), path.size()):
+		var point := path[i]
+		if Vector2(point.x - global_position.x, point.z - global_position.z).length() > navigation_agent.path_desired_distance:
+			return point
+	return next_pos
 
 
 func get_flee_path_direction_from(threat_global_position: Vector3, retreat_distance: float) -> Vector3:

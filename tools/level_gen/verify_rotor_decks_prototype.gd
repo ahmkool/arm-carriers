@@ -395,11 +395,16 @@ func _run() -> void:
 		world.get_active_weapon().get_node("WeaponSpecifics")._request_fire_bullet()
 	)
 	await wait(0.8)
-	check("the ride wakes the chasers", group_enemies("Enemies/EnemyGroup2").all(func(e): return e.is_offensive))
+	check("the chasers wait out the ride: the ferry isn't in the navmesh", group_enemies("Enemies/EnemyGroup2").all(func(e): return not e.is_offensive))
 	print("INFO chasers down after one rocket fired mid-flight: %d of 11" % (11 - group_enemies("Enemies/EnemyGroup2").size()))
 	check("ring: normal zoom, since every enemy here can be walked to", focal_count() == 0, str(focal_count()))
 	check_view("ring view from the dock", group_enemies("Enemies/EnemyGroup2"))
-	await walk("off the ferry onto the ring", 1.2, 3.0)
+	await walk("off the ferry onto the ring", 1.6, 4.0)
+	var woke: bool = await wait_until(func(): return group_enemies("Enemies/EnemyGroup2").all(func(e): return e.is_offensive), 3.0)
+	check("stepping off onto the ring wakes the chasers", woke)
+	var returned: bool = await wait_until(func(): return absf(ferry_z(1) - near_dock_z(1)) < 0.1, 7.0)
+	check("then ferry 1 flies back to its near dock", returned, "z=%.1f" % ferry_z(1))
+	check("sending the ferry back doesn't lock the players' input", not GameplayInput.is_locked())
 	await shot("decks_ring.png")
 	for spot in [[-4, -12, "south-west"], [4, -12, "south-east"], [-4, -19, "north-west"], [4, -19, "north-east"]]:
 		move_players(w(spot[0], spot[1]))
@@ -424,7 +429,12 @@ func _run() -> void:
 		fireballs[0] = get_tree().get_nodes_in_group("fireballs").size() + world.get_children().filter(func(c): return c is Fireball).size()
 	)
 	print("INFO fireballs in flight during the second ride: ", fireballs[0])
-	check("mages can reach the ferry", fireballs[0] > 0 or check_any_mage_in_range(), str(fireballs[0]))
+	check("the causeway waits out the ride", group_enemies("Enemies/EnemyGroup3").all(func(e): return not e.is_offensive))
+	await walk("off the ferry onto the causeway", 1.6, 4.0)
+	var woke3: bool = await wait_until(func(): return group_enemies("Enemies/EnemyGroup3").all(func(e): return e.is_offensive), 3.0)
+	check("landing on the causeway wakes the mages and chasers", woke3)
+	var returned2: bool = await wait_until(func(): return absf(ferry_z(2) - near_dock_z(2)) < 0.1, 7.0)
+	check("then ferry 2 flies back to its near dock", returned2, "z=%.1f" % ferry_z(2))
 	await wait(1.5)
 	for spot in [[0, -29, "entrance"], [-2, -33, "west"], [2, -36, "far side"]]:
 		move_players(w(spot[0], spot[1]))
@@ -433,6 +443,7 @@ func _run() -> void:
 		var mages := group_enemies("Enemies/EnemyGroup3").filter(_can_cast_at_a_player)
 		check("causeway %s: mages in range on screen" % spot[2], mages.size() > 0 and visible_count(mages) == mages.size(), "%d/%d" % [visible_count(mages), mages.size()])
 	await shot("decks_causeway.png")
+	await check_waits_for_unreachable_player()
 	print("INFO fps on the causeway: ", Engine.get_frames_per_second())
 	await clear_and_call("Enemies/EnemyGroup3", "Checkpoint4", 3)
 
@@ -443,6 +454,22 @@ func _run() -> void:
 	check("end area finishes the level", state() == "levelfinished", state())
 	print("RESULT fails=", fails)
 	get_tree().quit(1 if fails > 0 else 0)
+
+
+func check_waits_for_unreachable_player() -> void:
+	var chaser: EnemyLocal = group_enemies("Enemies/EnemyGroup3").filter(func(e): return not e.has_node("MageBehavior"))[0]
+	var mage_deck := w(-8, -32)
+	place(mage_deck + Vector3(0, 0, 2.0), mage_deck)
+	chaser.global_position = w(-2, -32)
+	var lowest := [INF]
+	var watch := func():
+		if is_instance_valid(chaser):
+			lowest[0] = minf(lowest[0], chaser.global_position.y)
+	get_tree().physics_frame.connect(watch)
+	await wait(5.0)
+	get_tree().physics_frame.disconnect(watch)
+	var stayed: bool = is_instance_valid(chaser) and chaser.is_alive() and lowest[0] > -1.3
+	check("a chaser hunting a player it can't reach waits on its deck instead of walking off", stayed, "lowest y=%.2f, x=%.1f, deck edge x=%.1f" % [lowest[0], chaser.global_position.x if is_instance_valid(chaser) else 0.0, w(-3, -32).x - 1.5])
 
 
 func check_any_mage_in_range() -> bool:

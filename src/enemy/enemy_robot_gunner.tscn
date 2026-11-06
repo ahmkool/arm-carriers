@@ -1,6 +1,12 @@
 [gd_scene format=3]
-[ext_resource type="PackedScene" path="res://src/enemy/robot/plasma_bolt_spawn.tscn" id="plasma_spawn"]
+[ext_resource type="PackedScene" path="res://src/enemy/robot/laser_bolt_spawn.tscn" id="plasma_spawn"]
 [ext_resource type="PackedScene" path="res://assets/characters/robot/Robot_Two.glb" id="robot_glb"]
+[ext_resource type="PackedScene" path="res://assets/characters/robot/Robot_One.glb" id="robot_one_glb"]
+[ext_resource type="Script" path="res://src/enemy/robot/borrowed_arm.gd" id="borrowed_arm"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/enemies/space_ranger_rifle/SpaceRanger_Rifle.gltf" id="rifle"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Ranged_2H_Shoot.res" id="gun_shoot"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Ranged_2H_Aiming.res" id="gun_aim"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Running_HoldingRifle.res" id="gun_run"]
 [ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_bvua1"]
 [ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="2_health"]
 [ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="3_vqbib"]
@@ -63,17 +69,20 @@ _data = {
 &"Use_Item": ExtResource("24_7ydln"),
 &"Walking_A": ExtResource("25_ajc47"),
 &"Walking_B": ExtResource("26_fn5vr"),
-&"Walking_C": ExtResource("27_qfk4c")
+&"Walking_C": ExtResource("27_qfk4c"),
+&"Ranged_2H_Shoot": ExtResource("gun_shoot"),
+&"Ranged_2H_Aiming": ExtResource("gun_aim"),
+&"Running_HoldingRifle": ExtResource("gun_run")
 }
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_w0lih"]
-animation = &"animations/Idle_B"
+animation = &"animations/Ranged_2H_Aiming"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_su138"]
-animation = &"animations/Running_A"
+animation = &"animations/Running_HoldingRifle"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5bjus"]
-animation = &"animations/Throw"
+animation = &"animations/Ranged_2H_Shoot"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_4kt2u"]
 animation = &"animations/Death_A"
@@ -151,6 +160,21 @@ parameters/BlendIdleRun/blend_amount = 0.0
 "parameters/OneShot 2/internal_active" = false
 "parameters/OneShot 2/request" = 0
 
+[node name="RifleHand" type="BoneAttachment3D" parent="Robot/Rig_Medium/Skeleton3D"]
+bone_name = "handslot.r"
+
+[node name="Rifle" parent="Robot/Rig_Medium/Skeleton3D/RifleHand" instance=ExtResource("rifle")]
+transform = Transform3D(0.0186, -0.055, 0.9983, 0.0022, 0.9985, 0.055, -0.9998, 0.0011, 0.0187, 0, 0, 0)
+
+[node name="Muzzle" type="Marker3D" parent="Robot/Rig_Medium/Skeleton3D/RifleHand/Rifle"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.17, 1.12)
+
+[node name="BorrowedArm" type="Node" parent="." node_paths=PackedStringArray("skeleton", "replaced_arm")]
+script = ExtResource("borrowed_arm")
+donor_scene = ExtResource("robot_one_glb")
+skeleton = NodePath("../Robot/Rig_Medium/Skeleton3D")
+replaced_arm = NodePath("../Robot/Rig_Medium/Skeleton3D/Robot_Two_ArmRight")
+
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
 shape = SubResource("CapsuleShape3D_uw1rm")
@@ -174,6 +198,7 @@ script = ExtResource("33_chhk2")
 [node name="Casting" type="Node" parent="EnemyStateMachine" node_paths=PackedStringArray("fireball_emitter")]
 script = ExtResource("34_iu716")
 fireball_emitter = NodePath("../../FireballEmitter")
+cast_animation_delay_seconds = 0.79
 
 [node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("36_hitdmg")
@@ -188,7 +213,7 @@ process_material = SubResource("ParticleProcessMaterial_c4hag")
 draw_pass_1 = SubResource("SphereMesh_w0lih")
 
 [node name="FireballEmitter" type="Marker3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2430093, -1.111675)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.43, 1.22, -1.2)
 script = ExtResource("35_ao3iy")
 speed = 5.0
 spawn_scene = ExtResource("plasma_spawn")

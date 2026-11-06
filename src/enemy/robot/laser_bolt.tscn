@@ -1,0 +1,120 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://64pji2ifyp0g" path="res://src/vfx/fireball.gd" id="1_fireball"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hit"]
+radius = 0.4
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_disappear"]
+resource_name = "disappear"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0.05, 0.05, 0.05)]
+}
+
+[sub_resource type="Animation" id="Animation_flicker"]
+resource_name = "flicker"
+length = 0.2
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals/Glow:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(1.25, 1, 1.25), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bolt"]
+_data = {
+&"RESET": SubResource("Animation_reset"),
+&"disappear": SubResource("Animation_disappear"),
+&"flicker": SubResource("Animation_flicker")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_core"]
+shading_mode = 0
+albedo_color = Color(1, 0.86, 0.94, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_core"]
+material = SubResource("StandardMaterial3D_core")
+radius = 0.07
+height = 1.1
+radial_segments = 8
+rings = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_glow"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.45, 0.85)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_glow"]
+material = SubResource("StandardMaterial3D_glow")
+radius = 0.2
+height = 1.5
+radial_segments = 10
+rings = 2
+
+[node name="LaserBolt" type="Node3D"]
+script = ExtResource("1_fireball")
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+light_color = Color(1, 0.2, 0.45, 1)
+light_energy = 1.4
+omni_range = 3.5
+omni_attenuation = 1.2
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_hit")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_bolt")
+}
+autoplay = "flicker"
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="Core" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_core")
+
+[node name="Glow" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("CapsuleMesh_glow")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_body_collision"]

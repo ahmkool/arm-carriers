@@ -19,6 +19,8 @@ const TIMING := {
 	&"slash": {"face": 0.4, "strike": 0.5, "strike_end": 0.7, "end": 1.45},
 	&"dash": {"face": 0.35, "strike": 0.58, "strike_end": 0.8, "end": 1.3},
 	&"waves": {"face": 0.6, "strike": 0.98, "strike_end": 1.1, "end": 2.3},
+	## No clip: it vanishes on entering, reappears at the strike, and lunges right after.
+	&"teleport": {"face": 0.0, "strike": 0.22, "strike_end": 0.22, "end": 0.4},
 }
 const SLASH_SPEED := 1.0
 const ENRAGED_SLASH_SPEED := 1.25
@@ -26,6 +28,8 @@ const ENRAGED_SLASH_SPEED := 1.25
 const DASH_WINDUP_SPEED := 0.55
 const ENRAGED_DASH_WINDUP_SPEED := 0.7
 const ENRAGED_FOLLOW_UP_WINDUP_SPEED := 0.85
+## Rage lunges come straight out of a blink: still slow enough to read the lane.
+const RAGE_DASH_WINDUP_SPEED := 0.8
 
 var _move: StringName = &""
 var _anim_time := 0.0
@@ -85,6 +89,8 @@ func _get_speed() -> float:
 func _get_dash_speed() -> float:
 	if _anim_time >= _get_timing("strike"):
 		return 1.0
+	if _behavior.is_raging():
+		return RAGE_DASH_WINDUP_SPEED
 	if not _behavior.is_enraged():
 		return DASH_WINDUP_SPEED
 	return ENRAGED_FOLLOW_UP_WINDUP_SPEED if _is_follow_up else ENRAGED_DASH_WINDUP_SPEED

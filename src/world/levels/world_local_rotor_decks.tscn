@@ -55,6 +55,12 @@ size = Vector3(400, 1, 400)
 [sub_resource type="BoxShape3D" id="BoxShape3D_ride"]
 size = Vector3(7.5, 3, 7.5)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_ring_landing"]
+size = Vector3(39, 3, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_causeway_landing"]
+size = Vector3(21, 3, 12)
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_end"]
 size = Vector3(21, 3, 9)
 
@@ -258,7 +264,7 @@ script = ExtResource("checkpoint")
 events_completed = [NodePath("../../Level/Events/CallFerry1")]
 enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup2")]
 enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
-areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/LandingTrigger")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -269,11 +275,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 [node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -55.4815)
 script = ExtResource("checkpoint")
-events_completed = [NodePath("../../Level/Events/CallFerry2")]
+events_completed = [NodePath("../../Level/Events/CallFerry2"), NodePath("../../Level/Events/SendFerry1Back")]
 enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup3")]
 enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup2")]
-areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2")]
-areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2"), NodePath("../../Level/Areas/LandingTrigger2")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/LandingTrigger")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -284,10 +290,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 [node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -103.4655)
 script = ExtResource("checkpoint")
-events_completed = [NodePath("../../Level/Events/CallFerry3")]
+events_completed = [NodePath("../../Level/Events/CallFerry3"), NodePath("../../Level/Events/SendFerry2Back")]
 enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup3")]
 areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger3")]
-areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2"), NodePath("../../Level/Areas/LandingTrigger2")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -893,12 +899,18 @@ script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform1")]
 platform_animation_stagger_seconds = 0.5
 
-[node name="RideFerry1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="RideFerry1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform1")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
+
+[node name="SendFerry1Back" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 next_event = NodePath("../MakeEnemiesGroup2Offensive")
 
 [node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
@@ -910,12 +922,18 @@ script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform2")]
 platform_animation_stagger_seconds = 0.5
 
-[node name="RideFerry2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="RideFerry2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform2")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
+
+[node name="SendFerry2Back" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
 next_event = NodePath("../MakeEnemiesGroup3Offensive")
 
 [node name="MakeEnemiesGroup3Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
@@ -1011,6 +1029,20 @@ script = ExtResource("all_players")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger3"]
 shape = SubResource("BoxShape3D_ride")
 
+[node name="LandingTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -35.988)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/LandingTrigger"]
+shape = SubResource("BoxShape3D_ring_landing")
+
+[node name="LandingTrigger2" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -86.971)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/LandingTrigger2"]
+shape = SubResource("BoxShape3D_causeway_landing")
+
 [node name="Weapon" type="Node3D" parent="."]
 
 [node name="Bazooka" parent="Weapon" instance=ExtResource("bazooka")]
@@ -1036,6 +1068,8 @@ parameters/looping = true
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/RideFerry1" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/RideFerry2" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/RideFerry3" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/LandingTrigger" to="Level/Events/SendFerry1Back" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/LandingTrigger2" to="Level/Events/SendFerry2Back" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesSW" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesSE" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/FocusMagesNW" method="trigger"]

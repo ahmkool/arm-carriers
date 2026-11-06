@@ -27,11 +27,11 @@ size = Vector3(8.3, 0.55, 8.3)
 
 [sub_resource type="BoxMesh" id="BoxMesh_edgeX"]
 material = SubResource("ShaderMaterial_beam")
-size = Vector3(9, 0.52, 0.3)
+size = Vector3(9.03, 0.56, 0.33)
 
 [sub_resource type="BoxMesh" id="BoxMesh_edgeZ"]
 material = SubResource("ShaderMaterial_beam")
-size = Vector3(0.3, 0.52, 9)
+size = Vector3(0.33, 0.56, 9.03)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_deck"]
 size = Vector3(8.99, 0.5, 8.99)
@@ -127,19 +127,19 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
 mesh = SubResource("BoxMesh_joists")
 
 [node name="EdgeNorth" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
-transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.24, -4.35)
+transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -4.345)
 mesh = SubResource("BoxMesh_edgeX")
 
 [node name="EdgeSouth" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
-transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.24, 4.35)
+transform = Transform3D(1.0, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 4.345)
 mesh = SubResource("BoxMesh_edgeX")
 
 [node name="EdgeWest" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.35, -0.24, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.345, -0.25, 0)
 mesh = SubResource("BoxMesh_edgeZ")
 
 [node name="EdgeEast" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.35, -0.24, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.345, -0.25, 0)
 mesh = SubResource("BoxMesh_edgeZ")
 
 [node name="Rotor1" parent="AnimatableBody3D/Visual" instance=ExtResource("3_rotor")]

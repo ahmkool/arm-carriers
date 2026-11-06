@@ -1,12 +1,16 @@
 extends EnemyState
 
 @export var fireball_emitter: FireballEmitter
+## Waits before playing the cast animation. A gunner uses it so the recoil of its shoot animation lines up with
+## the shot, which leaves FIREBALL_DELAY_SECONDS plus the spawn scene's charge-up after the cast starts.
+@export var cast_animation_delay_seconds := 0.0
 
 const CAST_DURATION_SECONDS := 2.0
 const FIREBALL_DELAY_SECONDS := 1.0
 
 var _cast_time_remaining := 0.0
 var _fireball_delay_remaining := 0.0
+var _animation_delay_remaining := -1.0
 
 func enter() -> void:
 	super.enter()
@@ -15,7 +19,8 @@ func enter() -> void:
 	enemy.velocity = Vector3.ZERO
 	if enemy.footsteps_particles:
 		enemy.footsteps_particles.emitting = false
-	enemy.play_cast_animation()
+	_animation_delay_remaining = cast_animation_delay_seconds
+	_tick_animation_delay(0.0)
 
 func exit() -> void:
 	pass
@@ -27,6 +32,7 @@ func physics_update(delta: float) -> void:
 
 	enemy.velocity = Vector3.ZERO
 	_rotate_toward_target(delta)
+	_tick_animation_delay(delta)
 	_tick_fireball_delay(delta)
 
 	_cast_time_remaining -= delta
@@ -34,6 +40,15 @@ func physics_update(delta: float) -> void:
 		return
 
 	_finish_cast()
+
+func _tick_animation_delay(delta: float) -> void:
+	if _animation_delay_remaining < 0.0:
+		return
+	_animation_delay_remaining -= delta
+	if _animation_delay_remaining > 0.0:
+		return
+	_animation_delay_remaining = -1.0
+	enemy.play_cast_animation()
 
 func _tick_fireball_delay(delta: float) -> void:
 	if _fireball_delay_remaining <= 0.0:

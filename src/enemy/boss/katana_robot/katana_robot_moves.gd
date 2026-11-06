@@ -11,6 +11,7 @@ const SLAM_SOUND := preload("res://assets/sounds/explosion/Medium Explosion 4_1.
 const WAVE_SOUND := preload("res://assets/sounds/fireball_cast.wav")
 const SPARKS_SCENE := preload("res://src/vfx/saw_sparks.tscn")
 const POP_SCENE := preload("res://src/vfx/small_explosion.tscn")
+const BLINK_SCENE := preload("res://src/enemy/boss/katana_robot/katana_blink_vfx.tscn")
 
 ## Telegraph alpha from the start of a wind-up to the strike.
 const TELEGRAPH_ALPHA_START := 0.12
@@ -18,6 +19,15 @@ const TELEGRAPH_ALPHA_STRIKE := 0.5
 ## Lunge lane sampling along the deck, so it stops short of open space.
 const DASH_PROBE_STEP := 0.5
 const ENRAGED_BLADE_LIGHT := 2.5
+const RAGE_BLADE_LIGHT := 5.0
+const RAGE_BLADE_COLOR := Color(1.0, 0.25, 0.2)
+const RAGE_PHASE := 3
+## Random spots tried around the target before giving up on a blink.
+const TELEPORT_ATTEMPTS := 24
+## The blink pulls the model into a thin column of light, and springs it back out on landing.
+const BLINK_SQUASH := Vector3(0.08, 1.7, 0.08)
+const BLINK_OUT_SECONDS := 0.16
+const BLINK_IN_SECONDS := 0.3
 
 @export_group("Lunge")
 @export var dash_min_length := 5.0
@@ -34,6 +44,23 @@ const ENRAGED_BLADE_LIGHT := 2.5
 @export var wave_damage := 1
 @export var wave_lane_length := 7.0
 
+@export_group("Rage blink")
+## The blink lands this far from the target: inside the lunge range, so it lunges straight away.
+@export var teleport_min_distance := 7.0
+@export var teleport_max_distance := 9.5
+## Never closer than this to any carrier, so it doesn't appear on top of one.
+@export var teleport_min_player_distance := 6.0
+## The camera sees less behind the carriers than ahead: limits how far toward the camera
+## (+Z) from the target it can land, so it stays on screen.
+@export var teleport_max_behind := 2.5
+
+var _teleport_destination := Vector3.ZERO
+var _blade_tween: Tween
+var _blink_tween: Tween
+var _robot_base_scale := Vector3.ONE
+## True from the start of a blink until it lands.
+var _is_blinked_out := false
+
 @onready var _enemy := get_parent() as EnemyLocal
 @onready var _slash_hit_box: Area3D = _enemy.get_node("SlashHitBox")
 @onready var _dash_hit_box: Area3D = _enemy.get_node("DashHitBox")
@@ -43,11 +70,13 @@ const ENRAGED_BLADE_LIGHT := 2.5
 @onready var _slam_telegraph: MeshInstance3D = _enemy.get_node("VFX/SlamTelegraph")
 @onready var _wave_fan: Node3D = _enemy.get_node("VFX/WaveFan")
 @onready var _wave_muzzle: Marker3D = _enemy.get_node("WaveMuzzle")
+@onready var _robot: Node3D = _enemy.get_node("Robot")
 @onready var _blade_light: OmniLight3D = _enemy.get_node("Robot/Rig_Large/Skeleton3D/KatanaHand/Katana/BladeLight")
 @onready var _telegraph_material: StandardMaterial3D = (_slash_telegraph.mesh as PrimitiveMesh).material
 
 
 func _ready() -> void:
+	_robot_base_scale = _robot.scale
 	_build_wave_fan()
 	end_move()
 	# The boss's own @onready vars aren't set yet: children are ready before their parent.
@@ -66,6 +95,8 @@ func begin_move(move: StringName) -> void:
 	_wave_fan.visible = move == &"waves"
 	if move == &"dash" or move == &"waves":
 		_play_sound(SERVO_SOUND, 0.8, -4.0)
+	if move == &"teleport":
+		_vanish()
 
 
 func end_move() -> void:
@@ -73,6 +104,7 @@ func end_move() -> void:
 	_dash_lane.visible = false
 	_slam_telegraph.visible = false
 	_wave_fan.visible = false
+	_reset_robot_after_blink()
 	_set_hit_box_active(_slash_hit_box, false)
 	_set_hit_box_active(_dash_hit_box, false)
 	_set_hit_box_active(_slam_hit_box, false)
@@ -122,6 +154,8 @@ func strike(move: StringName) -> void:
 			CameraFeedback.add_trauma_dash()
 		&"waves":
 			_slam()
+		&"teleport":
+			_reappear()
 
 
 func end_strike(move: StringName) -> void:
@@ -133,6 +167,140 @@ func end_strike(move: StringName) -> void:
 			ImpactFeedback.spawn_dust(_enemy.global_position, 1.0)
 		&"waves":
 			_set_hit_box_active(_slam_hit_box, false)
+
+
+## Picks where the next blink lands: around `target`, on the deck, away from every carrier,
+## on screen, and with a clear lane back to the target. False when no spot qualifies.
+func plan_teleport(target: Node3D) -> bool:
+	if target == null:
+		return false
+	for attempt in TELEPORT_ATTEMPTS:
+		var candidate := _get_random_spot_around(target.global_position)
+		if not _is_safe_teleport_spot(candidate, target.global_position):
+			continue
+		_teleport_destination = candidate
+		return true
+	return false
+
+
+func _get_random_spot_around(center: Vector3) -> Vector3:
+	var offset := Vector3.FORWARD.rotated(Vector3.UP, randf() * TAU)
+	offset *= randf_range(teleport_min_distance, teleport_max_distance)
+	return Vector3(center.x + offset.x, _enemy.global_position.y, center.z + offset.z)
+
+
+func _is_safe_teleport_spot(spot: Vector3, target_position: Vector3) -> bool:
+	if spot.z - target_position.z > teleport_max_behind:
+		return false
+	if not can_dash_through(spot):
+		return false
+	if _is_near_a_player(spot):
+		return false
+	return _has_clear_lane(spot, target_position)
+
+
+func _is_near_a_player(spot: Vector3) -> bool:
+	for player in _get_living_players():
+		var offset := player.global_position - spot
+		if Vector2(offset.x, offset.z).length() < teleport_min_player_distance:
+			return true
+	return false
+
+
+func _get_living_players() -> Array[PlayerLocal]:
+	var players: Array[PlayerLocal] = []
+	var players_node := _enemy._get_players_node()
+	if players_node == null:
+		return players
+	for child in players_node.get_children():
+		var player := child as PlayerLocal
+		if player == null or player.is_dead:
+			continue
+		players.append(player)
+	return players
+
+
+## The lunge from `from` toward `to` stays on the deck the whole way.
+func _has_clear_lane(from: Vector3, to: Vector3) -> bool:
+	var flat := Vector3(to.x - from.x, 0.0, to.z - from.z)
+	var length := flat.length()
+	var direction := flat.normalized()
+	var travelled := DASH_PROBE_STEP
+	while travelled < length:
+		if not can_dash_through(from + direction * travelled):
+			return false
+		travelled += DASH_PROBE_STEP
+	return true
+
+
+## Squeezes into a column of light and bursts away, while light gathers where it will land.
+func _vanish() -> void:
+	_is_blinked_out = true
+	_play_sound(SERVO_SOUND, 1.4, -2.0)
+	_spawn_blink(_teleport_destination).play_gather()
+	var tween := _restart_blink_tween()
+	tween.tween_property(_robot, "scale", _robot_base_scale * BLINK_SQUASH, BLINK_OUT_SECONDS) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+	tween.tween_callback(_burst_away)
+
+
+func _burst_away() -> void:
+	_robot.visible = false
+	_spawn_blink(_enemy.global_position).play_burst()
+	ImpactFeedback.spawn_dust(_enemy.global_position, 0.6)
+	CameraFeedback.add_trauma_shot()
+
+
+## Lands on the planned spot already facing the target, so the lunge's lane reads at once,
+## and springs out of the column of light.
+func _reappear() -> void:
+	_is_blinked_out = false
+	_enemy.global_position = _teleport_destination
+	_face_target_now()
+	_play_sound(TAUNT_SOUND, 1.3, -4.0)
+	_spawn_blink(_enemy.global_position).play_burst()
+	ImpactFeedback.spawn_dust(_enemy.global_position, 0.8)
+	_robot.scale = _robot_base_scale * BLINK_SQUASH
+	_robot.visible = true
+	var tween := _restart_blink_tween()
+	tween.tween_property(_robot, "scale", _robot_base_scale, BLINK_IN_SECONDS) \
+		.set_trans(Tween.TRANS_ELASTIC).set_ease(Tween.EASE_OUT)
+
+
+func _spawn_blink(at_position: Vector3) -> KatanaBlinkVfx:
+	var vfx := BLINK_SCENE.instantiate() as KatanaBlinkVfx
+	get_tree().current_scene.add_child(vfx)
+	vfx.global_position = at_position
+	return vfx
+
+
+func _restart_blink_tween() -> Tween:
+	if _blink_tween != null:
+		_blink_tween.kill()
+	_blink_tween = _robot.create_tween()
+	return _blink_tween
+
+
+## A move that ends mid-blink (death, say) must not leave the model hidden or squashed.
+## The landing spring is left to finish: it plays on into the lunge's wind-up.
+func _reset_robot_after_blink() -> void:
+	if not _is_blinked_out:
+		return
+	_is_blinked_out = false
+	if _blink_tween != null:
+		_blink_tween.kill()
+	_robot.scale = _robot_base_scale
+	_robot.visible = true
+
+
+func _face_target_now() -> void:
+	if not is_instance_valid(_enemy.target_player):
+		return
+	var to_target := _enemy.target_player.global_position - _enemy.global_position
+	var flat := Vector3(to_target.x, 0.0, to_target.z)
+	if flat.length_squared() < 0.0001:
+		return
+	_enemy.global_basis = Basis.looking_at(flat.normalized(), Vector3.UP)
 
 
 func _set_hit_box_active(hit_box: Area3D, active: bool) -> void:
@@ -203,10 +371,27 @@ func _build_wave_fan() -> void:
 
 
 func _on_phase_changed(phase_index: int) -> void:
+	if phase_index >= RAGE_PHASE:
+		_start_rage_visuals()
+		return
 	if phase_index < 2:
 		return
-	var tween := _blade_light.create_tween()
+	var tween := _restart_blade_tween()
 	tween.tween_property(_blade_light, "light_energy", ENRAGED_BLADE_LIGHT, 0.6)
+
+
+func _start_rage_visuals() -> void:
+	var tween := _restart_blade_tween().set_parallel()
+	tween.tween_property(_blade_light, "light_energy", RAGE_BLADE_LIGHT, 0.6)
+	tween.tween_property(_blade_light, "light_color", RAGE_BLADE_COLOR, 0.6)
+
+
+## A big hit can cross both thresholds at once: the rage glow replaces the enraged one.
+func _restart_blade_tween() -> Tween:
+	if _blade_tween != null:
+		_blade_tween.kill()
+	_blade_tween = _blade_light.create_tween()
+	return _blade_tween
 
 
 func _on_died(_source_position: Vector3 = Vector3.ZERO) -> void:

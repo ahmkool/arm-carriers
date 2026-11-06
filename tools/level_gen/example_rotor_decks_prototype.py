@@ -46,7 +46,7 @@ DISTANT = (
 level = Level("src/world/levels/world_local_rotor_decks.tscn", palette="decks", weapon="bazooka", floor_seed=3, deco_seed=3, music="ticking_labyrinth")
 level.use_rotor_decks()
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
-level.boxes = {"fall": (400, 1, 400), "ride": (7.5, 3, 7.5), "end": (21, 3, 9)}
+level.boxes = {"fall": (400, 1, 400), "ride": (7.5, 3, 7.5), "ring_landing": (39, 3, 12), "causeway_landing": (21, 3, 12), "end": (21, 3, 9)}
 level.add_shell()
 
 # ---- Enemies. ----
@@ -57,21 +57,34 @@ for cx, cz in ((-3, -1), (0, -1), (3, -1)):
     level.melee("EnemyGroup", f"EnemyLocal{pack}a", cx, cz)
     level.melee("EnemyGroup", f"EnemyLocal{pack}b", cx - 0.35, cz - 0.35)
     level.melee("EnemyGroup", f"EnemyLocal{pack}c", cx + 0.35, cz - 0.35)
-level.enemy_group("EnemyGroup2")  # wake as the ferry leaves, and crowd the far dock: shoot them from the ferry
+level.enemy_group("EnemyGroup2")  # wake once both carriers step off the ferry onto their deck
 for i, (cx, cz) in enumerate(((-4, -19), (-2, -19), (0, -19), (2, -19), (4, -19), (-5, -16), (5, -16), (-4, -14), (4, -14), (-3, -18), (3, -18)), 1):
     level.melee("EnemyGroup2", f"EnemyLocal{i}", cx, cz)
-level.enemy_group("EnemyGroup3")  # mages on their own decks, in range as the ferry lands
+level.enemy_group("EnemyGroup3")  # mages on their own decks and chasers on the causeway, awake once the carriers land
 for i, (cx, cz) in enumerate(((-7, -30), (-7, -33), (7, -33), (7, -30)), 1):
     level.mage("EnemyGroup3", f"EnemyMage{i}", cx, cz, cast_max=26.0, cooldown=4.0)
 for i, (cx, cz) in enumerate(((-1, -35), (1, -35), (0, -34)), 1):
     level.melee("EnemyGroup3", f"EnemyLocal{i}", cx, cz)
 
-level.checkpoints([
+# checkpoint() takes one name per array, so the landing triggers and the ferries sent back are appended.
+def also(entry, key, path):
+    entry[3].setdefault(key, []).append(path)
+    return entry
+
+
+CHECKPOINTS = [
     checkpoint("Checkpoint", 0, 7),
     checkpoint("Checkpoint2", 0, 1, "CallFerry1", "EnemyGroup2", "EnemyGroup", T),
     checkpoint("Checkpoint3", 0, -19, "CallFerry2", "EnemyGroup3", "EnemyGroup2", T + "2", T),
     checkpoint("Checkpoint4", 0, -35, "CallFerry3", None, "EnemyGroup3", T + "3", T + "2"),
-], setter_marker=(0, -0.5082588), shooter_marker=(0, 2.1002235))
+]
+also(CHECKPOINTS[1], "areas_to_reactivate", "../../Level/Areas/LandingTrigger")
+also(CHECKPOINTS[2], "areas_already_activated", "../../Level/Areas/LandingTrigger")
+also(CHECKPOINTS[2], "events_completed", "../../Level/Events/SendFerry1Back")
+also(CHECKPOINTS[2], "areas_to_reactivate", "../../Level/Areas/LandingTrigger2")
+also(CHECKPOINTS[3], "areas_already_activated", "../../Level/Areas/LandingTrigger2")
+also(CHECKPOINTS[3], "events_completed", "../../Level/Events/SendFerry2Back")
+level.checkpoints(CHECKPOINTS, setter_marker=(0, -0.5082588), shooter_marker=(0, 2.1002235))
 
 # ---- Terrain and scenery. ----
 level.add_deck_terrain(DECKS, LANES, fall_z=-40)
@@ -79,13 +92,17 @@ level.node("DistantDecks", "Level", "Node")
 for name, position, shape in DISTANT:
     level.add_distant_deck(name, position, shape)
 
-# ---- Events. "Call" brings a ferry to the carriers; "Ride" flies it back with them aboard. ----
+# ---- Events. "Call" brings a ferry to the carriers; "Ride" flies it back with them aboard.
+# Enemies can't follow anyone onto a moving ferry (it isn't in the navmesh), so a deck's enemies wake only once both
+# carriers have landed. The ferry then flies back to its near dock, closing the way behind them like a bridge.
 level.set_bridges(FERRIES)
 level.bridge_event("CallFerry1", 1)
-level.bridge_event("RideFerry1", 1, True, "MakeEnemiesGroup2Offensive")
+level.bridge_event("RideFerry1", 1, True)
+level.bridge_event("SendFerry1Back", 1, next_event="MakeEnemiesGroup2Offensive", camera_focus=False)
 level.offensive_event("MakeEnemiesGroup2Offensive", "EnemyGroup2")
 level.bridge_event("CallFerry2", 2)
-level.bridge_event("RideFerry2", 2, True, "MakeEnemiesGroup3Offensive")
+level.bridge_event("RideFerry2", 2, True)
+level.bridge_event("SendFerry2Back", 2, next_event="MakeEnemiesGroup3Offensive", camera_focus=False)
 level.offensive_event("MakeEnemiesGroup3Offensive", "EnemyGroup3")
 level.bridge_event("CallFerry3", 3)
 level.bridge_event("RideFerry3", 3, True)
@@ -94,7 +111,9 @@ level.node("LevelSucceeded", "Level/Events", "Node", props={"script": 'ExtResour
 level.add_focus({"Mages": (-10, 10, -21, -37)})
 level.add_end_area(0, -49)
 level.add_bridge_nodes()
-level.add_triggers(((T, *NEAR_DOCKS[1], "ride"), (T + "2", *NEAR_DOCKS[2], "ride"), (T + "3", *NEAR_DOCKS[3], "ride")))
+# Landing triggers cover the first four rows of deck past each far dock, so both carriers must be off the ferry.
+level.add_triggers(((T, *NEAR_DOCKS[1], "ride"), (T + "2", *NEAR_DOCKS[2], "ride"), (T + "3", *NEAR_DOCKS[3], "ride"),
+                    ("LandingTrigger", 0, -12.5, "ring_landing"), ("LandingTrigger2", 0, -29.5, "causeway_landing")))
 level.add_weapon("Bazooka", tf(1.5, 0.593, 22.5))
 level.add_audio_and_hint()
 
@@ -106,6 +125,8 @@ for group, number, cp_name in (("EnemyGroup", 1, "Checkpoint2"), ("EnemyGroup2",
 level.connect("all_players_inside", "Level/EndLevelArea", EVENTS + "LevelSucceeded")
 for number, name in ((1, T), (2, T + "2"), (3, T + "3")):
     level.connect("all_players_inside", AREAS + name, EVENTS + f"RideFerry{number}")
+level.connect("all_players_inside", AREAS + "LandingTrigger", EVENTS + "SendFerry1Back")
+level.connect("all_players_inside", AREAS + "LandingTrigger2", EVENTS + "SendFerry2Back")
 for corner in ("SW", "SE", "NW", "NE"):
     level.connect("all_players_inside", AREAS + T + "2", EVENTS + f"FocusMages{corner}")
 

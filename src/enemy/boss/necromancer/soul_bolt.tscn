@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene load_steps=6 format=3 uid="uid://cvxm3qyeep5xy"]
 
 [ext_resource type="PackedScene" uid="uid://cm4mxhbh52ywr" path="res://src/vfx/fireball.tscn" id="1_fireball"]
 [ext_resource type="Shader" uid="uid://cc2ar3gvopx6i" path="res://src/shaders/fireball_visual.gdshader" id="2_visual"]
@@ -18,6 +18,7 @@ shader_parameter/emission_strength = 3.0
 material = SubResource("Material_soul")
 
 [node name="SoulBolt" instance=ExtResource("1_fireball")]
+damage = 1
 
 [node name="OmniLight3D" parent="." index="0"]
 light_color = Color(0.4, 0.75, 1, 1)

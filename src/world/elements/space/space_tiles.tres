@@ -1,17 +1,17 @@
-[gd_resource type="MeshLibrary" load_steps=88 format=4]
+[gd_resource type="MeshLibrary" load_steps=88 format=4 uid="uid://b6l2d4g4d7q73"]
 
-[ext_resource type="Shader" path="res://src/world/elements/space/station_panels.gdshader" id="1_gbnk8"]
-[ext_resource type="Texture2D" path="res://assets/models/space_base/spacebits_texture.png" id="2_u4wis"]
+[ext_resource type="Shader" uid="uid://oegd0y4gpw3p" path="res://src/world/elements/space/station_panels.gdshader" id="1_gbnk8"]
+[ext_resource type="Texture2D" uid="uid://3n3ahnuqhpnu" path="res://assets/models/space_base/spacebits_texture.png" id="2_u4wis"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_v2goe"]
 render_priority = 0
 shader = ExtResource("1_gbnk8")
-shader_parameter/panel_color = null
-shader_parameter/seam_color = null
-shader_parameter/hull_color = null
-shader_parameter/window_color = null
-shader_parameter/panel_size = null
-shader_parameter/window_strength = null
+shader_parameter/panel_color = Color(0.4, 0.43, 0.48, 1)
+shader_parameter/seam_color = Color(0.16, 0.18, 0.22, 1)
+shader_parameter/hull_color = Color(0.2, 0.22, 0.27, 1)
+shader_parameter/window_color = Color(0.35, 0.85, 1, 1)
+shader_parameter/panel_size = 1.5
+shader_parameter/window_strength = 2.2
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_3lal1"]
 _surfaces = [{
@@ -33,11 +33,11 @@ size = Vector3(2.999, 1, 2.999)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_7dg07"]
 render_priority = 0
 shader = ExtResource("1_gbnk8")
-shader_parameter/panel_color = null
-shader_parameter/seam_color = null
+shader_parameter/panel_color = Color(0.4, 0.43, 0.48, 1)
+shader_parameter/seam_color = Color(0.16, 0.18, 0.22, 1)
 shader_parameter/hull_color = Color(0.12, 0.13, 0.17, 1)
-shader_parameter/window_color = null
-shader_parameter/panel_size = null
+shader_parameter/window_color = Color(0.35, 0.85, 1, 1)
+shader_parameter/panel_size = 1.5
 shader_parameter/window_strength = 0.0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ibhak"]

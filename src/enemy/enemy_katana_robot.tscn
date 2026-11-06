@@ -13,6 +13,7 @@
 [ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="dead"]
 [ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="health"]
 [ext_resource type="Script" uid="uid://djda3j3mx1537" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
+[ext_resource type="Script" uid="uid://b0odbh3r53j4i" path="res://src/enemy/boss/boss_phase_threshold.gd" id="phase_threshold"]
 [ext_resource type="Script" uid="uid://0t4an2d6njhq" path="res://src/enemy/weapon/hit_box.gd" id="hit_box"]
 [ext_resource type="PackedScene" path="res://src/enemy/robot/plasma_bolt.tscn" id="plasma_bolt"]
 [ext_resource type="Texture2D" uid="uid://cnkv2y3rchd23" path="res://assets/sprites/particles/flame_01_a.png" id="flame"]
@@ -23,6 +24,16 @@
 [ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_1H_Slash.res" id="a_slash"]
 [ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_1H_Stab.res" id="a_stab"]
 [ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/katana_robot/Melee_2H_Slam.res" id="a_slam"]
+
+[sub_resource type="Resource" id="Threshold_enraged"]
+script = ExtResource("phase_threshold")
+hp_ratio = 0.5
+phase_index = 2
+
+[sub_resource type="Resource" id="Threshold_rage"]
+script = ExtResource("phase_threshold")
+hp_ratio = 0.15
+phase_index = 3
 
 [sub_resource type="AnimationLibrary" id="Library"]
 _data = {
@@ -317,6 +328,7 @@ max_hp = 180
 
 [node name="BossPhaseController" type="Node" parent="."]
 script = ExtResource("phase")
+thresholds = Array[ExtResource("phase_threshold")]([SubResource("Threshold_enraged"), SubResource("Threshold_rage")])
 fire_particles_path = NodePath("Robot/Rig_Large/Skeleton3D/KatanaHand/Katana/FireParticles")
 axe_fire_visual_path = NodePath("")
 

@@ -1,0 +1,119 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/enemy/robot/laser_bolt.tscn" id="bolt"]
+[ext_resource type="Script" uid="uid://cvfjjy2fmnwnc" path="res://src/vfx/fireball_spawn.gd" id="1_c3uvo"]
+[ext_resource type="Texture2D" uid="uid://mpqnqkq0gx33" path="res://assets/sprites/particles/light_01_a.png" id="2_dpvmf"]
+[ext_resource type="AudioStream" path="res://assets/sounds/gun/Gun 6-1.wav" id="2_mjgpl"]
+
+[sub_resource type="Curve" id="Curve_mjgpl"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_dpvmf"]
+curve = SubResource("Curve_mjgpl")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dpvmf"]
+resource_local_to_scene = true
+particle_flag_align_y = true
+emission_shape = 2
+emission_sphere_radius = 0.35
+radial_velocity_min = -3.0
+radial_velocity_max = -3.0
+gravity = Vector3(0, 0, 0)
+radial_accel_min = 0.0
+radial_accel_max = 0.0
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_dpvmf")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_au0l1"]
+albedo_color = Color(0.95, 0.15, 0.45, 1)
+emission_enabled = true
+emission = Color(0.95, 0.15, 0.45, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_au0l1"]
+material = SubResource("StandardMaterial3D_au0l1")
+top_radius = 0.04
+bottom_radius = 0.0
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_c3uvo"]
+transparency = 1
+vertex_color_use_as_albedo = true
+albedo_texture = ExtResource("2_dpvmf")
+disable_receive_shadows = true
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+
+[sub_resource type="Gradient" id="Gradient_mjgpl"]
+offsets = PackedFloat32Array(0, 0.51241136, 1)
+colors = PackedColorArray(1, 0.3, 0.6, 1, 1, 0.55, 0.8, 1, 1, 0.9, 0.98, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dpvmf"]
+gradient = SubResource("Gradient_mjgpl")
+
+[sub_resource type="Curve" id="Curve_au0l1"]
+_data = [Vector2(0.08576052, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.26535624), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_esfnc"]
+curve = SubResource("Curve_au0l1")
+
+[sub_resource type="Curve" id="Curve_xv8pa"]
+_data = [Vector2(0, 0.8172263), 0.0, 0.0, 0, 0, Vector2(0.23300973, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_1bpjp"]
+curve = SubResource("Curve_xv8pa")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_3emel"]
+particle_flag_align_y = true
+spread = 180.0
+initial_velocity_min = 5.0
+initial_velocity_max = 8.0
+gravity = Vector3(0, 1, 0)
+damping_min = 15.000001
+damping_max = 19.0
+scale_min = 0.099999994
+scale_max = 0.39999998
+scale_curve = SubResource("CurveTexture_1bpjp")
+color_initial_ramp = SubResource("GradientTexture1D_dpvmf")
+emission_curve = SubResource("CurveTexture_esfnc")
+
+[sub_resource type="QuadMesh" id="QuadMesh_au0l1"]
+
+[node name="LaserBoltSpawn" type="Node3D"]
+script = ExtResource("1_c3uvo")
+projectile_scene = ExtResource("bolt")
+
+[node name="Focus" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+emitting = false
+amount = 12
+lifetime = 0.12
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_dpvmf")
+draw_pass_1 = SubResource("CylinderMesh_au0l1")
+
+[node name="GPUParticles3D" type="GPUParticles3D" parent="."]
+material_override = SubResource("StandardMaterial3D_c3uvo")
+cast_shadow = 0
+emitting = false
+amount = 14
+lifetime = 0.25
+one_shot = true
+explosiveness = 1.0
+randomness = 0.8
+process_material = SubResource("ParticleProcessMaterial_3emel")
+draw_pass_1 = SubResource("QuadMesh_au0l1")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("2_mjgpl")
+volume_db = -6.0
+bus = &"SFX"

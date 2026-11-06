@@ -1,14 +1,11 @@
-[gd_scene format=3]
+[gd_scene load_steps=9 format=3 uid="uid://dcwqcc62g4lms"]
 
-[ext_resource type="Script" path="res://src/enemy/boss/necromancer/grave_eruption.gd" id="1_script"]
+[ext_resource type="Script" uid="uid://cimoa712ip3at" path="res://src/enemy/boss/necromancer/grave_eruption.gd" id="1_script"]
 
 [sub_resource type="StandardMaterial3D" id="Material_ring"]
 transparency = 1
 shading_mode = 0
 albedo_color = Color(0.45, 0.85, 1, 0.42)
-emission_enabled = true
-emission = Color(0.3, 0.75, 1, 1)
-emission_energy_multiplier = 1.5
 
 [sub_resource type="CylinderMesh" id="Mesh_ring"]
 material = SubResource("Material_ring")
@@ -40,15 +37,11 @@ spread = 25.0
 initial_velocity_min = 4.0
 initial_velocity_max = 8.0
 scale_min = 0.5
-scale_max = 1.0
 color = Color(0.5, 0.9, 1, 1)
 
 [sub_resource type="StandardMaterial3D" id="Material_burst"]
 shading_mode = 0
 vertex_color_use_as_albedo = true
-emission_enabled = true
-emission = Color(0.4, 0.85, 1, 1)
-emission_energy_multiplier = 2.5
 
 [sub_resource type="SphereMesh" id="Mesh_burst"]
 material = SubResource("Material_burst")
@@ -100,5 +93,4 @@ draw_pass_1 = SubResource("Mesh_burst")
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 light_color = Color(0.45, 0.8, 1, 1)
-light_energy = 1.0
 omni_range = 6.0

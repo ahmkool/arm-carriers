@@ -3,12 +3,15 @@ extends EnemyBehavior
 ## 4GTN, a robot samurai. Walks the carriers down and cuts at them with its katana, and
 ## lunges across the deck when they keep their distance. Below half health the blade
 ## charges up: lunges come in pairs, and a slam sends plasma waves out in a fan, which
-## the pulse rifle can shoot down.
+## the pulse rifle can shoot down. Below 15% it goes into a rage: it blinks to a spot
+## away from the carriers and lunges, over and over, with no pause between moves.
 
 const MOVE_TAUNT := &"taunt"
 const MOVE_SLASH := &"slash"
 const MOVE_DASH := &"dash"
 const MOVE_WAVES := &"waves"
+const MOVE_TELEPORT := &"teleport"
+const RAGE_PHASE := 3
 
 @export_group("Distances")
 @export var slash_distance := 5.0
@@ -30,6 +33,8 @@ const MOVE_WAVES := &"waves"
 @export var dash_cooldown := 5.0
 @export var enraged_dash_cooldown := 3.5
 @export var waves_cooldown := 6.0
+## In the rage phase a lunge follows a blink straight away, and the next blink the lunge.
+@export var rage_gap_between_moves := 0.0
 
 @export_group("Movement")
 @export var enraged_speed := 3.4
@@ -43,10 +48,14 @@ var _follow_up_dash_pending := false
 ## True while the current move is the second lunge of a pair, which winds up faster.
 var is_follow_up_dash := false
 var _phase_controller: BossPhaseController
+var _moves: KatanaRobotMoves
+## In the rage phase blinks and lunges alternate: true when the next move is a blink.
+var _rage_teleport_next := true
 
 
 func _ready() -> void:
 	super._ready()
+	_moves = enemy.get_node("KatanaRobotMoves") as KatanaRobotMoves
 	_phase_controller = BossPhaseController.from_enemy(enemy)
 	if _phase_controller == null:
 		return
@@ -59,12 +68,20 @@ func is_enraged() -> bool:
 	return _phase_controller.is_phase_at_least(2)
 
 
+func is_raging() -> bool:
+	if _phase_controller == null:
+		return false
+	return _phase_controller.is_phase_at_least(RAGE_PHASE)
+
+
 func _on_phase_changed(phase_index: int) -> void:
 	if phase_index < 2:
 		return
 	_taunt_pending = true
 	_waves_remaining = 0.0
 	enemy.speed = enraged_speed
+	_follow_up_dash_pending = false
+	_rage_teleport_next = true
 
 
 func _think(delta: float) -> void:
@@ -127,6 +144,8 @@ func _get_direction(flat: Vector3) -> Vector3:
 func _pick_move(distance: float) -> StringName:
 	if _taunt_pending:
 		return MOVE_TAUNT
+	if is_raging():
+		return _pick_rage_move(distance)
 	if _follow_up_dash_pending:
 		return _pick_follow_up(distance)
 	if _gap_remaining > 0.0:
@@ -150,6 +169,18 @@ func _pick_follow_up(distance: float) -> StringName:
 	return MOVE_DASH
 
 
+## Rage: blink to a spot away from the carriers, then lunge at them from there. When no
+## spot is safe it lunges from where it stands, or slashes if they are on top of it.
+func _pick_rage_move(distance: float) -> StringName:
+	if _gap_remaining > 0.0:
+		return &""
+	if _rage_teleport_next and _moves.plan_teleport(enemy.target_player):
+		return MOVE_TELEPORT
+	if distance < follow_up_dash_min_distance:
+		return MOVE_SLASH
+	return MOVE_DASH
+
+
 func _can_dash(distance: float) -> bool:
 	if _dash_remaining > 0.0:
 		return false
@@ -167,8 +198,15 @@ func _can_cast_waves(distance: float) -> bool:
 func _start_move(move: StringName) -> void:
 	intent.requested_attack = move
 	intent.requested_locomotion = &"attacking"
-	_gap_remaining = enraged_gap_between_moves if is_enraged() else gap_between_moves
+	_gap_remaining = _get_gap_between_moves()
+	_rage_teleport_next = move != MOVE_TELEPORT
 	_apply_move_cooldown(move)
+
+
+func _get_gap_between_moves() -> float:
+	if is_raging():
+		return rage_gap_between_moves
+	return enraged_gap_between_moves if is_enraged() else gap_between_moves
 
 
 func _apply_move_cooldown(move: StringName) -> void:
@@ -187,6 +225,8 @@ func _apply_move_cooldown(move: StringName) -> void:
 func _start_dash_cooldown() -> void:
 	var was_first_of_pair := _dash_remaining <= 0.0
 	_dash_remaining = enraged_dash_cooldown if is_enraged() else dash_cooldown
+	if is_raging():
+		return
 	if not is_enraged() or not was_first_of_pair:
 		return
 	_follow_up_dash_pending = true

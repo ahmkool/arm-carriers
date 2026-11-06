@@ -48,7 +48,7 @@ func _hurt_if_inside(player: PlayerLocal) -> void:
 	var offset := player.global_position - global_position
 	if Vector2(offset.x, offset.z).length() > radius:
 		return
-	Health.apply_damage(player, 9999, global_position)
+	Health.apply_damage(player, 1, global_position)
 
 
 func _animate_spikes() -> void:

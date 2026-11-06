@@ -9,6 +9,7 @@ shader_parameter/wood_color = Color(0.56, 0.37, 0.2, 1)
 shader_parameter/seam_color = Color(0.13, 0.08, 0.05, 1)
 shader_parameter/plank_width = 0.75
 shader_parameter/plank_length = 4.5
+shader_parameter/local_space = false
 
 [sub_resource type="BoxMesh" id="BoxMesh_0"]
 material = SubResource("ShaderMaterial_deck")
@@ -24,6 +25,7 @@ shader_parameter/wood_color = Color(0.26, 0.16, 0.09, 1)
 shader_parameter/seam_color = Color(0.13, 0.08, 0.05, 1)
 shader_parameter/plank_width = 1.2
 shader_parameter/plank_length = 4.5
+shader_parameter/local_space = false
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
 material = SubResource("ShaderMaterial_beam")
@@ -31,19 +33,19 @@ size = Vector3(2.649, 0.55, 2.649)
 
 [sub_resource type="BoxMesh" id="BoxMesh_2"]
 material = SubResource("ShaderMaterial_beam")
-size = Vector3(2.999, 0.5, 0.3)
+size = Vector3(3.029, 0.56, 0.33)
 
 [sub_resource type="BoxMesh" id="BoxMesh_3"]
 material = SubResource("ShaderMaterial_beam")
-size = Vector3(2.999, 0.5, 0.3)
+size = Vector3(3.029, 0.56, 0.33)
 
 [sub_resource type="BoxMesh" id="BoxMesh_4"]
 material = SubResource("ShaderMaterial_beam")
-size = Vector3(0.3, 0.5, 2.999)
+size = Vector3(0.33, 0.56, 3.029)
 
 [sub_resource type="BoxMesh" id="BoxMesh_5"]
 material = SubResource("ShaderMaterial_beam")
-size = Vector3(0.3, 0.5, 2.999)
+size = Vector3(0.33, 0.56, 3.029)
 
 [resource]
 item/0/name = "Deck"
@@ -62,28 +64,28 @@ item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 
 item/1/navigation_layers = 1
 item/2/name = "EdgeN"
 item/2/mesh = SubResource("BoxMesh_2")
-item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.76, -1.3495)
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.79, -1.3645)
 item/2/mesh_cast_shadow = 1
 item/2/shapes = []
 item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/2/navigation_layers = 1
 item/3/name = "EdgeS"
 item/3/mesh = SubResource("BoxMesh_3")
-item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.76, 1.3495)
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.79, 1.3645)
 item/3/mesh_cast_shadow = 1
 item/3/shapes = []
 item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/3/navigation_layers = 1
 item/4/name = "EdgeW"
 item/4/mesh = SubResource("BoxMesh_4")
-item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3495, 5.76, 0)
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3645, 5.79, 0)
 item/4/mesh_cast_shadow = 1
 item/4/shapes = []
 item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 item/4/navigation_layers = 1
 item/5/name = "EdgeE"
 item/5/mesh = SubResource("BoxMesh_5")
-item/5/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3495, 7.76, 0)
+item/5/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3645, 7.79, 0)
 item/5/mesh_cast_shadow = 1
 item/5/shapes = []
 item/5/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)

@@ -609,12 +609,15 @@ class Level:
             self.platforms[number] = [f"BridgePlatform{count + i + 1}" for i in range(len(cells))]
             count += len(cells)
 
-    def bridge_event(self, name, number, close=False, next_event=None):
+    def bridge_event(self, name, number, close=False, next_event=None, camera_focus=True):
+        """camera_focus=False opens without locking input and cutting the camera to the platform."""
         props = {"script": 'ExtResource("toggle_bridge")',
                  "platforms": node_paths(["../../Bridges/" + p for p in self.platforms[number]]),
                  "platform_animation_stagger_seconds": "0.5"}
         if close:
             props.update({"use_camera_focus": "false", "event_type": "1"})
+        if not close and not camera_focus:
+            props["use_camera_focus"] = "false"
         if next_event:
             props["next_event"] = f'NodePath("../{next_event}")'
         paths = ["platforms"] + (["next_event"] if next_event else [])

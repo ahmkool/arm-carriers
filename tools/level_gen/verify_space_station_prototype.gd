@@ -249,8 +249,8 @@ func _run() -> void:
 	await overhead()
 	var first := group_enemies("Enemies/EnemyGroup")
 	check("enemies are robots", first.size() == 9 and first.all(func(e): return e.has_node("Robot") and not e.has_node("Skeleton_Warrior")), str(first.size()))
-	check("gunners are robots that fire plasma", group_enemies("Enemies/EnemyGroup3").filter(func(e): return e.has_node("MageBehavior")).all(
-		func(e): return e.get_node("FireballEmitter").spawn_scene.resource_path.ends_with("plasma_bolt_spawn.tscn")))
+	check("gunners are robots that fire laser bolts", group_enemies("Enemies/EnemyGroup3").filter(func(e): return e.has_node("MageBehavior")).all(
+		func(e): return e.get_node("FireballEmitter").spawn_scene.resource_path.ends_with("laser_bolt_spawn.tscn")))
 	check("bridges start switched off", bridge_pair_off(1) and bridge_pair_off(4))
 	path_ok(w(0, -10), w(0, -21), true, "nav: yard connects around the cargo")
 	path_ok(w(0, 0), w(0, -12), false, "nav: dock separate from the yard")
@@ -318,11 +318,11 @@ func _run() -> void:
 		check("causeway %s: gunners in range on screen" % spot[2], gunners.size() > 0 and visible_count(gunners) == gunners.size(), "%d/%d" % [visible_count(gunners), gunners.size()])
 		for bolt in fireballs_in_flight():
 			shots_seen[0] += 1
-			plasma[0] = plasma[0] or bolt.name.begins_with("PlasmaBolt")
+			plasma[0] = plasma[0] or bolt.name.begins_with("LaserBolt")
 	await shot("space_causeway.png")
 	await check_bolt_downs_plasma()
 	print("INFO bolts seen on the causeway: ", shots_seen[0], "  fps: ", Engine.get_frames_per_second())
-	check("gunners fire plasma bolts", shots_seen[0] > 0 and plasma[0], "%d seen, plasma=%s" % [shots_seen[0], plasma[0]])
+	check("gunners fire laser bolts", shots_seen[0] > 0 and plasma[0], "%d seen, plasma=%s" % [shots_seen[0], plasma[0]])
 	await clear_and_open("Enemies/EnemyGroup3", "Checkpoint4", 3)
 	check("clearing the gunners drops the framing", focal_count() == 0, str(focal_count()))
 
