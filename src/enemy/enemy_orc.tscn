@@ -1,0 +1,265 @@
+[gd_scene format=3]
+[ext_resource type="PackedScene" path="res://assets/characters/orc_raider/OrcRaider.glb" id="orc_glb"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/enemies/orc_axe/Orc_Axe.glb" id="orc_axe"]
+[ext_resource type="Script" uid="uid://bqs7kd6fwong3" path="res://src/enemy/behavior/chase_behavior.gd" id="1_chase"]
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_rv3oy"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="3_6obaf"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="3_k0inv"]
+[ext_resource type="Animation" uid="uid://bb6rh8o22vtqk" path="res://assets/animations_source/animations/Death_A_Pose.res" id="4_6pgiq"]
+[ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="4_nqpn3"]
+[ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="5_ovf15"]
+[ext_resource type="Animation" uid="uid://qr28d1kys3cu" path="res://assets/animations_source/animations/Death_B.res" id="5_p1hda"]
+[ext_resource type="Script" uid="uid://bbgviimwhb8xd" path="res://src/enemy/state/falling.gd" id="6_2o1j5"]
+[ext_resource type="Animation" uid="uid://d4mqxy7yj4eeb" path="res://assets/animations_source/animations/Death_B_Pose.res" id="6_cd20w"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="7_4si6m"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="7_uqia1"]
+[ext_resource type="Animation" uid="uid://dgye3dqqmpauj" path="res://assets/animations_source/animations/Hit_B.res" id="8_qlwsw"]
+[ext_resource type="Script" uid="uid://cy3ru26cixx67" path="res://src/enemy/state/spawning.gd" id="8_spawn"]
+[ext_resource type="Animation" uid="uid://c3ppuhivk30bj" path="res://assets/animations_source/animations/Idle_A.res" id="9_08wyp"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="10_u2ycs"]
+[ext_resource type="Animation" uid="uid://bvdi208mt7bf3" path="res://assets/animations_source/animations/Interact.res" id="11_krgyo"]
+[ext_resource type="Animation" uid="uid://cvofd306jejsk" path="res://assets/animations_source/animations/Jump_Full_Long.res" id="12_8j5m8"]
+[ext_resource type="Animation" uid="uid://ch1jryo7lq8ll" path="res://assets/animations_source/animations/Jump_Full_Short.res" id="13_wpk31"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="14_423i2"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="15_41ldg"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="16_fo663"]
+[ext_resource type="Animation" uid="uid://ckorprw785c6n" path="res://assets/animations_source/animations/PickUp.res" id="17_y83rj"]
+[ext_resource type="Animation" uid="uid://5o0p7x5ts3yq" path="res://assets/animations_source/animations/Running_A.res" id="18_l8uud"]
+[ext_resource type="Animation" uid="uid://h8eb8s8erx3o" path="res://assets/animations_source/animations/Running_B.res" id="19_6wyxs"]
+[ext_resource type="Animation" uid="uid://4ddywlnww1vh" path="res://assets/animations_source/animations/Spawn_Air.res" id="20_m468x"]
+[ext_resource type="Animation" uid="uid://ce0wp8fauyjy7" path="res://assets/animations_source/animations/Spawn_Ground.res" id="21_16rfl"]
+[ext_resource type="Animation" uid="uid://cyc51jqqiv405" path="res://assets/animations_source/animations/T-Pose.res" id="22_j0ymw"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="23_y25gs"]
+[ext_resource type="Animation" uid="uid://dmeewkkixxoei" path="res://assets/animations_source/animations/Use_Item.res" id="24_x6ft7"]
+[ext_resource type="Animation" uid="uid://400p0viws1y" path="res://assets/animations_source/animations/Walking_A.res" id="25_vbxci"]
+[ext_resource type="Animation" uid="uid://b66k543srtgf6" path="res://assets/animations_source/animations/Walking_B.res" id="26_687tl"]
+[ext_resource type="Animation" uid="uid://blfigfpjocmqx" path="res://assets/animations_source/animations/Walking_C.res" id="27_43u0p"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="35_p1hda"]
+[ext_resource type="Script" uid="uid://c8k2hitdmg01" path="res://src/enemy/state/taking_damage.gd" id="36_hitdmg"]
+
+[sub_resource type="Animation" id="Animation_k0inv"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6pgiq"]
+_data = {
+&"RESET": SubResource("Animation_k0inv")
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m0mtg"]
+_data = {
+&"Death_A": ExtResource("3_k0inv"),
+&"Death_A_Pose": ExtResource("4_6pgiq"),
+&"Death_B": ExtResource("5_p1hda"),
+&"Death_B_Pose": ExtResource("6_cd20w"),
+&"Hit_A": ExtResource("7_uqia1"),
+&"Hit_B": ExtResource("8_qlwsw"),
+&"Idle_A": ExtResource("9_08wyp"),
+&"Idle_B": ExtResource("10_u2ycs"),
+&"Interact": ExtResource("11_krgyo"),
+&"Jump_Full_Long": ExtResource("12_8j5m8"),
+&"Jump_Full_Short": ExtResource("13_wpk31"),
+&"Jump_Idle": ExtResource("14_423i2"),
+&"Jump_Land": ExtResource("15_41ldg"),
+&"Jump_Start": ExtResource("16_fo663"),
+&"PickUp": ExtResource("17_y83rj"),
+&"Running_A": ExtResource("18_l8uud"),
+&"Running_B": ExtResource("19_6wyxs"),
+&"Spawn_Air": ExtResource("20_m468x"),
+&"Spawn_Ground": ExtResource("21_16rfl"),
+&"T-Pose": ExtResource("22_j0ymw"),
+&"Throw": ExtResource("23_y25gs"),
+&"Use_Item": ExtResource("24_x6ft7"),
+&"Walking_A": ExtResource("25_vbxci"),
+&"Walking_B": ExtResource("26_687tl"),
+&"Walking_C": ExtResource("27_43u0p")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dl8mv"]
+animation = &"skeleton_warrior/Idle_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_okfnn"]
+animation = &"skeleton_warrior/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_spawn"]
+animation = &"skeleton_warrior/Spawn_Ground"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_awda7"]
+animation = &"skeleton_warrior/Running_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_okfnn"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_df4md"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_a1vpm"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_spawn"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_cd20w"]
+graph_offset = Vector2(-286, -9)
+nodes/output/position = Vector2(790, 180)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_awda7")
+nodes/Animation/position = Vector2(-540, 360)
+nodes/BlendIdleRun/node = SubResource("AnimationNodeBlend2_okfnn")
+nodes/BlendIdleRun/position = Vector2(-60, 120)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_dl8mv")
+"nodes/Animation 2/position" = Vector2(-450, 70)
+nodes/DeadBlend/node = SubResource("AnimationNodeBlend2_df4md")
+nodes/DeadBlend/position = Vector2(450, 230)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_a1vpm")
+nodes/OneShot/position = Vector2(150, 430)
+nodes/OneShotSpawn/node = SubResource("AnimationNodeOneShot_spawn")
+nodes/OneShotSpawn/position = Vector2(200, 210)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_okfnn")
+"nodes/Animation 3/position" = Vector2(-350, 710)
+"nodes/Animation Spawn/node" = SubResource("AnimationNodeAnimation_spawn")
+"nodes/Animation Spawn/position" = Vector2(-300, 520)
+node_connections = [&"output", 0, &"DeadBlend", &"BlendIdleRun", 0, &"Animation 2", &"BlendIdleRun", 1, &"Animation", &"DeadBlend", 0, &"OneShotSpawn", &"DeadBlend", 1, &"OneShot", &"OneShot", 0, &"Animation 3", &"OneShotSpawn", 0, &"BlendIdleRun", &"OneShotSpawn", 1, &"Animation Spawn"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_65eof"]
+radius = 0.39160156
+height = 2.3062744
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p5r7q"]
+radius = 0.7792969
+height = 2.3674316
+
+[sub_resource type="Curve" id="Curve_enemy_fs"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_enemy_fs"]
+curve = SubResource("Curve_enemy_fs")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_enemy_fs"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_enemy_fs")
+
+[sub_resource type="SphereMesh" id="SphereMesh_enemy_fs"]
+
+[sub_resource type="Curve" id="Curve_6pgiq"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_dvbte"]
+curve = SubResource("Curve_6pgiq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p1hda"]
+particle_flag_align_y = true
+emission_shape = 2
+emission_sphere_radius = 6.0
+radial_velocity_min = -2.0000224
+radial_velocity_max = -2.0000224
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -1.0000023
+radial_accel_max = -1.0000023
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_dvbte")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_10pld"]
+albedo_color = Color(0.9122237, 0.41413048, 9.62615e-07, 1)
+emission_enabled = true
+emission = Color(0.8459809, 0.4121156, 1.92523e-07, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cd20w"]
+material = SubResource("StandardMaterial3D_10pld")
+top_radius = 0.04
+bottom_radius = 0.0
+height = 0.5
+
+[node name="EnemyOrc" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 20
+script = ExtResource("1_rv3oy")
+hitbox_damage = 3
+
+[node name="Orc" parent="." instance=ExtResource("orc_glb")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Orc"]
+libraries = {
+&"": SubResource("AnimationLibrary_6pgiq"),
+&"skeleton_warrior": SubResource("AnimationLibrary_m0mtg")
+}
+autoplay = "skeleton_warrior/Walking_B"
+
+[node name="AnimationTree" type="AnimationTree" parent="Orc"]
+tree_root = SubResource("AnimationNodeBlendTree_cd20w")
+anim_player = NodePath("../AnimationPlayer")
+parameters/BlendIdleRun/blend_amount = 0.0
+parameters/DeadBlend/blend_amount = 0.0
+parameters/OneShot/active = false
+parameters/OneShot/internal_active = false
+parameters/OneShot/request = 0
+parameters/OneShotSpawn/active = false
+parameters/OneShotSpawn/internal_active = false
+parameters/OneShotSpawn/request = 0
+
+[node name="AxeHand" type="BoneAttachment3D" parent="Orc/Rig_Medium/Skeleton3D"]
+bone_name = "handslot.r"
+
+[node name="Axe" parent="Orc/Rig_Medium/Skeleton3D/AxeHand" instance=ExtResource("orc_axe")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
+shape = SubResource("CapsuleShape3D_65eof")
+
+[node name="ChaseBehavior" type="Node" parent="."]
+script = ExtResource("1_chase")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("3_6obaf")
+initial_state_path = NodePath("Spawning")
+
+[node name="Spawning" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("8_spawn")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("4_nqpn3")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("5_ovf15")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("6_2o1j5")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("7_4si6m")
+
+[node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("36_hitdmg")
+
+[node name="HitBox" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1779166, -0.77149844)
+shape = SubResource("CapsuleShape3D_p5r7q")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("ParticleProcessMaterial_enemy_fs")
+draw_pass_1 = SubResource("SphereMesh_enemy_fs")
+
+[node name="VFX" type="Node3D" parent="."]
+
+[node name="Focus" type="GPUParticles3D" parent="VFX"]
+cast_shadow = 0
+emitting = false
+amount = 24
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_p1hda")
+draw_pass_1 = SubResource("CylinderMesh_cd20w")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("35_p1hda")
+
+[connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]

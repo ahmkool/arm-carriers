@@ -1,0 +1,297 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/characters/frost_golem/FrostGolem.glb" id="glb"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/enemies/frost_golem_axe/FrostGolem_Axe_Large.gltf" id="axe"]
+[ext_resource type="Script" path="res://src/enemy/enemy_local.gd" id="enemy"]
+[ext_resource type="Script" path="res://src/enemy/boss/frost_golem/frost_golem_behavior.gd" id="behavior"]
+[ext_resource type="Script" path="res://src/enemy/boss/frost_golem/frost_golem_moves.gd" id="moves"]
+[ext_resource type="Script" path="res://src/enemy/boss/frost_golem/frost_ground.gd" id="frost"]
+[ext_resource type="Script" path="res://src/enemy/boss/frost_golem/frost_golem_attacking.gd" id="attacking"]
+[ext_resource type="Script" path="res://src/enemy/state/enemy_state_machine.gd" id="fsm"]
+[ext_resource type="Script" path="res://src/enemy/state/idle.gd" id="idle"]
+[ext_resource type="Script" path="res://src/enemy/state/running.gd" id="running"]
+[ext_resource type="Script" path="res://src/enemy/state/falling.gd" id="falling"]
+[ext_resource type="Script" path="res://src/enemy/state/dead.gd" id="dead"]
+[ext_resource type="Script" path="res://src/components/health.gd" id="health"]
+[ext_resource type="Script" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
+[ext_resource type="Script" path="res://src/enemy/weapon/hit_box.gd" id="hit_box"]
+[ext_resource type="PackedScene" path="res://src/enemy/boss/frost_golem/frost_spike.tscn" id="spike"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/skeleton/Idle_A.res" id="a_Idle"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/skeleton/Walking_A.res" id="a_Walk"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/skeleton/Death_A.res" id="a_Death"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/skeleton/Melee_2H_Attack.res" id="a_Sweep"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/skeleton/Melee_2H_Slam.res" id="a_Slam"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/skeleton/Melee_Unarmed_Smash.res" id="a_Smash"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/rig_large/frost_golem/Flexing.res" id="a_Roar"]
+
+[sub_resource type="AnimationLibrary" id="Library"]
+_data = {
+&"Idle_A": ExtResource("a_Idle"),
+&"Walking_A": ExtResource("a_Walk"),
+&"Death_A": ExtResource("a_Death"),
+&"Melee_2H_Attack": ExtResource("a_Sweep"),
+&"Melee_2H_Slam": ExtResource("a_Slam"),
+&"Melee_Unarmed_Smash": ExtResource("a_Smash"),
+&"Flexing": ExtResource("a_Roar")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Idle"]
+animation = &"golem/Idle_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Walk"]
+animation = &"golem/Walking_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_Death"]
+animation = &"golem/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SweepAnim"]
+animation = &"golem/Melee_2H_Attack"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SlamAnim"]
+animation = &"golem/Melee_2H_Slam"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_SmashAnim"]
+animation = &"golem/Melee_Unarmed_Smash"
+
+[sub_resource type="AnimationNodeAnimation" id="Node_RoarAnim"]
+animation = &"golem/Flexing"
+
+[sub_resource type="AnimationNodeBlend2" id="Node_BlendIdleRun"]
+
+[sub_resource type="AnimationNodeBlend2" id="Node_DeadBlend"]
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Sweep"]
+fadein_time = 0.1
+fadeout_time = 0.2
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Slam"]
+fadein_time = 0.1
+fadeout_time = 0.25
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Smash"]
+fadein_time = 0.1
+fadeout_time = 0.25
+
+[sub_resource type="AnimationNodeOneShot" id="Node_Roar"]
+fadein_time = 0.15
+fadeout_time = 0.3
+
+[sub_resource type="AnimationNodeBlendTree" id="Tree"]
+nodes/output/position = Vector2(2200, 100)
+nodes/IdleAnim/node = SubResource("Node_Idle")
+nodes/IdleAnim/position = Vector2(200, 100)
+nodes/WalkAnim/node = SubResource("Node_Walk")
+nodes/WalkAnim/position = Vector2(380, 100)
+nodes/BlendIdleRun/node = SubResource("Node_BlendIdleRun")
+nodes/BlendIdleRun/position = Vector2(560, 100)
+nodes/SweepAnim/node = SubResource("Node_SweepAnim")
+nodes/SweepAnim/position = Vector2(740, 100)
+nodes/Sweep/node = SubResource("Node_Sweep")
+nodes/Sweep/position = Vector2(920, 100)
+nodes/SlamAnim/node = SubResource("Node_SlamAnim")
+nodes/SlamAnim/position = Vector2(1100, 100)
+nodes/Slam/node = SubResource("Node_Slam")
+nodes/Slam/position = Vector2(1280, 100)
+nodes/SmashAnim/node = SubResource("Node_SmashAnim")
+nodes/SmashAnim/position = Vector2(1460, 100)
+nodes/Smash/node = SubResource("Node_Smash")
+nodes/Smash/position = Vector2(1640, 100)
+nodes/RoarAnim/node = SubResource("Node_RoarAnim")
+nodes/RoarAnim/position = Vector2(1820, 100)
+nodes/Roar/node = SubResource("Node_Roar")
+nodes/Roar/position = Vector2(2000, 100)
+nodes/DeathAnim/node = SubResource("Node_Death")
+nodes/DeathAnim/position = Vector2(2180, 100)
+nodes/DeadBlend/node = SubResource("Node_DeadBlend")
+nodes/DeadBlend/position = Vector2(2360, 100)
+node_connections = [&"output", 0, &"DeadBlend", &"BlendIdleRun", 0, &"IdleAnim", &"BlendIdleRun", 1, &"WalkAnim", &"Sweep", 0, &"BlendIdleRun", &"Sweep", 1, &"SweepAnim", &"Slam", 0, &"Sweep", &"Slam", 1, &"SlamAnim", &"Smash", 0, &"Slam", &"Smash", 1, &"SmashAnim", &"Roar", 0, &"Smash", &"Roar", 1, &"RoarAnim", &"DeadBlend", 0, &"Roar", &"DeadBlend", 1, &"DeathAnim"]
+
+[sub_resource type="CapsuleShape3D" id="Capsule"]
+radius = 0.5
+height = 3.9
+
+[sub_resource type="CylinderShape3D" id="SweepShape"]
+radius = 3.0
+height = 2.5
+
+[sub_resource type="StandardMaterial3D" id="Material_telegraph"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(0.08, 0.38, 1, 0.55)
+
+[sub_resource type="CylinderMesh" id="Mesh_sweep_telegraph"]
+material = SubResource("Material_telegraph")
+top_radius = 3.0
+bottom_radius = 3.0
+height = 0.03
+radial_segments = 32
+rings = 1
+
+[sub_resource type="CylinderMesh" id="Mesh_slam_telegraph"]
+material = SubResource("Material_telegraph")
+top_radius = 3.6
+bottom_radius = 3.6
+height = 0.03
+radial_segments = 40
+rings = 1
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_slam"]
+emission_shape = 6
+emission_ring_axis = Vector3(0, 1, 0)
+emission_ring_height = 0.1
+emission_ring_radius = 1.0
+emission_ring_inner_radius = 0.0
+direction = Vector3(0, 1, 0)
+spread = 70.0
+initial_velocity_min = 5.0
+initial_velocity_max = 10.0
+gravity = Vector3(0, -14, 0)
+scale_min = 0.6
+scale_max = 1.6
+color = Color(0.85, 0.95, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_slam"]
+shading_mode = 0
+vertex_color_use_as_albedo = true
+emission_enabled = true
+emission = Color(0.5, 0.85, 1, 1)
+emission_energy_multiplier = 1.5
+
+[sub_resource type="BoxMesh" id="Mesh_shard"]
+material = SubResource("Material_slam")
+size = Vector3(0.18, 0.18, 0.18)
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_footsteps"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.3
+scale_max = 0.5
+
+[sub_resource type="SphereMesh" id="Mesh_footsteps"]
+radius = 0.08
+height = 0.16
+radial_segments = 6
+rings = 3
+
+[node name="EnemyFrostGolem" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("enemy")
+speed = 2.2
+is_offensive = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.95, 0)
+shape = SubResource("Capsule")
+
+[node name="FrostGolemBehavior" type="Node" parent="."]
+script = ExtResource("behavior")
+
+[node name="FrostGolemMoves" type="Node" parent="."]
+script = ExtResource("moves")
+spike_scene = ExtResource("spike")
+
+[node name="FrostGround" type="Node" parent="."]
+script = ExtResource("frost")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("fsm")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("idle")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("running")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("falling")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("dead")
+knockback_speed = 0.0
+
+[node name="Attacking" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("attacking")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("Particles_footsteps")
+draw_pass_1 = SubResource("Mesh_footsteps")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("health")
+max_hp = 54
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("phase")
+fire_particles_path = NodePath("")
+axe_fire_visual_path = NodePath("")
+
+[node name="BossLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.4, 1.4)
+light_color = Color(0.6, 0.85, 1, 1)
+light_energy = 1.2
+omni_range = 9.0
+
+[node name="SweepHitBox" type="Area3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, -2.4)
+collision_layer = 0
+monitoring = false
+monitorable = false
+script = ExtResource("hit_box")
+damage = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SweepHitBox"]
+shape = SubResource("SweepShape")
+
+[node name="SweepTelegraph" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, -2.4)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_sweep_telegraph")
+
+[node name="SlamPoint" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.2)
+
+[node name="SlamTelegraph" type="MeshInstance3D" parent="SlamPoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_slam_telegraph")
+
+[node name="SlamBurst" type="GPUParticles3D" parent="SlamPoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+cast_shadow = 0
+emitting = false
+amount = 48
+lifetime = 0.9
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("Particles_slam")
+draw_pass_1 = SubResource("Mesh_shard")
+
+[node name="FrostGolem" parent="." instance=ExtResource("glb")]
+
+[node name="Rig_Large" parent="FrostGolem" index="0"]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="AxeHand" type="BoneAttachment3D" parent="FrostGolem/Rig_Large/Skeleton3D"]
+bone_name = "handslot.r"
+
+[node name="Axe" parent="FrostGolem/Rig_Large/Skeleton3D/AxeHand" instance=ExtResource("axe")]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="FrostGolem"]
+libraries = {
+&"golem": SubResource("Library")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="FrostGolem"]
+active = false
+tree_root = SubResource("Tree")
+anim_player = NodePath("../AnimationPlayer")
+
+[editable path="FrostGolem"]

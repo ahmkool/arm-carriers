@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" uid="uid://1omvlp44jb2k" path="res://water.gdshader" id="1_water"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_icy"]
+render_priority = 0
+shader = ExtResource("1_water")
+shader_parameter/water_color = Color(0.05, 0.18, 0.3, 1)
+shader_parameter/foam_color = Color(0.86, 0.94, 1, 1)
+shader_parameter/wave_scale = 0.6
+shader_parameter/wave_scale_detail = 0.9
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_icy"]
+material = SubResource("ShaderMaterial_icy")
+size = Vector2(400, 400)
+
+[node name="IcyWater" type="MeshInstance3D"]
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_icy")

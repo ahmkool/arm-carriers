@@ -44,6 +44,12 @@ const GROUPS: Array[Dictionary] = [
 		],
 	},
 	{
+		"name": "Bosses 2",
+		"levels": [
+			{"title": "Frost Golem", "difficulty": 3, "label": "Boss", "art": Art.BOSS, "scene": "res://src/world/levels/world_local_frost_golem_boss.tscn", "weapon": "sword"},
+		],
+	},
+	{
 		"name": "Prototypes",
 		"levels": [
 			{"title": "Sky Islands", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky.tscn", "weapon": "bazooka", "requires": "ranged"},
@@ -56,6 +62,7 @@ const GROUPS: Array[Dictionary] = [
 		"levels": [
 			{"title": "Rotor Decks", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Space Station", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
+			{"title": "Frozen Shore", "difficulty": 2, "label": "Prototype", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_snow.tscn", "weapon": "sword"},
 		],
 	},
 ]

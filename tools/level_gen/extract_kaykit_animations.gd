@@ -4,8 +4,9 @@ extends SceneTree
 ##   KAYKIT=<collection folder> CLIPS=<pack:clip[:loop],...> OUT=res://<folder> \
 ##     godot --headless --path . --script tools/level_gen/extract_kaykit_animations.gd
 ## pack is a file in "KayKit Character Animations 1.1/Animations/gltf/Rig_Medium", without "Rig_Medium_" or ".glb".
+## RIG=Large reads the Rig_Large packs instead, for large characters such as the golems.
 
-const PACK_FOLDER := "/KayKit Character Animations 1.1/Animations/gltf/Rig_Medium/Rig_Medium_%s.glb"
+const PACK_FOLDER := "/KayKit Character Animations 1.1/Animations/gltf/Rig_%s/Rig_%s_%s.glb"
 
 
 func _initialize() -> void:
@@ -33,7 +34,8 @@ func _extract(parts: PackedStringArray, out_dir: String) -> int:
 func _load_pack(pack: String) -> AnimationPlayer:
 	var document := GLTFDocument.new()
 	var state := GLTFState.new()
-	if document.append_from_file(OS.get_environment("KAYKIT") + PACK_FOLDER % pack, state) != OK:
+	var rig := OS.get_environment("RIG") if OS.has_environment("RIG") else "Medium"
+	if document.append_from_file(OS.get_environment("KAYKIT") + PACK_FOLDER % [rig, rig, pack], state) != OK:
 		return null
 	var root := document.generate_scene(state)
 	return root.find_children("*", "AnimationPlayer", true, false)[0] as AnimationPlayer

@@ -1,0 +1,45 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/dungeon/carrier_light.gd" id="1_follow"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_snow"]
+emission_shape = 3
+emission_box_extents = Vector3(30, 0.5, 24)
+direction = Vector3(0.3, -1, 0.1)
+spread = 12.0
+initial_velocity_min = 1.2
+initial_velocity_max = 2.2
+gravity = Vector3(0.2, -0.4, 0)
+turbulence_enabled = true
+turbulence_noise_strength = 0.6
+turbulence_noise_scale = 4.0
+scale_min = 0.5
+scale_max = 1.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_snow"]
+transparency = 1
+shading_mode = 0
+billboard_mode = 1
+albedo_color = Color(1, 1, 1, 0.85)
+
+[sub_resource type="SphereMesh" id="SphereMesh_flake"]
+material = SubResource("StandardMaterial3D_snow")
+radius = 0.06
+height = 0.12
+radial_segments = 6
+rings = 3
+
+[node name="SnowFall" type="Node3D"]
+script = ExtResource("1_follow")
+height = 12.0
+smoothing = 2.0
+
+[node name="Particles" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 500
+lifetime = 7.0
+preprocess = 7.0
+local_coords = false
+visibility_aabb = AABB(-200, -40, -200, 400, 60, 400)
+process_material = SubResource("ParticleProcessMaterial_snow")
+draw_pass_1 = SubResource("SphereMesh_flake")

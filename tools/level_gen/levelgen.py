@@ -28,6 +28,7 @@ LIBRARIES = {
     "dungeon": ("src/world/elements/dungeon/dungeon_tiles.tres", None),  # stone
     "lava": ("src/world/elements/lava/lava_tiles.tres", None),  # basalt; built by build_lava_tiles.gd
     "decks": ("src/world/elements/sky_decks/deck_tiles.tres", None),  # planks
+    "snow": ("src/world/elements/snow/snow_tiles.tres", None),  # snow, ice and snowy props; built by build_snow_tiles.gd
     "space": ("src/world/elements/space/space_tiles.tres", None),  # station plating; built by build_space_tiles.gd
 }
 WEAPONS = {
@@ -102,6 +103,20 @@ ground_horizon_color = Color(0.24, 0.1, 0.05, 1)
 ground_bottom_color = Color(0.3, 0.13, 0.05, 1)"""
 ROTOR_BASIS = {"E": "1, 0, 0, 0, 1, 0, 0, 0, 1", "W": "-1, 0, 0, 0, 1, 0, 0, 0, -1",
                "N": "0, 0, 1, 0, 1, 0, -1, 0, 0", "S": "0, 0, -1, 0, 1, 0, 1, 0, 0"}  # the arm points this way
+ENVIRONMENT_SNOW = """background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 3
+ambient_light_color = Color(0.78, 0.86, 1, 1)
+ambient_light_sky_contribution = 0.6
+ambient_light_energy = 0.55
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.3
+glow_hdr_threshold = 1.2
+fog_enabled = true
+fog_light_color = Color(0.78, 0.86, 0.96, 1)
+fog_density = 0.003
+fog_sky_affect = 0.3"""
 LAVA_Y = -4.6  # lava_rock.gdshader's lava_y must match
 LAVA_FALL_Y = -9.6  # puts the top of the kill box at the lava's surface
 
@@ -294,13 +309,19 @@ class Level:
             self.node("PositionDirectionSetter", f"CheckpointManager/{name}", "Marker3D", props={"transform": tf(setter_marker[0], 0, setter_marker[1])})
             self.node("PositionShooter", f"CheckpointManager/{name}", "Marker3D", props={"transform": tf(shooter_marker[0], 0, shooter_marker[1])})
 
-    def build_floor(self, floor, mouths):
+    def build_floor(self, floor, mouths, ice=frozenset(), props=None):
+        """ice: cells that get the library's "Ice_" tile instead. props: {cell: (item, rotation)} replacing the top tile."""
         cells = {}
         rng = random.Random(self.floor_seed)
+        names = {index: name for name, index in self.items.items()}
         for cell in sorted(floor):
             top, cliff = self._floor_tiles(cell, floor, rng)
             if cell in mouths:
                 top = (self.items["Hill_Top_E_Center"], 0)  # flat lip where a bridge lands
+            if cell in ice and cell not in mouths:
+                top = (self.items["Ice_" + names[top[0]]], top[1])
+            if props and cell in props:
+                top = (self.items[props[cell][0]], props[cell][1])
             cells[(cell[0], -1, cell[1])] = top
             if cliff:
                 cells[(cell[0], -3, cell[1])] = cliff
@@ -596,6 +617,42 @@ class Level:
         for index, (x, y, z, scale) in enumerate(asteroids, 1):
             self.node(f"Asteroid{index}", "Level/Asteroids", instance="asteroid", props={
                 "transform": tf(x, y, z, f"{scale}, 0, 0, 0, {scale}, 0, 0, 0, {scale}"), "script": 'ExtResource("drift")'})
+
+    def use_snow(self):
+        """Call before add_shell: a cold sky with a little fog, a white sun, snowfall, and blue orcs instead of skeletons."""
+        self.environment = ENVIRONMENT_SNOW
+        self.sun_extra = {"light_color": "Color(0.96, 0.98, 1, 1)", "light_energy": "1.05"}
+        self.melee_scene, self.survival_scene = "orc", "orc"
+        self.extra_ext += [
+            ("PackedScene", None, "res://src/enemy/enemy_orc.tscn", "orc"),
+            ("PackedScene", None, "res://src/world/elements/snow/icy_water.tscn", "icy_water"),
+            ("PackedScene", None, "res://src/world/elements/snow/snow_fall.tscn", "snow_fall"),
+        ]
+
+    def add_snow_terrain(self, floor, mouths, ice, props, fall_z, water_z):
+        """Snow ground with ice patches (slippery, see IceFloor) and solid snowy props, over an icy sea."""
+        interior = {c for c in floor if all((c[0] + dx, c[1] + dz) in floor for dx in (-1, 0, 1) for dz in (-1, 0, 1))}
+        assert set(props) <= interior - set(mouths) - set(ice), sorted(set(props) - (interior - set(mouths) - set(ice)))
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, -6.726822, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        cells = self.build_floor(floor, mouths, frozenset(ice), props)
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.node("Water", "Level", instance="icy_water", props={"transform": tf(0, -4.6065345, water_z)})
+        self.node("SnowFall", "Level", instance="snow_fall", props={"transform": tf(1.5, 12, 0)})
+        self.node("Events", "Level", "Node")
+
+    def add_snow_isles(self, isles):
+        """isles: (name, (x, y, z) offset, cells, {cell: scenery item}). Snowy islets out in the sea, with no collision."""
+        self.node("Isles", "Level", "Node3D")
+        settings = 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'
+        for name, (x, y, z), shape, scenery in isles:
+            self.node(name, "Level/Isles", "Node3D", props={"transform": tf(x, y, z)})
+            cells = self.build_floor(shape, set())
+            cells.update({(cx, -1, cz): (self.items[item], rot) for (cx, cz), (item, rot) in scenery.items()})
+            self.nodes.append(self._grid_map("Terrain", f"Level/Isles/{name}", cells, settings))
 
     def add_braziers(self, cells):
         self.node("Braziers", "Level", "Node")

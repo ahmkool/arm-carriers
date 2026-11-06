@@ -1,0 +1,300 @@
+[gd_scene load_steps=0 format=3 uid="uid://bydyrnqbubmfe"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/snow/snow_tiles.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="water"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="sword"]
+[ext_resource type="AudioStream" uid="uid://bkee2kcxygr38" path="res://assets/music/PeriTune_Rising_Tension.mp3" id="music"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_orc.tscn" id="orc"]
+[ext_resource type="PackedScene" path="res://src/world/elements/snow/icy_water.tscn" id="icy_water"]
+[ext_resource type="PackedScene" path="res://src/world/elements/snow/snow_fall.tscn" id="snow_fall"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_frost_golem.tscn" id="frost_golem"]
+[ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="show_boss_bar"]
+[ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/frost_golem_boss_icon.png" id="boss_icon"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("sky")
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 3
+ambient_light_color = Color(0.78, 0.86, 1, 1)
+ambient_light_sky_contribution = 0.6
+ambient_light_energy = 0.55
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.3
+glow_hdr_threshold = 1.2
+fog_enabled = true
+fog_light_color = Color(0.78, 0.86, 0.96, 1)
+fog_density = 0.003
+fog_sky_affect = 0.3
+
+[sub_resource type="Curve" id="Curve_survival"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3.0), 0.0, 0.0, 0, 0, Vector2(1, 3.0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(400, 1, 400)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_arena"]
+size = Vector3(33, 3, 6)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(-6.744499, -0.5500002, -30.481503, -5.744499, -0.5500002, -29.481503, -5.244499, -0.5500002, -31.231503, -8.244499, -0.5500002, -30.481503, -4.994499, -0.3000002, -52.481503, -3.9944992, -0.3000002, -52.731503, -3.9944992, -0.5500002, -56.231503, -13.994499, -0.5500002, -56.231503, -14.244499, -0.5500002, -53.731503, -17.2445, -0.5500002, -28.481503, -9.494499, -0.5500002, -28.481503, -9.494499, -0.5500002, -29.731503, -4.744499, -0.5500002, -51.481503, -14.744499, -0.5500002, -53.231503, -17.2445, -0.5500002, -52.981503, -3.4944992, -0.5500002, -52.731503, 9.505501, -0.5500002, -47.731503, 10.005501, -0.5500002, -47.981503, 10.005501, -0.5500002, -56.231503, -3.4944992, -0.5500002, -51.731503, 9.505501, -0.5500002, -46.481503, 10.255501, -0.5500002, -45.731503, 20.2555, -0.5500002, -46.481503, 20.2555, -0.5500002, -52.981503, 17.7555, -0.5500002, -53.231503, 17.2555, -0.5500002, -53.731503, 17.0055, -0.5500002, -56.231503, 11.005501, -0.5500002, -47.481503, 11.255501, -0.5500002, -46.481503, -5.744499, -0.5500002, -27.231503, -7.494499, -0.5500002, -26.481503, -7.494499, -0.5500002, -18.731503, 17.0055, -0.5500002, -18.731503, 17.2555, -0.5500002, -21.231503, 11.005501, -0.5500002, -45.731503, 17.7555, -0.5500002, -21.731503, 20.2555, -0.5500002, -21.981503, -17.2445, -0.5500002, -21.981503, -14.744499, -0.5500002, -21.731503, -9.494499, -0.5500002, -27.231503, -14.244499, -0.5500002, -20.981503, -8.994499, -0.5500002, -26.981503, -13.994499, -0.5500002, -18.731503, 12.505501, -0.5500002, 3.2684975, 12.505501, -0.5500002, 4.2684975, 14.255501, -0.5500002, 4.2684975, -11.244499, -0.5500002, 4.5184975, -8.244499, -0.5500002, 4.5184975, -8.244499, -0.5500002, 4.0184975, 11.255501, -0.5500002, 2.5184975, 14.255501, -0.5500002, -7.9815025, 11.755501, -0.5500002, -8.231503, 11.255501, -0.5500002, 9.018497, 10.755501, -0.5500002, 6.5184975, 8.755501, -0.5500002, 5.7684975, -6.494499, -0.5500002, 5.0184975, -7.744499, -0.5500002, 5.2684975, -8.244499, -0.5500002, 8.768497, -7.994499, -0.5500002, 11.268497, -6.994499, -0.5500002, 3.2684975, -8.744499, -0.5500002, -8.231503, -11.244499, -0.5500002, -7.9815025, -2.9944992, -0.5500002, -11.231503, -7.994499, -0.5500002, -11.231503, -8.244499, -0.5500002, -8.731503, 11.005501, -0.5500002, 11.268497, -5.994499, -0.5500002, 3.5184975, 11.005501, -0.5500002, -11.231503, -2.7444992, -0.5500002, -11.731503, 8.755501, -0.5500002, 3.2684975, 11.255501, -0.5500002, -8.731503, 9.755501, -0.5500002, 2.5184975, 11.755501, -0.5500002, 8.268497, 12.505501, -0.5500002, 5.5184975, 14.255501, -0.5500002, 8.018497, -8.744499, -0.5500002, 8.268497, -11.244499, -0.5500002, 8.018497)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(2, 0, 3), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(7, 4, 8), PackedInt32Array(11, 10, 9), PackedInt32Array(3, 11, 9), PackedInt32Array(8, 4, 13), PackedInt32Array(13, 4, 12), PackedInt32Array(3, 9, 2), PackedInt32Array(2, 9, 12), PackedInt32Array(12, 9, 13), PackedInt32Array(13, 9, 14), PackedInt32Array(15, 5, 6), PackedInt32Array(17, 16, 18), PackedInt32Array(18, 16, 15), PackedInt32Array(18, 15, 6), PackedInt32Array(15, 16, 19), PackedInt32Array(19, 16, 20), PackedInt32Array(20, 21, 19), PackedInt32Array(19, 21, 12), PackedInt32Array(12, 21, 2), PackedInt32Array(22, 24, 23), PackedInt32Array(18, 26, 25), PackedInt32Array(24, 22, 25), PackedInt32Array(25, 22, 28), PackedInt32Array(25, 28, 27), PackedInt32Array(25, 27, 18), PackedInt32Array(27, 17, 18), PackedInt32Array(29, 1, 2), PackedInt32Array(30, 29, 31), PackedInt32Array(31, 29, 33), PackedInt32Array(31, 33, 32), PackedInt32Array(34, 28, 22), PackedInt32Array(2, 21, 34), PackedInt32Array(35, 33, 29), PackedInt32Array(2, 34, 29), PackedInt32Array(29, 34, 22), PackedInt32Array(29, 22, 35), PackedInt32Array(35, 22, 36), PackedInt32Array(37, 9, 38), PackedInt32Array(38, 9, 39), PackedInt32Array(39, 9, 10), PackedInt32Array(39, 41, 38), PackedInt32Array(38, 41, 40), PackedInt32Array(42, 40, 31), PackedInt32Array(31, 40, 41), PackedInt32Array(31, 41, 30), PackedInt32Array(45, 44, 43), PackedInt32Array(48, 47, 46), PackedInt32Array(43, 49, 45), PackedInt32Array(45, 49, 50), PackedInt32Array(50, 49, 51), PackedInt32Array(52, 54, 53), PackedInt32Array(56, 55, 57), PackedInt32Array(57, 55, 58), PackedInt32Array(48, 46, 59), PackedInt32Array(59, 46, 61), PackedInt32Array(59, 61, 60), PackedInt32Array(64, 63, 62), PackedInt32Array(52, 65, 54), PackedInt32Array(54, 65, 66), PackedInt32Array(66, 65, 55), PackedInt32Array(55, 65, 58), PackedInt32Array(62, 68, 67), PackedInt32Array(60, 64, 62), PackedInt32Array(69, 54, 66), PackedInt32Array(66, 59, 60), PackedInt32Array(70, 69, 67), PackedInt32Array(67, 69, 62), PackedInt32Array(62, 69, 60), PackedInt32Array(60, 69, 66), PackedInt32Array(51, 49, 71), PackedInt32Array(51, 71, 70), PackedInt32Array(70, 71, 69), PackedInt32Array(52, 53, 72), PackedInt32Array(72, 53, 73), PackedInt32Array(73, 44, 45), PackedInt32Array(72, 73, 74), PackedInt32Array(74, 73, 45), PackedInt32Array(56, 57, 75), PackedInt32Array(47, 56, 46), PackedInt32Array(46, 56, 75), PackedInt32Array(46, 75, 76)]
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("theme")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#88ccff]Frost Golem[/color]
+
+Dash to strike. Step out of the blue rings, and watch
+your footing : its slam freezes the ground !"
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+light_color = Color(0.96, 0.98, 1, 1)
+light_energy = 1.05
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="BossGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/BossGroup"]
+
+[node name="EnemyFrostGolem" parent="Enemies/BossGroup/InstancedEnemies" instance=ExtResource("frost_golem")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -43.4855)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 4.4985)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/BossGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.7268, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -8)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131078, 65518, 655366, -131078, 65519, 1441797, -131078, 65520, 1441797, -131078, 65521, 1441797, -131078, 65522, 1441797, -131078, 65523, 1441797, -131078, 65524, 1441797, -131078, 65525, 1441797, -131078, 65526, 1441797, -131078, 65527, 1441797, -131078, 65528, 1441798, -6, 65518, 1441795, -6, 65519, 655369, -6, 65520, 1441802, -6, 65521, 1441802, -6, 65522, 655369, -6, 65523, 1441794, -6, 65524, 1441794, -6, 65525, 655361, -6, 65526, 1441794, -6, 65527, 1441794, -6, 65528, 3, -131077, 65517, 655366, -131077, 65518, 655367, -131077, 65528, 1441799, -131077, 65529, 1441798, -5, 65517, 1441795, -5, 65518, 1441796, -5, 65519, 8, -5, 65520, 8, -5, 65521, 8, -5, 65522, 8, -5, 65523, 0, -5, 65524, 0, -5, 65525, 0, -5, 65526, 0, -5, 65527, 0, -5, 65528, 4, -5, 65529, 3, -131076, 65517, 655365, -131076, 65529, 5, -131076, 65533, 655366, -131076, 65534, 1441797, -131076, 65535, 1441797, -131076, 0, 1441797, -131076, 1, 1441797, -131076, 2, 1441798, -4, 65517, 655362, -4, 65518, 0, -4, 65519, 8, -4, 65520, 8, -4, 65521, 8, -4, 65522, 8, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65526, 0, -4, 65527, 0, -4, 65528, 0, -4, 65529, 1441793, -4, 65533, 1441795, -4, 65534, 655361, -4, 65535, 655361, -4, 0, 1441794, -4, 1, 1441794, -4, 2, 3, -131075, 65517, 655365, -131075, 65529, 5, -131075, 65532, 655366, -131075, 65533, 655367, -131075, 2, 1441799, -131075, 3, 1441798, -3, 65517, 1048577, -3, 65518, 0, -3, 65519, 0, -3, 65520, 0, -3, 65521, 0, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65526, 17, -3, 65527, 0, -3, 65528, 0, -3, 65529, 2, -3, 65532, 1441795, -3, 65533, 1441796, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 16, -3, 2, 4, -3, 3, 3, -131074, 65517, 655365, -131074, 65529, 5, -131074, 65532, 655365, -131074, 3, 5, -2, 65517, 655362, -2, 65518, 19, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 0, -2, 65526, 0, -2, 65527, 0, -2, 65528, 0, -2, 65529, 2, -2, 65532, 655362, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 1441793, -131073, 65517, 655365, -131073, 65529, 5, -131073, 65532, 655365, -131073, 3, 5, -1, 65517, 1048577, -1, 65518, 0, -1, 65519, 0, -1, 65520, 0, -1, 65521, 0, -1, 65522, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65526, 0, -1, 65527, 0, -1, 65528, 0, -1, 65529, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 1441793, -196608, 65517, 655365, -196608, 65529, 5, -196608, 65532, 655365, -196608, 3, 5, -65536, 65517, 1048577, -65536, 65518, 0, -65536, 65519, 0, -65536, 65520, 0, -65536, 65521, 0, -65536, 65522, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65526, 0, -65536, 65527, 0, -65536, 65528, 0, -65536, 65529, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 1441793, -196607, 65517, 655365, -196607, 65529, 5, -196607, 65532, 655365, -196607, 3, 5, -65535, 65517, 655362, -65535, 65518, 0, -65535, 65519, 0, -65535, 65520, 0, -65535, 65521, 0, -65535, 65522, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65526, 0, -65535, 65527, 0, -65535, 65528, 0, -65535, 65529, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 1441793, -196606, 65517, 655365, -196606, 65529, 5, -196606, 65532, 655365, -196606, 3, 5, -65534, 65517, 655362, -65534, 65518, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 0, -65534, 65526, 0, -65534, 65527, 0, -65534, 65528, 0, -65534, 65529, 1441793, -65534, 65532, 1048577, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 2, -196605, 65517, 655365, -196605, 65529, 5, -196605, 65532, 1048582, -196605, 65533, 1048583, -196605, 2, 7, -196605, 3, 6, -65533, 65517, 655362, -65533, 65518, 0, -65533, 65519, 0, -65533, 65520, 1048592, -65533, 65521, 0, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65526, 0, -65533, 65527, 0, -65533, 65528, 0, -65533, 65529, 2, -65533, 65532, 655363, -65533, 65533, 655364, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 655377, -65533, 2, 1048580, -65533, 3, 1048579, -196604, 65517, 655365, -196604, 65529, 5, -196604, 65533, 1048582, -196604, 65534, 1048581, -196604, 65535, 1048581, -196604, 0, 1048581, -196604, 1, 1048581, -196604, 2, 6, -65532, 65517, 655362, -65532, 65518, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 8, -65532, 65525, 8, -65532, 65526, 8, -65532, 65527, 8, -65532, 65528, 0, -65532, 65529, 1441793, -65532, 65533, 655363, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1048578, -65532, 2, 1048579, -196603, 65517, 1048582, -196603, 65518, 1048583, -196603, 65528, 7, -196603, 65529, 6, -65531, 65517, 655363, -65531, 65518, 655364, -65531, 65519, 0, -65531, 65520, 0, -65531, 65521, 0, -65531, 65522, 0, -65531, 65523, 0, -65531, 65524, 8, -65531, 65525, 8, -65531, 65526, 8, -65531, 65527, 8, -65531, 65528, 1048580, -65531, 65529, 1048579, -196602, 65518, 1048582, -196602, 65519, 1048581, -196602, 65520, 1048581, -196602, 65521, 1048581, -196602, 65522, 1048581, -196602, 65523, 1048581, -196602, 65524, 1048581, -196602, 65525, 1048581, -196602, 65526, 1048581, -196602, 65527, 1048581, -196602, 65528, 6, -65530, 65518, 655363, -65530, 65519, 1, -65530, 65520, 1048578, -65530, 65521, 1, -65530, 65522, 1048578, -65530, 65523, 1048578, -65530, 65524, 9, -65530, 65525, 9, -65530, 65526, 1048586, -65530, 65527, 9, -65530, 65528, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Water" parent="Level" instance=ExtResource("icy_water")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.6065, -8)
+
+[node name="SnowFall" parent="Level" instance=ExtResource("snow_fall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 12, 0)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="Isles" type="Node3D" parent="Level"]
+
+[node name="IsleA" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40, -1.6, -20)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131074, 65535, 655366, -131074, 0, 1441797, -131074, 1, 1441798, -2, 65535, 1441795, -2, 0, 655361, -2, 1, 3, -131073, 65534, 655366, -131073, 65535, 655367, -131073, 1, 1441799, -131073, 2, 1441798, -1, 65534, 1441795, -1, 65535, 1441796, -1, 0, 0, -1, 1, 655384, -1, 2, 3, -196608, 65534, 655365, -196608, 2, 5, -65536, 65534, 655362, -65536, 65535, 0, -65536, 0, 21, -65536, 1, 0, -65536, 2, 2, -196607, 65534, 1048582, -196607, 65535, 1048583, -196607, 1, 7, -196607, 2, 6, -65535, 65534, 655363, -65535, 65535, 655364, -65535, 0, 0, -65535, 1, 1048580, -65535, 2, 1048579, -196606, 65535, 1048582, -196606, 0, 1048581, -196606, 1, 6, -65534, 65535, 655363, -65534, 0, 1, -65534, 1, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="IsleB" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, -1.8, -40)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131075, 65535, 655366, -131075, 0, 1441797, -131075, 1, 1441797, -131075, 2, 1441798, -3, 65535, 1441795, -3, 0, 655361, -3, 1, 1441794, -3, 2, 3, -131074, 65534, 655366, -131074, 65535, 655367, -131074, 2, 1441799, -131074, 3, 1441798, -2, 65534, 1441795, -2, 65535, 1441796, -2, 0, 23, -2, 1, 0, -2, 2, 4, -2, 3, 3, -131073, 65534, 655365, -131073, 3, 5, -1, 65534, 655362, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 1441793, -196608, 65534, 655365, -196608, 3, 5, -65536, 65534, 655362, -65536, 65535, 0, -65536, 0, 22, -65536, 1, 0, -65536, 2, 0, -65536, 3, 2, -196607, 65534, 1048582, -196607, 65535, 1048583, -196607, 2, 7, -196607, 3, 6, -65535, 65534, 655363, -65535, 65535, 655364, -65535, 0, 0, -65535, 1, 1048597, -65535, 2, 1048580, -65535, 3, 1048579, -196606, 65535, 1048582, -196606, 0, 1048581, -196606, 1, 1048581, -196606, 2, 6, -65534, 65535, 655363, -65534, 0, 1, -65534, 1, 1048578, -65534, 2, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="IsleC" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 38, -1.6, 8)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131074, 65535, 655366, -131074, 0, 1441797, -131074, 1, 1441798, -2, 65535, 1441795, -2, 0, 655361, -2, 1, 3, -131073, 65534, 655366, -131073, 65535, 655367, -131073, 1, 1441799, -131073, 2, 1441798, -1, 65534, 1441795, -1, 65535, 1441796, -1, 0, 0, -1, 1, 4, -1, 2, 3, -196608, 65534, 655365, -196608, 2, 5, -65536, 65534, 655362, -65536, 65535, 0, -65536, 0, 23, -65536, 1, 0, -65536, 2, 2, -196607, 65534, 1048582, -196607, 65535, 1048583, -196607, 1, 7, -196607, 2, 6, -65535, 65534, 655363, -65535, 65535, 24, -65535, 0, 0, -65535, 1, 1048580, -65535, 2, 1048579, -196606, 65535, 1048582, -196606, 0, 1048581, -196606, 1, 6, -65534, 65535, 655363, -65534, 0, 1, -65534, 1, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../WakeBoss")
+
+[node name="WakeBoss" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/BossGroup")
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -13.4955)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -16.4945)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -13.4955)
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -16.4945)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -25.4915)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger"]
+shape = SubResource("BoxShape3D_arena")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="Sword" parent="Weapon" instance=ExtResource("sword")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0.593, 4.4985)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("launch_message")
+message_string = "[color=#88ccff]Frost Golem[/color]
+
+Dash to strike. Step out of the blue rings, and watch
+your footing : its slam freezes the ground !"
+
+[node name="ShowBossHealthBar" type="Node" parent="." node_paths=PackedStringArray("fight_trigger", "enemy_group")]
+script = ExtResource("show_boss_bar")
+fight_trigger = NodePath("../Level/Areas/AllPlayersAreaTrigger")
+enemy_group = NodePath("../Enemies/BossGroup")
+boss_icon = ExtResource("boss_icon")
+
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/BossGroup" to="Level/Events/LevelSucceeded" method="trigger"]

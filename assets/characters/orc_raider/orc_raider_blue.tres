@@ -1,0 +1,8 @@
+[gd_resource type="StandardMaterial3D" format=3]
+
+[ext_resource type="Texture2D" path="res://assets/characters/orc_raider/orc_texture_blue.png" id="1_tex"]
+
+[resource]
+resource_name = "orc_raider_blue"
+albedo_texture = ExtResource("1_tex")
+roughness = 0.8

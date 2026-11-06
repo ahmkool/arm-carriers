@@ -8,6 +8,11 @@ extends CharacterBody3D
 
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
+## On ice, speed builds up and bleeds off instead of changing at once (m/s per second).
+const ICE_ACCELERATION := 5.0
+const ICE_DECELERATION := 2.0
+## A dash on ice slides at no more than this, or the carriers would skate across the level.
+const ICE_MAX_SLIDE_SPEED := 6.0
 const DAMAGE_SOUND := preload("res://assets/sounds/damage.wav")
 const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
 const DAMAGE_VFX_KNOCKBACK_OFFSET := 2.0
@@ -34,6 +39,7 @@ var action_action: String
 var action_shoot: String
 var action_dash: String
 var _animate_on_dead_enter: bool = true
+var _on_ice := false
 var _resume_state_after_hit := &"idle"
 var _damage_source_position := Vector3.ZERO
 var _has_damage_source_position := false
@@ -332,3 +338,22 @@ func play_dead_animation() -> void:
 		return
 	animation_tree.set(ANIM_PARAM_DEAD_ONESHOT_REQUEST, AnimationNodeOneShot.ONE_SHOT_REQUEST_FIRE)
 	animation_tree.set(ANIM_PARAM_DEAD_BLEND, 1.0)
+
+
+## Moves the horizontal velocity toward `target`. Off ice, by at most `normal_step` per frame, which keeps each
+## state's usual feel: INF for an instant change. On ice, by the ice rates, so the carriers slide.
+func steer_on_ground(target: Vector3, normal_step: float, delta: float) -> void:
+	_on_ice = IceFloor.under(self, _on_ice)
+	if not _on_ice:
+		velocity.x = move_toward(velocity.x, target.x, normal_step)
+		velocity.z = move_toward(velocity.z, target.z, normal_step)
+		return
+	var flat := Vector2(velocity.x, velocity.z).limit_length(ICE_MAX_SLIDE_SPEED)
+	var rate := ICE_ACCELERATION if target.length_squared() > 0.0001 else ICE_DECELERATION
+	flat = flat.move_toward(Vector2(target.x, target.z), rate * delta)
+	velocity.x = flat.x
+	velocity.z = flat.y
+
+
+func is_on_ice() -> bool:
+	return _on_ice

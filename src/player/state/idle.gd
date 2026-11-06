@@ -16,8 +16,7 @@ func physics_update(delta: float) -> void:
 	if direction.length_squared() > 0.0001:
 		player_state_machine.transition_to("running")
 		return
-	player.velocity.x = move_toward(player.velocity.x, 0.0, player.SPEED)
-	player.velocity.z = move_toward(player.velocity.z, 0.0, player.SPEED)
+	player.steer_on_ground(Vector3.ZERO, player.SPEED, delta)
 	var carry_status := player.carrying_weapon_data.can_carry_status
 	if carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_SHOOTER or carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_DIRECTION_SETTER:
 		var world_node := player.get_parent().get_parent()

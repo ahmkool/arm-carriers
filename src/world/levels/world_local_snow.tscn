@@ -1,0 +1,512 @@
+[gd_scene load_steps=33 format=3 uid="uid://boetb65bvxk4e"]
+
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" path="res://src/world/elements/snow/icy_water.tscn" id="icy_water"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="AudioStream" uid="uid://duaul8r11ug66" path="res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3" id="music"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_orc.tscn" id="orc"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" path="res://src/world/elements/snow/snow_fall.tscn" id="snow_fall"]
+[ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="sword"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="MeshLibrary" uid="uid://dtsdoq5vo67ks" path="res://src/world/elements/snow/snow_tiles.tres" id="tiles"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("sky")
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 3
+ambient_light_color = Color(0.78, 0.86, 1, 1)
+ambient_light_sky_contribution = 0.6
+ambient_light_energy = 0.55
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.3
+glow_hdr_threshold = 1.2
+fog_enabled = true
+fog_light_color = Color(0.78, 0.86, 0.96, 1)
+fog_density = 0.003
+fog_sky_affect = 0.3
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(400, 1, 400)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(-9.4935, -0.5500002, -132.2035, -9.4935, -0.5500002, -133.4535, -11.2435, -0.5500002, -133.4535, -11.2435, -0.5500002, -123.95351, 14.2565, -0.5500002, -133.7035, 12.0065, -0.5500002, -133.7035, 11.0065, -0.5500002, -132.7035, 11.7565, -0.5500002, -123.70351, 14.2565, -0.5500002, -123.95351, 9.7565, -0.5500002, -133.9535, 11.2565, -0.5500002, -134.4535, 11.2565, -0.5500002, -137.7035, -8.2435, -0.5500002, -137.9535, -7.7434998, -0.5500002, -135.4535, -5.7434998, -0.5500002, -134.7035, -7.9934998, -0.5500002, -140.2035, 11.0065, -0.5500002, -140.2035, 5.7565002, -0.5500002, -120.45351, 11.0065, -0.5500002, -120.70351, 11.2565, -0.5500002, -123.20351, -5.7434998, -0.5500002, -132.2035, 9.7565, -0.5500002, -132.9535, -6.9934998, -0.5500002, -131.4535, -8.7435, -0.5500002, -123.70351, -8.2435, -0.5500002, -123.20351, -8.2435, -0.5500002, -131.4535, -7.9934998, -0.5500002, -120.70351, -8.7435, -0.5500002, -137.2035, -9.4935, -0.5500002, -134.7035, -11.2435, -0.5500002, -136.9535, 11.7565, -0.5500002, -134.4535, 14.2565, -0.5500002, -136.9535, 11.7565, -0.5500002, -137.2035, -10.9935, -0.5500002, -102.70351, -11.2435, -0.5500002, -103.45351, -17.2435, -0.5500002, -103.45351, -4.7434998, -0.5500002, -72.70351, -4.7434998, -0.05000019, -79.45351, -5.4934998, -0.5500002, -79.45351, -14.2435, -0.5500002, -75.20351, -13.9935, -0.5500002, -72.70351, -4.7434998, -0.5500002, -78.10351, 12.0065, -0.5500002, -104.95351, 14.5065, -0.5500002, -105.20351, 17.2565, -0.5500002, -110.95351, 17.0065, -0.5500002, -113.20351, -10.7435, -0.5500002, -113.20351, -10.2435, -0.5500002, -104.45351, -9.2435, -0.5500002, -104.45351, 11.5065, -0.5500002, -102.70351, 11.5065, -0.5500002, -104.20351, -2.9934998, -0.5500002, -113.20351, 12.0065, -0.5500002, -101.95351, -9.9935, -0.5500002, -102.70351, -5.4934998, -0.5500002, -80.20351, -3.9934998, -0.5500002, -80.20351, -8.9935, -0.5500002, -103.45351, -14.7435, -0.5500002, -75.70351, -17.2435, -0.5500002, -75.95351, -2.7434998, -0.5500002, -113.70351, -13.9935, -0.5500002, -113.20351, -14.2435, -0.5500002, -110.70351, -14.7435, -0.5500002, -110.20351, -11.2435, -0.5500002, -103.95351, -17.2435, -0.5500002, -109.95351, 15.0065, -0.5500002, -104.95351, 15.5065, -0.5500002, -103.20351, 20.2565, -0.5500002, -103.20351, 20.2565, -0.5500002, -109.95351, 17.7565, -0.5500002, -110.20351, 14.7565, -0.5500002, -101.45351, 20.2565, -0.5500002, -75.95351, -3.9934998, -0.3000002, -79.45351, 17.0065, -0.5500002, -72.70351, 17.2565, -0.5500002, -75.20351, 17.7565, -0.5500002, -75.70351, 12.2565, -0.5500002, -101.45351, -20.2435, -0.5500002, -31.453506, -15.4935, -0.5500002, -31.203506, -15.2435, -0.5500002, -32.953506, -11.7435, -0.5500002, -30.203506, -12.4935, -0.5500002, -29.703506, -12.4935, -0.5500002, -24.703506, 20.0065, -0.5500002, -24.703506, 20.2565, -0.5500002, -27.203506, -14.4935, -0.5500002, -33.453506, -16.4935, -0.05000019, -46.203506, -20.2435, -0.5500002, -57.203506, -17.72845, -0.5500002, -46.184555, 23.2565, -0.5500002, -58.703506, 17.7565, -0.5500002, -58.703506, 17.2565, -0.5500002, -57.453506, 20.7565, -0.5500002, -27.703506, 23.2565, -0.5500002, -27.953506, -13.2435, -0.5500002, -65.20351, -13.2435, -0.5500002, -59.203506, -12.7435, -0.5500002, -58.953506, -2.9934998, -0.5500002, -65.20351, 15.2565, -0.5500002, -58.953506, 16.2565, -0.5500002, -59.703506, 16.2565, -0.5500002, -65.20351, -2.7434998, -0.5500002, -65.70351, -14.4935, -0.5500002, -57.453506, -16.4935, -0.5500002, -47.453506, -15.4935, -0.5500002, -47.203506, -12.7435, -0.5500002, -57.953506, 15.7565, -0.5500002, -57.453506, -15.4935, -0.5500002, -46.203506, -12.7435, -0.5500002, -33.453506, -11.7435, -0.5500002, -32.703506, -16.9935, -0.5500002, -65.20351, -17.2435, -0.5500002, -62.703506, -14.2435, -0.5500002, -59.203506, -14.9935, -0.5500002, -57.703506, -17.7435, -0.5500002, -62.203506, -14.9935, -0.5500002, -58.453506, -20.2435, -0.5500002, -61.953506, 23.2565, -0.5500002, -61.953506, 20.7565, -0.5500002, -62.203506, 17.5065, -0.5500002, -59.703506, 20.2565, -0.5500002, -62.703506, 20.0065, -0.5500002, -65.20351, -20.2435, -0.5500002, -27.953506, -17.7435, -0.5500002, -27.703506, -15.4935, -0.5500002, -30.453506, -14.7435, -0.5500002, -29.703506, -17.2435, -0.5500002, -27.203506, -16.9935, -0.5500002, -24.703506, 15.5065, -0.5500002, 3.2964935, 15.5065, -0.5500002, 4.2964935, 17.2565, -0.5500002, 4.2964935, 13.7565, -0.5500002, 11.296494, 14.2565, -0.5500002, 11.046494, 14.2565, -0.5500002, 9.046494, 14.5065, -0.5500002, 2.5464935, -14.2435, -0.5500002, 4.2964935, -11.2435, -0.5500002, 4.2964935, -10.9935, -0.5500002, 3.5464935, -10.7435, -0.5500002, -9.453506, -10.7435, -0.3000002, -9.953506, -14.2435, -0.5500002, -9.953506, 12.7565, -0.5500002, 2.5464935, 11.2565, -0.5500002, -9.453506, 9.2565, -0.5500002, -11.203506, 11.5065, -0.5500002, -11.953506, 14.2565, -0.5500002, -14.703506, 14.0065, -0.5500002, -17.203506, -2.7434998, -0.5500002, -17.703506, -2.9934998, -0.5500002, -17.203506, 14.7565, -0.5500002, -14.203506, 11.7565, -0.5500002, -10.453506, 13.7565, -0.5500002, 6.5464935, 11.7565, -0.5500002, 5.7964935, -11.2435, -0.5500002, -14.703506, -11.7435, -0.5500002, -14.203506, -10.2435, -0.05000019, -10.703506, -9.4935, -0.5500002, 5.0464935, -10.7435, -0.5500002, 5.2964935, -11.2435, -0.5500002, 8.796494, -10.9935, -0.5500002, 11.296494, -9.4935, -0.5500002, -10.703506, -10.9935, -0.5500002, -17.203506, -9.4935, -0.5500002, -9.703506, -8.9935, -0.5500002, 3.5464935, 17.2565, -0.5500002, -13.953506, 9.7565, -0.5500002, -9.453506, 11.7565, -0.5500002, 3.2964935, -14.2435, -0.5500002, -13.953506, -11.2435, -0.5500002, 5.0464935, -11.7435, -0.5500002, 8.296494, -14.2435, -0.5500002, 8.046494, 14.7565, -0.5500002, 8.296494, 15.5065, -0.5500002, 5.5464935, 17.2565, -0.5500002, 8.046494)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 8), PackedInt32Array(6, 8, 7), PackedInt32Array(11, 10, 9), PackedInt32Array(12, 14, 13), PackedInt32Array(12, 15, 14), PackedInt32Array(14, 15, 9), PackedInt32Array(9, 15, 11), PackedInt32Array(11, 15, 16), PackedInt32Array(19, 18, 17), PackedInt32Array(9, 20, 14), PackedInt32Array(19, 17, 7), PackedInt32Array(7, 17, 6), PackedInt32Array(6, 17, 21), PackedInt32Array(23, 22, 24), PackedInt32Array(24, 22, 20), PackedInt32Array(25, 23, 0), PackedInt32Array(0, 23, 3), PackedInt32Array(24, 20, 26), PackedInt32Array(26, 20, 17), PackedInt32Array(17, 20, 21), PackedInt32Array(21, 20, 9), PackedInt32Array(22, 23, 25), PackedInt32Array(12, 13, 27), PackedInt32Array(27, 13, 28), PackedInt32Array(28, 1, 2), PackedInt32Array(27, 28, 29), PackedInt32Array(29, 28, 2), PackedInt32Array(5, 30, 4), PackedInt32Array(4, 30, 31), PackedInt32Array(31, 30, 32), PackedInt32Array(30, 10, 32), PackedInt32Array(32, 10, 11), PackedInt32Array(35, 34, 33), PackedInt32Array(37, 41, 38), PackedInt32Array(38, 41, 36), PackedInt32Array(38, 36, 39), PackedInt32Array(39, 36, 40), PackedInt32Array(43, 42, 44), PackedInt32Array(44, 42, 45), PackedInt32Array(48, 47, 46), PackedInt32Array(51, 50, 49), PackedInt32Array(53, 52, 33), PackedInt32Array(33, 52, 55), PackedInt32Array(33, 55, 54), PackedInt32Array(53, 56, 52), PackedInt32Array(48, 46, 56), PackedInt32Array(56, 46, 51), PackedInt32Array(56, 51, 49), PackedInt32Array(56, 49, 52), PackedInt32Array(38, 39, 57), PackedInt32Array(38, 57, 54), PackedInt32Array(54, 57, 58), PackedInt32Array(54, 58, 33), PackedInt32Array(33, 58, 35), PackedInt32Array(42, 50, 45), PackedInt32Array(45, 50, 59), PackedInt32Array(59, 50, 51), PackedInt32Array(61, 60, 46), PackedInt32Array(61, 46, 62), PackedInt32Array(62, 46, 47), PackedInt32Array(62, 47, 63), PackedInt32Array(62, 63, 35), PackedInt32Array(63, 34, 35), PackedInt32Array(35, 64, 62), PackedInt32Array(66, 65, 67), PackedInt32Array(67, 65, 69), PackedInt32Array(67, 69, 68), PackedInt32Array(65, 43, 69), PackedInt32Array(69, 43, 44), PackedInt32Array(66, 67, 70), PackedInt32Array(70, 67, 71), PackedInt32Array(37, 72, 41), PackedInt32Array(41, 72, 36), PackedInt32Array(36, 72, 73), PackedInt32Array(73, 72, 74), PackedInt32Array(75, 55, 71), PackedInt32Array(71, 55, 76), PackedInt32Array(76, 55, 52), PackedInt32Array(76, 70, 71), PackedInt32Array(72, 55, 74), PackedInt32Array(74, 55, 75), PackedInt32Array(79, 78, 77), PackedInt32Array(81, 80, 82), PackedInt32Array(82, 80, 83), PackedInt32Array(83, 80, 84), PackedInt32Array(86, 88, 87), PackedInt32Array(87, 88, 77), PackedInt32Array(77, 88, 79), PackedInt32Array(79, 88, 85), PackedInt32Array(85, 88, 86), PackedInt32Array(90, 89, 91), PackedInt32Array(91, 89, 93), PackedInt32Array(91, 93, 92), PackedInt32Array(95, 94, 96), PackedInt32Array(96, 94, 97), PackedInt32Array(99, 98, 100), PackedInt32Array(100, 98, 101), PackedInt32Array(103, 102, 104), PackedInt32Array(104, 102, 105), PackedInt32Array(87, 102, 103), PackedInt32Array(101, 98, 97), PackedInt32Array(97, 98, 106), PackedInt32Array(109, 108, 107), PackedInt32Array(87, 103, 86), PackedInt32Array(104, 105, 107), PackedInt32Array(107, 105, 97), PackedInt32Array(105, 96, 97), PackedInt32Array(84, 80, 109), PackedInt32Array(92, 84, 106), PackedInt32Array(106, 84, 97), PackedInt32Array(97, 84, 107), PackedInt32Array(107, 84, 109), PackedInt32Array(86, 107, 85), PackedInt32Array(85, 107, 108), PackedInt32Array(106, 91, 92), PackedInt32Array(112, 111, 95), PackedInt32Array(95, 111, 110), PackedInt32Array(95, 110, 94), PackedInt32Array(113, 102, 87), PackedInt32Array(111, 112, 114), PackedInt32Array(114, 112, 115), PackedInt32Array(115, 113, 114), PackedInt32Array(114, 113, 116), PackedInt32Array(116, 113, 87), PackedInt32Array(119, 118, 90), PackedInt32Array(90, 118, 117), PackedInt32Array(90, 117, 89), PackedInt32Array(119, 120, 118), PackedInt32Array(119, 99, 120), PackedInt32Array(120, 99, 121), PackedInt32Array(121, 99, 100), PackedInt32Array(124, 123, 78), PackedInt32Array(78, 123, 122), PackedInt32Array(78, 122, 77), PackedInt32Array(125, 81, 126), PackedInt32Array(126, 81, 127), PackedInt32Array(127, 81, 82), PackedInt32Array(126, 123, 125), PackedInt32Array(125, 123, 124), PackedInt32Array(130, 129, 128), PackedInt32Array(133, 132, 131), PackedInt32Array(130, 128, 134), PackedInt32Array(136, 135, 137), PackedInt32Array(137, 135, 138), PackedInt32Array(138, 135, 139), PackedInt32Array(139, 135, 140), PackedInt32Array(142, 134, 141), PackedInt32Array(145, 144, 146), PackedInt32Array(146, 144, 143), PackedInt32Array(146, 143, 147), PackedInt32Array(147, 143, 148), PackedInt32Array(145, 149, 144), PackedInt32Array(144, 149, 150), PackedInt32Array(133, 152, 151), PackedInt32Array(155, 154, 153), PackedInt32Array(157, 156, 158), PackedInt32Array(158, 156, 159), PackedInt32Array(155, 153, 160), PackedInt32Array(160, 153, 161), PackedInt32Array(160, 161, 148), PackedInt32Array(162, 160, 148), PackedInt32Array(133, 131, 152), PackedInt32Array(152, 131, 163), PackedInt32Array(163, 131, 156), PackedInt32Array(156, 131, 159), PackedInt32Array(150, 149, 142), PackedInt32Array(142, 149, 164), PackedInt32Array(142, 164, 134), PackedInt32Array(134, 164, 130), PackedInt32Array(143, 165, 148), PackedInt32Array(142, 141, 165), PackedInt32Array(165, 141, 166), PackedInt32Array(166, 152, 165), PackedInt32Array(165, 152, 148), PackedInt32Array(148, 152, 162), PackedInt32Array(162, 152, 163), PackedInt32Array(138, 162, 137), PackedInt32Array(137, 162, 163), PackedInt32Array(139, 140, 155), PackedInt32Array(155, 140, 154), PackedInt32Array(154, 140, 167), PackedInt32Array(135, 136, 168), PackedInt32Array(157, 158, 169), PackedInt32Array(157, 169, 168), PackedInt32Array(168, 169, 170), PackedInt32Array(168, 170, 135), PackedInt32Array(133, 151, 171), PackedInt32Array(171, 151, 172), PackedInt32Array(172, 129, 130), PackedInt32Array(171, 172, 173), PackedInt32Array(173, 172, 130)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(21, 3, 9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lake"]
+size = Vector3(45, 3, 9)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_river"]
+size = Vector3(39, 3, 9)
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("theme")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#ff8888]Sword usage[/color]
+
+Use dash to swing and attack with the sword !
+Ice is slippery: you keep sliding after you stop."
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+light_color = Color(0.96, 0.98, 1, 1)
+light_energy = 1.05
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
+
+[node name="EnemyOrc1" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, 1.4995)
+is_offensive = false
+
+[node name="EnemyOrc2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, 1.4995)
+is_offensive = false
+
+[node name="EnemyOrc3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -7.4975)
+is_offensive = false
+
+[node name="EnemyOrc4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -7.4975)
+is_offensive = false
+
+[node name="EnemyOrc5" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -4.4985)
+is_offensive = false
+
+[node name="EnemyGroup2" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup2"]
+
+[node name="EnemyOrc1" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.4945, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyOrc2" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.4965, 0, -61.4795)
+is_offensive = false
+
+[node name="EnemyOrc3" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -61.4795)
+is_offensive = false
+
+[node name="EnemyOrc4" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -61.4795)
+is_offensive = false
+
+[node name="EnemyOrc5" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 13.4955, 0, -61.4795)
+is_offensive = false
+
+[node name="EnemyOrc6" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 19.4935, 0, -55.4815)
+is_offensive = false
+
+[node name="EnemyOrc7" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.4945, 0, -37.4875)
+is_offensive = false
+
+[node name="EnemyOrc8" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 19.4935, 0, -31.4895)
+is_offensive = false
+
+[node name="EnemyOrc9" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.4965, 0, -28.4905)
+is_offensive = false
+
+[node name="EnemyOrc10" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 13.4955, 0, -28.4905)
+is_offensive = false
+
+[node name="EnemyGroup3" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup3"]
+
+[node name="EnemyOrc1" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -106.4645)
+is_offensive = false
+
+[node name="EnemyOrc2" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -106.4645)
+is_offensive = false
+
+[node name="EnemyOrc3" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -106.4645)
+is_offensive = false
+
+[node name="EnemyOrc4" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -13.4955, 0, -100.4665)
+is_offensive = false
+
+[node name="EnemyOrc5" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 16.4945, 0, -100.4665)
+is_offensive = false
+
+[node name="EnemyOrc6" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -109.4635)
+is_offensive = false
+
+[node name="EnemyOrc7" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -109.4635)
+is_offensive = false
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 7.4975)
+script = ExtResource("checkpoint")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -13.4955)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup2")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -61.4795)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge2")]
+enemy_groups_reset = [NodePath("../../Enemies/EnemyGroup3")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup2")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -109.4635)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge3")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup3")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger2")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.7268, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -40)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131079, 65515, 655366, -131079, 65516, 1441797, -131079, 65517, 1441797, -131079, 65518, 1441797, -131079, 65519, 1441797, -131079, 65520, 1441797, -131079, 65521, 1441797, -131079, 65522, 1441797, -131079, 65523, 1441797, -131079, 65524, 1441797, -131079, 65525, 1441797, -131079, 65526, 1441798, -7, 65515, 1441795, -7, 65516, 655361, -7, 65517, 655361, -7, 65518, 1441794, -7, 65519, 655361, -7, 65520, 1441794, -7, 65521, 655361, -7, 65522, 655361, -7, 65523, 1441794, -7, 65524, 655361, -7, 65525, 655361, -7, 65526, 3, -131078, 65499, 655366, -131078, 65500, 1441797, -131078, 65501, 1441797, -131078, 65502, 1441797, -131078, 65503, 1441797, -131078, 65504, 1441797, -131078, 65505, 1441797, -131078, 65506, 1441797, -131078, 65507, 1441797, -131078, 65508, 1441797, -131078, 65509, 1441797, -131078, 65510, 1441798, -131078, 65514, 655366, -131078, 65515, 655367, -131078, 65526, 1441799, -131078, 65527, 1441798, -6, 65499, 1441795, -6, 65500, 655361, -6, 65501, 655361, -6, 65502, 655361, -6, 65503, 1441802, -6, 65504, 655369, -6, 65505, 655369, -6, 65506, 1441802, -6, 65507, 1441794, -6, 65508, 1441794, -6, 65509, 655361, -6, 65510, 3, -6, 65514, 1441795, -6, 65515, 1441796, -6, 65516, 0, -6, 65517, 0, -6, 65518, 0, -6, 65519, 0, -6, 65520, 1048595, -6, 65521, 0, -6, 65522, 0, -6, 65523, 0, -6, 65524, 0, -6, 65525, 0, -6, 65526, 4, -6, 65527, 3, -131077, 65498, 655366, -131077, 65499, 655367, -131077, 65510, 1441799, -131077, 65511, 1441798, -131077, 65514, 655365, -131077, 65527, 5, -131077, 65531, 655366, -131077, 65532, 1441797, -131077, 65533, 1441797, -131077, 65534, 1441797, -131077, 65535, 1441797, -131077, 0, 1441797, -131077, 1, 1441797, -131077, 2, 1441798, -5, 65498, 1441795, -5, 65499, 1441796, -5, 65500, 0, -5, 65501, 0, -5, 65502, 0, -5, 65503, 8, -5, 65504, 8, -5, 65505, 8, -5, 65506, 8, -5, 65507, 0, -5, 65508, 0, -5, 65509, 0, -5, 65510, 4, -5, 65511, 3, -5, 65514, 655362, -5, 65515, 0, -5, 65516, 655376, -5, 65517, 0, -5, 65518, 0, -5, 65519, 0, -5, 65520, 0, -5, 65521, 0, -5, 65522, 0, -5, 65523, 0, -5, 65524, 0, -5, 65525, 17, -5, 65526, 0, -5, 65527, 1441793, -5, 65531, 1441795, -5, 65532, 1441794, -5, 65533, 655361, -5, 65534, 655361, -5, 65535, 655361, -5, 0, 655361, -5, 1, 1441794, -5, 2, 3, -131076, 65490, 655366, -131076, 65491, 1441797, -131076, 65492, 1441797, -131076, 65493, 1441797, -131076, 65494, 1441798, -131076, 65498, 655365, -131076, 65511, 5, -131076, 65514, 655365, -131076, 65527, 5, -131076, 65530, 655366, -131076, 65531, 655367, -131076, 2, 1441799, -131076, 3, 1441798, -4, 65490, 1441795, -4, 65491, 655361, -4, 65492, 1441794, -4, 65493, 1441794, -4, 65494, 3, -4, 65498, 1048577, -4, 65499, 0, -4, 65500, 0, -4, 65501, 16, -4, 65502, 0, -4, 65503, 8, -4, 65504, 8, -4, 65505, 8, -4, 65506, 8, -4, 65507, 0, -4, 65508, 0, -4, 65509, 0, -4, 65510, 0, -4, 65511, 2, -4, 65514, 1048577, -4, 65515, 0, -4, 65516, 0, -4, 65517, 0, -4, 65518, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65526, 0, -4, 65527, 1441793, -4, 65530, 1441795, -4, 65531, 1441796, -4, 65532, 19, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 16, -4, 2, 4, -4, 3, 3, -131075, 65489, 655366, -131075, 65490, 655367, -131075, 65494, 1441799, -131075, 65495, 1441798, -131075, 65498, 655365, -131075, 65511, 5, -131075, 65514, 655365, -131075, 65527, 5, -131075, 65530, 655365, -131075, 3, 5, -3, 65489, 1441795, -3, 65490, 1441796, -3, 65491, 17, -3, 65492, 0, -3, 65493, 0, -3, 65494, 4, -3, 65495, 3, -3, 65498, 1048577, -3, 65499, 0, -3, 65500, 0, -3, 65501, 0, -3, 65502, 0, -3, 65503, 8, -3, 65504, 8, -3, 65505, 8, -3, 65506, 8, -3, 65507, 0, -3, 65508, 0, -3, 65509, 0, -3, 65510, 0, -3, 65511, 2, -3, 65514, 1048577, -3, 65515, 0, -3, 65516, 0, -3, 65517, 0, -3, 65518, 8, -3, 65519, 8, -3, 65520, 8, -3, 65521, 8, -3, 65522, 8, -3, 65523, 8, -3, 65524, 0, -3, 65525, 0, -3, 65526, 0, -3, 65527, 1441793, -3, 65530, 655362, -3, 65531, 0, -3, 65532, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 1441793, -131074, 65489, 655365, -131074, 65495, 5, -131074, 65498, 655365, -131074, 65511, 5, -131074, 65514, 655365, -131074, 65527, 5, -131074, 65530, 655365, -131074, 3, 5, -2, 65489, 1048577, -2, 65490, 0, -2, 65491, 0, -2, 65492, 0, -2, 65493, 0, -2, 65494, 0, -2, 65495, 2, -2, 65498, 655362, -2, 65499, 0, -2, 65500, 0, -2, 65501, 0, -2, 65502, 0, -2, 65503, 8, -2, 65504, 8, -2, 65505, 8, -2, 65506, 8, -2, 65507, 0, -2, 65508, 0, -2, 65509, 655379, -2, 65510, 0, -2, 65511, 1441793, -2, 65514, 655362, -2, 65515, 0, -2, 65516, 0, -2, 65517, 0, -2, 65518, 8, -2, 65519, 8, -2, 65520, 8, -2, 65521, 8, -2, 65522, 8, -2, 65523, 8, -2, 65524, 0, -2, 65525, 0, -2, 65526, 0, -2, 65527, 2, -2, 65530, 655362, -2, 65531, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 2, -131073, 65489, 655365, -131073, 65495, 5, -131073, 65498, 655365, -131073, 65511, 5, -131073, 65514, 655365, -131073, 65527, 5, -131073, 65530, 655365, -131073, 3, 5, -1, 65489, 1048577, -1, 65490, 0, -1, 65491, 0, -1, 65492, 0, -1, 65493, 0, -1, 65494, 0, -1, 65495, 0, -1, 65498, 0, -1, 65499, 0, -1, 65500, 0, -1, 65501, 0, -1, 65502, 0, -1, 65503, 8, -1, 65504, 8, -1, 65505, 8, -1, 65506, 8, -1, 65507, 0, -1, 65508, 0, -1, 65509, 0, -1, 65510, 0, -1, 65511, 0, -1, 65514, 0, -1, 65515, 0, -1, 65516, 0, -1, 65517, 8, -1, 65518, 8, -1, 65519, 8, -1, 65520, 8, -1, 65521, 8, -1, 65522, 8, -1, 65523, 8, -1, 65524, 8, -1, 65525, 0, -1, 65526, 0, -1, 65527, 0, -1, 65530, 0, -1, 65531, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 1441793, -196608, 65489, 655365, -196608, 65495, 5, -196608, 65498, 655365, -196608, 65511, 5, -196608, 65514, 655365, -196608, 65527, 5, -196608, 65530, 655365, -196608, 3, 5, -65536, 65489, 655362, -65536, 65490, 0, -65536, 65491, 0, -65536, 65492, 0, -65536, 65493, 0, -65536, 65494, 0, -65536, 65495, 0, -65536, 65498, 0, -65536, 65499, 0, -65536, 65500, 0, -65536, 65501, 0, -65536, 65502, 0, -65536, 65503, 8, -65536, 65504, 8, -65536, 65505, 8, -65536, 65506, 8, -65536, 65507, 0, -65536, 65508, 0, -65536, 65509, 0, -65536, 65510, 0, -65536, 65511, 0, -65536, 65514, 0, -65536, 65515, 0, -65536, 65516, 0, -65536, 65517, 8, -65536, 65518, 8, -65536, 65519, 8, -65536, 65520, 8, -65536, 65521, 8, -65536, 65522, 8, -65536, 65523, 8, -65536, 65524, 8, -65536, 65525, 0, -65536, 65526, 0, -65536, 65527, 0, -65536, 65530, 0, -65536, 65531, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 2, -196607, 65489, 655365, -196607, 65495, 5, -196607, 65498, 655365, -196607, 65511, 5, -196607, 65514, 655365, -196607, 65527, 5, -196607, 65530, 655365, -196607, 3, 5, -65535, 65489, 1048577, -65535, 65490, 0, -65535, 65491, 0, -65535, 65492, 0, -65535, 65493, 0, -65535, 65494, 0, -65535, 65495, 0, -65535, 65498, 0, -65535, 65499, 0, -65535, 65500, 0, -65535, 65501, 0, -65535, 65502, 0, -65535, 65503, 8, -65535, 65504, 8, -65535, 65505, 8, -65535, 65506, 8, -65535, 65507, 0, -65535, 65508, 0, -65535, 65509, 0, -65535, 65510, 0, -65535, 65511, 0, -65535, 65514, 0, -65535, 65515, 0, -65535, 65516, 0, -65535, 65517, 8, -65535, 65518, 8, -65535, 65519, 8, -65535, 65520, 8, -65535, 65521, 8, -65535, 65522, 8, -65535, 65523, 8, -65535, 65524, 8, -65535, 65525, 0, -65535, 65526, 0, -65535, 65527, 0, -65535, 65530, 0, -65535, 65531, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 2, -196606, 65489, 655365, -196606, 65495, 5, -196606, 65498, 655365, -196606, 65511, 5, -196606, 65514, 655365, -196606, 65527, 5, -196606, 65530, 655365, -196606, 3, 5, -65534, 65489, 655362, -65534, 65490, 0, -65534, 65491, 0, -65534, 65492, 0, -65534, 65493, 0, -65534, 65494, 0, -65534, 65495, 2, -65534, 65498, 1048577, -65534, 65499, 0, -65534, 65500, 0, -65534, 65501, 0, -65534, 65502, 0, -65534, 65503, 8, -65534, 65504, 8, -65534, 65505, 8, -65534, 65506, 8, -65534, 65507, 0, -65534, 65508, 0, -65534, 65509, 0, -65534, 65510, 0, -65534, 65511, 1441793, -65534, 65514, 655362, -65534, 65515, 0, -65534, 65516, 0, -65534, 65517, 8, -65534, 65518, 8, -65534, 65519, 8, -65534, 65520, 8, -65534, 65521, 8, -65534, 65522, 8, -65534, 65523, 8, -65534, 65524, 8, -65534, 65525, 0, -65534, 65526, 0, -65534, 65527, 1441793, -65534, 65530, 1048577, -65534, 65531, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 1441793, -196605, 65489, 1048582, -196605, 65490, 1048583, -196605, 65494, 7, -196605, 65495, 6, -196605, 65498, 655365, -196605, 65511, 5, -196605, 65514, 655365, -196605, 65527, 5, -196605, 65530, 655365, -196605, 3, 5, -65533, 65489, 655363, -65533, 65490, 655364, -65533, 65491, 16, -65533, 65492, 0, -65533, 65493, 0, -65533, 65494, 1048580, -65533, 65495, 1048579, -65533, 65498, 1048577, -65533, 65499, 0, -65533, 65500, 0, -65533, 65501, 0, -65533, 65502, 0, -65533, 65503, 8, -65533, 65504, 8, -65533, 65505, 8, -65533, 65506, 8, -65533, 65507, 0, -65533, 65508, 0, -65533, 65509, 20, -65533, 65510, 0, -65533, 65511, 1441793, -65533, 65514, 655362, -65533, 65515, 0, -65533, 65516, 0, -65533, 65517, 8, -65533, 65518, 8, -65533, 65519, 8, -65533, 65520, 8, -65533, 65521, 8, -65533, 65522, 8, -65533, 65523, 8, -65533, 65524, 8, -65533, 65525, 0, -65533, 65526, 0, -65533, 65527, 1441793, -65533, 65530, 1048577, -65533, 65531, 0, -65533, 65532, 18, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 1441793, -196604, 65490, 1048582, -196604, 65491, 1048581, -196604, 65492, 1048581, -196604, 65493, 1048581, -196604, 65494, 6, -196604, 65498, 655365, -196604, 65511, 5, -196604, 65514, 655365, -196604, 65527, 5, -196604, 65530, 1048582, -196604, 65531, 1048583, -196604, 2, 7, -196604, 3, 6, -65532, 65490, 655363, -65532, 65491, 1048578, -65532, 65492, 1, -65532, 65493, 1, -65532, 65494, 1048579, -65532, 65498, 655362, -65532, 65499, 0, -65532, 65500, 0, -65532, 65501, 1048593, -65532, 65502, 0, -65532, 65503, 8, -65532, 65504, 8, -65532, 65505, 8, -65532, 65506, 8, -65532, 65507, 0, -65532, 65508, 0, -65532, 65509, 0, -65532, 65510, 0, -65532, 65511, 2, -65532, 65514, 655362, -65532, 65515, 0, -65532, 65516, 0, -65532, 65517, 8, -65532, 65518, 8, -65532, 65519, 8, -65532, 65520, 8, -65532, 65521, 8, -65532, 65522, 8, -65532, 65523, 8, -65532, 65524, 8, -65532, 65525, 0, -65532, 65526, 0, -65532, 65527, 2, -65532, 65530, 655363, -65532, 65531, 655364, -65532, 65532, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 655377, -65532, 2, 1048580, -65532, 3, 1048579, -196603, 65498, 1048582, -196603, 65499, 1048583, -196603, 65510, 7, -196603, 65511, 6, -196603, 65514, 655365, -196603, 65527, 5, -196603, 65531, 1048582, -196603, 65532, 1048581, -196603, 65533, 1048581, -196603, 65534, 1048581, -196603, 65535, 1048581, -196603, 0, 1048581, -196603, 1, 1048581, -196603, 2, 6, -65531, 65498, 655363, -65531, 65499, 655364, -65531, 65500, 0, -65531, 65501, 0, -65531, 65502, 0, -65531, 65503, 8, -65531, 65504, 8, -65531, 65505, 8, -65531, 65506, 8, -65531, 65507, 0, -65531, 65508, 0, -65531, 65509, 0, -65531, 65510, 1048580, -65531, 65511, 1048579, -65531, 65514, 1048577, -65531, 65515, 0, -65531, 65516, 18, -65531, 65517, 0, -65531, 65518, 8, -65531, 65519, 8, -65531, 65520, 8, -65531, 65521, 8, -65531, 65522, 8, -65531, 65523, 8, -65531, 65524, 0, -65531, 65525, 0, -65531, 65526, 0, -65531, 65527, 1441793, -65531, 65531, 655363, -65531, 65532, 1, -65531, 65533, 1048578, -65531, 65534, 1048578, -65531, 65535, 1, -65531, 0, 1, -65531, 1, 1, -65531, 2, 1048579, -196602, 65499, 1048582, -196602, 65500, 1048581, -196602, 65501, 1048581, -196602, 65502, 1048581, -196602, 65503, 1048581, -196602, 65504, 1048581, -196602, 65505, 1048581, -196602, 65506, 1048581, -196602, 65507, 1048581, -196602, 65508, 1048581, -196602, 65509, 1048581, -196602, 65510, 6, -196602, 65514, 1048582, -196602, 65515, 1048583, -196602, 65526, 7, -196602, 65527, 6, -65530, 65499, 655363, -65530, 65500, 1, -65530, 65501, 1, -65530, 65502, 1048578, -65530, 65503, 9, -65530, 65504, 9, -65530, 65505, 9, -65530, 65506, 9, -65530, 65507, 1048578, -65530, 65508, 1048578, -65530, 65509, 1048578, -65530, 65510, 1048579, -65530, 65514, 655363, -65530, 65515, 655364, -65530, 65516, 0, -65530, 65517, 0, -65530, 65518, 8, -65530, 65519, 8, -65530, 65520, 8, -65530, 65521, 8, -65530, 65522, 8, -65530, 65523, 8, -65530, 65524, 0, -65530, 65525, 0, -65530, 65526, 1048580, -65530, 65527, 1048579, -196601, 65515, 1048582, -196601, 65516, 1048581, -196601, 65517, 1048581, -196601, 65518, 1048581, -196601, 65519, 1048581, -196601, 65520, 1048581, -196601, 65521, 1048581, -196601, 65522, 1048581, -196601, 65523, 1048581, -196601, 65524, 1048581, -196601, 65525, 1048581, -196601, 65526, 6, -65529, 65515, 655363, -65529, 65516, 1048578, -65529, 65517, 1048578, -65529, 65518, 1048586, -65529, 65519, 9, -65529, 65520, 1048586, -65529, 65521, 1048586, -65529, 65522, 1048586, -65529, 65523, 1048586, -65529, 65524, 1, -65529, 65525, 1, -65529, 65526, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Water" parent="Level" instance=ExtResource("icy_water")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -4.6065, -40)
+
+[node name="SnowFall" parent="Level" instance=ExtResource("snow_fall")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 12, 0)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeEnemiesGroup2Offensive")
+
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/EnemyGroup2")
+
+[node name="OpenBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6"), NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6"), NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeEnemiesGroup3Offensive")
+
+[node name="MakeEnemiesGroup3Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/EnemyGroup3")
+
+[node name="OpenBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="Isles" type="Node3D" parent="Level"]
+
+[node name="IsleA" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42, -1.6, -10)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131074, 65535, 655366, -131074, 0, 1441797, -131074, 1, 1441798, -2, 65535, 1441795, -2, 0, 655361, -2, 1, 3, -131073, 65534, 655366, -131073, 65535, 655367, -131073, 1, 1441799, -131073, 2, 1441798, -1, 65534, 1441795, -1, 65535, 1441796, -1, 0, 0, -1, 1, 655384, -1, 2, 3, -196608, 65534, 655365, -196608, 2, 5, -65536, 65534, 1048577, -65536, 65535, 0, -65536, 0, 21, -65536, 1, 0, -65536, 2, 2, -196607, 65534, 1048582, -196607, 65535, 1048583, -196607, 1, 7, -196607, 2, 6, -65535, 65534, 655363, -65535, 65535, 655364, -65535, 0, 0, -65535, 1, 1048580, -65535, 2, 1048579, -196606, 65535, 1048582, -196606, 0, 1048581, -196606, 1, 6, -65534, 65535, 655363, -65534, 0, 1, -65534, 1, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="IsleB" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 48, -1.8, -40)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131075, 65535, 655366, -131075, 0, 1441797, -131075, 1, 1441797, -131075, 2, 1441798, -3, 65535, 1441795, -3, 0, 655361, -3, 1, 655361, -3, 2, 3, -131074, 65534, 655366, -131074, 65535, 655367, -131074, 2, 1441799, -131074, 3, 1441798, -2, 65534, 1441795, -2, 65535, 1441796, -2, 0, 23, -2, 1, 0, -2, 2, 4, -2, 3, 3, -131073, 65534, 655365, -131073, 3, 5, -1, 65534, 655362, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 1441793, -196608, 65534, 655365, -196608, 3, 5, -65536, 65534, 655362, -65536, 65535, 0, -65536, 0, 22, -65536, 1, 0, -65536, 2, 0, -65536, 3, 1441793, -196607, 65534, 1048582, -196607, 65535, 1048583, -196607, 2, 7, -196607, 3, 6, -65535, 65534, 655363, -65535, 65535, 655364, -65535, 0, 0, -65535, 1, 1048597, -65535, 2, 1048580, -65535, 3, 1048579, -196606, 65535, 1048582, -196606, 0, 1048581, -196606, 1, 1048581, -196606, 2, 6, -65534, 65535, 655363, -65534, 0, 1, -65534, 1, 1048578, -65534, 2, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="IsleC" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, -1.6, -78)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131074, 65534, 655366, -131074, 65535, 1441797, -131074, 0, 1441797, -131074, 1, 1441798, -2, 65534, 1441795, -2, 65535, 655361, -2, 0, 655361, -2, 1, 3, -131073, 65533, 655366, -131073, 65534, 655367, -131073, 1, 1441799, -131073, 2, 1441798, -1, 65533, 1441795, -1, 65534, 1441796, -1, 65535, 655382, -1, 0, 0, -1, 1, 4, -1, 2, 3, -196608, 65533, 655365, -196608, 2, 5, -65536, 65533, 655362, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 1441793, -196607, 65533, 655365, -196607, 2, 5, -65535, 65533, 655362, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 21, -65535, 1, 0, -65535, 2, 1441793, -196606, 65533, 1048582, -196606, 65534, 1048583, -196606, 1, 7, -196606, 2, 6, -65534, 65533, 655363, -65534, 65534, 655364, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 1048580, -65534, 2, 1048579, -196605, 65534, 1048582, -196605, 65535, 1048581, -196605, 0, 1048581, -196605, 1, 6, -65533, 65534, 655363, -65533, 65535, 1, -65533, 0, 1048578, -65533, 1, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="IsleD" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, -1.6, 10)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleD"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131074, 65535, 655366, -131074, 0, 1441797, -131074, 1, 1441798, -2, 65535, 1441795, -2, 0, 655361, -2, 1, 3, -131073, 65534, 655366, -131073, 65535, 655367, -131073, 1, 1441799, -131073, 2, 1441798, -1, 65534, 1441795, -1, 65535, 1441796, -1, 0, 0, -1, 1, 4, -1, 2, 3, -196608, 65534, 655365, -196608, 2, 5, -65536, 65534, 1048577, -65536, 65535, 0, -65536, 0, 23, -65536, 1, 0, -65536, 2, 2, -196607, 65534, 1048582, -196607, 65535, 1048583, -196607, 1, 7, -196607, 2, 6, -65535, 65534, 655363, -65535, 65535, 24, -65535, 0, 0, -65535, 1, 1048580, -65535, 2, 1048579, -196606, 65535, 1048582, -196606, 0, 1048581, -196606, 1, 6, -65534, 65535, 655363, -65534, 0, 1, -65534, 1, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="IsleE" type="Node3D" parent="Level/Isles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, -1.8, -112)
+
+[node name="Terrain" type="GridMap" parent="Level/Isles/IsleE"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131075, 65535, 655366, -131075, 0, 1441797, -131075, 1, 1441798, -3, 65535, 1441795, -3, 0, 655361, -3, 1, 3, -131074, 65534, 655366, -131074, 65535, 655367, -131074, 1, 1441799, -131074, 2, 1441798, -2, 65534, 1441795, -2, 65535, 1441796, -2, 0, 22, -2, 1, 4, -2, 2, 3, -131073, 65534, 655365, -131073, 2, 5, -1, 65534, 1048577, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 2, -196608, 65534, 655365, -196608, 2, 5, -65536, 65534, 1048577, -65536, 65535, 0, -65536, 0, 655381, -65536, 1, 0, -65536, 2, 2, -196607, 65534, 655365, -196607, 2, 5, -65535, 65534, 1048577, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 1441793, -196606, 65534, 1048582, -196606, 65535, 1048583, -196606, 1, 7, -196606, 2, 6, -65534, 65534, 655363, -65534, 65535, 655364, -65534, 0, 0, -65534, 1, 1048600, -65534, 2, 1048579, -196605, 65535, 1048582, -196605, 0, 1048581, -196605, 1, 6, -65533, 65535, 655363, -65533, 0, 1048578, -65533, 1, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -130.4565)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+shape = SubResource("BoxShape3D_end")
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -19.4935)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -22.4925)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -19.4935)
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -22.4925)
+
+[node name="BridgePlatform5" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -67.4775)
+
+[node name="BridgePlatform6" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -70.4765)
+
+[node name="BridgePlatform7" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -67.4775)
+
+[node name="BridgePlatform8" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -70.4765)
+
+[node name="BridgePlatform9" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -115.4615)
+
+[node name="BridgePlatform10" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.9928, -118.4605)
+
+[node name="BridgePlatform11" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -115.4615)
+
+[node name="BridgePlatform12" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.999, -3.9928, -118.4605)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -31.4895)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger"]
+shape = SubResource("BoxShape3D_lake")
+
+[node name="AllPlayersAreaTrigger2" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -79.4735)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger2"]
+shape = SubResource("BoxShape3D_river")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="Sword" parent="Weapon" instance=ExtResource("sword")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0.593, 7.4975)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("launch_message")
+message_string = "[color=#ff8888]Sword usage[/color]
+
+Use dash to swing and attack with the sword !
+Ice is slippery: you keep sliding after you stop."
+
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup2" to="Level/Events/OpenBridge2" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup3" to="Level/Events/OpenBridge3" method="trigger"]
+[connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger2" to="Level/Events/CloseBridge2" method="trigger"]

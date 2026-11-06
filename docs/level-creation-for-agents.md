@@ -181,6 +181,18 @@ This caused most of the problems, so check it for every section.
 - **Scenery:** `add_planet`, `add_distant_station` and `add_asteroids`, all without collision. The starfield is a sky shader that also covers the view below the decks.
 - **Plating brightness:** under the white sun the first panel colour washed out to near-white. Keep `panel_color` in `station_panels.gdshader` darker than about 0.45.
 
+## Other environments: snow and ice
+
+`tools/level_gen/example_snow_prototype.py` builds a sword level on snowy shores over an icy sea, with blue orcs. Copy it as a starting point. `Level(palette="snow")`, then `use_snow()` before `add_shell()`, and `add_snow_terrain(floor, mouths, ice, props, fall_z, water_z)` instead of `add_terrain`. The art is in `src/world/elements/snow/`. Its tiles are built by `tools/level_gen/build_snow_tiles.gd` from the Color1 hill tiles.
+
+- **Ice is slippery.** Cells listed in `ice` get the library's `Ice_` tiles. `IceFloor` (`src/world/elements/snow/ice_floor.gd`) reports when a carrier stands on one, or on any floor body with `slippery` metadata. On ice, `PlayerLocal.steer_on_ground` eases speed in and out (`ICE_ACCELERATION`, `ICE_DECELERATION`) and caps a dash's slide (`ICE_MAX_SLIDE_SPEED`). Off ice, movement is unchanged. In testing, carriers slid 2.5 m after letting go on ice and 0.08 m on snow.
+- **Ice at an edge is the danger.** The lake's ice runs to a cliff, so letting go too late slides the carriers into the sea. The river's ice crosses the whole section, so it can't be walked around.
+- **Ice is still in the navmesh**, and enemies don't slide on it.
+- **Props** are snowy pines, bare trees and boulders standing on a snow plate, with box collision, so the navmesh bakes around them. `add_snow_terrain` asserts that each one stands on an interior cell away from mouths and ice.
+- **Snow cover:** `snow_cover.gdshader` keeps a KayKit prop's own texture and lays snow on whatever faces up. Round KayKit trees (Tree_1, 2, 3, 6, 7) are mostly side faces and barely catch any, so use the pines (Tree_4, Tree_5).
+- **Blue orcs:** `src/enemy/enemy_orc.tscn` is the robot enemy with the KayKit Orc Raider swapped in, and an axe in its right hand. Every Rig_Medium character can be swapped in this way. The orc's texture was recoloured by `tools/level_gen/recolor_texture.gd`, which moves one hue range into a narrow band and keeps the gradient's shading. Its glb doesn't embed a texture, so `OrcRaider.glb.import` points its material at `orc_raider_blue.tres`.
+- **Strike tests:** wait until the target leaves its Spawning state, which lasts about 2 s, and strike from the spawn. A teleported pair can leave the sword lying sideways.
+
 ## Boss fights: the necromancer
 
 `tools/level_gen/example_necromancer_boss.py` builds `world_local_necromancer_boss.tscn`, a dungeon arena with one gate. Copy it for a boss in a dark level. The boss is `src/enemy/enemy_necromancer.tscn`; its tuning is exported on `NecromancerBehavior` and `NecromancerSpells`.
@@ -190,6 +202,18 @@ This caused most of the problems, so check it for every section.
 - **Sword hits need the blade to cross the body.** `hit_area.gd` only deals damage when a body enters or leaves the blade during a strike. A body already inside the blade at the start of a dash can take no hit, and a wider capsule makes that more likely, so keep boss capsules narrow.
 - **Animations:** spell and melee clips aren't in the project's Rig_Medium glbs. Those in `assets/animations_source/animations/necromancer/` were extracted from `KayKit_Character_Animations_1.1` with `GLTFDocument` and saved as `.res`.
 - **Dev settings:** `boss_hp_multiplier` scales any enemy with a `BossPhaseController`, and is applied twice ([bug](bugs/dev-settings-double-apply.md)). Read the HP in the scene, not the one in the running game.
+
+## Boss fights: the Frost Golem
+
+`tools/level_gen/example_frost_golem_boss.py` builds `world_local_frost_golem_boss.tscn`, a snow arena with one bridge. The boss is `src/enemy/enemy_frost_golem.tscn` (the KayKit FrostGolem, on the Rig_Large rig). Its scripts are in `src/enemy/boss/frost_golem/`. Tune it through the exports on `FrostGolemBehavior` and `FrostGolemMoves`.
+
+- **Moves:** an axe sweep up close, a slam at mid range, and lines of ice spikes at carriers who keep away. Each has a blue ground marker first. Below 50% HP it roars and enrages: shorter gaps between moves, longer-lasting ice, and spikes in three lines.
+- **The slam freezes the deck.** `FrostGround` swaps the floor cells near the impact to their `Ice_` tiles, which are slippery (see the snow section), and swaps them back after `freeze_seconds`. Cells that were already ice, and props, are left alone. Everything thaws when the boss dies, and when a respawn resets it, because the old boss node leaves the tree.
+- **Impact timings come from the clips.** The slam's axe and the smash's fist hit the ground at 1.36 s and 2.2 s; `frost_golem_attacking.gd` lands the effects then. To measure a clip, sample a hand bone's height while it plays.
+- **Keep the capsule narrow:** at 0.75 m radius, real sword dashes did no damage. At 0.5 m they hit.
+- **Spikes reuse `grave_eruption.gd`** with ice visuals (`frost_spike.tscn`). Spawned scenes get auto-generated names, so find them by `scene_file_path` in tests.
+- **Ground markers on snow:** pale cyan was nearly invisible on white. Use a saturated blue at about 0.55 alpha.
+- **Rig_Large clips:** most are already in `assets/animations_source/animations/rig_large/skeleton/`. `RIG=Large` makes `extract_kaykit_animations.gd` read the Rig_Large packs.
 
 ## Testing
 

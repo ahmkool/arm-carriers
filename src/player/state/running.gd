@@ -35,8 +35,7 @@ func physics_update(delta: float) -> void:
 	if direction.length_squared() < 0.0001:
 		player_state_machine.transition_to("idle")
 		return
-	player.velocity.x = direction.x * player.SPEED
-	player.velocity.z = direction.z * player.SPEED
+	player.steer_on_ground(Vector3(direction.x, 0.0, direction.z) * player.SPEED, INF, delta)
 	var look_direction := direction
 	var carry_status := player.carrying_weapon_data.can_carry_status
 	if carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_SHOOTER or carry_status == CarryingWeaponData.CanCarryStatus.CARRYING_DIRECTION_SETTER:
