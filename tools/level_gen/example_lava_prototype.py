@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Prototype of a lava level: world_local_lava.tscn. Basalt over a molten surface, with erupting vents.
+Played with the catapult, which lobs bombs over the vents and pits onto the enemies beyond.
 
 Run from the project root; see docs/level-creation-for-agents.md.
 """
@@ -31,7 +32,7 @@ assert MOUTHS <= FLOOR
 VENTS = (
     # Field. First row: out to the sides, so the first eruption is seen from safety.
     (-3, -12, 0.0), (3, -12, 0.5),
-    # A centre vent the carriers can straddle, with the saw passing over the fire.
+    # A centre vent in the way, to walk around or wait out.
     (0, -15, 0.0), (-4, -15, 0.5), (4, -15, 0.5),
     # Blocks the straight path: wait for a gap, or go around.
     (-1, -18, 0.25), (1, -18, 0.25), (-4, -18, 0.75), (4, -18, 0.75),
@@ -47,9 +48,9 @@ OUTCROPS = ((-11, -2, "Rock_3_A", 0), (11, 1, "Rock_5_A", 10), (-10, -11, "Rock_
             (-11, -24, "Rock_5_C", 22), (13, -33, "Rock_3_F", 0), (-13, -36, "Rock_3_A", 10), (-13, -46, "Rock_6_A", 16),
             (13, -49, "Rock_5_A", 0), (-8, -66, "Rock_3_C", 0), (9, -68, "Rock_3_F", 22))
 
-level = Level("src/world/levels/world_local_lava.tscn", palette="lava", weapon="saw", floor_seed=11, deco_seed=11,
-              hint="[color=#ff8888]Saw usage[/color]\n\nThe saw is always spinning : steer it into enemies together !\nGlowing circles are about to erupt. They burn enemies too.",
-              follow_offset="Vector3(0, 11, 4.714)", music="relentless")  # the saw has no camera-forward marker, so raise the camera
+level = Level("src/world/levels/world_local_lava.tscn", palette="lava", weapon="catapult", floor_seed=11, deco_seed=11,
+              hint="[color=#ff8888]Catapult usage[/color]\n\nFront carrier: walk further ahead to throw further, closer for a short lob.\nBack carrier: press shoot when the ring is on the enemies !\nGlowing circles are about to erupt. They burn enemies too.",
+              music="relentless")  # the catapult's camera marker follows its landing ring, so the default camera fits
 level.use_lava_environment()
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
 level.boxes = {"fall": (400, 1, 400), "field": (33, 3, 6), "caldera": (51, 3, 9), "forge": (51, 3, 9), "end": (27, 3, 9)}
@@ -83,7 +84,7 @@ CHECKPOINTS = [
     checkpoint("Checkpoint4", 0, -41, "OpenBridge3", "EnemyGroup4", "EnemyGroup3", T + "3", T + "2"),
     checkpoint("Checkpoint5", 0, -59, "OpenBridge4", None, "EnemyGroup4", None, T + "3"),
 ]
-SETTER, SHOOTER = (-3, 0), (3, 0)  # side by side, saw across the path
+SETTER, SHOOTER = (0, -2.25), (0, 2.25)  # in line, the front carrier ahead, 4.5 m apart (the catapult takes 4 to 7.5)
 
 
 def too_close_to_a_vent(wx, wz, margin):
@@ -95,9 +96,10 @@ def too_close_to_a_vent(wx, wz, margin):
 
 
 for _, cx, cz, _arrays in CHECKPOINTS:
-    assert all((cx + d, cz) in FLOOR for d in (-1, 0, 1)), (cx, cz)
+    assert all((cx, cz + d) in FLOOR for d in (-1, 0, 1)), (cx, cz)
     wx, wz = world(cx, cz)
-    assert not too_close_to_a_vent(wx + SETTER[0], wz, 1.0) and not too_close_to_a_vent(wx + SHOOTER[0], wz, 1.0), ("spawn on a vent", cx, cz)
+    for dx, dz in (SETTER, SHOOTER):
+        assert not too_close_to_a_vent(wx + dx, wz + dz, 1.0), ("spawn on a vent", cx, cz)
 for cx, cz in MAGES + GUARDS + CHASERS + FORGE_CHASERS:
     assert not too_close_to_a_vent(*world(cx, cz), 1.0), ("waiting enemy on a vent", cx, cz)
 assert {(cx, cz) for cx, cz, _phase in VENTS} <= FLOOR - MOUTHS
@@ -124,7 +126,8 @@ level.add_end_area(0, -67)
 level.add_bridge_nodes()
 level.add_triggers(((T, 0, -19, "field"), (T + "2", 0, -29, "caldera"), (T + "3", 0, -47, "forge")))
 wx, wz = world(0, 2)
-level.add_weapon("Saw", tf(wx, 1.8726845, wz, "-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08"))
+# Turned to throw towards -z, with its back handles (local z = -2.7) over the shooter's marker.
+level.add_weapon("Catapult", tf(wx, 1.8726845, wz + SHOOTER[1] - 2.7, "-1, 0, 0, 0, 1, 0, 0, 0, -1"))
 level.add_audio_and_hint()
 
 # ---- Signals. ----

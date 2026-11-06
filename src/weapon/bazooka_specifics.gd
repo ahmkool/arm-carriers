@@ -3,6 +3,8 @@ extends Node3D
 
 @export var pick_and_drop_handler: PickAndDropHandler
 @onready var muzzle: Marker3D = $Muzzle
+## The warhead tip showing in the muzzle; hidden while the next rocket reloads.
+@onready var _loaded_rocket: Node3D = get_node_or_null("Model/LoadedRocket")
 
 var _bazooka_bullet_scene: PackedScene = preload("res://src/weapon/bazooka_bullet_local.tscn")
 
@@ -12,6 +14,7 @@ var _fire_cooldown_remaining := 0.0
 
 func _physics_process(delta: float) -> void:
 	_fire_cooldown_remaining = maxf(0.0, _fire_cooldown_remaining - delta)
+	_update_loaded_rocket()
 	if pick_and_drop_handler == null:
 		return
 
@@ -44,8 +47,15 @@ func _request_fire_bullet() -> void:
 	bullet.global_rotation = global_rotation
 	bullet.velocity = muzzle.global_transform.basis.z * 5.0
 	_fire_cooldown_remaining = FIRE_COOLDOWN_SEC
+	_update_loaded_rocket()
 	CameraFeedback.add_trauma_shot()
 	_play_recoil()
+
+
+func _update_loaded_rocket() -> void:
+	if _loaded_rocket == null:
+		return
+	_loaded_rocket.visible = _fire_cooldown_remaining <= 0.0
 
 
 func _play_recoil() -> void:

@@ -35,6 +35,7 @@ WEAPONS = {
     "sword": ("uid://bgdgrubg87row", "res://src/weapon/sword.tscn"),
     "saw": ("uid://lilxckjevvd5", "res://src/weapon/saw.tscn"),
     "pulse_rifle": ("uid://o1x22yp71o80", "res://src/weapon/pulse_rifle.tscn"),
+    "catapult": ("uid://c4tapu1tw3apn", "res://src/weapon/catapult.tscn"),
 }
 ## PeriTune tracks (peritune.com): free for games, but the audio files themselves must not be redistributed.
 MUSIC = {
