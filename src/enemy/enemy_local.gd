@@ -14,16 +14,25 @@ var _is_offensive := true
 		_is_offensive = value
 		_sync_hit_box_to_offensive_state()
 @export var hitbox_damage: int = 1
+## Whether a strong shove, such as the pulse rifle's vent, can push this enemy off a ledge.
+## Bosses turn it off so a fight can't be won by pushing them into the water.
+@export var can_fall_off_ledges := true
 
 const BODY_HIT_SOUND := preload("res://assets/sounds/punch/Punch 3_1.wav")
 const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
 ## How far off the navmesh a knockback step may land. The navmesh is inset from ledges,
 ## so a small margin lets enemies near its edge move without being pushed off a drop.
 const KNOCKBACK_NAV_TOLERANCE := 0.25
+## An enemy this far below the last floor it stood on has fallen out of the level and dies.
+const FALL_DEATH_DEPTH := 6.0
 ## How far the end of a path may stop short of the target, flat, before the target counts as unreachable.
 ## Generous, because the navmesh stops about half a metre short of every edge.
 const UNREACHABLE_TARGET_MARGIN := 1.5
 const DEATH_FREE_DELAY_SECONDS := 10.0
+## How far in from a moving floor's edges an enemy on it steers, so chasing a target off the deck stops at the edge.
+const MOVING_FLOOR_STEER_MARGIN := 0.8
+## How far in from a moving floor's edges a knockback may carry an enemy.
+const MOVING_FLOOR_KNOCKBACK_MARGIN := 0.3
 ## Higher = faster turn toward a facing direction (roughly “how many times per second” to ease toward the target).
 const ROTATION_SMOOTH_LAMBDA := 12.0
 const ANIM_PARAM_LOCOMOTION_BLEND := &"parameters/BlendIdleRun/blend_amount"
@@ -53,6 +62,10 @@ var _has_damage_source_position := false
 var _knockback_velocity := Vector3.ZERO
 var _knockback_duration := 0.0
 var _knockback_time_remaining := 0.0
+## Set by shoves strong enough to carry an enemy over a ledge.
+var _knockback_leaves_ledges := false
+var _last_floor_y := 0.0
+var _has_floor_y := false
 
 signal died
 
@@ -282,6 +295,9 @@ func update_target_player() -> void:
 	target_player = closest_player
 
 func get_path_direction_to(target_global_position: Vector3) -> Vector3:
+	var moving_floor := MovingFloor.under(get_tree(), global_position)
+	if moving_floor != null:
+		return _get_direction_on_moving_floor(moving_floor, target_global_position)
 	if navigation_agent == null:
 		return _get_direct_path_direction_to(target_global_position)
 	navigation_agent.target_position = target_global_position
@@ -339,6 +355,15 @@ func get_flee_path_direction_from(threat_global_position: Vector3, retreat_dista
 		var map_rid := navigation_agent.get_navigation_map()
 		flee_target = NavigationServer3D.map_get_closest_point(map_rid, flee_target)
 	return get_path_direction_to(flee_target)
+
+
+## Moving platforms aren't in the navmesh, and a barge deck is a flat open rectangle, so steer straight at the target,
+## stopping at the deck's edge when the target is off it.
+func _get_direction_on_moving_floor(moving_floor: MovingFloor, target_global_position: Vector3) -> Vector3:
+	var goal := moving_floor.clamp_inside(target_global_position, MOVING_FLOOR_STEER_MARGIN)
+	if Vector2(goal.x - global_position.x, goal.z - global_position.z).length() < 0.3:
+		return Vector3.ZERO
+	return _get_direct_path_direction_to(goal)
 
 
 func _get_direct_path_direction_to(target_global_position: Vector3) -> Vector3:
@@ -417,8 +442,11 @@ func hold_stagger(seconds: float) -> void:
 	current.call("hold_hit", seconds)
 
 
-func begin_knockback(knockback_speed: float, duration: float) -> void:
+## `leaves_ledges` lets the shove carry the enemy off the walkable area and over a drop,
+## for enemies with `can_fall_off_ledges`. Ordinary hits keep enemies on solid ground.
+func begin_knockback(knockback_speed: float, duration: float, leaves_ledges := false) -> void:
 	_knockback_time_remaining = 0.0
+	_knockback_leaves_ledges = leaves_ledges and can_fall_off_ledges
 	if knockback_speed <= 0.0 or duration <= 0.0:
 		return
 	var direction := _get_knockback_direction()
@@ -437,11 +465,37 @@ func apply_knockback(delta: float, keep_on_navmesh: bool) -> void:
 		return
 	var step_velocity := _knockback_velocity * (_knockback_time_remaining / _knockback_duration)
 	_knockback_time_remaining = maxf(0.0, _knockback_time_remaining - delta)
-	if keep_on_navmesh and not _is_on_navmesh(global_position + step_velocity * delta):
+	if keep_on_navmesh and not _knockback_leaves_ledges and not _is_on_navmesh(global_position + step_velocity * delta):
 		_knockback_time_remaining = 0.0
 		return
 	velocity.x = step_velocity.x
 	velocity.z = step_velocity.z
+
+
+## True while a shove strong enough to leave ledges is still carrying the enemy.
+func is_shoved_off_ledge() -> bool:
+	return _knockback_leaves_ledges and _knockback_time_remaining > 0.0
+
+
+func _physics_process(_delta: float) -> void:
+	_check_fallen_out()
+
+
+## Ends an enemy shoved off a ledge once it has dropped well below where it last stood, so it
+## can't stay alive out of reach and stall a wave.
+func _check_fallen_out() -> void:
+	if is_on_floor():
+		_last_floor_y = global_position.y
+		_has_floor_y = true
+		return
+	if not _has_floor_y or not is_alive():
+		return
+	if global_position.y > _last_floor_y - FALL_DEATH_DEPTH:
+		return
+	var health := Health.from_target(self)
+	if health == null:
+		return
+	health.kill(global_position + Vector3.UP)
 
 
 func _get_knockback_direction() -> Vector3:
@@ -457,6 +511,9 @@ func _get_knockback_direction() -> Vector3:
 ## Stops ground enemies leaving walkable space: one stranded off a ledge would stay alive
 ## forever and block survival groups from completing.
 func _is_on_navmesh(world_position: Vector3) -> bool:
+	var moving_floor := MovingFloor.under(get_tree(), global_position)
+	if moving_floor != null:
+		return moving_floor.contains(world_position, MOVING_FLOOR_KNOCKBACK_MARGIN)
 	if navigation_agent == null:
 		return false
 	var map_rid := navigation_agent.get_navigation_map()

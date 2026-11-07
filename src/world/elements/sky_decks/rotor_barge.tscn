@@ -1,0 +1,100 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/sky_decks/rotor_barge.gd" id="1_barge"]
+[ext_resource type="Shader" path="res://src/world/elements/sky_decks/wood_planks.gdshader" id="2_wood"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky_decks/deck_rotor.tscn" id="3_rotor"]
+[ext_resource type="Script" path="res://src/world/elements/sky_decks/moving_floor.gd" id="4_floor"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_deck"]
+render_priority = 0
+shader = ExtResource("2_wood")
+shader_parameter/wood_color = Color(0.64, 0.42, 0.22, 1)
+shader_parameter/local_space = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_beam"]
+render_priority = 0
+shader = ExtResource("2_wood")
+shader_parameter/wood_color = Color(0.26, 0.16, 0.09, 1)
+shader_parameter/plank_width = 1.2
+shader_parameter/local_space = true
+
+[sub_resource type="BoxMesh" id="BoxMesh_deck"]
+material = SubResource("ShaderMaterial_deck")
+size = Vector3(14.99, 0.5, 11.99)
+
+[sub_resource type="BoxMesh" id="BoxMesh_joists"]
+material = SubResource("ShaderMaterial_beam")
+size = Vector3(14.3, 0.55, 11.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_edgeX"]
+material = SubResource("ShaderMaterial_beam")
+size = Vector3(15.03, 0.56, 0.33)
+
+[sub_resource type="BoxMesh" id="BoxMesh_edgeZ"]
+material = SubResource("ShaderMaterial_beam")
+size = Vector3(0.33, 0.56, 12.03)
+
+[sub_resource type="BoxMesh" id="BoxMesh_keel"]
+material = SubResource("ShaderMaterial_beam")
+size = Vector3(10.0, 1.1, 7.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_deck"]
+size = Vector3(14.99, 0.5, 11.99)
+
+[node name="RotorBarge" type="Node3D"]
+script = ExtResource("1_barge")
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="MovingFloor" type="Node3D" parent="AnimatableBody3D"]
+script = ExtResource("4_floor")
+size = Vector2(14.99, 11.99)
+
+[node name="Visual" type="Node3D" parent="AnimatableBody3D"]
+
+[node name="Deck" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("BoxMesh_deck")
+
+[node name="Joists" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+mesh = SubResource("BoxMesh_joists")
+
+[node name="Keel" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.5, 0)
+mesh = SubResource("BoxMesh_keel")
+
+[node name="EdgeNorth" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, -5.845)
+mesh = SubResource("BoxMesh_edgeX")
+
+[node name="EdgeSouth" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 5.845)
+mesh = SubResource("BoxMesh_edgeX")
+
+[node name="EdgeWest" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.345, -0.25, 0)
+mesh = SubResource("BoxMesh_edgeZ")
+
+[node name="EdgeEast" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.345, -0.25, 0)
+mesh = SubResource("BoxMesh_edgeZ")
+
+[node name="Rotor1" parent="AnimatableBody3D/Visual" instance=ExtResource("3_rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, -3.5)
+
+[node name="Rotor2" parent="AnimatableBody3D/Visual" instance=ExtResource("3_rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.5, 0, 3.5)
+
+[node name="Rotor3" parent="AnimatableBody3D/Visual" instance=ExtResource("3_rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.5, 0, -3.5)
+
+[node name="Rotor4" parent="AnimatableBody3D/Visual" instance=ExtResource("3_rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.5, 0, 3.5)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("BoxShape3D_deck")

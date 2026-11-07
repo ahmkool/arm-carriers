@@ -116,13 +116,18 @@ func _run() -> void:
 	get_tree().quit(1 if fails > 0 else 0)
 
 
-## Parks every robot well behind the carriers, so no rocket hits one by accident.
+## Parks every robot well behind the carriers, so no rocket hits one by accident. Each spot
+## is snapped onto walkable ground: a robot parked over the water would fall and die.
 func _clear_the_range() -> void:
 	var behind := bazooka.muzzle.global_position - forward() * 14.0
 	var side := forward().cross(Vector3.UP)
 	var enemies := living_enemies()
 	for i in enemies.size():
-		pin(enemies[i], behind + side * (i - enemies.size() * 0.5) * 2.0)
+		pin(enemies[i], on_ground(enemies[i], behind + side * (i - enemies.size() * 0.5) * 2.0))
+
+
+func on_ground(enemy: EnemyLocal, point: Vector3) -> Vector3:
+	return NavigationServer3D.map_get_closest_point(enemy.navigation_agent.get_navigation_map(), point)
 
 
 func check_nothing_to_detonate() -> void:
@@ -158,7 +163,7 @@ func check_mid_air_detonation() -> void:
 	check("the mid-air blast kills the robot beside the path", not target.is_alive())
 	check("the robot out of the blast is untouched", control.is_alive())
 	check("the prompt hides once no rocket is flying", not prompt().visible)
-	pin(control, bazooka.muzzle.global_position - forward() * 14.0)
+	pin(control, on_ground(control, bazooka.muzzle.global_position - forward() * 14.0))
 
 
 func check_oldest_first() -> void:
@@ -179,4 +184,4 @@ func check_prompt_retires() -> void:
 	await wait(BazookaSpecifics.FIRE_COOLDOWN_SEC)
 	await tap(back.action_shoot)
 	await wait(0.3)
-	check("after %d detonations the prompt retires" % FrontCarrierPrompt.USES_TO_LEARN, not prompt().visible and bazooka.get_oldest_rocket() != null)
+	check("after %d detonations the prompt retires" % FrontCarrierPrompt.USES_TO_LEARN, not prompt().visible and bazooka.get_oldest_rocket() != null, "prompt visible=%s, rocket flying=%s, fired=%d" % [prompt().visible, bazooka.get_oldest_rocket() != null, fired.size()])

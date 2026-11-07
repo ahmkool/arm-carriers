@@ -9,6 +9,8 @@ signal restored
 
 var current_hp: int
 var _invulnerable_time_remaining := 0.0
+## While up, takes every hit in place of this health (see `EnemyShield`).
+var shield: EnemyShield
 
 func get_scene_max_hp() -> int:
 	print("Getting scene max HP for ", self, " with max_hp ", max_hp)
@@ -50,12 +52,25 @@ func take_damage(amount: int, source_position: Vector3 = Vector3.ZERO) -> bool:
 		return false
 	if is_invulnerable():
 		return false
+	if is_instance_valid(shield) and shield.is_up():
+		shield.absorb(source_position)
+		return false
 	var applied := mini(amount, current_hp)
 	current_hp -= applied
 	damaged.emit(applied, current_hp, source_position)
 	if current_hp <= 0:
 		died.emit(source_position)
 	return true
+
+
+## Ends the target outright, ignoring invulnerability, such as when it falls out of the level.
+func kill(source_position: Vector3 = Vector3.ZERO) -> void:
+	if not is_alive():
+		return
+	var applied := current_hp
+	current_hp = 0
+	damaged.emit(applied, current_hp, source_position)
+	died.emit(source_position)
 
 
 static func from_target(target: Node) -> Health:

@@ -67,8 +67,9 @@ static func note_use(word: String) -> void:
 	_uses[word] = get_uses(word) + 1
 
 
-func update_prompt(front_carrier: PlayerLocal, wanted: bool, highlight: bool, delta: float) -> void:
-	var showing := wanted and _can_show(front_carrier)
+## `ignore_learned` shows the prompt even after it has retired, for a moment that needs the move.
+func update_prompt(front_carrier: PlayerLocal, wanted: bool, highlight: bool, delta: float, ignore_learned := false) -> void:
+	var showing := wanted and _can_show(front_carrier, ignore_learned)
 	_set_shown(showing)
 	if not showing:
 		return
@@ -88,8 +89,8 @@ func hide_prompt() -> void:
 	_set_shown(false)
 
 
-func _can_show(front_carrier: PlayerLocal) -> bool:
-	if is_learned(_word):
+func _can_show(front_carrier: PlayerLocal, ignore_learned: bool) -> bool:
+	if is_learned(_word) and not ignore_learned:
 		return false
 	if not is_instance_valid(front_carrier):
 		return false

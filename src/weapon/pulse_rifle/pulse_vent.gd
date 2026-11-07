@@ -1,7 +1,8 @@
 class_name PulseVent
 extends RefCounted
 ## The pulse rifle's vent blast: a cone in front of the muzzle that damages and shoves back
-## every living enemy inside it and pops any plasma bolt. Its size, damage and push all
+## every living enemy inside it and pops any plasma bolt. It also breaks enemy shields, the
+## only thing that can, and then hits the enemy as usual. Its size, damage and push all
 ## scale with the heat the front carrier dumps, from 0 (barely warm) to 1 (about to overheat).
 
 ## Enemies (layer 2) and enemy projectiles such as plasma bolts (layer 4).
@@ -80,13 +81,21 @@ static func _try_hit_enemy(collider: Object, origin: Vector3, forward: Vector3, 
 		return false
 	if not is_in_cone(enemy.global_position, origin, forward, reach, ENEMY_MARGIN):
 		return false
+	_try_break_shield(enemy)
 	# Damage comes from the muzzle, so the hit reaction already pushes away from the rifle.
 	Health.apply_damage(enemy, get_damage(heat), origin)
 	if not enemy.is_alive():
 		return true
 	# The hit state starts its own small knockback; this replaces it with the vent's shove.
-	enemy.begin_knockback(lerpf(MIN_KNOCKBACK_SPEED, MAX_KNOCKBACK_SPEED, heat), KNOCKBACK_SEC)
+	enemy.begin_knockback(lerpf(MIN_KNOCKBACK_SPEED, MAX_KNOCKBACK_SPEED, heat), KNOCKBACK_SEC, true)
 	return true
+
+
+static func _try_break_shield(enemy: EnemyLocal) -> void:
+	var shield := EnemyShield.find_on(enemy)
+	if shield == null:
+		return
+	shield.shatter()
 
 
 static func is_in_cone(point: Vector3, origin: Vector3, forward: Vector3, reach: float, margin: float) -> bool:

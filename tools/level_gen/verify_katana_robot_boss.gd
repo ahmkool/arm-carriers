@@ -313,6 +313,10 @@ func _run() -> void:
 	await wait(0.2)
 	var phase := BossPhaseController.from_enemy(boss)
 	check("half health enters phase 2", phase.get_current_phase() == 2, str(phase.get_current_phase()))
+	# The shield has its own test (verify_katana_shield.gd). Off here: it would turn the
+	# scripted damage below into nothing, and its stun eats into this test's time.
+	(boss.behavior as KatanaRobotBehavior).shield_cooldown = 9999.0
+	(boss.behavior as KatanaRobotBehavior)._shield_remaining = 9999.0
 	var light := boss.get_node("Robot/Rig_Large/Skeleton3D/KatanaHand/Katana/BladeLight") as OmniLight3D
 	var particles := boss.get_node("Robot/Rig_Large/Skeleton3D/KatanaHand/Katana/FireParticles") as GPUParticles3D
 	await wait(0.8)
@@ -336,8 +340,8 @@ func _run() -> void:
 	print("INFO hits on the carriers: ", hits_taken)
 	check("every hit from 4GTN takes 1 hp", hits_taken.all(func(h): return h == 1), str(hits_taken))
 
-	# The kill ends the level.
-	health.take_damage(9999, boss.global_position)
+	# The kill ends the level. `kill`, so a shield can't absorb the scripted blow.
+	health.kill(boss.global_position)
 	var finished: bool = await wait_until(func(): return state() == "levelfinished", 12.0)
 	await shot("katana_finished.png")
 	check("defeating 4GTN finishes the level", finished, state())

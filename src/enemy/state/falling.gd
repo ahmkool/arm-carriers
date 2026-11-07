@@ -10,6 +10,11 @@ func physics_update(delta: float) -> void:
 		return
 
 	enemy.velocity += enemy.get_gravity() * delta
+	# A shove that carried the enemy over a ledge keeps carrying it, instead of the enemy
+	# steering straight back onto the edge.
+	if enemy.is_shoved_off_ledge():
+		enemy.apply_knockback(delta, false)
+		return
 
 	var direction: Vector3 = enemy.get_move_direction()
 	if direction.length_squared() > 0.0001:

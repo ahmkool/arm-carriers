@@ -61,15 +61,18 @@ for pack, (cx, cz) in enumerate(((-2.5, 0), (0, -0.5), (2.5, 0)), 1):
     level.melee("EnemyGroup", f"EnemyRobot{pack}b", cx - 0.35, cz - 0.35)
     level.melee("EnemyGroup", f"EnemyRobot{pack}c", cx + 0.35, cz - 0.35)
 YARD_ROBOTS = ((-4, -21), (-2, -21), (0, -21), (2, -21), (4, -21), (-5, -18), (5, -18), (-1, -17), (1, -17), (0, -20))
+# The two at the front of the yard reach the carriers first, so they are where the vent is
+# learned: bolts bounce off their shields, and heat the barrel for the vent that pops them.
+SHIELDED_YARD_ROBOTS = {(-1, -17), (1, -17)}
 level.enemy_group("EnemyGroup2")  # wake once the bridge behind the carriers switches off
 for i, (cx, cz) in enumerate(YARD_ROBOTS, 1):
-    level.melee("EnemyGroup2", f"EnemyRobot{i}", cx, cz)
+    level.melee("EnemyGroup2", f"EnemyRobot{i}", cx, cz, shielded=(cx, cz) in SHIELDED_YARD_ROBOTS)
 GUNNERS = ((-5, -29), (-5, -35), (5, -29), (5, -35))
 level.enemy_group("EnemyGroup3")  # gunners on the perches can only be shot; the rest charge down the causeway
 for i, (cx, cz) in enumerate(GUNNERS, 1):
     level.mage("EnemyGroup3", f"EnemyRobotGunner{i}", cx, cz, cast_max=16.0, cooldown=3.5)
 for i, (cx, cz) in enumerate(((-1, -37), (1, -37), (0, -36), (-1, -35), (1, -35)), 1):
-    level.melee("EnemyGroup3", f"EnemyRobot{i}", cx, cz)
+    level.melee("EnemyGroup3", f"EnemyRobot{i}", cx, cz, shielded=(cx, cz) == (0, -36))
 level.survival_group(((-5, -53), (5, -53), (-5, -43), (5, -43), (-5, -48), (5, -48)), duration=40)
 
 # ---- Checkpoints. ----

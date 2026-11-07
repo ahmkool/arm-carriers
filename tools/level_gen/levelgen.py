@@ -273,10 +273,18 @@ class Level:
         self.node(name, "Enemies", "Node3D", props={"script": 'ExtResource("normal_group")'})
         self.node("InstancedEnemies", f"Enemies/{name}", "Node3D")
 
-    def melee(self, group, name, cx, cz):
+    def melee(self, group, name, cx, cz, shielded=False):
+        """shielded: an EnemyShield bubble that only the pulse rifle's vent breaks. It removes itself in runs with any other weapon."""
         wx, wz = world(cx, cz)
-        self.node(name, f"Enemies/{group}/InstancedEnemies", instance=self.melee_scene, props={
+        parent = f"Enemies/{group}/InstancedEnemies"
+        self.node(name, parent, instance=self.melee_scene, props={
             "transform": tf(wx, 0, wz, FACE_SOUTH), "is_offensive": "false"})
+        if not shielded:
+            return
+        shield_ext = ("Script", None, "res://src/enemy/shield/enemy_shield.gd", "enemy_shield")
+        if shield_ext not in self.extra_ext:
+            self.extra_ext.append(shield_ext)
+        self.node("EnemyShield", f"{parent}/{name}", "Node3D", props={"script": 'ExtResource("enemy_shield")'})
 
     def mage(self, group, name, cx, cz, cast_max=14.0, cooldown=3.0):
         """Stationary mage. Keep cast_max short enough that anything able to fire is on screen."""
@@ -494,6 +502,15 @@ class Level:
             wx, wz = world(cx, cz)
             self.node(f"LavaVent{index}", "Level/Vents", instance="vent", props={"transform": tf(wx, -1, wz), "phase": fmt_decimal2(phase)})
 
+    def add_magma_pockets(self, cells, radius=2.4):
+        """cells: (cx, cz) on the floor. Dormant vents that burst when an explosion lands near them, setting off
+        the pockets within 6.6 m, so pockets two cells apart chain."""
+        self.node("Pockets", "Level", "Node")
+        for index, (cx, cz) in enumerate(cells, 1):
+            wx, wz = world(cx, cz)
+            self.node(f"MagmaPocket{index}", "Level/Pockets", instance="vent", props={
+                "transform": tf(wx, -1, wz), "dormant": "true", "radius": fmt_decimal(radius)})
+
     def add_lava_spouts(self, spouts):
         """spouts: (cx, cz, phase) out in the lava. Harmless scenery, about twice the size of a vent."""
         self.node("Spouts", "Level", "Node")
@@ -541,6 +558,43 @@ class Level:
             index += 1
             self.node(f"Rotor{index}", parent, instance="rotor", props={"transform": tf(wx, -1, wz, ROTOR_BASIS[side])})
         return index
+
+    def add_barge(self, name, park, stops):
+        """A rotor barge (15 x 12 m deck) parked at world (x, z), with its other stops as world (x, z), in flight order:
+        its dock, one stop per wave, then its final dock. See BargeVoyageEvent."""
+        ext = ("PackedScene", None, "res://src/world/elements/sky_decks/rotor_barge.tscn", "barge")
+        if ext not in self.extra_ext:
+            self.extra_ext.append(ext)
+        offsets = [(0.0, 0.0)] + [(x - park[0], z - park[1]) for x, z in stops]
+        vectors = ", ".join(f"{fmt(x)}, 0, {fmt(z)}" for x, z in offsets)
+        self.node(name, "Level", instance="barge", props={"transform": tf(park[0], BRIDGE_Y + 3.0, park[1]),
+                                                           "stops": f"PackedVector3Array({vectors})"})
+
+    def boarding_group(self, name, barge):
+        """Enemies that drop onto the barge when triggered. Add them with boarding_melee."""
+        ext = ("Script", None, "res://src/enemy/boarding_enemy_group.gd", "boarding_group")
+        if ext not in self.extra_ext:
+            self.extra_ext.append(ext)
+        self.node(name, "Enemies", "Node3D", paths=["deck"], props={
+            "script": 'ExtResource("boarding_group")', "deck": f'NodePath("../../Level/{barge}/AnimatableBody3D/MovingFloor")'})
+        self.node("InstancedEnemies", f"Enemies/{name}", "Node3D")
+
+    def boarding_melee(self, group, name, x, z):
+        """x, z: where it lands, in metres from the barge deck's centre."""
+        self.node(name, f"Enemies/{group}/InstancedEnemies", instance=self.melee_scene, props={
+            "transform": tf(x, 0, z, FACE_SOUTH), "is_offensive": "false"})
+
+    def barge_voyage_event(self, name, barge, waves, escort=None, escort_leg=-1):
+        ext = ("Script", None, "res://src/events/barge_voyage_event.gd", "barge_voyage")
+        if ext not in self.extra_ext:
+            self.extra_ext.append(ext)
+        props = {"script": 'ExtResource("barge_voyage")', "barge": f'NodePath("../../{barge}")',
+                 "waves": node_paths([f"../../../Enemies/{wave}" for wave in waves])}
+        paths = ["barge", "waves"]
+        if escort:
+            props.update({"escort_group": f'NodePath("../../../Enemies/{escort}")', "escort_leg": str(escort_leg)})
+            paths.append("escort_group")
+        self.node(name, "Level/Events", "Node", paths=paths, props=props)
 
     def add_distant_deck(self, name, position, shape):
         """Scenery far below the play space, with no collision and a slow bob."""

@@ -58,6 +58,8 @@ func _ensure_overlay_material() -> void:
 func _apply_overlay() -> void:
 	_ensure_overlay_material()
 	_overlay.set_shader_parameter("flash_amount", 1.0)
+	# Meshes can go away after caching, such as a shattered enemy shield's bubble.
+	_meshes.assign(_meshes.filter(func(mesh: MeshInstance3D) -> bool: return is_instance_valid(mesh)))
 	for mesh in _meshes:
 		mesh.material_overlay = _overlay
 

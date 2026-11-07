@@ -73,6 +73,6 @@ static func _try_hit_enemy(collider: Object, origin: Vector3) -> bool:
 	if not enemy.is_alive():
 		return true
 	# The hit state starts its own small knockback; this replaces it with the shockwave's shove.
-	enemy.begin_knockback(KNOCKBACK_SPEED, KNOCKBACK_SEC)
+	enemy.begin_knockback(KNOCKBACK_SPEED, KNOCKBACK_SEC, true)
 	enemy.hold_stagger(STAGGER_SEC)
 	return true

@@ -116,7 +116,8 @@ text = "[color=#ff8888]Catapult usage[/color]
 
 Front carrier: walk further ahead to throw further, closer for a short lob.
 Back carrier: press shoot when the ring is on the enemies !
-Glowing circles are about to erupt. They burn enemies too."
+Glowing circles are about to erupt. They burn enemies too.
+Pale pulsing cracks are magma pockets: bomb one and it bursts, setting off its neighbours."
 fit_content = true
 scroll_active = false
 
@@ -287,7 +288,7 @@ cast_max_distance = 13.0
 cast_cooldown = 4.0
 
 [node name="EnemyMage3" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -160.4465)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -163.4455)
 is_offensive = false
 
 [node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup4/InstancedEnemies/EnemyMage3"]
@@ -297,7 +298,7 @@ cast_max_distance = 13.0
 cast_cooldown = 4.0
 
 [node name="EnemyMage4" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 0, -169.4435)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 0, -172.4425)
 is_offensive = false
 
 [node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup4/InstancedEnemies/EnemyMage4"]
@@ -307,7 +308,7 @@ cast_max_distance = 13.0
 cast_cooldown = 4.0
 
 [node name="EnemyMage5" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -169.4435)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -172.4425)
 is_offensive = false
 
 [node name="MageBehavior" type="Node" parent="Enemies/EnemyGroup4/InstancedEnemies/EnemyMage5"]
@@ -539,6 +540,93 @@ phase = 0.75
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -1, -157.4475)
 phase = 0.50
 
+[node name="Pockets" type="Node" parent="Level"]
+
+[node name="MagmaPocket1" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -67.4775)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket2" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -1, -67.4775)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket3" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -1, -67.4775)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket4" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -67.4775)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket5" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -115.4615)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket6" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -1, -115.4615)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket7" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -1, -115.4615)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket8" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -1, -115.4615)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket9" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -115.4615)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket10" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, -1, -109.4635)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket11" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -1, -109.4635)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket12" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, -1, -172.4425)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket13" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -172.4425)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket14" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -1, -172.4425)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket15" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -1, -172.4425)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket16" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -172.4425)
+dormant = true
+radius = 2.4
+
+[node name="MagmaPocket17" parent="Level/Pockets" instance=ExtResource("vent")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -1, -172.4425)
+dormant = true
+radius = 2.4
+
 [node name="Spouts" type="Node" parent="Level"]
 
 [node name="LavaSpout1" parent="Level/Spouts" instance=ExtResource("vent")]
@@ -746,7 +834,8 @@ message_string = "[color=#ff8888]Catapult usage[/color]
 
 Front carrier: walk further ahead to throw further, closer for a short lob.
 Back carrier: press shoot when the ring is on the enemies !
-Glowing circles are about to erupt. They burn enemies too."
+Glowing circles are about to erupt. They burn enemies too.
+Pale pulsing cracks are magma pockets: bomb one and it bursts, setting off its neighbours."
 
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]

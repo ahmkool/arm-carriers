@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Prototype of a lava level: world_local_lava.tscn. Basalt over a molten surface, with erupting vents.
 Played with the catapult, which lobs bombs over the vents and pits onto the enemies beyond.
+Magma pockets are dormant vents that burst when a bomb or rocket lands near them, and set off their neighbours.
+They run in chains under where enemies wait, so one well-placed shot clears a line, and a careless one near the
+carriers burns them too.
 
 Run from the project root; see docs/level-creation-for-agents.md.
 """
@@ -43,13 +46,23 @@ VENTS = (
     # Forge, between the mages.
     (0, -48, 0.0), (-7, -53, 0.25), (7, -53, 0.75), (0, -53, 0.5),
 )
+# Magma pockets, two cells apart so each chains to the next. Enemies may wait on them: they only burn when set off.
+POCKETS = (
+    # Under the guards at the end of the field, far from the carriers: the lesson. Split around the checkpoint there.
+    (-4, -23), (-2, -23), (2, -23), (4, -23),
+    # The caldera's far rim, where the chasers wait, and one on each flank they run past.
+    (-4, -39), (-2, -39), (0, -39), (2, -39), (4, -39), (-6, -37), (6, -37),
+    # The back of the forge, under two mages and beside the chasers, split around the last checkpoint.
+    (-6, -58), (-4, -58), (-2, -58), (2, -58), (4, -58), (6, -58),
+)
+POCKET_RADIUS = 2.4
 SPOUTS = ((0, -34.5, 0.0), (-11, -18, 0.3), (11, -13, 0.7), (-12, -50, 0.5), (12, -38, 0.15))
 OUTCROPS = ((-11, -2, "Rock_3_A", 0), (11, 1, "Rock_5_A", 10), (-10, -11, "Rock_3_C", 16), (10, -22, "Rock_6_A", 0),
             (-11, -24, "Rock_5_C", 22), (13, -33, "Rock_3_F", 0), (-13, -36, "Rock_3_A", 10), (-13, -46, "Rock_6_A", 16),
             (13, -49, "Rock_5_A", 0), (-8, -66, "Rock_3_C", 0), (9, -68, "Rock_3_F", 22))
 
 level = Level("src/world/levels/world_local_lava.tscn", palette="lava", weapon="catapult", floor_seed=11, deco_seed=11,
-              hint="[color=#ff8888]Catapult usage[/color]\n\nFront carrier: walk further ahead to throw further, closer for a short lob.\nBack carrier: press shoot when the ring is on the enemies !\nGlowing circles are about to erupt. They burn enemies too.",
+              hint="[color=#ff8888]Catapult usage[/color]\n\nFront carrier: walk further ahead to throw further, closer for a short lob.\nBack carrier: press shoot when the ring is on the enemies !\nGlowing circles are about to erupt. They burn enemies too.\nPale pulsing cracks are magma pockets: bomb one and it bursts, setting off its neighbours.",
               music="relentless")  # the catapult's camera marker follows its landing ring, so the default camera fits
 level.use_lava_environment()
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
@@ -59,7 +72,7 @@ level.add_shell()
 # ---- Enemies. ----
 GUARDS = ((-3, -24), (0, -24), (3, -24), (-4, -23), (-2, -23), (2, -23), (4, -23))
 CHASERS = ((-6, -39), (-3, -39), (0, -39), (3, -39), (6, -39), (-7, -36), (7, -36), (-6, -32), (6, -32), (-2, -40), (2, -40), (-7, -37), (7, -37))
-MAGES = ((-3, -49), (3, -49), (0, -54), (-6, -57), (6, -57))
+MAGES = ((-3, -49), (3, -49), (0, -55), (-6, -58), (6, -58))
 FORGE_CHASERS = ((-1, -58), (1, -58), (0, -57))
 level.enemy_group("EnemyGroup")  # idle practice targets, close enough to see from spawn
 for i, (cx, cz) in enumerate(((0, 0), (-3, 0), (3, 0), (-5, -1), (-2, -1), (2, -1), (5, -1)), 1):
@@ -103,12 +116,21 @@ for _, cx, cz, _arrays in CHECKPOINTS:
 for cx, cz in MAGES + GUARDS + CHASERS + FORGE_CHASERS:
     assert not too_close_to_a_vent(*world(cx, cz), 1.0), ("waiting enemy on a vent", cx, cz)
 assert {(cx, cz) for cx, cz, _phase in VENTS} <= FLOOR - MOUTHS
+assert set(POCKETS) <= FLOOR - MOUTHS
+for cx, cz in POCKETS:
+    assert not too_close_to_a_vent(*world(cx, cz), POCKET_RADIUS), ("pocket overlaps a vent", cx, cz)
+    for _, ccx, ccz, _arrays in CHECKPOINTS:
+        wx, wz = world(ccx, ccz)
+        px, pz = world(cx, cz)
+        for dx, dz in (SETTER, SHOOTER):
+            assert ((wx + dx - px) ** 2 + (wz + dz - pz) ** 2) ** 0.5 > POCKET_RADIUS + 1.0, ("spawn on a pocket", cx, cz)
 assert CELL > 1.45 * 2, "vents in neighbouring cells would overlap"
 level.checkpoints(CHECKPOINTS, setter_marker=SETTER, shooter_marker=SHOOTER)
 
 # ---- Terrain and events. ----
 level.add_lava_terrain(FLOOR, MOUTHS, fall_z=-40, outcrops=OUTCROPS)
 level.add_vents(VENTS)
+level.add_magma_pockets(POCKETS, POCKET_RADIUS)
 level.add_lava_spouts(SPOUTS)
 level.set_bridges(BRIDGES)
 level.bridge_event("OpenBridge1", 1)

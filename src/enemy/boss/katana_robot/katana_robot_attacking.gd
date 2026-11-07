@@ -8,6 +8,8 @@ const ANIM_REQUEST := {
 	&"slash": &"parameters/Slash/request",
 	&"dash": &"parameters/Stab/request",
 	&"waves": &"parameters/Slam/request",
+	## The guard stance reads as bracing as the shield goes up.
+	&"shield": &"parameters/Taunt/request",
 }
 const ANIM_SPEED_PARAM := &"parameters/Speed/scale"
 
@@ -21,6 +23,8 @@ const TIMING := {
 	&"waves": {"face": 0.6, "strike": 0.98, "strike_end": 1.1, "end": 2.3},
 	## No clip: it vanishes on entering, reappears at the strike, and lunges right after.
 	&"teleport": {"face": 0.0, "strike": 0.22, "strike_end": 0.22, "end": 0.4},
+	## The shield goes up at the strike, then it fights on.
+	&"shield": {"face": 0.3, "strike": 0.45, "strike_end": 0.45, "end": 1.0},
 }
 const SLASH_SPEED := 1.0
 const ENRAGED_SLASH_SPEED := 1.25

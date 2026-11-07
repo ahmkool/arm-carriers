@@ -209,6 +209,7 @@ collision_mask = 4
 script = ExtResource("enemy")
 speed = 2.5
 is_offensive = false
+can_fall_off_ledges = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.85, 0)

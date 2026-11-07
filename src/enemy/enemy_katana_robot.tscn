@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://src/enemy/behavior/katana_robot_behavior.gd" id="behavior"]
 [ext_resource type="Script" path="res://src/enemy/boss/katana_robot/katana_robot_moves.gd" id="moves"]
 [ext_resource type="Script" path="res://src/enemy/boss/katana_robot/katana_robot_attacking.gd" id="attacking"]
+[ext_resource type="Script" path="res://src/enemy/boss/katana_robot/katana_robot_stunned.gd" id="stunned"]
 [ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="fsm"]
 [ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="idle"]
 [ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="running"]
@@ -236,6 +237,7 @@ collision_mask = 4
 script = ExtResource("enemy")
 speed = 2.6
 is_offensive = false
+can_fall_off_ledges = false
 
 [node name="Robot" parent="." instance=ExtResource("glb")]
 transform = Transform3D(1.1, 0, 0, 0, 1.1, 0, 0, 0, 1.1, 0, 0, 0)
@@ -312,6 +314,9 @@ knockback_speed = 0.0
 
 [node name="Attacking" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("attacking")
+
+[node name="Stunned" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("stunned")
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 path_desired_distance = 0.5

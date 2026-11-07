@@ -96,9 +96,10 @@ func survival_enemies() -> Array:
 	return world.get_node("Enemies/SurvivalEnemyGroup/Enemies").get_children().filter(func(c): return c is EnemyLocal and c.is_alive())
 
 
+## A scripted kill for testing the level's flow. `kill` goes through the vent-only shields.
 func kill_group(path: String) -> void:
 	for e in group_enemies(path):
-		Health.apply_damage(e, 9999, e.global_position)
+		Health.from_target(e).kill(e.global_position)
 
 
 func visible_count(enemies: Array) -> int:

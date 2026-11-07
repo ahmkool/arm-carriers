@@ -12,6 +12,13 @@ const WAVE_SOUND := preload("res://assets/sounds/fireball_cast.wav")
 const SPARKS_SCENE := preload("res://src/vfx/saw_sparks.tscn")
 const POP_SCENE := preload("res://src/vfx/small_explosion.tscn")
 const BLINK_SCENE := preload("res://src/enemy/boss/katana_robot/katana_blink_vfx.tscn")
+const SHIELD_SCRIPT := preload("res://src/enemy/shield/enemy_shield.gd")
+const PULSE_RIFLE_ID := "pulse_rifle"
+## Stunned, it slumps forward and its blade goes dark, with sparks off its frame.
+const STUN_LEAN_DEG := 22.0
+const STUN_DROP := 0.35
+const STUN_EASE_SECONDS := 0.25
+const STUN_SPARK_SECONDS := 0.45
 
 ## Telegraph alpha from the start of a wind-up to the strike.
 const TELEGRAPH_ALPHA_START := 0.12
@@ -29,6 +36,8 @@ const BLINK_SQUASH := Vector3(0.08, 1.7, 0.08)
 const BLINK_OUT_SECONDS := 0.16
 const BLINK_IN_SECONDS := 0.3
 
+signal shield_broken
+
 @export_group("Lunge")
 @export var dash_min_length := 5.0
 @export var dash_max_length := 14.0
@@ -43,6 +52,10 @@ const BLINK_IN_SECONDS := 0.3
 @export var wave_lifetime := 3.0
 @export var wave_damage := 1
 @export var wave_lane_length := 7.0
+
+@export_group("Shield")
+@export var shield_radius := 2.6
+@export var shield_height := 2.1
 
 @export_group("Rage blink")
 ## The blink lands this far from the target: inside the lunge range, so it lunges straight away.
@@ -60,6 +73,11 @@ var _blink_tween: Tween
 var _robot_base_scale := Vector3.ONE
 ## True from the start of a blink until it lands.
 var _is_blinked_out := false
+var _shield: EnemyShield
+var _stun_tween: Tween
+var _stun_spark_timer: Timer
+var _robot_base_position := Vector3.ZERO
+var _robot_base_rotation := Vector3.ZERO
 
 @onready var _enemy := get_parent() as EnemyLocal
 @onready var _slash_hit_box: Area3D = _enemy.get_node("SlashHitBox")
@@ -77,6 +95,8 @@ var _is_blinked_out := false
 
 func _ready() -> void:
 	_robot_base_scale = _robot.scale
+	_robot_base_position = _robot.position
+	_robot_base_rotation = _robot.rotation
 	_build_wave_fan()
 	end_move()
 	# The boss's own @onready vars aren't set yet: children are ready before their parent.
@@ -156,6 +176,8 @@ func strike(move: StringName) -> void:
 			_slam()
 		&"teleport":
 			_reappear()
+		&"shield":
+			_raise_shield()
 
 
 func end_strike(move: StringName) -> void:
@@ -370,6 +392,81 @@ func _build_wave_fan() -> void:
 	template.visible = false
 
 
+## The shield needs the pulse rifle: nothing else can break it.
+func can_raise_shield() -> bool:
+	var world := get_tree().current_scene as WorldLocal
+	if world == null:
+		return false
+	return world.get_active_weapon_id() == PULSE_RIFLE_ID
+
+
+func is_shield_up() -> bool:
+	return is_instance_valid(_shield) and _shield.is_up()
+
+
+## Raises a shield that stays up while it fights on, until a vent breaks it.
+func _raise_shield() -> void:
+	_shield = SHIELD_SCRIPT.new() as EnemyShield
+	_shield.radius = shield_radius
+	_shield.height = shield_height
+	_shield.forces_vent_prompt = true
+	_shield.shattered.connect(_on_shield_shattered)
+	_enemy.add_child(_shield)
+	_play_sound(TAUNT_SOUND, 0.7, 0.0)
+	_play_sound(SERVO_SOUND, 0.6, -2.0)
+	CameraFeedback.add_trauma_shot()
+
+
+## A vent broke the shield: it reels, whatever it was in the middle of.
+func _on_shield_shattered() -> void:
+	shield_broken.emit()
+	if not _enemy.is_alive():
+		return
+	_enemy.enemy_state_machine.transition_to("stunned")
+
+
+## Slumps forward with its blade dark, throwing sparks, until `end_stun`.
+func begin_stun() -> void:
+	_play_sound(TAUNT_SOUND, 0.45, 0.0)
+	_spawn(SPARKS_SCENE, _enemy.global_position + Vector3.UP * 2.5)
+	CameraFeedback.add_trauma_shot()
+	var tween := _restart_stun_tween().set_parallel()
+	tween.tween_property(_robot, "rotation:x", _robot_base_rotation.x + deg_to_rad(STUN_LEAN_DEG), STUN_EASE_SECONDS) \
+		.set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_OUT)
+	tween.tween_property(_robot, "position:y", _robot_base_position.y - STUN_DROP, STUN_EASE_SECONDS)
+	tween.tween_property(_blade_light, "light_energy", 0.0, STUN_EASE_SECONDS)
+	_stun_spark_timer = Timer.new()
+	_stun_spark_timer.wait_time = STUN_SPARK_SECONDS
+	_stun_spark_timer.timeout.connect(func(): _spawn(SPARKS_SCENE, _enemy.global_position + Vector3.UP * randf_range(1.5, 3.0)))
+	add_child(_stun_spark_timer)
+	_stun_spark_timer.start()
+
+
+func end_stun() -> void:
+	if is_instance_valid(_stun_spark_timer):
+		_stun_spark_timer.queue_free()
+	var tween := _restart_stun_tween().set_parallel()
+	tween.tween_property(_robot, "rotation:x", _robot_base_rotation.x, STUN_EASE_SECONDS)
+	tween.tween_property(_robot, "position:y", _robot_base_position.y, STUN_EASE_SECONDS)
+	tween.tween_property(_blade_light, "light_energy", _get_phase_blade_light(), STUN_EASE_SECONDS)
+	_play_sound(SERVO_SOUND, 1.1, -4.0)
+
+
+## The blade's glow for the phase it is in now: a big hit while stunned can start the rage.
+func _get_phase_blade_light() -> float:
+	var phase_controller := BossPhaseController.from_enemy(_enemy)
+	if phase_controller != null and phase_controller.is_phase_at_least(RAGE_PHASE):
+		return RAGE_BLADE_LIGHT
+	return ENRAGED_BLADE_LIGHT
+
+
+func _restart_stun_tween() -> Tween:
+	if _stun_tween != null:
+		_stun_tween.kill()
+	_stun_tween = _robot.create_tween()
+	return _stun_tween
+
+
 func _on_phase_changed(phase_index: int) -> void:
 	if phase_index >= RAGE_PHASE:
 		_start_rage_visuals()
@@ -396,6 +493,8 @@ func _restart_blade_tween() -> Tween:
 
 func _on_died(_source_position: Vector3 = Vector3.ZERO) -> void:
 	end_move()
+	if is_shield_up():
+		_shield.dissolve()
 	_blade_light.light_energy = 0.0
 
 

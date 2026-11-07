@@ -3,7 +3,8 @@ extends EnemyBehavior
 ## 4GTN, a robot samurai. Walks the carriers down and cuts at them with its katana, and
 ## lunges across the deck when they keep their distance. Below half health the blade
 ## charges up: lunges come in pairs, and a slam sends plasma waves out in a fan, which
-## the pulse rifle can shoot down. Below 15% it goes into a rage: it blinks to a spot
+## the pulse rifle can shoot down. In pulse rifle runs it also raises a shield and fights on
+## behind it: only the rifle's vent breaks it, and breaking it stuns the boss. Below 15% it goes into a rage: it blinks to a spot
 ## away from the carriers and lunges, over and over, with no pause between moves.
 
 const MOVE_TAUNT := &"taunt"
@@ -11,6 +12,7 @@ const MOVE_SLASH := &"slash"
 const MOVE_DASH := &"dash"
 const MOVE_WAVES := &"waves"
 const MOVE_TELEPORT := &"teleport"
+const MOVE_SHIELD := &"shield"
 const RAGE_PHASE := 3
 
 @export_group("Distances")
@@ -33,6 +35,10 @@ const RAGE_PHASE := 3
 @export var dash_cooldown := 5.0
 @export var enraged_dash_cooldown := 3.5
 @export var waves_cooldown := 6.0
+## How long after a shield breaks before the next one can go up.
+@export var shield_cooldown := 16.0
+## The first shield goes up this long after the enraged taunt, so it opens phase 2.
+@export var shield_first_delay := 2.0
 ## In the rage phase a lunge follows a blink straight away, and the next blink the lunge.
 @export var rage_gap_between_moves := 0.0
 
@@ -43,6 +49,7 @@ var _gap_remaining := 0.0
 var _slash_remaining := 0.0
 var _dash_remaining := 2.0
 var _waves_remaining := 0.0
+var _shield_remaining := 0.0
 var _taunt_pending := true
 var _follow_up_dash_pending := false
 ## True while the current move is the second lunge of a pair, which winds up faster.
@@ -56,6 +63,7 @@ var _rage_teleport_next := true
 func _ready() -> void:
 	super._ready()
 	_moves = enemy.get_node("KatanaRobotMoves") as KatanaRobotMoves
+	_moves.shield_broken.connect(_on_shield_broken)
 	_phase_controller = BossPhaseController.from_enemy(enemy)
 	if _phase_controller == null:
 		return
@@ -79,9 +87,14 @@ func _on_phase_changed(phase_index: int) -> void:
 		return
 	_taunt_pending = true
 	_waves_remaining = 0.0
+	_shield_remaining = shield_first_delay
 	enemy.speed = enraged_speed
 	_follow_up_dash_pending = false
 	_rage_teleport_next = true
+
+
+func _on_shield_broken() -> void:
+	_shield_remaining = shield_cooldown
 
 
 func _think(delta: float) -> void:
@@ -114,6 +127,8 @@ func _is_busy() -> bool:
 	var state_machine := enemy.enemy_state_machine
 	if state_machine.is_in_state("dead"):
 		return true
+	if state_machine.is_in_state("stunned"):
+		return true
 	return state_machine.is_in_state("attacking")
 
 
@@ -122,6 +137,7 @@ func _tick_cooldowns(delta: float) -> void:
 	_slash_remaining = maxf(_slash_remaining - delta, 0.0)
 	_dash_remaining = maxf(_dash_remaining - delta, 0.0)
 	_waves_remaining = maxf(_waves_remaining - delta, 0.0)
+	_shield_remaining = maxf(_shield_remaining - delta, 0.0)
 
 
 func _has_valid_target() -> bool:
@@ -150,6 +166,8 @@ func _pick_move(distance: float) -> StringName:
 		return _pick_follow_up(distance)
 	if _gap_remaining > 0.0:
 		return &""
+	if _can_raise_shield():
+		return MOVE_SHIELD
 	if _slash_remaining <= 0.0 and distance <= slash_distance:
 		return MOVE_SLASH
 	if _can_dash(distance):
@@ -187,6 +205,18 @@ func _can_dash(distance: float) -> bool:
 	return distance >= dash_min_distance and distance <= dash_max_distance
 
 
+## Only in phase 2, only one at a time, and only in pulse rifle runs: no other weapon can
+## break the shield.
+func _can_raise_shield() -> bool:
+	if not is_enraged() or is_raging():
+		return false
+	if _shield_remaining > 0.0:
+		return false
+	if _moves.is_shield_up():
+		return false
+	return _moves.can_raise_shield()
+
+
 func _can_cast_waves(distance: float) -> bool:
 	if not is_enraged():
 		return false
@@ -219,6 +249,7 @@ func _apply_move_cooldown(move: StringName) -> void:
 			_start_dash_cooldown()
 		MOVE_WAVES:
 			_waves_remaining = waves_cooldown
+
 
 
 ## Enraged lunges come in pairs: the first one queues the second, which doesn't queue a third.

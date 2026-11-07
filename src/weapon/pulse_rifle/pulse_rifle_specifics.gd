@@ -39,6 +39,8 @@ const PERFECT_VENT_HEAT := 0.8
 ## The vent prompt shows from this heat, and only vents this hot count towards learning it.
 const TEACH_VENT_HEAT := 0.5
 const VENT_WORD := "VENT"
+## A shield that forces the prompt (a boss's) shows it within this distance of the muzzle.
+const FORCED_PROMPT_DISTANCE := 16.0
 const OVERDRIVE_SEC := 2.5
 const OVERDRIVE_FIRE_INTERVAL_SEC := 0.065
 ## Vents at least this hot shove the carriers back like a bazooka shot.
@@ -217,10 +219,13 @@ func _update_heat(delta: float) -> void:
 
 
 ## Shown once the barrel is hot enough to vent well. An overheated rifle can't vent, so the
-## prompt hides while it is locked.
+## prompt hides while it is locked. Near a shield that forces it, it shows from the first
+## usable heat, even once retired, since only the vent breaks that shield.
 func _update_vent_prompt(front_carrier: PlayerLocal, delta: float) -> void:
-	var worth_venting := heat >= TEACH_VENT_HEAT and not is_overheated()
-	_vent_prompt.update_prompt(front_carrier, worth_venting, is_in_perfect_window(), delta)
+	var forced := EnemyShield.is_vent_prompt_forced_near(muzzle.global_position, FORCED_PROMPT_DISTANCE)
+	var wanted_heat := MIN_VENT_HEAT if forced else TEACH_VENT_HEAT
+	var worth_venting := heat >= wanted_heat and not is_overheated()
+	_vent_prompt.update_prompt(front_carrier, worth_venting, is_in_perfect_window(), delta, forced)
 
 
 ## Only a vent hot enough to have been worth waiting for counts towards retiring the prompt.

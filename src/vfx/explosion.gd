@@ -50,6 +50,8 @@ func _queue_free_hitbox() -> void:
 
 
 func _hurt_initial_overlaps() -> void:
+	# Deferred, like the damage, because spawners place the explosion after adding it.
+	LavaVent.explode_near(get_tree(), global_position, damage_radius)
 	for body in hitbox.get_overlapping_bodies():
 		_apply_damage_to_body(body)
 	for area in hitbox.get_overlapping_areas():

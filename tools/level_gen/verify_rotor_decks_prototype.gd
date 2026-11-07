@@ -16,7 +16,7 @@ func _ready() -> void:
 	world.skip_save = true
 	GameSave.untrack_manager(world.checkpoint_manager)
 	gsm = world.get_node("GameStateMachine") as GameStateMachine
-	get_tree().create_timer(420.0).timeout.connect(func(): print("WATCHDOG quit"); get_tree().quit(2))
+	get_tree().create_timer(600.0).timeout.connect(func(): print("WATCHDOG quit"); get_tree().quit(2))
 	_run.call_deferred()
 
 
@@ -318,9 +318,9 @@ func overhead() -> void:
 	var follow_cam := get_viewport().get_camera_3d()
 	var top := Camera3D.new()
 	top.projection = Camera3D.PROJECTION_ORTHOGONAL
-	top.size = 190.0
+	top.size = 250.0
 	top.far = 400.0
-	top.position = Vector3(1.5, 150, -70)
+	top.position = Vector3(10, 150, -95)
 	top.rotation_degrees = Vector3(-90, 0, 0)
 	world.add_child(top)
 	top.make_current()
@@ -445,13 +445,7 @@ func _run() -> void:
 	await shot("decks_causeway.png")
 	await check_waits_for_unreachable_player()
 	print("INFO fps on the causeway: ", Engine.get_frames_per_second())
-	await clear_and_call("Enemies/EnemyGroup3", "Checkpoint4", 3)
-
-	await board_and_ride(3, "ferry 3", func(): pass)
-	await walk("off the last ferry", 1.2, 3.0)
-	move_players(w(0, -49))
-	await wait(1.5)
-	check("end area finishes the level", state() == "levelfinished", state())
+	await barge_fight()
 	print("RESULT fails=", fails)
 	get_tree().quit(1 if fails > 0 else 0)
 
@@ -474,3 +468,138 @@ func check_waits_for_unreachable_player() -> void:
 
 func check_any_mage_in_range() -> bool:
 	return group_enemies("Enemies/EnemyGroup3").any(_can_cast_at_a_player)
+
+
+# ---- The barge fight. ----
+const BARGE_STOPS := [Vector3(1.5, 0, -129), Vector3(1.5, 0, -117), Vector3(1.5, 0, -150), Vector3(28.5, 0, -163), Vector3(28.5, 0, -186)]
+
+
+func barge() -> RotorBarge:
+	return world.get_node("Level/Barge") as RotorBarge
+
+
+func barge_at(stop: int) -> bool:
+	var at: Vector3 = barge().body.global_position
+	return Vector2(at.x - BARGE_STOPS[stop].x, at.z - BARGE_STOPS[stop].z).length() < 0.1
+
+
+func wave(number: int) -> Array:
+	return group_enemies("Enemies/BargeWave%d" % number)
+
+
+func stowed(enemies: Array) -> bool:
+	return enemies.all(func(e): return not e.visible and e.process_mode == Node.PROCESS_MODE_DISABLED)
+
+
+func aboard(node: Node3D) -> bool:
+	return barge().deck.contains(node.global_position)
+
+
+## Boards in line, one carrier behind the other, so the bazooka points forward at the waves.
+func board_barge() -> bool:
+	var list := players()
+	var spot := w(0, -35)
+	place(spot + Vector3(0, 0, -2), spot + Vector3(0, 0, 2))
+	await wait(0.6)
+	if muzzle_direction().z > 0.0:
+		place(spot + Vector3(0, 0, 2), spot + Vector3(0, 0, -2))
+		await wait(0.6)
+	Input.action_press(list[0].action_up)
+	Input.action_press(list[1].action_up)
+	var on: bool = await wait_until(func(): return players().all(func(p): return barge().deck.contains(p.global_position, 1.5)), 8.0)
+	Input.action_release(list[0].action_up)
+	Input.action_release(list[1].action_up)
+	return on and await wait_until(func(): return barge().is_moving(), 3.0)
+
+
+## Watches a wave from its drop to `seconds` later: lands on the deck, closes in, and nobody walks off.
+func watch_wave(number: int, label: String, seconds: float) -> void:
+	var enemies := wave(number)
+	var landed: bool = await wait_until(func(): return enemies.all(func(e): return e.visible and e.process_mode == Node.PROCESS_MODE_INHERIT), 6.0)
+	await wait(0.3)
+	check(label + ": every enemy drops onto the moving deck", landed and enemies.all(func(e): return aboard(e) and e.is_on_floor()), "%d enemies" % enemies.size())
+	var before := 0.0
+	for e in enemies:
+		before += _player_distance(e)
+	var deck_y: float = barge().body.global_position.y
+	var lowest := [INF]
+	var watch := func():
+		for e in enemies:
+			if is_instance_valid(e) and e.is_alive():
+				lowest[0] = minf(lowest[0], e.global_position.y - barge().body.global_position.y)
+	get_tree().physics_frame.connect(watch)
+	await wait(1.5)
+	var after := 0.0
+	var alive := enemies.filter(func(e): return is_instance_valid(e) and e.is_alive())
+	for e in alive:
+		after += _player_distance(e)
+	check(label + ": they chase the carriers across the deck", alive.size() < enemies.size() or after < before - 2.0, "summed distance %.1f -> %.1f" % [before, after])
+	await shot("decks_barge_wave%d.png" % number)
+	await wait(maxf(seconds - 1.5, 0.0))
+	get_tree().physics_frame.disconnect(watch)
+	check(label + ": none walk off the edge while chasing", lowest[0] > -1.0, "lowest %.2f m relative to the deck at y=%.2f" % [lowest[0], deck_y])
+
+
+func muzzle_direction() -> Vector3:
+	return world.get_active_weapon().get_node("WeaponSpecifics").muzzle.global_transform.basis.z
+
+
+## Fires real rockets along the carriers while the wave is aboard, then reports how many fell.
+func fire_rockets(number: int, shots: int) -> void:
+	var specifics := world.get_active_weapon().get_node("WeaponSpecifics")
+	var before := wave(number).size()
+	for i in shots:
+		specifics._request_fire_bullet()
+		await wait(1.4)
+	print("INFO wave %d: %d of %d down after %d real rockets fired along %s, carriers still aboard: %s" % [number, before - wave(number).size(), before, shots, str(muzzle_direction()), str(players().all(aboard))])
+
+
+func barge_fight() -> void:
+	kill_group("Enemies/EnemyGroup3")
+	var docked: bool = await wait_until(func(): return barge_at(1) and not barge().is_moving(), 12.0)
+	check("clearing the causeway sets Checkpoint4", cp() == "Checkpoint4", cp())
+	check("the barge comes to the causeway", docked, str(barge().body.global_position))
+	check("its waves wait out of sight", stowed(wave(1)) and stowed(wave(2)) and wave(1).size() == 5 and wave(2).size() == 7)
+	await wait(1.5)
+	check("the barge waits at the dock for the carriers", barge_at(1) and not barge().is_moving())
+	await shot("decks_barge_docked.png")
+
+	protect_players()
+	check("real input: walking aboard sets the barge off", await board_barge())
+	var mages := group_enemies("Enemies/BargeMages")
+	check("setting off wakes the mages on the perches", mages.size() == 2 and mages.all(func(m): return m.is_offensive))
+	await wait_until(func(): return wave(1).all(func(e): return e.process_mode == Node.PROCESS_MODE_INHERIT), 6.0)
+	await fire_rockets(1, 2)
+	await watch_wave(1, "wave 1", 3.0)
+	var hovering: bool = await wait_until(func(): return barge_at(2) and not barge().is_moving(), 20.0)
+	if wave(1).size() > 0:
+		await wait(1.5)
+		check("the barge hovers at its first stop while wave 1 lives", hovering and barge_at(2) and not barge().is_moving(), str(barge().body.global_position))
+	await shot("decks_barge_hover.png")
+	check("the carriers rode it all the way", players().all(aboard) and state() == "playing", state())
+	kill_group("Enemies/BargeWave1")
+	var left: bool = await wait_until(func(): return barge().is_moving() and barge().target_stop() == 3, 3.0)
+	check("clearing wave 1 sends the barge on", left)
+	await watch_wave(2, "wave 2", 3.0)
+	var fireballs := world.get_children().filter(func(c): return c is Fireball).size()
+	print("INFO fireballs in flight during wave 2: ", fireballs)
+
+	# Dying mid-voyage puts everything back at the dock.
+	gsm.transition_to("resettingcheckpoint")
+	await wait_until(func(): return state() == "playing", 20.0)
+	await wait(1.0)
+	check("after a death the barge is back at its dock", barge_at(1) and not barge().is_moving(), str(barge().body.global_position))
+	check("after a death both waves wait out of sight again", stowed(wave(1)) and stowed(wave(2)) and wave(1).size() == 5 and wave(2).size() == 7, "%d, %d" % [wave(1).size(), wave(2).size()])
+	check("after a death the mages wait again", group_enemies("Enemies/BargeMages").all(func(m): return not m.is_offensive))
+	protect_players()
+	check("real input: boarding again sets it off again", await board_barge())
+	await wait_until(func(): return not stowed(wave(1)) and wave(1).all(func(e): return e.process_mode == Node.PROCESS_MODE_INHERIT), 6.0)
+	kill_group("Enemies/BargeWave1")
+	await wait_until(func(): return barge().target_stop() == 3 and wave(2).all(func(e): return e.process_mode == Node.PROCESS_MODE_INHERIT), 12.0)
+	kill_group("Enemies/BargeWave2")
+	var arrived: bool = await wait_until(func(): return barge_at(4) and not barge().is_moving(), 30.0)
+	check("clearing wave 2 brings the barge to the end pad", arrived and players().all(aboard), str(barge().body.global_position))
+	await walk("off the barge onto the end pad", 1.4, 3.0)
+	move_players(w(9, -69))
+	await wait(1.5)
+	check("end area finishes the level", state() == "levelfinished", state())
