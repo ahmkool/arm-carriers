@@ -80,6 +80,8 @@ func _run() -> void:
 	await check_vent_blast()
 	await check_overdrive()
 	await check_weak_vent_shoves()
+	await check_prompt_retires()
+	await shot_controls_panel()
 	print("RESULT fails=", fails)
 	get_tree().quit(1 if fails > 0 else 0)
 
@@ -91,14 +93,20 @@ func check_heat_and_overheat() -> void:
 	var on_overheat := func(): overheats[0] += 1
 	rifle.fired.connect(on_fired)
 	rifle.overheated.connect(on_overheat)
+	check("the vent prompt starts hidden", not prompt().visible)
 	Input.action_press(back.action_shoot)
 	await wait(2.0)
+	# How many bolts fit in 2 s varies by a frame or two, so wait until clearly past the threshold.
+	await wait_until(func(): return rifle.heat >= PulseVentPrompt.TEACH_HEAT + 0.03, 0.5)
+	check_prompt_over_front("a hot barrel shows the vent prompt over the front carrier")
 	check("2 s of fire heats the barrel without overheating", rifle.heat > 0.4 and overheats[0] == 0, "heat %.2f" % rifle.heat)
 	await shot("rifle_hot.png")
 	var hot: bool = await wait_until(func(): return overheats[0] > 0, 3.0)
 	check("a held trigger overheats after about 3.6 s", hot, "%d shots" % shots[0])
 	var at_lock: int = shots[0]
-	await wait(1.2)
+	await wait(0.3)
+	check("an overheated rifle hides the vent prompt", not prompt().visible)
+	await wait(0.9)
 	check("an overheated rifle stops firing", shots[0] == at_lock, "%d extra" % (shots[0] - at_lock))
 	await tap(front.action_shoot)
 	check("an overheated rifle can't vent", rifle.is_overheated())
@@ -142,6 +150,10 @@ func check_vent_blast() -> void:
 	var on_vent := func(h, c, p): result.append_array([h, c, p])
 	rifle.vented.connect(on_vent)
 	rifle.heat = 0.9
+	await wait(0.3)
+	await shot("rifle_prompt_perfect.png")
+	# The barrel cooled a little while the prompt popped in.
+	rifle.heat = 0.9
 	await tap(front.action_shoot)
 	await shot("rifle_vent.png")
 	rifle.vented.disconnect(on_vent)
@@ -183,7 +195,9 @@ func check_overdrive() -> void:
 ## A low-heat vent doesn't kill a full-health robot, so it shows the shove on its own.
 func check_weak_vent_shoves() -> void:
 	await wait(OVERDRIVE_WAIT)
-	var enemy: EnemyLocal = living_enemies()[0]
+	# Stray bolts may have chipped some robots, and this one has to survive the vent.
+	var healthy := living_enemies().filter(func(e): return Health.from_target(e).current_hp > PulseVent.get_damage(0.3))
+	var enemy: EnemyLocal = healthy[0]
 	var forward := rifle.muzzle.global_basis.z
 	forward.y = 0.0
 	var origin := rifle.muzzle.global_position
@@ -216,3 +230,47 @@ func _place(enemy: EnemyLocal, at: Vector3) -> void:
 func _flat_distance(enemy: EnemyLocal, origin: Vector3) -> float:
 	var d := enemy.global_position - origin
 	return Vector2(d.x, d.z).length()
+
+
+func prompt() -> PulseVentPrompt:
+	for child in rifle.get_children():
+		if child is PulseVentPrompt:
+			return child
+	return null
+
+
+func check_prompt_over_front(label: String) -> void:
+	var p := prompt()
+	var offset := p.global_position - front.global_position
+	check(label, p.visible and Vector2(offset.x, offset.z).length() < 0.1 and offset.y > 2.5, "visible=%s offset=%s" % [p.visible, offset])
+
+
+## Hot vents count towards learning it: after three the prompt stays away even when hot.
+func check_prompt_retires() -> void:
+	var learned_before := PulseVentPrompt.learned_vents
+	print("INFO hot vents so far: ", learned_before)
+	while not PulseVentPrompt.is_learned():
+		rifle.heat = 0.6
+		await wait(0.1)
+		check_prompt_over_front("the prompt shows while still learning (%d vents)" % PulseVentPrompt.learned_vents)
+		await tap(front.action_shoot)
+		await wait(0.3)
+	rifle.heat = 0.7
+	await wait(0.3)
+	check("after %d hot vents the prompt retires" % PulseVentPrompt.VENTS_TO_LEARN, not prompt().visible)
+	rifle.heat = 0.0
+
+
+func shot_controls_panel() -> void:
+	var layer := CanvasLayer.new()
+	layer.layer = 100
+	add_child(layer)
+	var panel := (load("res://src/ui/controls/controls_info.tscn") as PackedScene).instantiate() as Control
+	layer.add_child(panel)
+	panel.show()
+	await wait(0.3)
+	var scroll := panel.get_node("MarginContainer/ScrollContainer") as ScrollContainer
+	scroll.scroll_vertical = int(scroll.get_v_scroll_bar().max_value)
+	await wait(0.2)
+	await shot("controls_panel.png")
+	layer.queue_free()

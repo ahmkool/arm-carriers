@@ -271,12 +271,12 @@ text = "Move"
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="TextureRect" type="TextureRect" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
-custom_minimum_size = Vector2(150, 0)
+[node name="KeyLabel" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
+custom_minimum_size = Vector2(150, 90)
 layout_mode = 2
-texture = ExtResource("7_u4328")
-expand_mode = 5
-stretch_mode = 5
+text = "R-OPTION"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="Control" type="Control" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
 visible = false
@@ -285,7 +285,7 @@ size_flags_horizontal = 3
 
 [node name="Label" type="Label" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer/HBoxContainer2"]
 layout_mode = 2
-text = "Shoot "
+text = "Shoot (right alt on PC)"
 
 [node name="HBoxContainer3" type="HBoxContainer" parent="MarginContainer/ScrollContainer/VBoxContainer/Controls/MarginContainer2/VBoxContainer/VBoxContainer"]
 layout_mode = 2

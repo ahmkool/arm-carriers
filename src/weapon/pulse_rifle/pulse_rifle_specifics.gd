@@ -80,11 +80,14 @@ var _overdrive_remaining := 0.0
 var _was_in_perfect_window := false
 var _glow_material: StandardMaterial3D
 var _heat_light: OmniLight3D
+var _vent_prompt: PulseVentPrompt
 
 
 func _ready() -> void:
 	_muzzle_flash.visible = false
 	_setup_heat_glow()
+	_vent_prompt = PulseVentPrompt.new()
+	add_child(_vent_prompt)
 
 
 func _physics_process(delta: float) -> void:
@@ -93,7 +96,9 @@ func _physics_process(delta: float) -> void:
 	_update_heat(delta)
 	var carry_info := pick_and_drop_handler.get_carry_info()
 	if not _is_carried_by_both(carry_info):
+		_vent_prompt.hide_prompt()
 		return
+	_update_vent_prompt(carry_info.secondary_carrier, delta)
 	_cue_perfect_window(carry_info.secondary_carrier)
 	_try_vent(carry_info.secondary_carrier)
 	_try_fire(carry_info.main_carrier)
@@ -139,6 +144,7 @@ func vent() -> int:
 	if perfect:
 		_overdrive_remaining = OVERDRIVE_SEC
 	_play_vent_feedback(vent_heat, forward, perfect)
+	PulseVentPrompt.note_vent(vent_heat)
 	vented.emit(vent_heat, hit_count, perfect)
 	return hit_count
 
@@ -205,6 +211,12 @@ func _update_heat(delta: float) -> void:
 	if _since_last_shot < HEAT_COOL_DELAY_SEC:
 		return
 	heat = maxf(0.0, heat - HEAT_COOL_PER_SEC * delta)
+
+
+## An overheated rifle can't vent, so the prompt hides while it is locked.
+func _update_vent_prompt(front_carrier: PlayerLocal, delta: float) -> void:
+	var ventable_heat := 0.0 if is_overheated() else heat
+	_vent_prompt.update_prompt(front_carrier, ventable_heat, is_in_perfect_window(), delta)
 
 
 ## A short buzz in the front carrier's hands the moment a perfect vent becomes possible.
