@@ -66,6 +66,15 @@ func _fizzle() -> void:
 	_schedule_delayed_free()
 
 
+func is_spent() -> bool:
+	return _spent
+
+
+## Blows the rocket up where it is, such as when the front carrier detonates it mid-air.
+func detonate() -> void:
+	_detonate()
+
+
 func _detonate() -> void:
 	if _spent:
 		return

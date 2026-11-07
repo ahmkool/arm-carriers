@@ -97,7 +97,7 @@ func check_heat_and_overheat() -> void:
 	Input.action_press(back.action_shoot)
 	await wait(2.0)
 	# How many bolts fit in 2 s varies by a frame or two, so wait until clearly past the threshold.
-	await wait_until(func(): return rifle.heat >= PulseVentPrompt.TEACH_HEAT + 0.03, 0.5)
+	await wait_until(func(): return rifle.heat >= PulseRifleSpecifics.TEACH_VENT_HEAT + 0.03, 0.5)
 	check_prompt_over_front("a hot barrel shows the vent prompt over the front carrier")
 	check("2 s of fire heats the barrel without overheating", rifle.heat > 0.4 and overheats[0] == 0, "heat %.2f" % rifle.heat)
 	await shot("rifle_hot.png")
@@ -232,9 +232,9 @@ func _flat_distance(enemy: EnemyLocal, origin: Vector3) -> float:
 	return Vector2(d.x, d.z).length()
 
 
-func prompt() -> PulseVentPrompt:
+func prompt() -> FrontCarrierPrompt:
 	for child in rifle.get_children():
-		if child is PulseVentPrompt:
+		if child is FrontCarrierPrompt:
 			return child
 	return null
 
@@ -247,17 +247,17 @@ func check_prompt_over_front(label: String) -> void:
 
 ## Hot vents count towards learning it: after three the prompt stays away even when hot.
 func check_prompt_retires() -> void:
-	var learned_before := PulseVentPrompt.learned_vents
+	var learned_before := FrontCarrierPrompt.get_uses("VENT")
 	print("INFO hot vents so far: ", learned_before)
-	while not PulseVentPrompt.is_learned():
+	while not FrontCarrierPrompt.is_learned("VENT"):
 		rifle.heat = 0.6
 		await wait(0.1)
-		check_prompt_over_front("the prompt shows while still learning (%d vents)" % PulseVentPrompt.learned_vents)
+		check_prompt_over_front("the prompt shows while still learning (%d vents)" % FrontCarrierPrompt.get_uses("VENT"))
 		await tap(front.action_shoot)
 		await wait(0.3)
 	rifle.heat = 0.7
 	await wait(0.3)
-	check("after %d hot vents the prompt retires" % PulseVentPrompt.VENTS_TO_LEARN, not prompt().visible)
+	check("after %d hot vents the prompt retires" % FrontCarrierPrompt.USES_TO_LEARN, not prompt().visible)
 	rifle.heat = 0.0
 
 

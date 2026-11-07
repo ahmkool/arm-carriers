@@ -1,16 +1,14 @@
-class_name PulseVentPrompt
+class_name FrontCarrierPrompt
 extends Node3D
-## Teaches the pulse rifle's vent: a "VENT" badge with the front carrier's shoot button,
-## floating over their head once the barrel is hot enough to vent well. It bobs faster and
-## turns to the overdrive colour in the perfect-vent window. After a few good vents in a
-## session it stops showing, since by then the carriers know the move.
+## Teaches a weapon's front-carrier move: a word such as "VENT" next to the front carrier's
+## shoot button, floating over their head while the move is worth doing. It bobs faster and
+## turns to the highlight colour when the move is at its best. After a few uses in a session
+## it stops showing, since by then the carriers know the move.
 
-## Good vents (at least `TEACH_HEAT` hot) before the prompt retires for the session.
-const VENTS_TO_LEARN := 3
-const TEACH_HEAT := 0.5
+## Uses of a move before its prompt retires for the session.
+const USES_TO_LEARN := 3
 ## Above the carry prompt's height, so the steep camera doesn't put the badge over the head.
 const HEAD_HEIGHT := 4.0
-## The game camera looks down from far away, so the badge is sized well above the carry prompt.
 ## The button sits left of the word, which the fixed camera never turns away from. The key
 ## text is anchored on its right edge and the word on its left, so they meet in the middle.
 const ICON_OFFSET := Vector3(-0.38, 0.0, 0.0)
@@ -22,17 +20,18 @@ const FONT := preload("res://assets/fonts/Lilita_One/LilitaOne-Regular.ttf")
 const GAMEPAD_ICON := preload("res://assets/sprites/ui/controls/T_X_RB_Light.png")
 const SPACE_ICON := preload("res://assets/sprites/ui/controls/T_Space_Key_White.png")
 const TEXT_COLOR := Color(1.0, 0.85, 0.55)
-const PERFECT_COLOR := Color(0.7, 1.0, 1.0)
+const HIGHLIGHT_COLOR := Color(0.7, 1.0, 1.0)
 const SHOW_SEC := 0.2
 const HIDE_SEC := 0.14
 const BOB_AMOUNT := 0.08
 const BOB_HZ := 2.0
-const PERFECT_BOB_HZ := 5.0
-const PERFECT_PULSE := 0.12
+const HIGHLIGHT_BOB_HZ := 5.0
+const HIGHLIGHT_PULSE := 0.12
 
-## Shared across rifles and levels, so the prompt retires once per play session.
-static var learned_vents := 0
+## Uses per move, shared across weapons and levels, so each prompt retires once per session.
+static var _uses := {}
 
+var _word := ""
 var _icon: Sprite3D
 var _key_label: Label3D
 var _text: Label3D
@@ -42,41 +41,46 @@ var _tween: Tween
 var _bound_action := ""
 
 
+func _init(word: String) -> void:
+	_word = word
+
+
 func _ready() -> void:
 	top_level = true
 	_icon = _make_icon()
 	_key_label = _make_label(56, KEY_TEXT_OFFSET, HORIZONTAL_ALIGNMENT_RIGHT)
 	_text = _make_label(96, TEXT_OFFSET, HORIZONTAL_ALIGNMENT_LEFT)
-	_text.text = "VENT"
+	_text.text = _word
 	scale = Vector3.ZERO
 	visible = false
 
 
-static func is_learned() -> bool:
-	return learned_vents >= VENTS_TO_LEARN
+static func get_uses(word: String) -> int:
+	return _uses.get(word, 0)
 
 
-## A vent hot enough to have been worth waiting for counts towards retiring the prompt.
-static func note_vent(heat: float) -> void:
-	if heat < TEACH_HEAT:
-		return
-	learned_vents += 1
+static func is_learned(word: String) -> bool:
+	return get_uses(word) >= USES_TO_LEARN
 
 
-func update_prompt(front_carrier: PlayerLocal, heat: float, perfect: bool, delta: float) -> void:
-	var wanted := _should_show(front_carrier, heat)
-	_set_shown(wanted)
-	if not wanted:
+static func note_use(word: String) -> void:
+	_uses[word] = get_uses(word) + 1
+
+
+func update_prompt(front_carrier: PlayerLocal, wanted: bool, highlight: bool, delta: float) -> void:
+	var showing := wanted and _can_show(front_carrier)
+	_set_shown(showing)
+	if not showing:
 		return
 	_bind_to(front_carrier)
 	_time += delta
-	var hz := PERFECT_BOB_HZ if perfect else BOB_HZ
+	var hz := HIGHLIGHT_BOB_HZ if highlight else BOB_HZ
 	var bob := sin(_time * TAU * hz)
 	global_position = front_carrier.global_position + Vector3.UP * (HEAD_HEIGHT + bob * BOB_AMOUNT)
-	_text.modulate = PERFECT_COLOR if perfect else TEXT_COLOR
+	_text.modulate = HIGHLIGHT_COLOR if highlight else TEXT_COLOR
 	if _tween != null and _tween.is_running():
 		return
-	var pulse := 1.0 + (bob * PERFECT_PULSE if perfect else 0.0)
+	var pulse := 1.0 + (bob * HIGHLIGHT_PULSE if highlight else 0.0)
 	scale = Vector3.ONE * pulse
 
 
@@ -84,14 +88,12 @@ func hide_prompt() -> void:
 	_set_shown(false)
 
 
-func _should_show(front_carrier: PlayerLocal, heat: float) -> bool:
-	if is_learned():
+func _can_show(front_carrier: PlayerLocal) -> bool:
+	if is_learned(_word):
 		return false
 	if not is_instance_valid(front_carrier):
 		return false
-	if front_carrier.is_dead:
-		return false
-	return heat >= TEACH_HEAT
+	return not front_carrier.is_dead
 
 
 ## Shows the button the front carrier would actually press: their pad's RB when they have

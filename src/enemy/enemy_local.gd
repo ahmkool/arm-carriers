@@ -407,6 +407,16 @@ func spawn_damage_vfx() -> void:
 	fx.global_position = global_position
 
 
+## Stretches the current hit reaction to `seconds`. Call it right after damaging the enemy.
+func hold_stagger(seconds: float) -> void:
+	if not _is_in_taking_damage_state():
+		return
+	var current := enemy_state_machine.current_state
+	if not current.has_method("hold_hit"):
+		return
+	current.call("hold_hit", seconds)
+
+
 func begin_knockback(knockback_speed: float, duration: float) -> void:
 	_knockback_time_remaining = 0.0
 	if knockback_speed <= 0.0 or duration <= 0.0:

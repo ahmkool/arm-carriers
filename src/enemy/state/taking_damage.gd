@@ -16,6 +16,11 @@ func refresh_hit() -> void:
 	_begin_hit_reaction()
 
 
+## Keeps the enemy reeling for at least `seconds` from now, for a stagger longer than a hit.
+func hold_hit(seconds: float) -> void:
+	_time_remaining = maxf(_time_remaining, seconds)
+
+
 func _begin_hit_reaction() -> void:
 	_time_remaining = hit_duration_seconds
 	enemy.velocity = Vector3.ZERO

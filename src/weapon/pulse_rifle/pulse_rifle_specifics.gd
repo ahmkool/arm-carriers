@@ -36,6 +36,9 @@ const OVERHEAT_LOCK_SEC := 2.0
 ## Below this a vent is only a dry click: too little heat to blast with.
 const MIN_VENT_HEAT := 0.15
 const PERFECT_VENT_HEAT := 0.8
+## The vent prompt shows from this heat, and only vents this hot count towards learning it.
+const TEACH_VENT_HEAT := 0.5
+const VENT_WORD := "VENT"
 const OVERDRIVE_SEC := 2.5
 const OVERDRIVE_FIRE_INTERVAL_SEC := 0.065
 ## Vents at least this hot shove the carriers back like a bazooka shot.
@@ -80,13 +83,13 @@ var _overdrive_remaining := 0.0
 var _was_in_perfect_window := false
 var _glow_material: StandardMaterial3D
 var _heat_light: OmniLight3D
-var _vent_prompt: PulseVentPrompt
+var _vent_prompt: FrontCarrierPrompt
 
 
 func _ready() -> void:
 	_muzzle_flash.visible = false
 	_setup_heat_glow()
-	_vent_prompt = PulseVentPrompt.new()
+	_vent_prompt = FrontCarrierPrompt.new(VENT_WORD)
 	add_child(_vent_prompt)
 
 
@@ -144,7 +147,7 @@ func vent() -> int:
 	if perfect:
 		_overdrive_remaining = OVERDRIVE_SEC
 	_play_vent_feedback(vent_heat, forward, perfect)
-	PulseVentPrompt.note_vent(vent_heat)
+	_note_vent_learned(vent_heat)
 	vented.emit(vent_heat, hit_count, perfect)
 	return hit_count
 
@@ -213,10 +216,18 @@ func _update_heat(delta: float) -> void:
 	heat = maxf(0.0, heat - HEAT_COOL_PER_SEC * delta)
 
 
-## An overheated rifle can't vent, so the prompt hides while it is locked.
+## Shown once the barrel is hot enough to vent well. An overheated rifle can't vent, so the
+## prompt hides while it is locked.
 func _update_vent_prompt(front_carrier: PlayerLocal, delta: float) -> void:
-	var ventable_heat := 0.0 if is_overheated() else heat
-	_vent_prompt.update_prompt(front_carrier, ventable_heat, is_in_perfect_window(), delta)
+	var worth_venting := heat >= TEACH_VENT_HEAT and not is_overheated()
+	_vent_prompt.update_prompt(front_carrier, worth_venting, is_in_perfect_window(), delta)
+
+
+## Only a vent hot enough to have been worth waiting for counts towards retiring the prompt.
+func _note_vent_learned(vent_heat: float) -> void:
+	if vent_heat < TEACH_VENT_HEAT:
+		return
+	FrontCarrierPrompt.note_use(VENT_WORD)
 
 
 ## A short buzz in the front carrier's hands the moment a perfect vent becomes possible.

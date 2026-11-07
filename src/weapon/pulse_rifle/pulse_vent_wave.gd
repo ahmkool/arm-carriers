@@ -2,7 +2,7 @@ class_name PulseVentWave
 extends MeshInstance3D
 ## The visible vent blast: a flat cone-shaped shockwave that sweeps out from the muzzle to
 ## the blast's range and fades. The mesh points along +Z with a radius of 1, and the node's
-## scale grows it to the range.
+## scale grows it to the range. A half angle of 180 degrees makes a full ring.
 
 const SWEEP_SEC := 0.2
 const FADE_SEC := 0.18
@@ -14,13 +14,15 @@ const FILL_ALPHA := 0.22
 const HEIGHT_ABOVE_GROUND := 0.35
 
 var _reach := 1.0
+var _half_angle_deg := PulseVent.HALF_ANGLE_DEG
 var _elapsed := 0.0
 var _color := Color.WHITE
 var _material: StandardMaterial3D
 
 
-static func spawn(parent: Node, origin: Vector3, forward: Vector3, reach: float, color: Color) -> PulseVentWave:
+static func spawn(parent: Node, origin: Vector3, forward: Vector3, reach: float, color: Color, half_angle_deg := PulseVent.HALF_ANGLE_DEG) -> PulseVentWave:
 	var wave := PulseVentWave.new()
+	wave._half_angle_deg = half_angle_deg
 	parent.add_child(wave)
 	var flat_forward := Vector3(forward.x, 0.0, forward.z).normalized()
 	wave.global_position = Vector3(origin.x, origin.y - HEIGHT_ABOVE_GROUND, origin.z)
@@ -65,7 +67,7 @@ func _apply(time: float) -> void:
 func _build_mesh() -> ArrayMesh:
 	var verts := PackedVector3Array()
 	var colors := PackedColorArray()
-	var half := deg_to_rad(PulseVent.HALF_ANGLE_DEG)
+	var half := deg_to_rad(_half_angle_deg)
 	for i in SEGMENTS:
 		var a0 := lerpf(-half, half, float(i) / SEGMENTS)
 		var a1 := lerpf(-half, half, float(i + 1) / SEGMENTS)

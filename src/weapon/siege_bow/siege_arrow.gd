@@ -5,6 +5,7 @@ extends Node3D
 ## enemies until it has hit `pierce_hits` of them or its head reaches its range.
 
 signal spent(head_distance: float, hit_count: int)
+signal hit_enemy(enemy: Node3D)
 
 ## Tail to the base of the head. Matches siege_arrow_visual.tscn.
 const LENGTH := 8.5
@@ -68,6 +69,7 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 	_hit_count += 1
 	_play_hit_feedback(body)
+	hit_enemy.emit(body)
 	if _hit_count >= _pierce_hits:
 		_finish()
 
