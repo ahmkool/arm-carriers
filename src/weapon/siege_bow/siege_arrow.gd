@@ -2,7 +2,8 @@ class_name SiegeArrow
 extends Node3D
 ## The origin is the arrow's tail and it points along -Z, so the arrow starts exactly where
 ## it sat on the string. It flies through terrain, like the bazooka's rockets, and pierces
-## enemies until it has hit `pierce_hits` of them or its head reaches its range.
+## enemies until it has hit `pierce_hits` of them or its head reaches its range. Fireballs it
+## touches are popped without using up a pierce.
 
 signal spent(head_distance: float, hit_count: int)
 signal hit_enemy(enemy: Node3D)
@@ -29,6 +30,7 @@ var _is_spent := false
 
 func _ready() -> void:
 	_hit_area.body_entered.connect(_on_body_entered)
+	_hit_area.area_entered.connect(_on_area_entered)
 
 
 ## `bow_position` is where range is measured from. Enemies behind it are never hit, because
@@ -72,6 +74,18 @@ func _on_body_entered(body: Node3D) -> void:
 	hit_enemy.emit(body)
 	if _hit_count >= _pierce_hits:
 		_finish()
+
+
+func _on_area_entered(area: Area3D) -> void:
+	if _is_spent:
+		return
+	var fireball := area.get_parent() as Fireball
+	if fireball == null or _is_behind_bow(fireball):
+		return
+	var pop := POP_SCENE.instantiate() as Node3D
+	get_tree().current_scene.add_child(pop)
+	pop.global_position = fireball.global_position
+	fireball.queue_free()
 
 
 func _is_behind_bow(body: Node3D) -> bool:

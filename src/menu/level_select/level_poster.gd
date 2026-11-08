@@ -31,6 +31,10 @@ const TAG_ROW_STEP := 74.0
 const TAG_FOCUS_SCALE := 1.18
 const TAG_FOCUS_RING := Color(1.0, 0.86, 0.45)
 const CHECK_RADIUS := 12.0
+const LOCKED_PAPER := Color(0.62, 0.55, 0.43)
+const LOCKED_INK := Color(0.27, 0.14, 0.06, 0.55)
+const CHAIN_COLOR := Color(0.36, 0.34, 0.33)
+const CHAIN_LINK := Vector2(26.0, 14.0)
 
 var level: Dictionary
 var rest_position := Vector2.ZERO
@@ -47,13 +51,26 @@ var _weapon_icons: Array[Texture2D] = []
 var _completed_weapons: Dictionary = {}
 var _focused_weapon := -1
 var _focus_pulse := 0.0
+var _lock_reason := ""
+## Shrinks the poster when the rope is too short for every poster at full size.
+var _fit_scale := 1.0
 
 
-## `completed_weapons` holds the ids of the weapons that have beaten this level.
-func setup(p_level: Dictionary, stamped: bool, completed_weapons: Array[String]) -> void:
+## `completed_weapons` holds the ids of the weapons that have beaten this level, `weapon_ids` the
+## ones it can be played with now. A non-empty `lock_reason` hangs it locked, saying how to open it.
+func setup(
+	p_level: Dictionary,
+	stamped: bool,
+	completed_weapons: Array[String],
+	weapon_ids: Array[String],
+	lock_reason: String,
+	fit_scale: float,
+) -> void:
 	level = p_level
 	_stamped = stamped
-	_weapon_ids = LevelSelectCatalog.weapons_for(level)
+	_lock_reason = lock_reason
+	_fit_scale = fit_scale
+	_weapon_ids = [] if is_locked() else weapon_ids
 	for weapon_id in _weapon_ids:
 		_weapon_icons.append(WeaponCatalog.icon(weapon_id))
 	for weapon_id in completed_weapons:
@@ -71,13 +88,16 @@ func _process(delta: float) -> void:
 	_size_spring.target = SELECTED_SCALE if _selected else 1.0
 	_size_spring.step(step_delta)
 	_swing_spring.step(step_delta)
-	scale = Vector2.ONE * _size_spring.value
+	scale = Vector2.ONE * _size_spring.value * _fit_scale
 	rotation_degrees = _swing_spring.value + sin(_time * 1.5) * 1.4
 	self_modulate = Color.WHITE if _selected else Color(0.86, 0.86, 0.86)
 	_step_focus_pulse(step_delta)
 
 
 func _draw() -> void:
+	if is_locked():
+		_draw_locked()
+		return
 	_draw_paper()
 	_draw_title()
 	_draw_portrait()
@@ -85,6 +105,16 @@ func _draw() -> void:
 	_draw_peg()
 	_draw_stamp()
 	_draw_weapon_tags()
+
+
+func is_locked() -> bool:
+	return not _lock_reason.is_empty()
+
+
+## A rattle on its peg when players try to pick it while it is locked.
+func play_denied() -> void:
+	_swing_spring.velocity += 90.0 * (1.0 if randf() < 0.5 else -1.0)
+	_size_spring.velocity -= 1.2
 
 
 func set_selected(selected: bool) -> void:
@@ -108,7 +138,7 @@ func weapon_tag_point(index: int) -> Vector2:
 
 
 func center_point() -> Vector2:
-	return rest_position + POSTER_SIZE * Vector2(0.5, 0.5 * SELECTED_SCALE)
+	return rest_position + POSTER_SIZE * Vector2(0.5, 0.5 * SELECTED_SCALE * _fit_scale)
 
 
 func play_enter(delay: float) -> void:
@@ -152,13 +182,47 @@ func _on_stamp_landed() -> void:
 	stamp_landed.emit()
 
 
-func _draw_paper() -> void:
+func _draw_paper(paper := PAPER) -> void:
 	var shadow := _outline.duplicate()
 	for index in shadow.size():
 		shadow[index] += Vector2(7.0, 9.0)
 	draw_colored_polygon(shadow, PAPER_SHADOW)
-	draw_colored_polygon(_outline, PAPER)
+	draw_colored_polygon(_outline, paper)
 	draw_rect(Rect2(Vector2(14.0, 14.0), POSTER_SIZE - Vector2(28.0, 28.0)), Color(INK, 0.45), false, 3.0)
+
+
+## Faded paper, no name, chained shut, with what opens it written below.
+func _draw_locked() -> void:
+	_draw_paper(LOCKED_PAPER)
+	draw_string(FONT, Vector2(0.0, 66.0), "???", HORIZONTAL_ALIGNMENT_CENTER, POSTER_SIZE.x, 42, LOCKED_INK)
+	draw_rect(PORTRAIT_RECT, Color(INK, 0.12))
+	_draw_chain(PORTRAIT_RECT.position, PORTRAIT_RECT.end)
+	_draw_chain(Vector2(PORTRAIT_RECT.end.x, PORTRAIT_RECT.position.y), Vector2(PORTRAIT_RECT.position.x, PORTRAIT_RECT.end.y))
+	_draw_padlock(PORTRAIT_RECT.get_center())
+	draw_string(FONT, Vector2(0.0, 334.0), "LOCKED", HORIZONTAL_ALIGNMENT_CENTER, POSTER_SIZE.x, 34, STAMP_RED)
+	draw_string(FONT, Vector2(20.0, 376.0), _lock_reason.to_upper(), HORIZONTAL_ALIGNMENT_CENTER, POSTER_SIZE.x - 40.0, 22, INK)
+	_draw_peg()
+
+
+func _draw_chain(from: Vector2, to: Vector2) -> void:
+	var direction := (to - from).normalized()
+	var link_count := int(from.distance_to(to) / (CHAIN_LINK.x * 0.8))
+	for index in link_count + 1:
+		var at := from.lerp(to, float(index) / link_count)
+		draw_set_transform(at, direction.angle() + (PI * 0.5 if index % 2 == 1 else 0.0))
+		var link := Rect2(-CHAIN_LINK * 0.5, CHAIN_LINK)
+		draw_rect(link, Color(0.1, 0.05, 0.02, 0.5), false, 7.0)
+		draw_rect(link, CHAIN_COLOR, false, 4.0)
+	draw_set_transform(Vector2.ZERO)
+
+
+func _draw_padlock(at: Vector2) -> void:
+	draw_arc(at + Vector2(0.0, -14.0), 22.0, PI, TAU, 20, INK, 9.0, true)
+	draw_arc(at + Vector2(0.0, -14.0), 22.0, PI, TAU, 20, CHAIN_COLOR, 5.0, true)
+	draw_rect(Rect2(at + Vector2(-34.0, -14.0), Vector2(68.0, 54.0)), Color(0.55, 0.38, 0.14))
+	draw_rect(Rect2(at + Vector2(-34.0, -14.0), Vector2(68.0, 54.0)), INK, false, 4.0)
+	draw_circle(at + Vector2(0.0, 6.0), 7.0, INK, true, -1.0, true)
+	draw_rect(Rect2(at + Vector2(-3.0, 8.0), Vector2(6.0, 18.0)), INK)
 
 
 func _draw_title() -> void:

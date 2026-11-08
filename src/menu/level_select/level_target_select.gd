@@ -3,6 +3,7 @@ extends Control
 ## Level select: wanted posters hang in the menu's sky and the players shoot the one they want.
 ## Left/right aims between posters, up/down switches tab, accept picks a poster. A level that can
 ## be played with several weapons then asks for one: left/right picks it, accept fires, cancel backs out.
+## Locked levels hang chained shut and rattle when picked; see LevelSelectCatalog for what opens them.
 
 const LEFT_ACTIONS: Array[StringName] = [&"ui_left", &"p0_left", &"p1_left"]
 const RIGHT_ACTIONS: Array[StringName] = [&"ui_right", &"p0_right", &"p1_right"]
@@ -39,6 +40,9 @@ const ENTER_STAGGER_SECONDS := 0.07
 const HINT_TEXT := "Left / Right: aim\nUp / Down: tab\nEnter / A: pick"
 const WEAPON_HINT_TEXT := "Arrows: weapon\nEnter / A: FIRE!\nEsc / B: back"
 const DIMMED_POSTER_ALPHA := 0.4
+const LOCKED_TAB_ALPHA := 0.55
+## Room left between neighbouring posters before they shrink to fit the rope.
+const POSTER_GAP := 24.0
 
 ## Survive the menu scene reloading after a level, so players return where they left off.
 static var _remembered_group := 0
@@ -140,7 +144,7 @@ func open() -> void:
 	_crosshair.visible = true
 	set_process(true)
 	_backdrop.tuck_logo(true)
-	_show_group(_remembered_group, _remembered_poster)
+	_show_group(clampi(_remembered_group, 0, LevelSelectCatalog.GROUPS.size() - 1), _remembered_poster)
 
 
 ## Fires the rocket at the chosen poster. Returns once the blast has played.
@@ -168,7 +172,7 @@ func _build_rail() -> void:
 	_rail.add_theme_constant_override("separation", 12)
 	add_child(_rail)
 	for index in LevelSelectCatalog.GROUPS.size():
-		var tab := _make_rail_button(LevelSelectCatalog.GROUPS[index]["name"], 38)
+		var tab := _make_rail_button(LevelSelectCatalog.GROUPS[index]["name"], 32)
 		tab.pressed.connect(_on_tab_pressed.bind(index))
 		_tabs.append(tab)
 	var back := _make_rail_button("Back", 28)
@@ -224,7 +228,7 @@ func _show_group(group_index: int, poster_index: int) -> void:
 	_clear_posters()
 	var levels: Array = LevelSelectCatalog.GROUPS[group_index]["levels"]
 	for index in levels.size():
-		_add_poster(levels[index], index, levels.size())
+		_add_poster(group_index, index, levels.size())
 	_refresh_tabs()
 	_select_poster(clampi(poster_index, 0, levels.size() - 1))
 	_snap_crosshair()
@@ -236,12 +240,15 @@ func _clear_posters() -> void:
 	_posters.clear()
 
 
-func _add_poster(level: Dictionary, index: int, count: int) -> void:
+func _add_poster(group_index: int, index: int, count: int) -> void:
+	var level: Dictionary = LevelSelectCatalog.GROUPS[group_index]["levels"][index]
 	var poster := LevelPoster.new()
 	var completed_weapons := _completed_weapons(level)
 	var new_wins := _unseen_wins(level, completed_weapons)
 	var is_new_win := not new_wins.is_empty()
-	poster.setup(level, not completed_weapons.is_empty() and not is_new_win, completed_weapons)
+	var stamped := not completed_weapons.is_empty() and not is_new_win
+	var lock_reason := LevelSelectCatalog.lock_reason(group_index, index)
+	poster.setup(level, stamped, completed_weapons, LevelSelectCatalog.offered_weapons(level), lock_reason, _poster_fit_scale(count))
 	var center_x := _poster_center_x(index, count)
 	poster.rest_position = Vector2(center_x - LevelPoster.POSTER_SIZE.x * 0.5, _rope_y(center_x) + 4.0)
 	poster.mouse_entered.connect(_on_poster_hovered.bind(poster))
@@ -278,8 +285,17 @@ func _unseen_wins(level: Dictionary, completed_weapons: Array[String]) -> Array[
 
 
 func _poster_center_x(index: int, count: int) -> float:
-	var row_width := size.x - POSTER_ROW_LEFT - POSTER_ROW_RIGHT_MARGIN
-	return POSTER_ROW_LEFT + row_width * (index + 0.5) / count
+	return POSTER_ROW_LEFT + _poster_row_width() * (index + 0.5) / count
+
+
+func _poster_row_width() -> float:
+	return size.x - POSTER_ROW_LEFT - POSTER_ROW_RIGHT_MARGIN
+
+
+## Selected posters grow, so leave room for that too.
+func _poster_fit_scale(count: int) -> float:
+	var room := _poster_row_width() / count - POSTER_GAP
+	return minf(1.0, room / (LevelPoster.POSTER_SIZE.x * LevelPoster.SELECTED_SCALE))
 
 
 func _rope_y(x: float) -> float:
@@ -306,6 +322,18 @@ func _snap_crosshair() -> void:
 func _refresh_tabs() -> void:
 	for index in _tabs.size():
 		_style_tab(_tabs[index], index == _group_index)
+		_tabs[index].text = _tab_text(index)
+		_tabs[index].modulate.a = 1.0 if LevelSelectCatalog.is_group_open(index) else LOCKED_TAB_ALPHA
+
+
+## The world's name and how many of its posters are stamped. A closed world shows its name only,
+## dimmed, and its posters say what opens it.
+func _tab_text(group_index: int) -> String:
+	var group: Dictionary = LevelSelectCatalog.GROUPS[group_index]
+	var group_name: String = group["name"]
+	if not LevelSelectCatalog.is_group_open(group_index):
+		return group_name
+	return "%s %d/%d" % [group_name, LevelSelectCatalog.cleared_count(group_index), group["levels"].size()]
 
 
 func _style_tab(button: Button, selected: bool) -> void:
@@ -397,12 +425,21 @@ func _go_back() -> void:
 
 ## A level with one weapon fires straight away; otherwise the players pick the weapon first.
 func _pick_poster() -> void:
+	if _posters[_poster_index].is_locked():
+		_deny_poster()
+		return
 	var level := _posters[_poster_index].level
-	var weapons := LevelSelectCatalog.weapons_for(level)
+	var weapons := LevelSelectCatalog.offered_weapons(level)
 	if weapons.size() == 1:
 		_fire(weapons[0])
 		return
 	_enter_weapon_choice(level)
+
+
+func _deny_poster() -> void:
+	_posters[_poster_index].play_denied()
+	_backdrop.thump()
+	_play_tick(0.55)
 
 
 func _enter_weapon_choice(level: Dictionary) -> void:
@@ -424,14 +461,14 @@ func _leave_weapon_choice() -> void:
 
 
 func _move_weapon(direction: int) -> void:
-	var count := LevelSelectCatalog.weapons_for(_posters[_poster_index].level).size()
+	var count := LevelSelectCatalog.offered_weapons(_posters[_poster_index].level).size()
 	_focus_weapon(posmod(_weapon_index + direction, count))
 	_play_tick(1.6)
 
 
 ## Jumps between the rows of weapon tags; the short second row catches the last tag.
 func _move_weapon_row(direction: int) -> void:
-	var count := LevelSelectCatalog.weapons_for(_posters[_poster_index].level).size()
+	var count := LevelSelectCatalog.offered_weapons(_posters[_poster_index].level).size()
 	var target_row := _weapon_index / LevelPoster.TAGS_PER_ROW + direction
 	var last_row := (count - 1) / LevelPoster.TAGS_PER_ROW
 	if target_row < 0 or target_row > last_row:
@@ -452,7 +489,7 @@ func _focus_weapon(index: int) -> void:
 
 
 func _remembered_weapon_index(level: Dictionary) -> int:
-	var weapons := LevelSelectCatalog.weapons_for(level)
+	var weapons := LevelSelectCatalog.offered_weapons(level)
 	var remembered: String = _remembered_weapons.get(level["scene"], "")
 	return maxi(weapons.find(remembered), 0)
 
@@ -466,7 +503,7 @@ func _set_other_posters_dimmed(dimmed: bool) -> void:
 
 func _fire_chosen_weapon() -> void:
 	var level := _posters[_poster_index].level
-	_fire(LevelSelectCatalog.weapons_for(level)[_weapon_index])
+	_fire(LevelSelectCatalog.offered_weapons(level)[_weapon_index])
 
 
 ## Asks about saved progress before the shot, so the rocket is always the last thing that happens.

@@ -31,7 +31,7 @@ Also, nothing here tests difficulty or fun. Only a person playing can. Say so wh
    ```
 
    Keep the JSON between runs: it also holds the scene's uid. Re-bake whenever the floor changes.
-4. **Add the level to the level select**: add an entry to a tab in `src/menu/level_select/level_select_catalog.gd`, with `"weapon": "<the scene's weapon id>"`. Add `"requires": "ranged"` if some enemies can't be reached on foot. Each tab fits about three posters. Every other weapon is offered too, so run the swap test described in "Playing a level with another weapon" in [level-authoring.md](level-authoring.md).
+4. **Add the level to the level select**: add an entry to a world in `src/menu/level_select/level_select_catalog.gd`, with `"weapon": "<the scene's weapon id>"`. Add `"requires": "ranged"` if some enemies can't be reached on foot. Worlds are in play order and each ends on its boss: a level opens when the one before it in its world is cleared, and a world opens when the previous world's boss is slain. So put a new level before the boss, and a new boss last. A `"challenge": true` group sits outside that chain and opens when its `"unlock_after"` level is cleared. Each world fits about four posters. Every other weapon is offered once the level is cleared, so run the swap test described in "Playing a level with another weapon" in [level-authoring.md](level-authoring.md). To play a locked level, set `unlock_all_levels` in `dev/dev_settings.tres`.
 5. **Test in the running game.** Copy `verify_saw_gauntlet.gd`, keep its helpers, and rewrite `_run()`:
 
    ```bash
@@ -144,6 +144,7 @@ This caused most of the problems, so check it for every section.
 - **Touching the lava is the fall:** the kill box sits right at the surface (`LAVA_FALL_Y`), and `lava_surface.gd` throws up a splash.
 - **Bridges:** `lava_bridge_platform.tscn` is a basalt slab that rises out of the lava. While lowered it is hidden and has no collision. Twin rails worked with the saw here; the catapult walks single file along one rail (not tested yet).
 - **Vents:** `add_vents` places `lava_vent.tscn`, one (cx, cz, phase) each. By default each runs a 4 s cycle: 1.3 s of warning, then 0.9 s of eruption. The rim on the ground has the same radius as the burn (1.45 m), measured from a body's origin, and it stays visible while the vent is quiet. Stagger `phase` to make waves. Vents burn enemies too, so keep waiting enemies and spawn points clear of them; the example asserts this.
+- **Tieflings:** the lava level's grunts are `src/enemy/enemy_tiefling.tscn`, the orc's setup (see blue orcs below) with the KayKit Tiefling and its sword. The example sets `level.melee_scene = "tiefling"` itself, so other levels that call `use_lava_environment()` keep skeletons.
 - **Scenery:** `add_lava_spouts` adds harmless, larger eruptions out in the lava, and `outcrops` adds rocks with no collision.
 - **Magma pockets:** `add_magma_pockets(cells, radius)` places dormant vents (`dormant = true` on `lava_vent.tscn`). They have no cycle and pulse a pale yellow. Any `explosion.tscn` whose centre lands within the pocket's radius plus half the blast radius sets one off (`LavaVent.explode_near`, called from `explosion.gd`). It bursts after 0.55 s and sets off every pocket within 6.6 m, so pockets two cells apart chain. It then stays spent for 10 s. Bursts burn carriers too. The bazooka and catapult set them off; the pulse rifle and siege bow don't make `explosion.tscn`, so with those weapons pockets are just floor. Enemies can wait on pockets, but keep spawn markers clear: the example asserts both. `tools/level_gen/verify_magma_pockets.gd` tests them.
 - **Unshaded materials ignore `EMISSION`.** The lava and vents first rendered pure black because of this. Write glowing colours to `ALBEDO` in an `unshaded` shader; values above 1 still trigger the environment's glow.
@@ -219,6 +220,16 @@ This caused most of the problems, so check it for every section.
 - **Ground markers on snow:** pale cyan was nearly invisible on white. Use a saturated blue at about 0.55 alpha.
 - **Rig_Large clips:** most are already in `assets/animations_source/animations/rig_large/skeleton/`. `RIG=Large` makes `extract_kaykit_animations.gd` read the Rig_Large packs.
 
+## Boss fights: the Clanker
+
+`tools/level_gen/example_clanker_boss.py` builds `world_local_clanker_boss.tscn`, a lava forge arena with one bridge, played with the catapult. The boss is `src/enemy/enemy_clanker.tscn` (KayKit Clanker, on the Rig_Large rig, so it reuses the skeleton clips). Its scripts are in `src/enemy/boss/clanker/`. Tune it through the exports on `ClankerBehavior` and `ClankerMoves`. `verify_clanker_boss.gd` tests it.
+
+- **Moves:** a punch up close, a floor smash at mid range, and slag lobbed from its exhausts at carriers who keep away (`slag_glob.tscn`: an orange ring fills, then a pool burns for 4 s). Below 50% HP it overheats: it roars, its eyes turn red, its exhausts burn, and its volleys add a glob beside each carrier and one between them.
+- **The shockwave sets off magma pockets.** The smash sends a ring outward at 9 m/s and ignites each pocket as it passes (12 m, 16 m when overheated). The roar's ring covers the whole arena. Pockets the Clanker sets off itself, and the chains they start, spare it (`LavaVent.ignite(spared)`).
+- **Pockets and vents hurt bosses, not kill them.** Anything with a `BossPhaseController` caught in a burst takes `LavaVent.boss_burn_damage` (6) once per burst instead of 9999. That's the counter: bomb a pocket the Clanker stands on. In testing, a bomb beside a pocket under it took 9 (the burn plus the blast).
+- **Test placement:** the forge pool in the middle is lava, and the bridge sinks once the fight starts. A test that teleports carriers onto either loses them, and the level quietly restarts and resets the boss. Check `state() == "playing"` after each section.
+- **Reading moves in a test:** the behavior's intent is rebuilt every frame, so it is empty mid-move. Read the move from the Attacking state.
+
 ## Testing
 
 ### Running the game
@@ -255,7 +266,8 @@ In the driver:
 
 ## Known issues in the game
 
-- **Level select space:** each tab in `level_select_catalog.gd` has room for about three posters. Beyond that, add a tab. A poster fits seven weapon tags under it, in two rows.
+- **Level select space:** each world in `level_select_catalog.gd` has room for about four posters; they shrink to fit narrow windows. Beyond that, add a world. A poster fits seven weapon tags under it, in two rows.
+- **Locked posters in menu drivers:** a driver that picks a poster must set `LevelSelectCatalog.force_unlock_all = true` first, or a locked poster only rattles. `verify_level_unlocks.gd` checks the unlock rules without touching the save.
 - **Simulating menu input in a driver:** send `InputEventAction` through `Input.parse_input_event`. `Input.action_press` was missed by the level select for some actions (`ui_left` never registered), probably a frame-timing issue.
 
 ## Code style

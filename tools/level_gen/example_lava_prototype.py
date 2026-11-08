@@ -65,6 +65,8 @@ level = Level("src/world/levels/world_local_lava.tscn", palette="lava", weapon="
               hint="[color=#ff8888]Catapult usage[/color]\n\nFront carrier: walk further ahead to throw further, closer for a short lob.\nBack carrier: press shoot when the ring is on the enemies !\nGlowing circles are about to erupt. They burn enemies too.\nPale pulsing cracks are magma pockets: bomb one and it bursts, setting off its neighbours.",
               music="relentless")  # the catapult's camera marker follows its landing ring, so the default camera fits
 level.use_lava_environment()
+level.melee_scene = "tiefling"  # tieflings instead of skeletons
+level.extra_ext.append(("PackedScene", None, "res://src/enemy/enemy_tiefling.tscn", "tiefling"))
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
 level.boxes = {"fall": (400, 1, 400), "field": (33, 3, 6), "caldera": (51, 3, 9), "forge": (51, 3, 9), "end": (27, 3, 9)}
 level.add_shell()

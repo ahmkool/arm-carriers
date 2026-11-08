@@ -19,6 +19,12 @@ func is_active() -> bool:
 	return OS.is_debug_build() or OS.has_feature("editor")
 
 
+func unlocks_all_levels() -> bool:
+	if not is_active():
+		return false
+	return _config.unlock_all_levels
+
+
 func apply_to_health(health: Health) -> void:
 	if not is_active():
 		return
@@ -99,3 +105,5 @@ func _apply_user_overrides(data: Dictionary) -> void:
 		_config.boss_hp_multiplier = float(data["boss_hp_multiplier"])
 	if data.has("enemy_hp_multiplier"):
 		_config.enemy_hp_multiplier = float(data["enemy_hp_multiplier"])
+	if data.has("unlock_all_levels"):
+		_config.unlock_all_levels = bool(data["unlock_all_levels"])

@@ -1,0 +1,111 @@
+[gd_scene load_steps=13 format=3 uid="uid://c3x4odngqo5yi"]
+
+[ext_resource type="Script" uid="uid://bxwx4rpdvbhs8" path="res://src/enemy/boss/clanker/slag_glob.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="Material_ring"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.45, 0.05, 0.5)
+
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Material_ring")
+inner_radius = 0.9
+rings = 40
+ring_segments = 6
+
+[sub_resource type="StandardMaterial3D" id="Material_fill"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.3, 0.02, 0.45)
+
+[sub_resource type="CylinderMesh" id="Mesh_fill"]
+material = SubResource("Material_fill")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.03
+radial_segments = 32
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Material_pool"]
+shading_mode = 0
+albedo_color = Color(2.2, 0.75, 0.12, 1)
+
+[sub_resource type="CylinderMesh" id="Mesh_pool"]
+material = SubResource("Material_pool")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.05
+radial_segments = 24
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Material_glob"]
+shading_mode = 0
+albedo_color = Color(2.5, 0.9, 0.15, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_glob"]
+material = SubResource("Material_glob")
+radius = 0.38
+height = 0.76
+radial_segments = 12
+rings = 6
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_burst"]
+emission_shape = 1
+emission_sphere_radius = 0.6
+direction = Vector3(0, 1, 0)
+spread = 55.0
+initial_velocity_min = 4.0
+initial_velocity_max = 9.0
+gravity = Vector3(0, -20, 0)
+scale_min = 0.6
+scale_max = 1.4
+
+[sub_resource type="StandardMaterial3D" id="Material_burst"]
+shading_mode = 0
+albedo_color = Color(2, 0.55, 0.08, 1)
+
+[sub_resource type="SphereMesh" id="Mesh_burst"]
+material = SubResource("Material_burst")
+radius = 0.12
+height = 0.24
+radial_segments = 6
+rings = 3
+
+[node name="SlagGlob" type="Node3D"]
+script = ExtResource("1_script")
+
+[node name="Ring" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_ring")
+
+[node name="Fill" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_fill")
+
+[node name="Pool" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.05, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_pool")
+
+[node name="Glob" type="MeshInstance3D" parent="."]
+top_level = true
+cast_shadow = 0
+mesh = SubResource("Mesh_glob")
+
+[node name="Burst" type="GPUParticles3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+cast_shadow = 0
+emitting = false
+amount = 30
+lifetime = 0.8
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("Particles_burst")
+draw_pass_1 = SubResource("Mesh_burst")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+light_color = Color(1, 0.5, 0.15, 1)
+omni_range = 4.5

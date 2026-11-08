@@ -53,6 +53,8 @@ func _send_action(action: StringName, pressed: bool) -> void:
 func _run() -> void:
 	await wait(3.0)
 	var menu := get_tree().current_scene
+	## Every poster and weapon open, whatever the save holds.
+	LevelSelectCatalog.force_unlock_all = true
 	menu.call("_on_play_pressed")
 	await wait(1.0)
 	level_select = menu.get_node("LevelSelectRoot") as LevelTargetSelect

@@ -24,6 +24,8 @@ const POCKET_RIM_COLOR := Color(1.0, 0.78, 0.25)
 @export var radius: float = 1.45
 ## Scenery vents out in the lava leave this off.
 @export var is_dangerous: bool = true
+## A boss (anything with a BossPhaseController) caught in a burst takes this once per burst, instead of dying.
+@export var boss_burn_damage: int = 6
 @export_group("Magma pocket")
 @export var dormant := false
 ## How long a pocket warns between being set off and bursting.
@@ -42,6 +44,11 @@ var _ignite_in := -1.0
 var _burst_time := -1.0
 var _spent_for := 0.0
 var _pulse := 0.0
+## Pockets only: a body that this burst, and the chain it starts, leaves unburned. A boss that sets pockets off
+## with its own shockwave isn't hurt by them.
+var _spared: Node3D
+## Bosses burned during the current burst, so each takes its damage once.
+var _bosses_burned: Array[Node3D] = []
 
 @onready var _ground: MeshInstance3D = $Ground
 @onready var _ground_material: ShaderMaterial = _ground.mesh.surface_get_material(0)
@@ -82,10 +89,12 @@ static func explode_near(tree: SceneTree, at_position: Vector3, blast_radius: fl
 			pocket.ignite()
 
 
-## Pockets only: bursts after its warning. Does nothing unless armed.
-func ignite() -> void:
+## Pockets only: bursts after its warning. Does nothing unless armed. `spared` is left unburned by this burst and
+## by the pockets it sets off.
+func ignite(spared: Node3D = null) -> void:
 	if not is_armed():
 		return
+	_spared = spared
 	_ignite_in = ignite_warning_seconds
 
 
@@ -134,7 +143,7 @@ func _chain() -> void:
 	for node in get_tree().get_nodes_in_group(POCKET_GROUP):
 		var other := node as LavaVent
 		if other != self and other.global_position.distance_to(global_position) <= chain_reach:
-			other.ignite()
+			other.ignite(_spared)
 
 
 func _show_warning(progress: float) -> void:
@@ -163,6 +172,7 @@ func _show_eruption(progress: float) -> void:
 
 func _start_eruption() -> void:
 	_erupting = true
+	_bosses_burned.clear()
 	_column.visible = true
 	_light.visible = true
 	_globs.emitting = true
@@ -191,8 +201,21 @@ func _burn_if_inside(body: Node3D) -> void:
 	var offset := body.global_position - global_position
 	if Vector2(offset.x, offset.z).length() > radius:
 		return
+	if dormant and is_instance_valid(_spared) and body == _spared:
+		return
+	if BossPhaseController.from_enemy(body) != null:
+		_burn_boss(body)
+		return
 	burned.emit(body)
 	Health.apply_damage(body, 9999, global_position)
+
+
+func _burn_boss(boss: Node3D) -> void:
+	if _bosses_burned.has(boss):
+		return
+	_bosses_burned.append(boss)
+	burned.emit(boss)
+	Health.apply_damage(boss, boss_burn_damage, global_position)
 
 
 func _play_sound() -> void:

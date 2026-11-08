@@ -31,6 +31,7 @@
 [ext_resource type="PackedScene" path="res://src/world/elements/lava/lava_surface.tscn" id="lava"]
 [ext_resource type="PackedScene" path="res://src/world/elements/lava/lava_embers.tscn" id="embers"]
 [ext_resource type="PackedScene" path="res://src/world/elements/lava/lava_vent.tscn" id="vent"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_tiefling.tscn" id="tiefling"]
 
 [sub_resource type="ProceduralSkyMaterial" id="PanoramaSkyMaterial_sky"]
 sky_top_color = Color(0.46, 0.34, 0.3, 1)
@@ -144,31 +145,31 @@ script = ExtResource("normal_group")
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
 
-[node name="EnemyLocal1" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal1" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, 1.4995)
 is_offensive = false
 
-[node name="EnemyLocal2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, 1.4995)
 is_offensive = false
 
-[node name="EnemyLocal3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, 1.4995)
 is_offensive = false
 
-[node name="EnemyLocal4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -13.4955, 0, -1.4995)
 is_offensive = false
 
-[node name="EnemyLocal5" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -1.4995)
 is_offensive = false
 
-[node name="EnemyLocal6" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal6" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -1.4995)
 is_offensive = false
 
-[node name="EnemyLocal7" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal7" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 16.4945, 0, -1.4995)
 is_offensive = false
 
@@ -177,31 +178,31 @@ script = ExtResource("normal_group")
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup2"]
 
-[node name="EnemyLocal1" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal1" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -70.4765)
 is_offensive = false
 
-[node name="EnemyLocal2" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -70.4765)
 is_offensive = false
 
-[node name="EnemyLocal3" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -70.4765)
 is_offensive = false
 
-[node name="EnemyLocal4" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal4" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.4965, 0, -67.4775)
 is_offensive = false
 
-[node name="EnemyLocal5" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -67.4775)
 is_offensive = false
 
-[node name="EnemyLocal6" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal6" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -67.4775)
 is_offensive = false
 
-[node name="EnemyLocal7" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal7" parent="Enemies/EnemyGroup2/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 13.4955, 0, -67.4775)
 is_offensive = false
 
@@ -210,55 +211,55 @@ script = ExtResource("normal_group")
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup3"]
 
-[node name="EnemyLocal1" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal1" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.4945, 0, -115.4615)
 is_offensive = false
 
-[node name="EnemyLocal2" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -115.4615)
 is_offensive = false
 
-[node name="EnemyLocal3" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -115.4615)
 is_offensive = false
 
-[node name="EnemyLocal4" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal4" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -115.4615)
 is_offensive = false
 
-[node name="EnemyLocal5" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal5" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 19.4935, 0, -115.4615)
 is_offensive = false
 
-[node name="EnemyLocal6" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal6" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -19.4935, 0, -106.4645)
 is_offensive = false
 
-[node name="EnemyLocal7" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal7" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 22.4925, 0, -106.4645)
 is_offensive = false
 
-[node name="EnemyLocal8" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal8" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.4945, 0, -94.4685)
 is_offensive = false
 
-[node name="EnemyLocal9" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal9" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 19.4935, 0, -94.4685)
 is_offensive = false
 
-[node name="EnemyLocal10" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal10" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -118.4605)
 is_offensive = false
 
-[node name="EnemyLocal11" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal11" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -118.4605)
 is_offensive = false
 
-[node name="EnemyLocal12" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal12" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -19.4935, 0, -109.4635)
 is_offensive = false
 
-[node name="EnemyLocal13" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal13" parent="Enemies/EnemyGroup3/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 22.4925, 0, -109.4635)
 is_offensive = false
 
@@ -317,15 +318,15 @@ mobility = 1
 cast_max_distance = 13.0
 cast_cooldown = 4.0
 
-[node name="EnemyLocal1" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal1" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -172.4425)
 is_offensive = false
 
-[node name="EnemyLocal2" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal2" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -172.4425)
 is_offensive = false
 
-[node name="EnemyLocal3" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("enemy")]
+[node name="EnemyLocal3" parent="Enemies/EnemyGroup4/InstancedEnemies" instance=ExtResource("tiefling")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -169.4435)
 is_offensive = false
 

@@ -7,6 +7,8 @@ func _ready() -> void:
 	get_tree().create_timer(50.0).timeout.connect(func(): print("WATCHDOG quit"); get_tree().quit(2))
 	await get_tree().create_timer(3.0).timeout
 	var menu := get_tree().current_scene
+	## Every poster and weapon open, whatever the save holds.
+	LevelSelectCatalog.force_unlock_all = true
 	menu.call("_on_play_pressed")
 	await get_tree().create_timer(1.0).timeout
 	var scene_id := OS.get_environment("MENU_LEVEL")
