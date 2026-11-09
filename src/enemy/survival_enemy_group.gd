@@ -1,10 +1,14 @@
 class_name SurvivalEnemyGroup
 extends EnemyGroup
 
+const SURVIVAL_TIMER_PATH := "UI/SurvivalTimer"
+
 @export var enemy_scene: PackedScene = preload("res://src/enemy/enemy_local.tscn")
 @export var spawner_scene: PackedScene = preload("res://src/enemy/spawn/enemy_spawner.tscn")
 @export var spawn_interval_curve: Curve
 @export_range(0.1, 600.0, 0.1) var fight_duration: float = 60.0
+## Shows the HUD countdown (UI/SurvivalTimer) while this wave runs.
+@export var show_timer_ui := true
 
 var signal_emitted := false
 
@@ -32,6 +36,28 @@ func trigger(offensive: bool = true) -> void:
 	_fight_elapsed = 0.0
 	_spawn_timer = 0.0
 	_spawn_one()
+	_bind_timer_ui()
+
+
+## True from trigger until the wave is cleared or reset.
+func is_running() -> bool:
+	return _started and not signal_emitted
+
+
+func get_time_remaining() -> float:
+	return maxf(fight_duration - _fight_elapsed, 0.0)
+
+
+func _bind_timer_ui() -> void:
+	if not show_timer_ui:
+		return
+	var world := LevelNodes.find_world(self)
+	if world == null:
+		return
+	var timer_ui := world.get_node_or_null(SURVIVAL_TIMER_PATH) as SurvivalTimer
+	if timer_ui == null:
+		return
+	timer_ui.bind(self)
 
 
 func reset() -> void:

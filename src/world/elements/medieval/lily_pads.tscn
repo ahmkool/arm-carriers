@@ -1,0 +1,66 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.22, 0.45, 0.16, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2"]
+albedo_color = Color(0.96, 0.8, 0.86, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0.42
+bottom_radius = 0.42
+height = 0.03
+radial_segments = 12
+rings = 1
+
+[sub_resource type="SphereMesh" id="SphereMesh_4"]
+material = SubResource("StandardMaterial3D_2")
+radius = 0.12
+height = 0.14
+radial_segments = 8
+rings = 3
+
+[node name="LilyPads" type="Node3D"]
+
+[node name="Pad0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.822, 0, 0, 0, 1, 0, 0, 0, 0.822, -0.7337, 0.03, 0.0885)
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0
+
+[node name="Flower0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7337, 0.08, 0.0885)
+mesh = SubResource("SphereMesh_4")
+cast_shadow = 0
+
+[node name="Pad1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6393, 0, 0, 0, 1, 0, 0, 0, 0.6393, 0.291, 0.03, 0.2514)
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0
+
+[node name="Pad2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.7556, 0, 0, 0, 1, 0, 0, 0, 0.7556, -1.3631, 0.03, 0.6749)
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0
+
+[node name="Pad3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.8822, 0, 0, 0, 1, 0, 0, 0, 0.8822, -0.7439, 0.03, 0.9913)
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0
+
+[node name="Flower3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.7439, 0.08, 0.9913)
+mesh = SubResource("SphereMesh_4")
+cast_shadow = 0
+
+[node name="Pad4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9834, 0, 0, 0, 1, 0, 0, 0, 0.9834, 0.9421, 0.03, -0.0473)
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0
+
+[node name="Pad5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1.1208, 0, 0, 0, 1, 0, 0, 0, 1.1208, -0.9783, 0.03, 0.2697)
+mesh = SubResource("CylinderMesh_3")
+cast_shadow = 0

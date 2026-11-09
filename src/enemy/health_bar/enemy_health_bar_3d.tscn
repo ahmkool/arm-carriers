@@ -1,0 +1,18 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://src/enemy/health_bar/enemy_health_bar_3d.gd" id="1_script"]
+[ext_resource type="Shader" path="res://src/enemy/health_bar/enemy_health_bar.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_bar"]
+render_priority = 10
+shader = ExtResource("2_shader")
+
+[sub_resource type="QuadMesh" id="QuadMesh_bar"]
+material = SubResource("ShaderMaterial_bar")
+size = Vector2(1, 0.11)
+
+[node name="EnemyHealthBar3D" type="MeshInstance3D"]
+cast_shadow = 0
+extra_cull_margin = 1.0
+mesh = SubResource("QuadMesh_bar")
+script = ExtResource("1_script")

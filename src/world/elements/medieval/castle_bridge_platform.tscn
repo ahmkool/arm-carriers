@@ -1,0 +1,41 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="1_packed"]
+[ext_resource type="Shader" path="res://src/world/elements/medieval/castle_stone.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+render_priority = 0
+shader = ExtResource("2_shader")
+shader_parameter/timber_top = true
+shader_parameter/local_space = true
+shader_parameter/water_y = -4.2
+shader_parameter/damp_height = 1.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2"]
+albedo_color = Color(0.26, 0.16, 0.09, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+material = SubResource("ShaderMaterial_1")
+size = Vector3(3, 5.18, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = SubResource("StandardMaterial3D_2")
+size = Vector3(3, 0.16, 0.2)
+
+[node name="CastleBridgePlatform" instance=ExtResource("1_packed")]
+
+[node name="Wooden_Platform_Top" parent="AnimatableBody3D"]
+visible = false
+
+[node name="Pier" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.59, 0)
+mesh = SubResource("BoxMesh_3")
+
+[node name="EdgeBeamA" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 1.4)
+mesh = SubResource("BoxMesh_4")
+
+[node name="EdgeBeamB" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -1.4)
+mesh = SubResource("BoxMesh_4")

@@ -17,7 +17,7 @@ func _ready() -> void:
 		print("FAIL no poster for ", scene_id, " in level_select_catalog.gd")
 		get_tree().quit(1)
 		return
-	print("PASS poster found in tab ", LevelSelectCatalog.GROUPS[slot[0]]["name"])
+	print("PASS poster found in tab ", LevelSelectCatalog.groups()[slot[0]]["name"])
 	var level_select := menu.get_node("LevelSelectRoot")
 	level_select.call("_show_group", slot[0], slot[1])
 	await get_tree().create_timer(1.0).timeout
@@ -32,8 +32,8 @@ func _ready() -> void:
 
 ## Returns the tab and poster index, or an empty array when the level has no poster.
 func _find_catalog_slot(scene_id: String) -> Array:
-	for group_index in LevelSelectCatalog.GROUPS.size():
-		var levels: Array = LevelSelectCatalog.GROUPS[group_index]["levels"]
+	for group_index in LevelSelectCatalog.groups().size():
+		var levels: Array = LevelSelectCatalog.groups()[group_index]["levels"]
 		var poster_index := levels.find_custom(func(level): return level["scene"] == scene_id)
 		if poster_index >= 0:
 			return [group_index, poster_index]

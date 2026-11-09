@@ -1,0 +1,117 @@
+[gd_scene load_steps=13 format=3]
+
+[ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_weapon"]
+[ext_resource type="Script" path="res://src/weapon/fork_cannon/fork_cannon_specifics.gd" id="2_specifics"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/fork_cannon/fork_cannon.glb" id="3_model"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/bazooka/bazooka_rocket.glb" id="4_rocket"]
+[ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="5_pick"]
+[ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="6_movement"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flash"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(0.5, 0.95, 1, 0.9)
+
+[sub_resource type="SphereMesh" id="SphereMesh_flash"]
+material = SubResource("StandardMaterial3D_flash")
+radius = 0.2
+height = 0.4
+radial_segments = 8
+rings = 4
+
+[sub_resource type="BoxMesh" id="BoxMesh_flash"]
+material = SubResource("StandardMaterial3D_flash")
+size = Vector3(0.7, 0.07, 0.07)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_body"]
+size = Vector3(1.5, 1.2, 7.2)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_pick"]
+radius = 1.6
+height = 4.16
+
+[node name="ForkCannon" type="RigidBody3D"]
+collision_layer = 8
+collision_mask = 4
+script = ExtResource("1_weapon")
+
+[node name="WeaponSpecifics" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("2_specifics")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+
+[node name="Model" parent="WeaponSpecifics" instance=ExtResource("3_model")]
+transform = Transform3D(1.2, 0, 0, 0, 1.2, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="BoltMuzzle" type="Marker3D" parent="WeaponSpecifics"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.504, 0.12, 3.95)
+
+[node name="MuzzleFlash" type="Node3D" parent="WeaponSpecifics/BoltMuzzle"]
+
+[node name="Core" type="MeshInstance3D" parent="WeaponSpecifics/BoltMuzzle/MuzzleFlash"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.6, 0, 0, 0.15)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_flash")
+
+[node name="SpikeA" type="MeshInstance3D" parent="WeaponSpecifics/BoltMuzzle/MuzzleFlash"]
+cast_shadow = 0
+mesh = SubResource("BoxMesh_flash")
+
+[node name="SpikeB" type="MeshInstance3D" parent="WeaponSpecifics/BoltMuzzle/MuzzleFlash"]
+transform = Transform3D(-4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 0, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_flash")
+
+[node name="MissileMuzzle" type="Marker3D" parent="WeaponSpecifics"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.12, 3.75)
+
+[node name="LoadedMissile" parent="WeaponSpecifics/MissileMuzzle" instance=ExtResource("4_rocket")]
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, -0.3)
+
+[node name="CameraAddons" type="Node3D" parent="WeaponSpecifics"]
+
+[node name="Marker3D" type="Marker3D" parent="WeaponSpecifics/CameraAddons"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 7)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.35)
+shape = SubResource("BoxShape3D_body")
+
+[node name="WeaponMovement" type="Node3D" parent="." node_paths=PackedStringArray("pick_and_drop_handler")]
+script = ExtResource("6_movement")
+pick_and_drop_handler = NodePath("../PickAndDropHandler")
+
+[node name="PickAndDropHandler" type="Node3D" parent="."]
+script = ExtResource("5_pick")
+hide_arms_type = 2
+
+[node name="ShooterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/ShooterPickArea"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -2.32)
+shape = SubResource("CapsuleShape3D_pick")
+
+[node name="DirectionSetterPickArea" type="Area3D" parent="PickAndDropHandler"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PickAndDropHandler/DirectionSetterPickArea"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, 1.95)
+shape = SubResource("CapsuleShape3D_pick")
+
+[node name="ShooterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, -2.02)
+
+[node name="DirectionSetterPosition" type="Marker3D" parent="PickAndDropHandler"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.953, 0, 1.18)
+
+[node name="LookVector" type="Node3D" parent="PickAndDropHandler"]
+
+[node name="Source" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.85)
+
+[node name="Target" type="Node3D" parent="PickAndDropHandler/LookVector"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.09)
+
+[connection signal="body_entered" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_entered_shooter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/ShooterPickArea" to="PickAndDropHandler" method="on_body_exited_shooter_zone"]
+[connection signal="body_entered" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_entered_direction_setter_zone"]
+[connection signal="body_exited" from="PickAndDropHandler/DirectionSetterPickArea" to="PickAndDropHandler" method="on_body_exited_direction_setter_zone"]

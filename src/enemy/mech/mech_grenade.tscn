@@ -1,0 +1,65 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/enemy/mech/mech_grenade.gd" id="1_grenade"]
+[ext_resource type="PackedScene" uid="uid://cuik2h25uohq2" path="res://assets/models/weapon/enemies/grenade/Grenade.gltf" id="2_model"]
+[ext_resource type="AudioStream" path="res://assets/sounds/gun/grenade_beep.wav" id="3_beep"]
+
+[sub_resource type="StandardMaterial3D" id="Material_edge"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.08, 0.6)
+disable_receive_shadows = true
+
+[sub_resource type="StandardMaterial3D" id="Material_fill"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.15, 0.1, 0.16)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="TorusMesh_edge"]
+material = SubResource("Material_edge")
+inner_radius = 0.92
+outer_radius = 1.0
+rings = 48
+ring_segments = 4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fill"]
+material = SubResource("Material_fill")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.01
+radial_segments = 48
+rings = 1
+
+[node name="MechGrenade" type="Node3D"]
+script = ExtResource("1_grenade")
+
+[node name="Model" type="Node3D" parent="."]
+
+[node name="Grenade" parent="Model" instance=ExtResource("2_model")]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, -0.02, 0)
+
+[node name="BlinkLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+visible = false
+light_color = Color(1, 0.15, 0.1, 1)
+light_energy = 3.0
+omni_range = 2.2
+
+[node name="WarningRing" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.13, 0)
+
+[node name="Edge" type="MeshInstance3D" parent="WarningRing"]
+transform = Transform3D(1, 0, 0, 0, 0.05, 0, 0, 0, 1, 0, 0.01, 0)
+cast_shadow = 0
+mesh = SubResource("TorusMesh_edge")
+
+[node name="Fill" type="MeshInstance3D" parent="WarningRing"]
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_fill")
+
+[node name="Beep" type="AudioStreamPlayer3D" parent="."]
+stream = ExtResource("3_beep")
+volume_db = -6.0
+bus = &"SFX"

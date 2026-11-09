@@ -1,0 +1,154 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="enemy_local"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="health"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="state_machine"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="dead"]
+[ext_resource type="Script" path="res://src/enemy/behavior/ground_mech_behavior.gd" id="behavior"]
+[ext_resource type="Script" path="res://src/enemy/ground_mech/mech_standing.gd" id="standing"]
+[ext_resource type="Script" path="res://src/enemy/ground_mech/mech_walking.gd" id="walking"]
+[ext_resource type="Script" path="res://src/enemy/mech/mech_lobbing.gd" id="lobbing"]
+[ext_resource type="PackedScene" path="res://src/enemy/mech/mech_grenade.tscn" id="grenade"]
+[ext_resource type="PackedScene" uid="uid://b77200tumriy8" path="res://assets/characters/combat_mech/CombatMech.glb" id="mech_glb"]
+[ext_resource type="PackedScene" uid="uid://dvc0sg1nfb2bq" path="res://assets/models/weapon/enemies/combat_mech/grenade_launcher.glb" id="launcher"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Ranged_2H_Aiming.res" id="anim_aim"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Running_HoldingRifle.res" id="anim_run"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="anim_death"]
+[ext_resource type="PackedScene" path="res://src/enemy/health_bar/enemy_health_bar_3d.tscn" id="health_bar"]
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_mech"]
+_data = {
+&"Death_A": ExtResource("anim_death"),
+&"Ranged_2H_Aiming": ExtResource("anim_aim"),
+&"Running_HoldingRifle": ExtResource("anim_run")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimNode_aim"]
+animation = &"animations/Ranged_2H_Aiming"
+use_custom_timeline = true
+timeline_length = 1.3
+stretch_time_scale = false
+start_offset = 0.3
+loop_mode = 1
+
+[sub_resource type="AnimationNodeAnimation" id="AnimNode_run"]
+animation = &"animations/Running_HoldingRifle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimNode_death"]
+animation = &"animations/Death_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimNode_idle_run"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimNode_dead_blend"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimTree_mech"]
+nodes/output/position = Vector2(1000, 140)
+nodes/Aim/node = SubResource("AnimNode_aim")
+nodes/Aim/position = Vector2(100, 40)
+nodes/Run/node = SubResource("AnimNode_run")
+nodes/Run/position = Vector2(100, 220)
+nodes/BlendIdleRun/node = SubResource("AnimNode_idle_run")
+nodes/BlendIdleRun/position = Vector2(400, 100)
+nodes/Death/node = SubResource("AnimNode_death")
+nodes/Death/position = Vector2(400, 300)
+nodes/DeadBlend/node = SubResource("AnimNode_dead_blend")
+nodes/DeadBlend/position = Vector2(720, 140)
+node_connections = [&"output", 0, &"DeadBlend", &"BlendIdleRun", 0, &"Aim", &"BlendIdleRun", 1, &"Run", &"DeadBlend", 0, &"BlendIdleRun", &"DeadBlend", 1, &"Death"]
+
+[sub_resource type="CapsuleShape3D" id="Shape_body"]
+radius = 0.55
+height = 2.6
+
+[sub_resource type="SphereMesh" id="Mesh_footsteps"]
+radius = 0.1
+height = 0.2
+
+[node name="EnemyGrenadierMech" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("enemy_local")
+speed = 2.0
+hitbox_damage = 3
+
+[node name="Visual" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
+
+[node name="Mech" parent="Visual" instance=ExtResource("mech_glb")]
+transform = Transform3D(-1.2, 0, -1.0490734e-07, 0, 1.2, 0, 1.0490734e-07, 0, -1.2, 0, -1.2, 0)
+
+[node name="CombatMech_WingLeft" parent="Visual/Mech/Rig_Medium/Skeleton3D/chest" index="0"]
+visible = false
+
+[node name="CombatMech_WingRight" parent="Visual/Mech/Rig_Medium/Skeleton3D/chest" index="1"]
+visible = false
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Visual/Mech"]
+libraries = {
+&"animations": SubResource("AnimationLibrary_mech")
+}
+
+[node name="AnimationTree" type="AnimationTree" parent="Visual/Mech"]
+active = false
+tree_root = SubResource("AnimTree_mech")
+anim_player = NodePath("../AnimationPlayer")
+parameters/BlendIdleRun/blend_amount = 0.0
+parameters/DeadBlend/blend_amount = 0.0
+
+[node name="GunHand" type="BoneAttachment3D" parent="Visual/Mech/Rig_Medium/Skeleton3D"]
+bone_name = "handslot.r"
+
+[node name="Launcher" parent="Visual/Mech/Rig_Medium/Skeleton3D/GunHand" instance=ExtResource("launcher")]
+transform = Transform3D(0.0121, -0.0358, 0.6489, 0.0015, 0.649, 0.0358, -0.6498, 0.0007, 0.0122, 0, 0, 0)
+
+[node name="Muzzle" type="Marker3D" parent="Visual/Mech/Rig_Medium/Skeleton3D/GunHand/Launcher"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12, 1.15)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.3, 0)
+shape = SubResource("Shape_body")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("state_machine")
+initial_state_path = NodePath("Standing")
+
+[node name="Standing" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("standing")
+
+[node name="Walking" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("walking")
+
+[node name="Lobbing" type="Node" parent="EnemyStateMachine" node_paths=PackedStringArray("muzzle_node", "drum")]
+script = ExtResource("lobbing")
+muzzle_node = NodePath("../../Visual/Mech/Rig_Medium/Skeleton3D/GunHand/Launcher/Muzzle")
+grenade_scene = ExtResource("grenade")
+drum = NodePath("../../Visual/Mech/Rig_Medium/Skeleton3D/GunHand/Launcher/GrenadeLauncher/Drum")
+return_state = &"standing"
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("dead")
+
+[node name="GroundMechBehavior" type="Node" parent="."]
+script = ExtResource("behavior")
+attack_state = &"lobbing"
+approach_distance = 11.0
+retreat_distance = 5.0
+retreat_step = 4.0
+shoot_max_distance = 13.0
+first_shot_delay = 1.2
+shot_cooldown_min = 2.4
+shot_cooldown_max = 3.4
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+draw_pass_1 = SubResource("Mesh_footsteps")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("health")
+max_hp = 6
+
+[node name="EnemyHealthBar3D" parent="." instance=ExtResource("health_bar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)

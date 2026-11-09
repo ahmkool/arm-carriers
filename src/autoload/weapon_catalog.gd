@@ -11,6 +11,7 @@ const WEAPONS: Array[Dictionary] = [
 	{"id": "catapult", "name": "Catapult", "ranged": true, "scene": "res://src/weapon/catapult.tscn", "icon": "res://assets/sprites/ui/icons/weapons/catapult.png", "setter_offset": Vector3(0.0, 0.0, -2.25), "shooter_offset": Vector3(0.0, 0.0, 2.25)},
 	{"id": "pulse_rifle", "name": "Pulse Rifle", "ranged": true, "scene": "res://src/weapon/pulse_rifle.tscn", "icon": "res://assets/sprites/ui/icons/weapons/pulse_rifle.png", "setter_offset": Vector3(0.0, 0.0, -0.5083), "shooter_offset": Vector3(0.0, 0.0, 2.1002)},
 	{"id": "siege_bow", "name": "Siege Bow", "ranged": true, "scene": "res://src/weapon/siege_bow.tscn", "icon": "res://assets/sprites/ui/icons/weapons/siege_bow.png", "setter_offset": Vector3(0.0, 0.0, -0.5083), "shooter_offset": Vector3(0.0, 0.0, 2.1002)},
+	{"id": "fork_cannon", "name": "Fork Cannon", "ranged": true, "scene": "res://src/weapon/fork_cannon.tscn", "icon": "res://assets/sprites/ui/icons/weapons/fork_cannon.png", "setter_offset": Vector3(0.0, 0.0, -0.5083), "shooter_offset": Vector3(0.0, 0.0, 2.1002)},
 	{"id": "shears", "name": "Shears", "ranged": false, "scene": "res://src/weapon/shears.tscn", "icon": "res://assets/sprites/ui/icons/weapons/shears.png", "setter_offset": Vector3(2.5, 0.0, 0.0), "shooter_offset": Vector3(-2.5, 0.0, 0.0)},
 ]
 

@@ -1,0 +1,582 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="5_g7rls"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="5_nixuq"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="6_gsm"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="9_nixuq"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="13_f7b5o"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="14_lj4gk"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="15_xb4ls"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="18_iifxy"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="18_khskr"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="19_g7rls"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="19_khskr"]
+[ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/medieval/castle_tiles.tres" id="21_jq7lx"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_jq7lx"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="22_khskr"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
+[ext_resource type="AudioStream" uid="uid://duaul8r11ug66" path="res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3" id="22_tak01"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="24_g7rls"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="25_ui"]
+
+[ext_resource type="Shader" uid="uid://1omvlp44jb2k" path="res://water.gdshader" id="m_water"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_tower.tscn" id="m_tower"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_wall.tscn" id="m_wall"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_gatehouse.tscn" id="m_gatehouse"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_banner.tscn" id="m_banner"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_torch.tscn" id="m_torch"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/rowboat.tscn" id="m_boat"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/reeds.tscn" id="m_reeds"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/lily_pads.tscn" id="m_lilies"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
+panorama = ExtResource("5_g7rls")
+
+[sub_resource type="Sky" id="Sky_8eeh1"]
+sky_material = SubResource("PanoramaSkyMaterial_j5fge")
+
+[sub_resource type="Environment" id="Environment_msrya"]
+background_mode = 2
+sky = SubResource("Sky_8eeh1")
+ambient_light_source = 2
+ambient_light_color = Color(0.8, 0.74, 0.66, 1)
+ambient_light_energy = 0.6
+reflected_light_source = 2
+tonemap_mode = 3
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.6
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.03
+glow_hdr_threshold = 1.05
+fog_enabled = true
+fog_light_color = Color(0.86, 0.76, 0.64, 1)
+fog_density = 0.0022
+fog_aerial_perspective = 0.35
+fog_sky_affect = 0.3
+
+[sub_resource type="Curve" id="Curve_tak01"]
+_limits = [0.0, 1.0, 0.0, 5.0]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(5, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
+size = Vector3(4, 4, 4)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
+size = Vector3(105, 1, 94)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_dvkoh"]
+vertices = PackedVector3Array(-35.7345, -0.5500002, 2.2544994, -35.2345, -0.5500002, 3.0044994, -27.7345, -0.5500002, 2.7544994, -44.2345, -0.5500002, -0.24550056, -43.9845, -0.5500002, 2.2544994, -44.7345, -0.5500002, -0.74550056, -27.9845, -0.5500002, -14.245501, -46.9845, -0.5500002, -14.245501, -47.2345, -0.5500002, -0.99550056, -9.734501, -0.5500002, -5.7455006, -9.984501, -0.5500002, -8.245501, -13.984501, -0.5500002, -8.245501, -14.234501, -0.5500002, -5.7455006, -17.2345, -0.5500002, 3.2544994, -17.7345, -0.5500002, 3.7544994, -17.7345, -0.5500002, 14.254499, -17.2345, -0.5500002, 14.754499, -9.234501, -0.5500002, -5.2455006, -14.734501, -0.5500002, -5.2455006, 5.265499, -0.5500002, 5.7544994, 5.765499, -0.5500002, 5.2544994, 8.265499, -0.5500002, -4.9955006, -17.2345, -0.5500002, -4.9955006, 8.265499, -0.5500002, 5.0044994, -19.7345, -0.5500002, 3.7544994, -19.7345, -0.5500002, 14.254499, -16.9845, -0.5500002, 17.2545, 5.015499, -0.5500002, 17.2545, -27.7345, -0.5500002, 3.2544994, -26.9845, -0.5500002, 11.254499, -26.7345, -0.5500002, 3.7544994, -35.2345, -0.5500002, 11.004499, -26.2345, -0.5500002, 11.754499, -25.9845, -0.5500002, 14.254499)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(4, 3, 0), PackedInt32Array(3, 5, 0), PackedInt32Array(0, 5, 2), PackedInt32Array(2, 5, 6), PackedInt32Array(6, 5, 7), PackedInt32Array(5, 8, 7), PackedInt32Array(10, 9, 11), PackedInt32Array(11, 9, 12), PackedInt32Array(14, 13, 15), PackedInt32Array(15, 13, 16), PackedInt32Array(9, 17, 12), PackedInt32Array(12, 17, 18), PackedInt32Array(20, 19, 21), PackedInt32Array(21, 19, 17), PackedInt32Array(18, 17, 22), PackedInt32Array(22, 17, 13), PackedInt32Array(21, 23, 20), PackedInt32Array(14, 15, 24), PackedInt32Array(24, 15, 25), PackedInt32Array(16, 13, 26), PackedInt32Array(26, 13, 17), PackedInt32Array(26, 17, 19), PackedInt32Array(26, 19, 27), PackedInt32Array(1, 2, 28), PackedInt32Array(30, 29, 28), PackedInt32Array(28, 29, 31), PackedInt32Array(28, 31, 1), PackedInt32Array(33, 32, 25), PackedInt32Array(32, 29, 25), PackedInt32Array(25, 29, 30), PackedInt32Array(25, 30, 24)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h2fuj"]
+size = Vector3(10, 3, 11)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_moat"]
+render_priority = 0
+shader = ExtResource("m_water")
+shader_parameter/water_color = Color(0.05, 0.19, 0.2, 1)
+shader_parameter/foam_color = Color(0.42, 0.56, 0.5, 1)
+shader_parameter/wave_scale = 0.8
+shader_parameter/wave_scale_detail = 1.2
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("1_iifxy")
+aim_guide_color = Color(0.85, 0.12, 0.1, 0.5)
+arrow_shaft_color = Color(0.3, 0.18, 0.1, 1)
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("2_nixuq")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("22_shkpiv")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("25_ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("5_nixuq")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#ff8888]Sword usage[/color]
+
+Use dash to swing and attack with the sword !"
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_msrya")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.4356, 0.6505, -0.6222, 0, 0.6913, 0.7226, 0.9002, 0.3147, -0.3011, 0, 8, 0)
+light_color = Color(1, 0.87, 0.7, 1)
+light_energy = 1.3
+shadow_enabled = true
+
+[node name="GameStateMachine" parent="." instance=ExtResource("6_gsm")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.703827, 0, 6.352253)
+script = ExtResource("9_nixuq")
+spawn_interval_curve = SubResource("Curve_tak01")
+
+[node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -21, 0, -13)
+
+[node name="Node3D" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.4537582, 0, -4.0409126)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.984478, 0, -4.9522285)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.0125237, 0, 3.8979492)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.358948, 0, 6.0236473)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.546242, 0, 5.9590874)
+
+[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.984478, 0, 5.0477715)
+
+[node name="Node3D7" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.987476, 0, 13.897949)
+
+[node name="Node3D8" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.358948, 0, 16.023647)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("13_f7b5o")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 8.754402)
+script = ExtResource("14_lj4gk")
+enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/AllPlayersAreaTrigger")]
+
+[node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="CheckpointManager/Checkpoint/TriggerArea"]
+shape = SubResource("BoxShape3D_lpgms")
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
+script = ExtResource("15_xb4ls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.650024, -0.69485664, -7.3463745)
+shape = SubResource("BoxShape3D_65eof")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_dvkoh")
+
+[node name="FloorGridMap" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("21_jq7lx")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 3, 62, -4, 3, 62, -3, 4, 62, -4, 4, 62, -4, 65533, 655404, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1048619, -65536, 65535, 62, -65535, 65535, 62, -65535, 65534, 1048619, -65534, 65535, 43, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 43, -65536, 5, 1441835, -1, 5, 1441835, -2, 5, 1441835, -2, 4, 62, -2, 3, 62, -5, 65534, 1441855, -5, 65535, 62, -5, 0, 62, -5, 1, 62, -5, 2, 62, -5, 3, 62, -6, 65535, 655403, -6, 0, 655403, -6, 1, 1441855, -6, 2, 62, -6, 3, 62, -7, 0, 1443024, -7, 1, 1048619, -7, 2, 62, -7, 3, 62, -8, 1, 1048619, -9, 1, 1048619, -9, 2, 62, -9, 3, 63, -8, 3, 62, -8, 2, 62, -4, 65534, 655423, -3, 65534, 1048619, -2, 65534, 1048619, -1, 65534, 1048619, -1, 65535, 62, -3, 65535, 62, -4, 65535, 62, -4, 0, 62, -4, 1, 62, -4, 2, 62, -3, 2, 62, -2, 2, 62, -2, 1, 62, -2, 0, 62, -2, 65535, 62, -3, 0, 62, -3, 1, 62, -1, 1, 62, -1, 0, 62, -65536, 0, 62, -65535, 0, 62, -65534, 0, 43, -65534, 1, 1048620, -65535, 1, 1048639, -65536, 1, 62, -65536, 2, 62, -1, 2, 62, -65535, 2, 43, -65534, 2, 1443041, -65535, 3, 43, -65536, 3, 62, -1, 3, 62, -1, 4, 62, -65536, 4, 62, -10, 3, 1441835, -10, 2, 62, -10, 1, 655423, -196608, 5, 57, -196607, 4, 1048633, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 57, -131076, 4, 1443039, -131082, 3, 57, -131079, 0, 656607, -131078, 65535, 1441849, -131077, 65534, 1441848, -131076, 65533, 655397, -196608, 65533, 1049823, -196607, 65534, 655417, -196606, 65535, 1048633, -196605, 0, 1049823, -196608, 65534, 655417, -196607, 65535, 1049822, -196606, 0, 1048633, -196606, 2, 1246, -196607, 3, 1048633, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 655417, -131078, 0, 1441849, -131077, 65535, 656606, -131076, 65534, 655416, -131081, 3, 56, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 57, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131080, 1, 655417, -10, 0, 43, -10, 65535, 43, -11, 1, 62, -11, 0, 62, -11, 65535, 62, -13, 0, 1441835, -12, 0, 63, -12, 65535, 62, -13, 65535, 62, -10, 65534, 43, -11, 65534, 62, -11, 65533, 62, -10, 65533, 43, -12, 65533, 62, -13, 65533, 62, -13, 65534, 62, -12, 65534, 62, -10, 65532, 43, -11, 65532, 62, -12, 65532, 62, -12, 65531, 1048619, -13, 65531, 62, -14, 65531, 1048619, -14, 65532, 62, -13, 65532, 62, -15, 65532, 62, -15, 65533, 62, -15, 65534, 62, -14, 65534, 62, -14, 65535, 62, -14, 0, 1441835, -15, 0, 44, -15, 65535, 63, -14, 65533, 62, -11, 2, 62, -131083, 2, 1443039, -131087, 0, 37, -131087, 65532, 656607, -131086, 65531, 655417, -131084, 65531, 655417, -131082, 65532, 1048633, -131082, 1, 655416, -131084, 65532, 1049822, -131086, 65532, 656606, -131083, 0, 1443038, -131082, 2, 1443038, -131083, 1, 1443037, -131084, 0, 56, -131085, 0, 57, -131086, 0, 57, -131087, 65535, 56, -131087, 65534, 1443037, -131087, 65533, 1443037, -131085, 65531, 655417, -131083, 65532, 656605, -131082, 65533, 1048633, -131082, 65534, 1048633, -131082, 65535, 1048633, -131082, 0, 1048633, -131081, 1, 655417, -13, 65528, 1250, -13, 65527, 1250, -13, 65526, 1250, -13, 65525, 1250, -14, 65525, 1250, -15, 65525, 1250, -16, 65525, 1250, -16, 65526, 1250, -16, 65527, 1250, -15, 65527, 1250, -14, 65527, 1250, -12, 65527, 1250, -11, 65527, 1250, -10, 65527, 1250, -10, 65526, 1250, -10, 65525, 1250, -11, 65525, 1250, -12, 65525, 1250, -12, 65526, 1250, -11, 65526, 1250, -14, 65526, 1250, -15, 65526, 1250, -65534, 65534, 655404, -65535, 5, 1048620, -3, 5, 1441835, -4, 5, 1441835, -5, 5, 1441835, -6, 5, 44, -6, 4, 63, -6, 65534, 1441836, -5, 65533, 1441836, -5, 4, 62, -12, 1, 655403, -12, 2, 655403, -12, 3, 44, -11, 3, 1441835, -9, 4, 44, -8, 4, 1441835, -7, 4, 1441835, -10, 65531, 655404, -11, 65531, 1048619, -15, 65531, 1048619, -16, 65531, 1441836, -16, 65532, 655403, -16, 65533, 655403, -16, 65534, 655403, -16, 65535, 44, -131075, 5, 57, -131076, 5, 57, -131077, 5, 57, -131079, 4, 57, -131080, 4, 57, -131083, 3, 57, -131084, 3, 37, -131088, 65534, 1441849, -131088, 65533, 1441849, -131088, 65532, 1441849, -131087, 65531, 655417, -131083, 65531, 655417, -131075, 65534, 655417, -131074, 65534, 655417, -131073, 65534, 655417, -196607, 2, 1048633, -196607, 5, 1048613, -196606, 1, 1048613, -131078, 5, 37, -131081, 4, 37, -131088, 65535, 37, -131088, 65531, 1441829, -131082, 65531, 655397, -196606, 65534, 655397, -131078, 65534, 1441829, -131077, 65533, 1441829, -131078, 1, 1441848, -196607, 1, 1048632, -131078, 4, 56)
+}
+metadata/_editor_floor_ = Vector3(0, -3, 0)
+
+[node name="GridMap" type="GridMap" parent="Level"]
+mesh_library = ExtResource("21_jq7lx")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-8, 2, 656654, -65535, 2, 7, -5, 0, 1049773, -9, 1, 1049773, -65535, 65535, 1441799, -1, 3, 1441799, -8, 4, 7, -5, 2, 655367, -4, 65534, 1048583, -11, 1, 7, -14, 65534, 7, -12, 65533, 7, -65536, 0, 7, -65536, 2, 6, -3, 3, 6, -7, 3, 6, -9, 2, 6, -5, 65535, 6, -1, 65534, 6, -1, 65535, 1441798, -5, 3, 1441798, -5, 5, 1441798, -11, 2, 1441798, -13, 65535, 1441798, -65534, 65534, 1441798, -65534, 0, 1441798, -1, 4, 1441798, -4, 4, 1441795, -7, 1, 1441795, -6, 65534, 1441795, -12, 65534, 1441795, -11, 65532, 1441795, -14, 65531, 1441795, -15, 65533, 655363, -16, 65534, 655363, -11, 65535, 1048583, -10, 0, 1048583, -12, 0, 1048586, -11, 65531, 1048586, -15, 0, 22, -11, 65533, 93, -16, 65531, 93)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Water" parent="Level" instance=ExtResource("18_iifxy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+surface_material_override/0 = SubResource("ShaderMaterial_moat")
+
+[node name="Medieval" type="Node3D" parent="Level"]
+
+[node name="Towers" type="Node3D" parent="Level/Medieval"]
+
+[node name="Walls" type="Node3D" parent="Level/Medieval"]
+
+[node name="Banners" type="Node3D" parent="Level/Medieval"]
+
+[node name="Torches" type="Node3D" parent="Level/Medieval"]
+
+[node name="Moat" type="Node3D" parent="Level/Medieval"]
+
+[node name="CastleTower1" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, -5, -14)
+
+[node name="CastleTower2" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(0.9205, 0, 0.3907, 0, 1, 0, -0.3907, 0, 0.9205, 17, -5, 13)
+
+[node name="CastleTower3" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(0.6947, 0, 0.7193, 0, 1, 0, -0.7193, 0, 0.6947, -22, -5, -14)
+
+[node name="CastleTower4" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(0.3584, 0, 0.9336, 0, 1, 0, -0.9336, 0, 0.3584, -22, -5, -23)
+
+[node name="CastleTower5" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(-0.0349, 0, 0.9994, 0, 1, 0, -0.9994, 0, -0.0349, -55, -5, -23)
+
+[node name="CastleTower6" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(-0.4226, 0, 0.9063, 0, 1, 0, -0.9063, 0, -0.4226, -55, -5, 9)
+
+[node name="CastleTower7" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(-0.7431, 0, 0.6691, 0, 1, 0, -0.6691, 0, -0.7431, -42.5, -5, -23)
+
+[node name="CastleTower8" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(-0.9455, 0, 0.3256, 0, 1, 0, -0.3256, 0, -0.9455, -32.5, -5, -23)
+
+[node name="CastleGatehouse1" parent="Level/Medieval/Towers" instance=ExtResource("m_gatehouse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.5, -5, -23)
+
+[node name="CastleWall1" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, -16.75, -5, -14)
+
+[node name="CastleWall2" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, -11.05, -5, -14)
+
+[node name="CastleWall3" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, -5.35, -5, -14)
+
+[node name="CastleWall4" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, 0.35, -5, -14)
+
+[node name="CastleWall5" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, 6.05, -5, -14)
+
+[node name="CastleWall6" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, 11.75, -5, -14)
+
+[node name="CastleWall7" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.925, 0, 0, 17, -5, -8.825)
+
+[node name="CastleWall8" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.925, 0, 0, 17, -5, -3.275)
+
+[node name="CastleWall9" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.925, 0, 0, 17, -5, 2.275)
+
+[node name="CastleWall10" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.925, 0, 0, 17, -5, 7.825)
+
+[node name="CastleWall11" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.7, 0, 0, -22, -5, -18.5)
+
+[node name="CastleWall12" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, -27.25, -5, -23)
+
+[node name="CastleWall13" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.6417, 0, 0, 0, 1, 0, 0, 0, 1, -50.675, -5, -23)
+
+[node name="CastleWall14" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0.6417, 0, 0, 0, 1, 0, 0, 0, 1, -46.825, -5, -23)
+
+[node name="CastleWall15" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, -17.88)
+
+[node name="CastleWall16" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, -12.44)
+
+[node name="CastleWall17" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, -7)
+
+[node name="CastleWall18" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, -1.56)
+
+[node name="CastleWall19" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, 3.88)
+
+[node name="WallBanner1" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.7, -13.2)
+instance_shader_parameters/charge = 0
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallBanner2" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1.7, -13.2)
+instance_shader_parameters/charge = 1
+instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
+instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
+
+[node name="WallBanner3" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 1.7, -13.2)
+instance_shader_parameters/charge = 2
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallBanner4" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 1.7, -22.2)
+instance_shader_parameters/charge = 3
+instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
+instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
+
+[node name="WallBanner5" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 1.7, -22.2)
+instance_shader_parameters/charge = 0
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallBanner6" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, 1.7, -3)
+instance_shader_parameters/charge = 1
+instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
+instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
+
+[node name="WallBanner7" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, 1.7, 6)
+instance_shader_parameters/charge = 2
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallBanner8" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, 1.7, -12)
+instance_shader_parameters/charge = 3
+instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
+instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
+
+[node name="WallBanner9" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, 1.7, -1)
+instance_shader_parameters/charge = 0
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallBanner10" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -12, -1.75, 17.52)
+instance_shader_parameters/charge = 1
+instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
+instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
+
+[node name="WallBanner11" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -1.75, 17.52)
+instance_shader_parameters/charge = 2
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallBanner12" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -31.5, -1.75, 11.52)
+instance_shader_parameters/charge = 3
+instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
+instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
+
+[node name="WallBanner13" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -41.5, -1.75, 2.52)
+instance_shader_parameters/charge = 0
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="WallTorch1" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, -0.3, -13.2)
+
+[node name="WallTorch2" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.5, -0.3, -13.2)
+
+[node name="WallTorch3" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -0.3, -13.2)
+
+[node name="WallTorch4" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13, -0.3, -13.2)
+
+[node name="WallTorch5" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46, -0.3, -22.2)
+
+[node name="WallTorch6" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29, -0.3, -22.2)
+
+[node name="WallTorch7" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, -0.3, -7.5)
+
+[node name="WallTorch8" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, -0.3, 1.5)
+
+[node name="WallTorch9" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, -0.3, 9)
+
+[node name="WallTorch10" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, -0.3, -17)
+
+[node name="WallTorch11" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, -0.3, -6.5)
+
+[node name="WallTorch12" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, -0.3, 4)
+
+[node name="WallTorch13" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, -2.5, 17.52)
+
+[node name="WallTorch14" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, -2.5, 17.52)
+
+[node name="WallTorch15" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -2.5, 17.52)
+
+[node name="WallTorch16" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -2.5, 17.52)
+
+[node name="WallTorch17" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33.5, -2.5, 11.52)
+
+[node name="WallTorch18" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -29.5, -2.5, 11.52)
+
+[node name="WallTorch19" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.5, -2.5, 2.52)
+
+[node name="WallTorch20" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39.5, -2.5, 2.52)
+
+[node name="Rowboat1" parent="Level/Medieval/Moat" instance=ExtResource("m_boat")]
+transform = Transform3D(0.1736, 0, 0.9848, 0, 1, 0, -0.9848, 0, 0.1736, -22.5, -5, -3)
+
+[node name="Rowboat2" parent="Level/Medieval/Moat" instance=ExtResource("m_boat")]
+transform = Transform3D(0.9848, 0, 0.1736, 0, 1, 0, -0.1736, 0, 0.9848, 13, -5, 7)
+
+[node name="Rowboat3" parent="Level/Medieval/Moat" instance=ExtResource("m_boat")]
+transform = Transform3D(0.9397, 0, -0.342, 0, 1, 0, 0.342, 0, 0.9397, -41, -5, 8)
+
+[node name="Rowboat4" parent="Level/Medieval/Moat" instance=ExtResource("m_boat")]
+transform = Transform3D(0.9962, 0, 0.0872, 0, 1, 0, -0.0872, 0, 0.9962, -6, -5, 22)
+
+[node name="Reeds1" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -51.5, -5, -18.5)
+
+[node name="Reeds2" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(0.682, 0, 0.7314, 0, 1, 0, -0.7314, 0, 0.682, -51, -5, 5.5)
+
+[node name="Reeds3" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.0698, 0, 0.9976, 0, 1, 0, -0.9976, 0, -0.0698, 14, -5, -10.5)
+
+[node name="Reeds4" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.7771, 0, 0.6293, 0, 1, 0, -0.6293, 0, -0.7771, 13.5, -5, 19.5)
+
+[node name="Reeds5" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.9903, 0, -0.1392, 0, 1, 0, 0.1392, 0, -0.9903, -25, -5, -10)
+
+[node name="Reeds6" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, -0.5736, -38, -5, 9.5)
+
+[node name="Reeds7" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(0.2079, 0, -0.9781, 0, 1, 0, 0.9781, 0, 0.2079, -20, -5, 17.5)
+
+[node name="Reeds8" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(0.8572, 0, -0.515, 0, 1, 0, 0.515, 0, 0.8572, 8, -5, 21)
+
+[node name="LilyPads1" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24, -5, -7)
+
+[node name="LilyPads2" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.4848, 0, 0.8746, 0, 1, 0, -0.8746, 0, 0.4848, 12, -5, -4)
+
+[node name="LilyPads3" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.5299, 0, 0.848, 0, 1, 0, -0.848, 0, -0.5299, -51, -5, -8)
+
+[node name="LilyPads4" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.9986, 0, -0.0523, 0, 1, 0, 0.0523, 0, -0.9986, -30, -5, 15.5)
+
+[node name="LilyPads5" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.4384, 0, -0.8988, 0, 1, 0, 0.8988, 0, -0.4384, 11.5, -5, 13)
+
+[node name="LilyPads6" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, 0.5736, -45, -5, 7.5)
+
+[node name="LilyPads7" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.9945, 0, 0.1045, 0, 1, 0, -0.1045, 0, 0.9945, -34, -5, -18)
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform" parent="Level/Bridges" instance=ExtResource("21_dvkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -16.493908)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("21_dvkoh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -19.493908)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/BridgePlatform"), NodePath("../../Bridges/BridgePlatform2")]
+
+[node name="MakeEnemiesGroup2Offensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("18_khskr")
+enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("19_khskr")
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 8)
+script = ExtResource("19_g7rls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AllPlayersAreaTrigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+shape = SubResource("BoxShape3D_h2fuj")
+
+[node name="Weapon" type="Node" parent="."]
+
+[node name="Sword" parent="Weapon" instance=ExtResource("20_iifxy")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -6.6896334, 0, 0)
+
+[node name="TestEnemies" type="Node" parent="."]
+
+[node name="Players" parent="." instance=ExtResource("24_g7rls")]
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("22_tak01")
+volume_db = -18.0
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("22_khskr")
+message_string = "[color=#ff8888]Sword usage[/color]
+
+Use dash to swing and attack with the sword !"
+
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/LevelSucceeded" method="trigger"]
+[connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
+[connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Level/Events/MakeEnemiesGroup2Offensive" method="trigger"]

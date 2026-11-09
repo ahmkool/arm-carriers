@@ -2,7 +2,8 @@ extends Node
 
 const SAVE_PATH := "user://save.json"
 ## 3: progress is kept per level and weapon ("<level id>@<weapon id>"); see SaveMigration.
-const SAVE_VERSION := 3
+## 4: Level 2 was replaced by its medieval reskin; its progress moves over.
+const SAVE_VERSION := 4
 const WEAPON_SEPARATOR := "@"
 
 var _levels: Dictionary = {}
@@ -181,8 +182,11 @@ func _load_from_disk() -> void:
 func _migrate_from(version: int) -> void:
 	if version >= SAVE_VERSION:
 		return
-	_levels = SaveMigration.migrate_v2_keys(_levels)
-	_completed = SaveMigration.migrate_v2_keys(_completed)
+	if version < 3:
+		_levels = SaveMigration.migrate_v2_keys(_levels)
+		_completed = SaveMigration.migrate_v2_keys(_completed)
+	_levels = SaveMigration.migrate_v3_keys(_levels)
+	_completed = SaveMigration.migrate_v3_keys(_completed)
 
 
 func _load_character_picks(saved: Variant) -> void:

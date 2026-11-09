@@ -1,0 +1,32 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/medieval/heraldry_cloth.gdshader" id="1_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+render_priority = 0
+shader = ExtResource("1_shader")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2"]
+albedo_color = Color(0.12, 0.11, 0.11, 1)
+roughness = 0.6
+metallic = 0.3
+
+[sub_resource type="QuadMesh" id="QuadMesh_3"]
+material = SubResource("ShaderMaterial_1")
+size = Vector2(1.3, 3)
+subdivide_width = 2
+subdivide_depth = 12
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = SubResource("StandardMaterial3D_2")
+size = Vector3(1.7, 0.09, 0.09)
+
+[node name="WallBanner" type="Node3D"]
+
+[node name="Cloth" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.55, 0.03)
+mesh = SubResource("QuadMesh_3")
+
+[node name="Rod" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.02, 0.05)
+mesh = SubResource("BoxMesh_4")

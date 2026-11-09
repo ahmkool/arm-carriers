@@ -1,0 +1,298 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/sky_decks/rotor_barge.gd" id="1_barge"]
+[ext_resource type="Shader" path="res://src/world/elements/space/station_panels.gdshader" id="2_panels"]
+[ext_resource type="Script" path="res://src/world/elements/sky_decks/moving_floor.gd" id="3_floor"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_plating"]
+render_priority = 0
+shader = ExtResource("2_panels")
+shader_parameter/panel_color = Color(0.36, 0.39, 0.44, 1)
+shader_parameter/local_space = true
+shader_parameter/local_y_offset = -1.0
+
+[sub_resource type="StandardMaterial3D" id="Material_dark"]
+albedo_color = Color(0.13, 0.15, 0.19, 1)
+metallic = 0.5
+roughness = 0.5
+
+[sub_resource type="StandardMaterial3D" id="Material_trim"]
+shading_mode = 0
+albedo_color = Color(0.35, 0.9, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="Material_glow"]
+shading_mode = 0
+albedo_color = Color(0.55, 0.95, 1.6, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_deck"]
+material = SubResource("ShaderMaterial_plating")
+size = Vector3(14.99, 0.5, 11.99)
+
+[sub_resource type="BoxMesh" id="BoxMesh_hull"]
+material = SubResource("ShaderMaterial_plating")
+size = Vector3(14.2, 1.0, 11.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_keel"]
+material = SubResource("Material_dark")
+size = Vector3(9.0, 1.2, 6.0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_trimX"]
+material = SubResource("Material_trim")
+size = Vector3(15.05, 0.08, 0.12)
+
+[sub_resource type="BoxMesh" id="BoxMesh_trimZ"]
+material = SubResource("Material_trim")
+size = Vector3(0.12, 0.08, 12.05)
+
+[sub_resource type="BoxMesh" id="BoxMesh_arm"]
+material = SubResource("Material_dark")
+size = Vector3(1.6, 0.35, 0.6)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_pod"]
+material = SubResource("Material_dark")
+top_radius = 0.75
+bottom_radius = 0.6
+height = 1.3
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_ring"]
+material = SubResource("Material_trim")
+top_radius = 0.78
+bottom_radius = 0.78
+height = 0.12
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_nozzle"]
+material = SubResource("Material_glow")
+top_radius = 0.48
+bottom_radius = 0.48
+height = 0.06
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_intake"]
+material = SubResource("Material_glow")
+top_radius = 0.5
+bottom_radius = 0.5
+height = 0.04
+radial_segments = 16
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_hub"]
+material = SubResource("Material_dark")
+top_radius = 0.2
+bottom_radius = 0.2
+height = 0.08
+radial_segments = 12
+rings = 1
+
+[sub_resource type="Curve" id="Curve_exhaust"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_exhaust"]
+curve = SubResource("Curve_exhaust")
+
+[sub_resource type="ParticleProcessMaterial" id="Particles_exhaust"]
+emission_shape = 1
+emission_sphere_radius = 0.35
+direction = Vector3(0, -1, 0)
+spread = 6.0
+initial_velocity_min = 5.0
+initial_velocity_max = 6.0
+gravity = Vector3(0, 0, 0)
+scale_min = 0.7
+scale_max = 1.1
+scale_curve = SubResource("CurveTexture_exhaust")
+
+[sub_resource type="SphereMesh" id="SphereMesh_exhaust"]
+material = SubResource("Material_glow")
+radius = 0.22
+height = 0.44
+radial_segments = 8
+rings = 4
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_deck"]
+size = Vector3(14.99, 0.5, 11.99)
+
+[node name="HoverBarge" type="Node3D"]
+script = ExtResource("1_barge")
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"metal"
+
+[node name="MovingFloor" type="Node3D" parent="AnimatableBody3D"]
+script = ExtResource("3_floor")
+size = Vector2(14.99, 11.99)
+
+[node name="Visual" type="Node3D" parent="AnimatableBody3D"]
+
+[node name="Deck" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+mesh = SubResource("BoxMesh_deck")
+
+[node name="Hull" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.0, 0)
+mesh = SubResource("BoxMesh_hull")
+
+[node name="Keel" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.0, 0)
+mesh = SubResource("BoxMesh_keel")
+
+[node name="TrimNorth" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, -5.96)
+mesh = SubResource("BoxMesh_trimX")
+
+[node name="TrimSouth" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.01, 5.96)
+mesh = SubResource("BoxMesh_trimX")
+
+[node name="TrimWest" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.46, 0.01, 0)
+mesh = SubResource("BoxMesh_trimZ")
+
+[node name="TrimEast" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.46, 0.01, 0)
+mesh = SubResource("BoxMesh_trimZ")
+
+[node name="Thrusters" type="Node3D" parent="AnimatableBody3D/Visual"]
+
+[node name="ThrusterNE" type="Node3D" parent="AnimatableBody3D/Visual/Thrusters"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, -0.55, -3.8)
+
+[node name="Arm" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.1, 0)
+mesh = SubResource("BoxMesh_arm")
+
+[node name="Pod" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+mesh = SubResource("CylinderMesh_pod")
+
+[node name="Ring" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="Intake" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0)
+mesh = SubResource("CylinderMesh_intake")
+
+[node name="Hub" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+mesh = SubResource("CylinderMesh_hub")
+
+[node name="Nozzle" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.66, 0)
+mesh = SubResource("CylinderMesh_nozzle")
+
+[node name="Exhaust" type="GPUParticles3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+amount = 24
+lifetime = 0.45
+process_material = SubResource("Particles_exhaust")
+draw_pass_1 = SubResource("SphereMesh_exhaust")
+
+[node name="ThrusterSE" type="Node3D" parent="AnimatableBody3D/Visual/Thrusters"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.6, -0.55, 3.8)
+
+[node name="Arm" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.1, 0)
+mesh = SubResource("BoxMesh_arm")
+
+[node name="Pod" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+mesh = SubResource("CylinderMesh_pod")
+
+[node name="Ring" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="Intake" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0)
+mesh = SubResource("CylinderMesh_intake")
+
+[node name="Hub" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+mesh = SubResource("CylinderMesh_hub")
+
+[node name="Nozzle" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.66, 0)
+mesh = SubResource("CylinderMesh_nozzle")
+
+[node name="Exhaust" type="GPUParticles3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSE"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+amount = 24
+lifetime = 0.45
+process_material = SubResource("Particles_exhaust")
+draw_pass_1 = SubResource("SphereMesh_exhaust")
+
+[node name="ThrusterNW" type="Node3D" parent="AnimatableBody3D/Visual/Thrusters"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.6, -0.55, -3.8)
+
+[node name="Arm" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.1, 0)
+mesh = SubResource("BoxMesh_arm")
+
+[node name="Pod" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+mesh = SubResource("CylinderMesh_pod")
+
+[node name="Ring" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="Intake" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0)
+mesh = SubResource("CylinderMesh_intake")
+
+[node name="Hub" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+mesh = SubResource("CylinderMesh_hub")
+
+[node name="Nozzle" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.66, 0)
+mesh = SubResource("CylinderMesh_nozzle")
+
+[node name="Exhaust" type="GPUParticles3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterNW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+amount = 24
+lifetime = 0.45
+process_material = SubResource("Particles_exhaust")
+draw_pass_1 = SubResource("SphereMesh_exhaust")
+
+[node name="ThrusterSW" type="Node3D" parent="AnimatableBody3D/Visual/Thrusters"]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.6, -0.55, 3.8)
+
+[node name="Arm" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.9, 0.1, 0)
+mesh = SubResource("BoxMesh_arm")
+
+[node name="Pod" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+mesh = SubResource("CylinderMesh_pod")
+
+[node name="Ring" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+mesh = SubResource("CylinderMesh_ring")
+
+[node name="Intake" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.66, 0)
+mesh = SubResource("CylinderMesh_intake")
+
+[node name="Hub" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+mesh = SubResource("CylinderMesh_hub")
+
+[node name="Nozzle" type="MeshInstance3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.66, 0)
+mesh = SubResource("CylinderMesh_nozzle")
+
+[node name="Exhaust" type="GPUParticles3D" parent="AnimatableBody3D/Visual/Thrusters/ThrusterSW"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.75, 0)
+amount = 24
+lifetime = 0.45
+process_material = SubResource("Particles_exhaust")
+draw_pass_1 = SubResource("SphereMesh_exhaust")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 0)
+shape = SubResource("BoxShape3D_deck")

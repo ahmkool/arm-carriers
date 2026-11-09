@@ -49,6 +49,8 @@ func set_world_at_checkpoint_state():
 		area._reset()
 	for area in areas_already_activated:
 		area._mark_area_as_inactive()
+	# Level pieces that always go back to their start on any respawn, such as SpikeTrap.
+	get_tree().call_group(&"checkpoint_resettable", "reset_to_checkpoint")
 	if not is_carrying_weapon:
 		var players: Node = get_parent().get_parent().get_node("Players")
 		if players != null:

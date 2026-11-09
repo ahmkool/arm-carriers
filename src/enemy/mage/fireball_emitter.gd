@@ -7,6 +7,9 @@ const FIREBALL_SPAWN_SCENE := preload("res://src/vfx/fireball_spawn.tscn")
 ## What appears at the muzzle and then launches the projectile. Robots fire plasma instead of fire.
 @export var spawn_scene: PackedScene = FIREBALL_SPAWN_SCENE
 
+## Damage of each projectile this muzzle fires. -1 keeps the projectile scene's own damage.
+@export var damage := -1
+
 func spawn_fireball() -> void:
 	var direction := _get_launch_direction()
 	if direction.length_squared() < 0.0001:
@@ -21,7 +24,7 @@ func spawn_fireball() -> void:
 		spawn.queue_free()
 		return
 
-	spawn.setup(direction * speed)
+	spawn.setup(direction * speed, damage)
 	scene_root.add_child(spawn)
 	spawn.global_position = global_position
 

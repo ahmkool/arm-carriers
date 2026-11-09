@@ -41,9 +41,30 @@ const V2_LEVEL_KEYS := {
 }
 
 
+## Version 4 replaced levels with reskins that play the same, so their progress moves over, weapon by weapon.
+const V3_RENAMED_LEVELS := {
+	"res://src/world/levels/world_local_level_2.tscn": "res://src/world/levels/world_local_level_2_medieval.tscn",
+}
+
+
 ## Returns `entries` with its v2 keys renamed.
 static func migrate_v2_keys(entries: Dictionary) -> Dictionary:
 	var result := {}
 	for key in entries:
 		result[V2_LEVEL_KEYS.get(key, key)] = entries[key]
 	return result
+
+
+## Returns `entries` with the levels in V3_RENAMED_LEVELS renamed, keeping each key's weapon suffix.
+static func migrate_v3_keys(entries: Dictionary) -> Dictionary:
+	var result := {}
+	for key in entries:
+		result[_renamed_v3_key(key)] = entries[key]
+	return result
+
+
+static func _renamed_v3_key(key: String) -> String:
+	var separator := key.find(GameSave.WEAPON_SEPARATOR)
+	var level := key if separator < 0 else key.substr(0, separator)
+	var suffix := "" if separator < 0 else key.substr(separator)
+	return V3_RENAMED_LEVELS.get(level, level) + suffix

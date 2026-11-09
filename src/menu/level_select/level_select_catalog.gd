@@ -17,17 +17,20 @@ extends RefCounted
 ## "weapon" is the one placed in the scene. It comes first and is picked by default. Until the
 ## level is cleared once it is the only weapon offered; clearing it opens the others.
 ## Progress is saved per level and weapon (see GameSave.level_key).
+## DEV_GROUPS are added after these only in dev mode (DevSettings active: editor or debug build).
+## Use groups(), not GROUPS, for what the level select shows.
 
 enum Art { SKELETON, HORDE, BOSS }
 
 const DUNGEON_BOSS := "res://src/world/levels/world_boss_scene.tscn"
+const PLAYGROUND := "res://src/world/levels/world_playground.tscn"
 
 const GROUPS: Array[Dictionary] = [
 	{
 		"name": "Dungeon",
 		"levels": [
 			{"title": "Level 1", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local.tscn", "weapon": "bazooka", "requires": "ranged"},
-			{"title": "Level 2", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_level_2.tscn", "weapon": "bazooka", "requires": "ranged"},
+			{"title": "Level 2", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_level_2_medieval.tscn", "weapon": "siege_bow", "requires": "ranged"},
 			{"title": "Gauntlet", "difficulty": 2, "label": "Medium", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_bazooka.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Skeleton Boss", "difficulty": 2, "label": "Boss", "art": Art.BOSS, "scene": DUNGEON_BOSS, "weapon": "bazooka"},
 		],
@@ -61,6 +64,7 @@ const GROUPS: Array[Dictionary] = [
 			{"title": "Sky Islands", "difficulty": 3, "label": "Hard", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Rotor Decks", "difficulty": 3, "label": "Hard", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Space Station", "difficulty": 3, "label": "Hard", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
+			{"title": "Sky Barge", "difficulty": 2, "label": "Medium", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky_station.tscn", "weapon": "fork_cannon", "requires": "ranged"},
 			{"title": "4GTN", "difficulty": 4, "label": "Boss", "art": Art.BOSS, "scene": "res://src/world/levels/world_local_katana_robot_boss.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
 		],
 	},
@@ -76,9 +80,32 @@ const GROUPS: Array[Dictionary] = [
 	},
 ]
 
+## Sandboxes for prototyping, shown only in dev mode. Always open, outside every unlock chain, and
+## every weapon is offered ("all_weapons"). Their scenes set skip_save, so they never count as cleared.
+const DEV_GROUPS: Array[Dictionary] = [
+	{
+		"name": "Dev",
+		"dev": true,
+		"levels": [
+			{"title": "Playground", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": PLAYGROUND, "weapon": "bazooka", "all_weapons": true},
+			{"title": "Spike Trap", "difficulty": 2, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_spike_trap_prototype.tscn", "weapon": "bazooka", "all_weapons": true},
+			{"title": "Sky Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky_station_2.tscn", "weapon": "fork_cannon", "requires": "ranged"},
+		],
+	},
+]
+
 ## Opens every level and weapon, for test drivers. Players get the same with DevSettings'
 ## unlock_all_levels in debug builds.
 static var force_unlock_all := false
+
+
+## The groups the level select shows: GROUPS, plus DEV_GROUPS in dev mode.
+static func groups() -> Array[Dictionary]:
+	if not DevSettings.is_active():
+		return GROUPS
+	var all: Array[Dictionary] = GROUPS.duplicate()
+	all.append_array(DEV_GROUPS)
+	return all
 
 
 ## The key the level's checkpoint and completion are saved under when played with this weapon.
@@ -98,7 +125,7 @@ static func weapons_for(level: Dictionary) -> Array[String]:
 
 ## The weapons players may pick right now: only the level's own until it has been cleared once.
 static func offered_weapons(level: Dictionary) -> Array[String]:
-	if unlocks_all() or is_cleared(level):
+	if unlocks_all() or level.get("all_weapons", false) or is_cleared(level):
 		return weapons_for(level)
 	var own: Array[String] = [level["weapon"]]
 	return own
@@ -114,7 +141,7 @@ static func is_cleared(level: Dictionary) -> bool:
 
 static func cleared_count(group_index: int) -> int:
 	var count := 0
-	for level in GROUPS[group_index]["levels"]:
+	for level in groups()[group_index]["levels"]:
 		if is_cleared(level):
 			count += 1
 	return count
@@ -123,13 +150,15 @@ static func cleared_count(group_index: int) -> int:
 static func is_group_open(group_index: int) -> bool:
 	if unlocks_all() or group_index == 0:
 		return true
-	var group: Dictionary = GROUPS[group_index]
+	var group: Dictionary = groups()[group_index]
+	if group.get("dev", false):
+		return true
 	if group.get("challenge", false):
 		return _is_scene_cleared(group["unlock_after"])
 	var previous := _previous_story_group(group_index)
 	if previous < 0:
 		return true
-	return is_cleared(GROUPS[previous]["levels"].back())
+	return is_cleared(groups()[previous]["levels"].back())
 
 
 static func is_level_open(group_index: int, level_index: int) -> bool:
@@ -137,9 +166,9 @@ static func is_level_open(group_index: int, level_index: int) -> bool:
 		return false
 	if level_index == 0 or unlocks_all():
 		return true
-	if GROUPS[group_index].get("challenge", false):
+	if _is_outside_story(groups()[group_index]):
 		return true
-	return is_cleared(GROUPS[group_index]["levels"][level_index - 1])
+	return is_cleared(groups()[group_index]["levels"][level_index - 1])
 
 
 ## What players must do to open a locked level, for its poster. Empty when it is open.
@@ -148,7 +177,7 @@ static func lock_reason(group_index: int, level_index: int) -> String:
 		return ""
 	if not is_group_open(group_index):
 		return _group_lock_reason(group_index)
-	return _beat_text(GROUPS[group_index]["levels"][level_index - 1])
+	return _beat_text(groups()[group_index]["levels"][level_index - 1])
 
 
 static func unlocks_all() -> bool:
@@ -156,10 +185,10 @@ static func unlocks_all() -> bool:
 
 
 static func _group_lock_reason(group_index: int) -> String:
-	var group: Dictionary = GROUPS[group_index]
+	var group: Dictionary = groups()[group_index]
 	if group.get("challenge", false):
 		return _beat_text(_level_for_scene(group["unlock_after"]))
-	return _beat_text(GROUPS[_previous_story_group(group_index)]["levels"].back())
+	return _beat_text(groups()[_previous_story_group(group_index)]["levels"].back())
 
 
 static func _beat_text(level: Dictionary) -> String:
@@ -171,7 +200,7 @@ static func _beat_text(level: Dictionary) -> String:
 
 static func _previous_story_group(group_index: int) -> int:
 	for index in range(group_index - 1, -1, -1):
-		if not GROUPS[index].get("challenge", false):
+		if not _is_outside_story(groups()[index]):
 			return index
 	return -1
 
@@ -184,11 +213,16 @@ static func _is_scene_cleared(scene: String) -> bool:
 
 
 static func _level_for_scene(scene: String) -> Dictionary:
-	for group in GROUPS:
+	for group in groups():
 		for level in group["levels"]:
 			if level["scene"] == scene:
 				return level
 	return {}
+
+
+## Challenge and dev groups are not part of the story's unlock chain.
+static func _is_outside_story(group: Dictionary) -> bool:
+	return group.get("challenge", false) or group.get("dev", false)
 
 
 static func _offers(level: Dictionary, weapon_id: String) -> bool:

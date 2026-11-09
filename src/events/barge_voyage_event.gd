@@ -7,14 +7,21 @@ extends LevelEvent
 ##
 ## Listed in a checkpoint's events_completed, the checkpoint's restore puts the barge back at its dock, waiting for
 ## the carriers to board again. List the waves in the same checkpoint's enemy_groups_reset.
+##
+## A wave is any enemy group: a BoardingEnemyGroup that drops or flies onto the deck, or a group off the barge, such
+## as a SurvivalEnemyGroup of gunners on a nearby island. The barge holds until its `signal_emitted` is true.
 
 @export var barge: RotorBarge
-@export var waves: Array[BoardingEnemyGroup]
+@export var waves: Array[EnemyGroup]
 ## Seconds after a leg begins before its wave drops on board.
 @export var board_delay_seconds := 2.0
 ## Woken when the given leg begins, such as mages on decks the barge flies past. Optional.
 @export var escort_group: EnemyGroup
 @export var escort_leg := -1
+## Run when a leg begins, such as camera framings for a wave fought off the barge. `leg_event_legs` holds each
+## event's leg, in the same order (0 is the first wave's leg).
+@export var leg_events: Array[LevelEvent] = []
+@export var leg_event_legs: PackedInt32Array = PackedInt32Array()
 
 ## Bumped to abandon a voyage in progress, when a checkpoint restore puts the barge back.
 var _voyage := 0
@@ -53,10 +60,11 @@ func _run(voyage: int, docked: bool) -> void:
 		barge.fly_to(leg + 2)
 		if leg == escort_leg and escort_group != null:
 			escort_group.trigger(true)
+		_run_leg_events(leg)
 		if not await _wait(board_delay_seconds, voyage):
 			return
 		waves[leg].trigger(true)
-		if not await _until(func() -> bool: return not barge.is_moving() and waves[leg].signal_emitted, voyage):
+		if not await _until(func() -> bool: return not barge.is_moving() and bool(waves[leg].get("signal_emitted")), voyage):
 			return
 	barge.fly_to(waves.size() + 2)
 	if not await _until(func() -> bool: return not barge.is_moving(), voyage):
@@ -64,6 +72,13 @@ func _run(voyage: int, docked: bool) -> void:
 	_running = false
 	completed.emit(self)
 	execute_next_event()
+
+
+func _run_leg_events(leg: int) -> void:
+	for index in mini(leg_events.size(), leg_event_legs.size()):
+		if leg_event_legs[index] != leg or leg_events[index] == null:
+			continue
+		leg_events[index].trigger()
 
 
 ## Waits a physics frame at a time until the condition holds. False if the voyage was abandoned meanwhile.

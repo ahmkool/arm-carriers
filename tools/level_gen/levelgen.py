@@ -37,6 +37,7 @@ WEAPONS = {
     "saw": ("uid://lilxckjevvd5", "res://src/weapon/saw.tscn"),
     "pulse_rifle": ("uid://o1x22yp71o80", "res://src/weapon/pulse_rifle.tscn"),
     "catapult": ("uid://c4tapu1tw3apn", "res://src/weapon/catapult.tscn"),
+    "fork_cannon": (None, "res://src/weapon/fork_cannon.tscn"),
 }
 ## PeriTune tracks (peritune.com): free for games, but the audio files themselves must not be redistributed.
 MUSIC = {
@@ -212,6 +213,7 @@ class Level:
         self.sky_material = SKY_PANORAMA
         self.bridge_scene = ("uid://chaj7v8uajl4q", "res://src/world/elements/bridge_platform.tscn")
         self.boxes = {}
+        self.extra_sub_resources = []  # raw [sub_resource] blocks, such as a second survival curve
         self.curve = None
         self.platforms = {}
         self.melee_scene = "enemy"
@@ -821,7 +823,10 @@ class Level:
         start, end = self.curve
         boxes = "\n\n".join(f'[sub_resource type="BoxShape3D" id="BoxShape3D_{key}"]\nsize = Vector3({x}, {y}, {z})'
                             for key, (x, y, z) in self.boxes.items())
+        extra = "\n\n".join(self.extra_sub_resources)
         return f"""{self.sky_material}
+
+{extra}
 
 [sub_resource type="Sky" id="Sky_level"]
 sky_material = SubResource("PanoramaSkyMaterial_sky")

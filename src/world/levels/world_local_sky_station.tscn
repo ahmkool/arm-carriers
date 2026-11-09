@@ -1,0 +1,337 @@
+[gd_scene load_steps=0 format=3 uid="uid://bfk5g47nsxgb0"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/space/space_tiles.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="water"]
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" path="res://src/weapon/fork_cannon.tscn" id="fork_cannon"]
+[ext_resource type="AudioStream" uid="uid://etr5pc8rj0ge" path="res://assets/music/PerituneMaterial_Cyber_Noir.mp3" id="music"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky/cloud_layers.tscn" id="clouds"]
+[ext_resource type="Script" path="res://src/world/elements/sky/floating_bob.gd" id="bob"]
+[ext_resource type="PackedScene" path="res://src/world/elements/space/hover_barge.tscn" id="hover_barge"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_winged_mech.tscn" id="winged_mech"]
+[ext_resource type="Script" path="res://src/enemy/boarding_enemy_group.gd" id="boarding_group"]
+[ext_resource type="Script" path="res://src/events/barge_voyage_event.gd" id="barge_voyage"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("sky")
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.45
+glow_hdr_threshold = 1.1
+
+[sub_resource type="Curve" id="Curve_survival"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3.0), 0.0, 0.0, 0, 0, Vector2(1, 3.0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(400, 1, 400)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(15, 3, 9)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(-0.2965002, -0.49, -72.474, -0.2965002, -0.49, -73.474, -1.2965002, -0.49, -74.224, -5.7965, -0.49, -74.724, -6.5465, -0.49, -71.974, -6.0465, -0.49, -71.224, -8.5465, -0.49, -74.724, -8.5465, -0.49, -71.974, -1.2965002, -0.49, -75.474, 2.4534998, -0.49, -77.474, -5.5465, -0.49, -77.474, 2.2034998, -0.49, -75.724, -5.7965, -0.49, -60.474, -5.5465, -0.49, -58.974, -5.0465, -0.49, -59.724, 7.9535, -0.49, -59.724, 8.7035, -0.49, -58.974, 8.9535, -0.49, -60.474, -4.0465, -0.49, -59.724, -6.2965, -0.49, -69.224, 6.9535, -0.49, -59.724, 9.7035, -0.49, -68.974, 4.2035, -0.49, -74.224, 3.2034998, -0.49, -73.474, 2.9534998, -0.49, -71.974, 9.2035, -0.49, -69.474, 9.2035, -0.49, -71.724, 8.9535, -0.49, -74.724, 4.2035, -0.49, -75.474, 11.7035, -0.49, -71.724, 11.7035, -0.49, -74.724, -3.2965002, -0.49, -58.974, 2.2034998, -0.49, -71.224, 8.7035, -0.49, -77.474, -8.5465, -0.49, -69.224, -8.5465, -0.49, -60.474, 11.7035, -0.49, -60.474, 11.7035, -0.49, -69.224, 6.4535, -0.49, -58.974, 0.7034998, -0.49, -71.224, -3.7965002, -0.49, -57.474, 6.9535, -0.49, -57.474, 1.2034998, 0.51, -72.224, 1.7034998, 0.51, -72.224, 1.7034998, 0.76, -72.974, 2.2034998, 0.76, -72.974, 2.2034998, 0.76, -73.974, 2.7034998, 1.01, -74.224, 0.7034998, 0.76, -74.224, -7.7965, 1.01, -70.974, -7.7965, 1.01, -70.224, -7.0465, 1.01, -70.224, -7.0465, 1.01, -70.974, 10.2035, 1.01, -70.974, 10.2035, 1.01, -70.224, 10.9535, 1.01, -70.224, 10.9535, 1.01, -70.974, -8.5465, -0.49, -8.723999, -8.5465, -0.49, -7.973999, -8.0465, -0.49, -8.473999, -8.0465, -0.49, -6.473999, -8.5465, -0.49, -6.973999, -8.7965, -0.49, -5.723999, -9.7965, -0.49, -5.723999, -10.0465, -0.49, -5.473999, -9.5465, -0.49, -3.973999, 11.7035, -0.49, 2.026001, 11.4535, -0.49, -0.47399902, 9.4535, -0.49, -6.973999, -11.2965, -0.49, -3.973999, -11.5465, -0.49, -3.723999, -11.5465, -0.49, 0.026000977, -9.5465, -0.49, 0.026000977, 11.7035, -0.49, 11.776001, 12.2035, -0.49, 11.526001, 11.9535, -0.49, 9.776001, 7.9535, -0.49, 12.276001, 8.7035, -0.49, 13.026001, -11.5465, -0.49, 7.776001, -10.5465, -0.49, 8.776001, -9.2965, -0.49, 8.776001, -9.2965, -0.49, 2.776001, -11.5465, -0.49, 2.776001, -6.2965, -0.49, -6.973999, -9.0465, -0.49, 0.526001, 8.7035, -0.49, 14.026001, 7.9535, -0.49, 14.526001, 11.7035, -0.49, 14.526001, 14.7035, -0.49, -0.723999, 14.7035, -0.49, -2.473999, 12.2035, -0.49, -2.473999, -3.2965002, -0.49, 13.026001, 6.4535, -0.49, 13.026001, 6.9535, -0.49, 12.276001, -4.0465, -0.49, 12.276001, 11.4535, -0.49, -3.223999, -8.2965, -0.49, 11.276001, -8.7965, -0.49, 11.526001, -8.5465, -0.49, 14.526001, -5.0465, -0.49, 14.526001, -5.5465, -0.49, 13.026001, 14.4535, -0.49, 9.026001, 14.7035, -0.49, 9.526001, 14.7035, -0.49, 2.276001, 12.7035, -0.49, 9.026001, -5.0465, -0.49, 12.276001, 11.7035, -0.49, -6.973999, 9.9535, -0.49, -6.473999, -3.2965002, -0.49, 14.026001, -6.2965, -0.49, -7.973999, -8.2965, -0.49, 9.526001, -4.0465, -0.49, 14.526001, 6.9535, -0.49, 14.526001, 9.9535, -0.49, -8.723999, -7.0465, -0.49, -8.723999, 10.9535, -0.49, -8.723999, 11.7035, -0.49, -7.973999, 11.7035, -0.49, -8.723999, -11.2965, -0.49, -4.973999, -11.5465, -0.49, -5.723999, 12.9535, 2.26, -4.973999, 12.9535, 2.26, -3.973999, 13.9535, 2.26, -3.973999, 13.9535, 2.26, -4.973999, 12.9535, -0.49, -4.723999, 13.2035, -0.49, -3.973999, 13.9535, -0.49, -4.223999, 13.7035, -0.49, -4.973999, 14.2035, 0.51, 0.27600098, 14.2035, 0.51, 1.026001, 14.7035, 0.51, 0.776001, -10.7965, 1.01, 1.026001, -10.7965, 1.01, 1.776001, -10.0465, 1.01, 1.776001, -10.0465, 1.01, 1.026001, -10.0465, 0.76, 10.776001, -9.5465, 0.76, 10.776001, -10.0465, 0.76, 9.776001, -11.2965, 0.76, 11.276001, -10.0465, 0.76, 11.276001, -11.5465, 0.76, 10.276001, -11.0465, 0.76, 9.526001)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(3, 0, 4), PackedInt32Array(4, 0, 5), PackedInt32Array(7, 6, 4), PackedInt32Array(4, 6, 3), PackedInt32Array(3, 8, 2), PackedInt32Array(3, 10, 8), PackedInt32Array(8, 10, 9), PackedInt32Array(9, 11, 8), PackedInt32Array(14, 13, 12), PackedInt32Array(17, 16, 15), PackedInt32Array(14, 12, 18), PackedInt32Array(18, 12, 19), PackedInt32Array(15, 20, 17), PackedInt32Array(17, 20, 21), PackedInt32Array(23, 22, 24), PackedInt32Array(24, 22, 27), PackedInt32Array(24, 27, 26), PackedInt32Array(24, 26, 25), PackedInt32Array(28, 11, 9), PackedInt32Array(29, 26, 30), PackedInt32Array(30, 26, 27), PackedInt32Array(18, 19, 31), PackedInt32Array(31, 19, 32), PackedInt32Array(31, 32, 20), PackedInt32Array(20, 32, 21), PackedInt32Array(27, 28, 33), PackedInt32Array(33, 28, 9), PackedInt32Array(34, 19, 35), PackedInt32Array(35, 19, 12), PackedInt32Array(22, 28, 27), PackedInt32Array(37, 36, 21), PackedInt32Array(21, 36, 17), PackedInt32Array(31, 20, 38), PackedInt32Array(19, 39, 32), PackedInt32Array(0, 39, 5), PackedInt32Array(5, 39, 19), PackedInt32Array(25, 21, 24), PackedInt32Array(24, 21, 32), PackedInt32Array(38, 41, 31), PackedInt32Array(31, 41, 40), PackedInt32Array(44, 43, 42), PackedInt32Array(46, 45, 44), PackedInt32Array(48, 47, 46), PackedInt32Array(44, 42, 46), PackedInt32Array(46, 42, 48), PackedInt32Array(52, 51, 49), PackedInt32Array(49, 51, 50), PackedInt32Array(56, 55, 53), PackedInt32Array(53, 55, 54), PackedInt32Array(59, 58, 57), PackedInt32Array(62, 61, 60), PackedInt32Array(63, 62, 64), PackedInt32Array(64, 62, 65), PackedInt32Array(67, 66, 68), PackedInt32Array(69, 65, 70), PackedInt32Array(70, 65, 71), PackedInt32Array(71, 65, 72), PackedInt32Array(74, 73, 75), PackedInt32Array(75, 73, 77), PackedInt32Array(75, 77, 76), PackedInt32Array(79, 78, 80), PackedInt32Array(80, 78, 82), PackedInt32Array(80, 82, 81), PackedInt32Array(60, 83, 62), PackedInt32Array(62, 83, 65), PackedInt32Array(65, 83, 72), PackedInt32Array(72, 83, 84), PackedInt32Array(87, 86, 85), PackedInt32Array(89, 88, 90), PackedInt32Array(90, 88, 67), PackedInt32Array(92, 91, 93), PackedInt32Array(93, 91, 94), PackedInt32Array(95, 90, 67), PackedInt32Array(97, 96, 98), PackedInt32Array(98, 96, 100), PackedInt32Array(98, 100, 99), PackedInt32Array(103, 102, 101), PackedInt32Array(103, 101, 104), PackedInt32Array(85, 77, 87), PackedInt32Array(87, 77, 73), PackedInt32Array(66, 93, 68), PackedInt32Array(68, 93, 94), PackedInt32Array(68, 94, 84), PackedInt32Array(68, 84, 83), PackedInt32Array(105, 100, 96), PackedInt32Array(107, 106, 95), PackedInt32Array(92, 108, 91), PackedInt32Array(76, 93, 75), PackedInt32Array(75, 93, 104), PackedInt32Array(104, 93, 66), PackedInt32Array(104, 66, 103), PackedInt32Array(83, 109, 68), PackedInt32Array(107, 95, 68), PackedInt32Array(68, 95, 67), PackedInt32Array(105, 96, 94), PackedInt32Array(94, 96, 110), PackedInt32Array(110, 80, 94), PackedInt32Array(94, 80, 81), PackedInt32Array(94, 81, 84), PackedInt32Array(108, 92, 111), PackedInt32Array(111, 92, 112), PackedInt32Array(109, 114, 68), PackedInt32Array(68, 114, 113), PackedInt32Array(117, 116, 115), PackedInt32Array(69, 70, 118), PackedInt32Array(118, 70, 119), PackedInt32Array(64, 118, 63), PackedInt32Array(63, 118, 119), PackedInt32Array(123, 122, 120), PackedInt32Array(120, 122, 121), PackedInt32Array(127, 126, 124), PackedInt32Array(124, 126, 125), PackedInt32Array(130, 129, 128), PackedInt32Array(134, 133, 131), PackedInt32Array(131, 133, 132), PackedInt32Array(137, 136, 135), PackedInt32Array(135, 139, 138), PackedInt32Array(141, 137, 140), PackedInt32Array(140, 137, 135), PackedInt32Array(140, 135, 138)]
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("theme")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#88ddff]Sky Station[/color]
+
+Board the barge together.
+Winged mechs guard the crossing."
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+light_color = Color(1, 0.98, 0.94, 1)
+light_energy = 1.1
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="MechWave" type="Node3D" parent="Enemies" node_paths=PackedStringArray("deck")]
+script = ExtResource("boarding_group")
+deck = NodePath("../../Level/Barge/AnimatableBody3D/MovingFloor")
+drop_stagger_seconds = 0.6
+entry = 1
+fly_in_offset = Vector3(18, 7, -12)
+fly_in_seconds = 1.8
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/MechWave"]
+
+[node name="EnemyWingedMech1" parent="Enemies/MechWave/InstancedEnemies" instance=ExtResource("winged_mech")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.5, 1.6, -3)
+is_offensive = false
+
+[node name="EnemyWingedMech2" parent="Enemies/MechWave/InstancedEnemies" instance=ExtResource("winged_mech")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.5, 1.6, -3)
+is_offensive = false
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 7.4975)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/BargeVoyage")]
+enemy_groups_reset = [NodePath("../../Enemies/MechWave")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -17, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -30)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 25, -4, 65535, 0, -4, 0, 18, -4, 1, 0, -4, 2, 0, -4, 3, 1048599, -3, 65511, 0, -3, 65512, 18, -3, 65513, 0, -3, 65514, 0, -3, 65515, 0, -3, 65533, 26, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -3, 4, 0, -2, 65510, 0, -2, 65511, 0, -2, 65512, 0, -2, 65513, 0, -2, 65514, 0, -2, 65515, 0, -2, 65516, 26, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -2, 4, 26, -1, 65510, 0, -1, 65511, 0, -1, 65512, 0, -1, 65513, 0, -1, 65514, 0, -1, 65515, 0, -1, 65516, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -1, 4, 0, -65536, 65510, 0, -65536, 65511, 23, -65536, 65512, 0, -65536, 65513, 0, -65536, 65514, 0, -65536, 65515, 0, -65536, 65516, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65536, 4, 0, -65535, 65510, 0, -65535, 65511, 0, -65535, 65512, 0, -65535, 65513, 0, -65535, 65514, 0, -65535, 65515, 0, -65535, 65516, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65535, 4, 0, -65534, 65510, 0, -65534, 65511, 0, -65534, 65512, 0, -65534, 65513, 0, -65534, 65514, 0, -65534, 65515, 0, -65534, 65516, 26, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65534, 4, 26, -65533, 65511, 0, -65533, 65512, 655379, -65533, 65513, 0, -65533, 65514, 0, -65533, 65515, 0, -65533, 65533, 26, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65533, 4, 0, -65532, 65534, 14, -65532, 65535, 0, -65532, 0, 1441809, -65532, 1, 0, -65532, 2, 0, -65532, 3, 22)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationHull" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262148, 65534, 4, -262148, 65535, 4, -262148, 0, 4, -262148, 1, 4, -262148, 2, 4, -262148, 3, 4, -196612, 3, 3, -131076, 65534, 2, -65540, 65534, 1, -65540, 65535, 1, -65540, 0, 1, -65540, 1, 1, -65540, 2, 1, -65540, 3, 1, -262147, 65511, 4, -262147, 65512, 4, -262147, 65513, 4, -262147, 65514, 4, -262147, 65515, 4, -262147, 65533, 4, -262147, 4, 4, -196611, 65515, 3, -196611, 4, 3, -131075, 65511, 2, -131075, 65533, 2, -65539, 65511, 1, -65539, 65512, 1, -65539, 65513, 1, -65539, 65514, 1, -65539, 65515, 1, -65539, 65533, 1, -65539, 65534, 1, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -65539, 2, 1, -65539, 3, 1, -65539, 4, 1, -262146, 65510, 4, -262146, 65516, 4, -196610, 65516, 3, -196610, 4, 3, -131074, 65510, 2, -131074, 65533, 2, -65538, 65510, 1, -65538, 65511, 1, -65538, 65512, 1, -65538, 65513, 1, -65538, 65514, 1, -65538, 65515, 1, -65538, 65516, 1, -65538, 65533, 1, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -65538, 3, 1, -65538, 4, 1, -196609, 65516, 3, -196609, 4, 3, -131073, 65510, 2, -131073, 65533, 2, -65537, 65510, 1, -65537, 65511, 1, -65537, 65512, 1, -65537, 65513, 1, -65537, 65514, 1, -65537, 65515, 1, -65537, 65516, 1, -65537, 65533, 1, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -65537, 3, 1, -65537, 4, 1, -262144, 65516, 3, -262144, 4, 3, -196608, 65510, 2, -196608, 65533, 2, -131072, 65510, 1, -131072, 65511, 1, -131072, 65512, 1, -131072, 65513, 1, -131072, 65514, 1, -131072, 65515, 1, -131072, 65516, 1, -131072, 65533, 1, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -131072, 3, 1, -131072, 4, 1, -262143, 65516, 3, -262143, 4, 3, -196607, 65510, 2, -196607, 65533, 2, -131071, 65510, 1, -131071, 65511, 1, -131071, 65512, 1, -131071, 65513, 1, -131071, 65514, 1, -131071, 65515, 1, -131071, 65516, 1, -131071, 65533, 1, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -131071, 3, 1, -131071, 4, 1, -393214, 65510, 5, -393214, 65516, 5, -262142, 65516, 3, -262142, 4, 3, -196606, 65510, 2, -196606, 65533, 2, -131070, 65510, 1, -131070, 65511, 1, -131070, 65512, 1, -131070, 65513, 1, -131070, 65514, 1, -131070, 65515, 1, -131070, 65516, 1, -131070, 65533, 1, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -131070, 3, 1, -131070, 4, 1, -393213, 65511, 5, -393213, 65512, 5, -393213, 65513, 5, -393213, 65514, 5, -393213, 65515, 5, -393213, 65533, 5, -393213, 4, 5, -262141, 65515, 3, -262141, 4, 3, -196605, 65511, 2, -196605, 65533, 2, -131069, 65511, 1, -131069, 65512, 1, -131069, 65513, 1, -131069, 65514, 1, -131069, 65515, 1, -131069, 65533, 1, -131069, 65534, 1, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1, -131069, 2, 1, -131069, 3, 1, -131069, 4, 1, -393212, 65534, 5, -393212, 65535, 5, -393212, 0, 5, -393212, 1, 5, -393212, 2, 5, -393212, 3, 5, -262140, 3, 3, -196604, 65534, 2, -131068, 65534, 1, -131068, 65535, 1, -131068, 0, 1, -131068, 1, 1, -131068, 2, 1, -131068, 3, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="CloudLayers" parent="Level" instance=ExtResource("clouds")]
+
+[node name="DistantStations" type="Node" parent="Level"]
+
+[node name="StationA" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, -32, 4)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65535, 0, -3, 0, 0, -3, 1, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 7, -2, 1, 0, -2, 2, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 12, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 24, -65534, 1, 0, -65534, 2, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262147, 65535, 4, -262147, 0, 4, -262147, 1, 4, -196611, 1, 3, -131075, 65535, 2, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -262146, 65534, 4, -262146, 2, 4, -196610, 2, 3, -131074, 65534, 2, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -196609, 2, 3, -131073, 65534, 2, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -262144, 2, 3, -196608, 65534, 2, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -262143, 2, 3, -196607, 65534, 2, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -393214, 65534, 5, -393214, 2, 5, -262142, 2, 3, -196606, 65534, 2, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -393213, 65535, 5, -393213, 0, 5, -393213, 1, 5, -262141, 1, 3, -196605, 65535, 2, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationB" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, -38, -30)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 11, -3, 2, 0, -3, 3, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 20, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 13, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262148, 65534, 4, -262148, 65535, 4, -262148, 0, 4, -262148, 1, 4, -262148, 2, 4, -196612, 2, 3, -131076, 65534, 2, -65540, 65534, 1, -65540, 65535, 1, -65540, 0, 1, -65540, 1, 1, -65540, 2, 1, -262147, 65533, 4, -262147, 3, 4, -196611, 3, 3, -131075, 65533, 2, -65539, 65533, 1, -65539, 65534, 1, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -65539, 2, 1, -65539, 3, 1, -196610, 3, 3, -131074, 65533, 2, -65538, 65533, 1, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -65538, 3, 1, -196609, 3, 3, -131073, 65533, 2, -65537, 65533, 1, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -65537, 3, 1, -262144, 3, 3, -196608, 65533, 2, -131072, 65533, 1, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -131072, 3, 1, -262143, 3, 3, -196607, 65533, 2, -131071, 65533, 1, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -131071, 3, 1, -262142, 3, 3, -196606, 65533, 2, -131070, 65533, 1, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -131070, 3, 1, -393213, 65533, 5, -393213, 3, 5, -262141, 3, 3, -196605, 65533, 2, -131069, 65533, 1, -131069, 65534, 1, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1, -131069, 2, 1, -131069, 3, 1, -393212, 65534, 5, -393212, 65535, 5, -393212, 0, 5, -393212, 1, 5, -393212, 2, 5, -262140, 2, 3, -196604, 65534, 2, -131068, 65534, 1, -131068, 65535, 1, -131068, 0, 1, -131068, 1, 1, -131068, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationC" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -66, -44, -78)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 14, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 28, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 25, -65534, 3, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262147, 65533, 4, -262147, 65534, 4, -262147, 65535, 4, -262147, 0, 4, -262147, 1, 4, -262147, 2, 4, -196611, 2, 3, -131075, 65533, 2, -65539, 65533, 1, -65539, 65534, 1, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -65539, 2, 1, -262146, 65532, 4, -262146, 3, 4, -196610, 3, 3, -131074, 65532, 2, -65538, 65532, 1, -65538, 65533, 1, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -65538, 3, 1, -196609, 3, 3, -131073, 65532, 2, -65537, 65532, 1, -65537, 65533, 1, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -65537, 3, 1, -262144, 3, 3, -196608, 65532, 2, -131072, 65532, 1, -131072, 65533, 1, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -131072, 3, 1, -262143, 3, 3, -196607, 65532, 2, -131071, 65532, 1, -131071, 65533, 1, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -131071, 3, 1, -262142, 3, 3, -196606, 65532, 2, -131070, 65532, 1, -131070, 65533, 1, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -131070, 3, 1, -393213, 65532, 5, -393213, 3, 5, -262141, 3, 3, -196605, 65532, 2, -131069, 65532, 1, -131069, 65533, 1, -131069, 65534, 1, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1, -131069, 2, 1, -131069, 3, 1, -393212, 65533, 5, -393212, 65534, 5, -393212, 65535, 5, -393212, 0, 5, -393212, 1, 5, -393212, 2, 5, -262140, 2, 3, -196604, 65533, 2, -131068, 65533, 1, -131068, 65534, 1, -131068, 65535, 1, -131068, 0, 1, -131068, 1, 1, -131068, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationD" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, -30, -104)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationD"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-2, 65535, 0, -2, 0, 0, -2, 1, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 10, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationD"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262146, 65535, 4, -262146, 0, 4, -262146, 1, 4, -196610, 1, 3, -131074, 65535, 2, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -262145, 65534, 4, -262145, 2, 4, -196609, 2, 3, -131073, 65534, 2, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -262144, 2, 3, -196608, 65534, 2, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -393215, 65534, 5, -393215, 2, 5, -262143, 2, 3, -196607, 65534, 2, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -393214, 65535, 5, -393214, 0, 5, -393214, 1, 5, -262142, 1, 3, -196606, 65535, 2, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Barge" parent="Level" instance=ExtResource("hover_barge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.9928, -14.997)
+stops = PackedVector3Array(0, 0, 0, 0, 0, 0, 3, 0, -17.992, 0, 0, -35.984)
+speed = 4.5
+
+[node name="BargeVoyage" type="Node" parent="Level/Events" node_paths=PackedStringArray("barge", "waves")]
+script = ExtResource("barge_voyage")
+barge = NodePath("../../Barge")
+waves = [NodePath("../../../Enemies/MechWave")]
+board_delay_seconds = 1.5
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -64.4785)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+shape = SubResource("BoxShape3D_end")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="ForkCannon" parent="Weapon" instance=ExtResource("fork_cannon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0.593, 7.4975)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("launch_message")
+message_string = "[color=#88ddff]Sky Station[/color]
+
+Board the barge together.
+Winged mechs guard the crossing."
+
+[connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]

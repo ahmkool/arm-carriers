@@ -442,6 +442,7 @@ func _burst_sparks(at: Vector2, direction: Vector2, amount: int) -> void:
 func _emit_burst(particles: CPUParticles2D, at: Vector2) -> void:
 	particles.position = at
 	particles.finished.connect(particles.queue_free)
+
 	_fx_root.add_child(particles)
 	particles.emitting = true
 

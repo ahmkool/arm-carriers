@@ -3,6 +3,8 @@ extends Node3D
 ## Matches `Hitbox/CollisionShape3D` sphere radius when synced in `_ready`.
 @export var damage_radius: float = 3.5
 @export var damage: int = 9999
+## Off for enemy grenades: they hurt the carriers themselves and use this only for the blast's look and sound.
+@export var hurts_enemies := true
 
 @onready var debris = $Debris
 @onready var fire = $Fire
@@ -67,6 +69,8 @@ func _on_hitbox_area_entered(area: Area3D) -> void:
 
 
 func _apply_damage_to_body(body: Node) -> void:
+	if not hurts_enemies:
+		return
 	if body is not EnemyLocal:
 		return
 	Health.apply_damage(body, damage, global_position)

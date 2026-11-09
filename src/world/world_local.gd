@@ -4,6 +4,12 @@ extends Node3D
 @export var level_id: String = ""
 @export var skip_save: bool = false
 @export var vfx_warmup_scenes: Array[PackedScene] = []
+## Per-level colours for the siege bow's aim guide and arrow shafts, for floors they blend into.
+## Left fully transparent (the default), the bow keeps its own colours.
+@export var aim_guide_color: Color = KEEP_WEAPON_COLOR
+@export var arrow_shaft_color: Color = KEEP_WEAPON_COLOR
+
+const KEEP_WEAPON_COLOR := Color(0, 0, 0, 0)
 
 @onready var players = $Players
 @onready var enemies = $Enemies

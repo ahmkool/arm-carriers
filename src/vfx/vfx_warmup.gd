@@ -16,6 +16,7 @@ const SHARED_WARMUP_SCENES: Array[PackedScene] = [
 	preload("res://src/vfx/fireball.tscn"),
 	preload("res://src/weapon/bazooka_bullet_local.tscn"),
 	preload("res://src/weapon/pulse_rifle/pulse_bolt.tscn"),
+	preload("res://src/weapon/fork_cannon/fork_missile.tscn"),
 ]
 
 const WARMUP_FRAME_COUNT := 2

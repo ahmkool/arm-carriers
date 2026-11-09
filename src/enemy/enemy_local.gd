@@ -294,7 +294,17 @@ func update_target_player() -> void:
 			closest_player = player
 	target_player = closest_player
 
+## Steers round EnemyAvoidZone zones (moving spike walls and the like): the goal moves clear of them,
+## and the step never enters one.
 func get_path_direction_to(target_global_position: Vector3) -> Vector3:
+	var zones := EnemyAvoidZone.zones(get_tree())
+	if zones.is_empty():
+		return _get_navigation_direction_to(target_global_position)
+	var goal := EnemyAvoidZone.clear_goal(zones, target_global_position)
+	return EnemyAvoidZone.steer(zones, global_position, _get_navigation_direction_to(goal))
+
+
+func _get_navigation_direction_to(target_global_position: Vector3) -> Vector3:
 	var moving_floor := MovingFloor.under(get_tree(), global_position)
 	if moving_floor != null:
 		return _get_direction_on_moving_floor(moving_floor, target_global_position)

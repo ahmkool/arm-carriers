@@ -1,0 +1,129 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.36, 0.48, 0.18, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2"]
+albedo_color = Color(0.55, 0.55, 0.22, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.3, 0.18, 0.1, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0
+bottom_radius = 0.05
+height = 1.6
+radial_segments = 4
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_5"]
+material = SubResource("StandardMaterial3D_2")
+top_radius = 0
+bottom_radius = 0.05
+height = 1.2
+radial_segments = 4
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6"]
+material = SubResource("StandardMaterial3D_3")
+top_radius = 0.07
+bottom_radius = 0.07
+height = 0.32
+radial_segments = 6
+rings = 1
+
+[node name="Reeds" type="Node3D"]
+
+[node name="Blade0" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.9501, -0.2183, -0.2229, -0.2069, 0.9756, -0.0737, 0.2336, -0.0239, -0.972, -0.3171, 0.5, -0.419)
+mesh = SubResource("CylinderMesh_5")
+cast_shadow = 0
+
+[node name="Head0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.3171, 1.3, -0.419)
+mesh = SubResource("CylinderMesh_6")
+cast_shadow = 0
+
+[node name="Blade1" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.8914, -0.2035, 0.4049, -0.2241, 0.9746, -0.0036, -0.3939, -0.094, -0.9143, -0.2418, 0.7, -0.5304)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Blade2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.6992, -0.1389, 0.7013, 0.1589, 0.9866, 0.0369, -0.697, 0.0857, 0.7119, -0.7743, 0.7, -0.4911)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Blade3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.7911, 0.1611, 0.5901, 0.0368, 0.9755, -0.2171, -0.6106, -0.15, -0.7776, -0.4982, 0.5, 0.1529)
+mesh = SubResource("CylinderMesh_5")
+cast_shadow = 0
+
+[node name="Blade4" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.5993, 0.1998, 0.7752, -0.1011, 0.9795, -0.1743, -0.7941, 0.0261, 0.6072, 0.8573, 0.7, -0.5441)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Head4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8573, 1.3, -0.5441)
+mesh = SubResource("CylinderMesh_6")
+cast_shadow = 0
+
+[node name="Blade5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.8491, -0.21, -0.4847, -0.1535, 0.9761, -0.1539, 0.5054, -0.0562, -0.861, -0.688, 0.7, -0.2298)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Blade6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9077, 0.2057, 0.3657, -0.212, 0.977, -0.0233, -0.3621, -0.0563, 0.9304, 0.25, 0.5, -0.1531)
+mesh = SubResource("CylinderMesh_5")
+cast_shadow = 0
+
+[node name="Blade7" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.857, -0.0599, -0.5118, -0.0906, 0.9953, 0.0354, 0.5072, 0.0767, -0.8584, -0.5293, 0.7, 0.2165)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Blade8" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.0508, 0.139, 0.989, 0.0961, 0.985, -0.1434, -0.9941, 0.1023, 0.0367, -0.0843, 0.7, -0.2403)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Head8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0843, 1.3, -0.2403)
+mesh = SubResource("CylinderMesh_6")
+cast_shadow = 0
+
+[node name="Blade9" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.2148, 0.2025, 0.9554, 0.11, 0.9771, -0.1823, -0.9704, 0.066, -0.2322, 0.134, 0.5, 0.0302)
+mesh = SubResource("CylinderMesh_5")
+cast_shadow = 0
+
+[node name="Blade10" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.569, -0.1048, 0.8156, 0.1252, 0.9913, 0.04, -0.8127, 0.0794, 0.5772, 0.8643, 0.7, -0.4583)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Blade11" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.8938, 0.0795, -0.4414, 0.1285, 0.9883, -0.0821, 0.4297, -0.1301, -0.8935, -0.0199, 0.7, -0.553)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0
+
+[node name="Blade12" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.8778, -0.0054, -0.479, 0.0459, 0.9944, -0.0953, 0.4768, -0.1056, -0.8726, 0.6759, 0.5, -0.2235)
+mesh = SubResource("CylinderMesh_5")
+cast_shadow = 0
+
+[node name="Head12" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6759, 1.3, -0.2235)
+mesh = SubResource("CylinderMesh_6")
+cast_shadow = 0
+
+[node name="Blade13" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.5112, -0.1915, -0.8378, -0.0124, 0.9764, -0.2156, 0.8594, -0.0999, -0.5015, -0.0788, 0.7, 0.408)
+mesh = SubResource("CylinderMesh_4")
+cast_shadow = 0

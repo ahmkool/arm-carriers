@@ -45,7 +45,7 @@ func _run() -> void:
 	await _shoot_group(0, "fresh_dungeon.png")
 	await _shoot_group(1, "fresh_crypt.png")
 	_check_locked_pick()
-	_set_completed(_cleared(["res://src/world/levels/world_local.tscn", "res://src/world/levels/world_local_level_2.tscn", "res://src/world/levels/world_local_bazooka.tscn", LevelSelectCatalog.DUNGEON_BOSS]))
+	_set_completed(_cleared(["res://src/world/levels/world_local.tscn", "res://src/world/levels/world_local_level_2_medieval.tscn", "res://src/world/levels/world_local_bazooka.tscn", LevelSelectCatalog.DUNGEON_BOSS]))
 	await _shoot_group(0, "dungeon_done.png")
 	await _shoot_group(1, "crypt_open.png")
 	await _shoot_group(5, "challenges_open.png")

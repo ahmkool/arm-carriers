@@ -144,7 +144,7 @@ func open() -> void:
 	_crosshair.visible = true
 	set_process(true)
 	_backdrop.tuck_logo(true)
-	_show_group(clampi(_remembered_group, 0, LevelSelectCatalog.GROUPS.size() - 1), _remembered_poster)
+	_show_group(clampi(_remembered_group, 0, LevelSelectCatalog.groups().size() - 1), _remembered_poster)
 
 
 ## Fires the rocket at the chosen poster. Returns once the blast has played.
@@ -171,8 +171,8 @@ func _build_rail() -> void:
 	_rail.custom_minimum_size.x = RAIL_WIDTH
 	_rail.add_theme_constant_override("separation", 12)
 	add_child(_rail)
-	for index in LevelSelectCatalog.GROUPS.size():
-		var tab := _make_rail_button(LevelSelectCatalog.GROUPS[index]["name"], 32)
+	for index in LevelSelectCatalog.groups().size():
+		var tab := _make_rail_button(LevelSelectCatalog.groups()[index]["name"], 32)
 		tab.pressed.connect(_on_tab_pressed.bind(index))
 		_tabs.append(tab)
 	var back := _make_rail_button("Back", 28)
@@ -226,7 +226,7 @@ func _show_group(group_index: int, poster_index: int) -> void:
 	_group_index = group_index
 	_remembered_group = group_index
 	_clear_posters()
-	var levels: Array = LevelSelectCatalog.GROUPS[group_index]["levels"]
+	var levels: Array = LevelSelectCatalog.groups()[group_index]["levels"]
 	for index in levels.size():
 		_add_poster(group_index, index, levels.size())
 	_refresh_tabs()
@@ -241,7 +241,7 @@ func _clear_posters() -> void:
 
 
 func _add_poster(group_index: int, index: int, count: int) -> void:
-	var level: Dictionary = LevelSelectCatalog.GROUPS[group_index]["levels"][index]
+	var level: Dictionary = LevelSelectCatalog.groups()[group_index]["levels"][index]
 	var poster := LevelPoster.new()
 	var completed_weapons := _completed_weapons(level)
 	var new_wins := _unseen_wins(level, completed_weapons)
@@ -329,10 +329,12 @@ func _refresh_tabs() -> void:
 ## The world's name and how many of its posters are stamped. A closed world shows its name only,
 ## dimmed, and its posters say what opens it.
 func _tab_text(group_index: int) -> String:
-	var group: Dictionary = LevelSelectCatalog.GROUPS[group_index]
+	var group: Dictionary = LevelSelectCatalog.groups()[group_index]
 	var group_name: String = group["name"]
 	if not LevelSelectCatalog.is_group_open(group_index):
 		return group_name
+	if group.get("dev", false):
+		return group_name  # dev sandboxes never save, so a count would stay at 0
 	return "%s %d/%d" % [group_name, LevelSelectCatalog.cleared_count(group_index), group["levels"].size()]
 
 
@@ -411,7 +413,7 @@ func _move_poster(direction: int) -> void:
 
 
 func _move_group(direction: int) -> void:
-	_show_group(posmod(_group_index + direction, LevelSelectCatalog.GROUPS.size()), 0)
+	_show_group(posmod(_group_index + direction, LevelSelectCatalog.groups().size()), 0)
 	_play_tick(1.0)
 
 
@@ -618,7 +620,7 @@ func _take_completion_baseline() -> void:
 	if _seen_baseline_taken:
 		return
 	_seen_baseline_taken = true
-	for group in LevelSelectCatalog.GROUPS:
+	for group in LevelSelectCatalog.groups():
 		_add_completed_to_seen(group["levels"])
 
 

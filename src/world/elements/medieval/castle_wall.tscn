@@ -1,0 +1,61 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/medieval/castle_stone.gdshader" id="1_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+render_priority = 0
+shader = ExtResource("1_shader")
+
+[sub_resource type="BoxMesh" id="BoxMesh_2"]
+material = SubResource("ShaderMaterial_1")
+size = Vector3(6, 7, 1.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_3"]
+material = SubResource("ShaderMaterial_1")
+size = Vector3(6, 0.25, 1.9)
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = SubResource("ShaderMaterial_1")
+size = Vector3(0.85, 0.75, 0.38)
+
+[node name="CastleWall" type="Node3D"]
+
+[node name="Wall" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.5, 0)
+mesh = SubResource("BoxMesh_2")
+
+[node name="Coping" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.12, 0)
+mesh = SubResource("BoxMesh_3")
+
+[node name="MerlonN0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.25, 7.62, -0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonS0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.25, 7.62, 0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonN1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 7.62, -0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonS1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.75, 7.62, 0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonN2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 7.62, -0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonS2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.75, 7.62, 0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonN3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 7.62, -0.75)
+mesh = SubResource("BoxMesh_4")
+
+[node name="MerlonS3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.25, 7.62, 0.75)
+mesh = SubResource("BoxMesh_4")

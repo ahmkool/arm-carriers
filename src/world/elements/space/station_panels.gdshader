@@ -8,6 +8,10 @@ uniform vec3 hull_color : source_color = vec3(0.2, 0.22, 0.27);
 uniform vec3 window_color : source_color = vec3(0.35, 0.85, 1.0);
 uniform float panel_size = 1.5;
 uniform float window_strength = 2.2;
+// For things that move, such as a hover barge: plating drawn in the mesh's own space so the panels ride along.
+// Its y is shifted by local_y_offset, so the hull's window band lines up with the station decks'.
+uniform bool local_space = false;
+uniform float local_y_offset = -1.0;
 
 varying vec3 v_pos;
 varying vec3 v_normal;
@@ -21,6 +25,9 @@ float hash(vec2 p) {
 void vertex() {
 	v_pos = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;
 	v_normal = normalize((MODEL_MATRIX * vec4(NORMAL, 0.0)).xyz);
+	if (local_space) {
+		v_pos = VERTEX + vec3(0.0, local_y_offset, 0.0);
+	}
 }
 
 vec3 top_plating(vec2 p) {

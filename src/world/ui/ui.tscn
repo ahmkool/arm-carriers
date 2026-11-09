@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://ddmgied4vtriv"]
+[gd_scene load_steps=13 format=3 uid="uid://ddmgied4vtriv"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_q2a7b"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="2_xvh14"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bs42v5vqpyjm1" path="res://src/world/ui/boss_health_bar.tscn" id="5_bhpbar"]
 [ext_resource type="PackedScene" uid="uid://xhd3xnbkaki" path="res://src/world/ui/player_health_bars.tscn" id="6_phpbars"]
 [ext_resource type="PackedScene" uid="uid://y0u243s3sir1" path="res://src/world/ui/dead/you_died_screen.tscn" id="7_you_died"]
+[ext_resource type="PackedScene" path="res://src/world/ui/survival_timer.tscn" id="8_survtimer"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_normal"]
 bg_color = Color(0.345098, 0.396078, 0.94902, 1)
@@ -114,6 +115,8 @@ text = "Status"
 [node name="PauseMenu" parent="." instance=ExtResource("3_4x7g5")]
 
 [node name="BossHealthBar" parent="." instance=ExtResource("5_bhpbar")]
+
+[node name="SurvivalTimer" parent="." instance=ExtResource("8_survtimer")]
 
 [node name="PlayerHealthBars" parent="." instance=ExtResource("6_phpbars")]
 offset_left = 1.0

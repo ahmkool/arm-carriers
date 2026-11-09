@@ -18,6 +18,7 @@ const MIN_FLOOR_NORMAL_Y := 0.7
 const BY_MESH_LIBRARY := {
 	"res://src/world/elements/dungeon/dungeon_tiles.tres": STONE,
 	"res://src/world/elements/lava/lava_tiles.tres": STONE,
+	"res://src/world/elements/medieval/castle_tiles.tres": STONE,
 	"res://src/world/elements/sky_decks/deck_tiles.tres": WOOD,
 	"res://src/world/elements/space/space_tiles.tres": METAL,
 }

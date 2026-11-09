@@ -151,7 +151,7 @@ func _weapons_to_test() -> Array[Dictionary]:
 
 
 func _catalog_weapons() -> Array[String]:
-	for group in LevelSelectCatalog.GROUPS:
+	for group in LevelSelectCatalog.groups():
 		for level in group["levels"]:
 			if level["scene"] == scene_path:
 				return LevelSelectCatalog.weapons_for(level)

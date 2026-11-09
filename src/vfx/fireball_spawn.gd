@@ -11,9 +11,12 @@ const FIREBALL_SCENE := preload("res://src/vfx/fireball.tscn")
 @onready var _sfx: AudioStreamPlayer3D = $AudioStreamPlayer3D
 
 var _launch_velocity := Vector3.ZERO
+var _damage := -1
 
-func setup(launch_velocity: Vector3) -> void:
+## `damage` -1 keeps the projectile scene's own damage.
+func setup(launch_velocity: Vector3, damage := -1) -> void:
 	_launch_velocity = launch_velocity
+	_damage = damage
 
 func _ready() -> void:
 	if _launch_velocity.length_squared() < 0.0001:
@@ -37,6 +40,8 @@ func _spawn_fireball() -> void:
 		_schedule_cleanup()
 		return
 
+	if _damage >= 0:
+		fireball.damage = _damage
 	scene_root.add_child(fireball)
 	fireball.global_position = global_position
 	fireball.launch(_launch_velocity)

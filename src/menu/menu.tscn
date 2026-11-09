@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=3 uid="uid://bf0gdkwg6xy2g"]
+[gd_scene load_steps=28 format=3 uid="uid://bf0gdkwg6xy2g"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_sblgy"]
 [ext_resource type="Script" uid="uid://e3qabm72tdbi" path="res://src/menu/level/level_button.gd" id="2_56xr1"]
@@ -16,10 +16,10 @@
 [ext_resource type="Script" uid="uid://bfsbvchm4njsm" path="res://src/ui/twinstick_setting_control.gd" id="14_twinstick"]
 [ext_resource type="Script" path="res://src/ui/fullscreen_setting_control.gd" id="15_fullscreen"]
 [ext_resource type="Script" path="res://src/ui/portrait_recording_setting_control.gd" id="16_portrait"]
-[ext_resource type="Script" path="res://src/menu/menu_backdrop_juice.gd" id="17_backdrop_juice"]
-[ext_resource type="Script" path="res://src/menu/menu_ui_juice.gd" id="18_ui_juice"]
-[ext_resource type="Script" path="res://src/menu/level_select/level_target_select.gd" id="19_level_select"]
-[ext_resource type="Script" path="res://src/menu/character_select/character_select.gd" id="20_character_select"]
+[ext_resource type="Script" uid="uid://cv7duojsuae4y" path="res://src/menu/menu_backdrop_juice.gd" id="17_backdrop_juice"]
+[ext_resource type="Script" uid="uid://b02agnt4fnw6q" path="res://src/menu/menu_ui_juice.gd" id="18_ui_juice"]
+[ext_resource type="Script" uid="uid://b5v3nr31s7s1y" path="res://src/menu/level_select/level_target_select.gd" id="19_level_select"]
+[ext_resource type="Script" uid="uid://c1x87igw7te8c" path="res://src/menu/character_select/character_select.gd" id="20_character_select"]
 
 [sub_resource type="Animation" id="Animation_2qbme"]
 length = 0.001
@@ -797,8 +797,8 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 40
 text = "Level 2 (medium)"
 script = ExtResource("2_56xr1")
-level_scene_path = "uid://omin38ccge2r"
-level_id = "res://src/world/levels/world_local_level_2.tscn"
+level_scene_path = "res://src/world/levels/world_local_level_2_medieval.tscn"
+level_id = "res://src/world/levels/world_local_level_2_medieval.tscn"
 
 [node name="BazookaLevelButton" type="Button" parent="MainMenuRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2

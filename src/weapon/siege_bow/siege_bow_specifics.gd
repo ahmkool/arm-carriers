@@ -83,6 +83,8 @@ var _is_shockwave_ready := false
 var _shockwave_prompt: FrontCarrierPrompt
 var _glow_material: StandardMaterial3D
 var _glow_time := 0.0
+## The level's arrow shaft colour, or WorldLocal.KEEP_WEAPON_COLOR.
+var _shaft_color := WorldLocal.KEEP_WEAPON_COLOR
 
 
 func _ready() -> void:
@@ -94,6 +96,7 @@ func _ready() -> void:
 	_limb_flex = get_draw(_rest_gap)
 	_apply_pose()
 	_glow_material = _make_glow_material()
+	_apply_level_colors()
 	_shockwave_prompt = FrontCarrierPrompt.new(SHOCKWAVE_WORD)
 	add_child(_shockwave_prompt)
 
@@ -218,6 +221,7 @@ func _fire(draw: float) -> void:
 	var forward := global_basis.z.normalized()
 	var arrow := ARROW_SCENE.instantiate() as SiegeArrow
 	get_tree().current_scene.add_child(arrow)
+	_tint_arrow(arrow.get_node("Visual"))
 	arrow.hit_enemy.connect(func(_enemy: Node3D): charge_shockwave())
 	arrow.launch(
 		_grip.to_global(Vector3(0.0, 0.0, _string_z)),
@@ -270,6 +274,39 @@ func _update_charged_glow(delta: float) -> void:
 	_glow_time += delta
 	var pulse := 0.5 + 0.5 * sin(_glow_time * TAU * CHARGED_GLOW_HZ)
 	_glow_material.albedo_color.a = lerpf(CHARGED_GLOW_MIN_ALPHA, CHARGED_GLOW_MAX_ALPHA, pulse)
+
+
+## Applies the level's colours (WorldLocal.aim_guide_color and arrow_shaft_color) to the aim guide and the nocked
+## arrow, and remembers the shaft colour for arrows fired later. Colours left at KEEP_WEAPON_COLOR change nothing.
+func _apply_level_colors() -> void:
+	var world := _find_world()
+	if world == null:
+		return
+	_shaft_color = world.arrow_shaft_color
+	_tint(_aim_guide as MeshInstance3D, world.aim_guide_color)
+	_tint_arrow(_nocked_arrow)
+
+
+## The level this bow is in. Walks up the tree rather than asking for the current scene, which may not be set
+## yet while a level swaps its weapon in.
+func _find_world() -> WorldLocal:
+	var node := get_parent()
+	while node != null and not node is WorldLocal:
+		node = node.get_parent()
+	return node as WorldLocal
+
+
+func _tint_arrow(visual: Node) -> void:
+	_tint(visual.get_node("Shaft") as MeshInstance3D, _shaft_color)
+
+
+## Overrides one mesh's colour with a copy of its own material, so other levels keep the original.
+func _tint(mesh: MeshInstance3D, color: Color) -> void:
+	if color == WorldLocal.KEEP_WEAPON_COLOR:
+		return
+	var material := mesh.mesh.surface_get_material(0).duplicate() as StandardMaterial3D
+	material.albedo_color = color
+	mesh.material_override = material
 
 
 func _make_glow_material() -> StandardMaterial3D:

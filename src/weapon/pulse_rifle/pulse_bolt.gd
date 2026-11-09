@@ -6,6 +6,8 @@ extends Node3D
 ## plasma bolt it meets. The origin is the bolt's head; the tracer trails behind it.
 
 signal spent(hit_enemy: bool)
+## Fired before `spent` when the bolt damages a living enemy, for weapons that track what they hit.
+signal enemy_hit(enemy: EnemyLocal)
 
 ## Enemies (layer 2) and enemy projectiles such as plasma bolts (layer 4).
 const HIT_MASK := 10
@@ -102,6 +104,7 @@ func _resolve_hit(hit: Dictionary) -> void:
 	var enemy := hit.collider as EnemyLocal
 	# Damage comes from just behind the enemy, so knockback pushes along the flight.
 	Health.apply_damage(enemy, _damage, enemy.global_position - _direction)
+	enemy_hit.emit(enemy)
 	ImpactFeedback.play_sfx(HIT_SOUND, hit_position, randf_range(1.2, 1.5), -10.0)
 	_spawn_sparks(hit_position)
 	_finish(true)

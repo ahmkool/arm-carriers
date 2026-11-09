@@ -184,6 +184,7 @@ SurvivalEnemyGroup            # SurvivalEnemyGroup script
 | `enemy_scene` | Prefab to spawn (default `enemy_local.tscn`; level 2 uses `enemy_mage_static.tscn`). |
 | `spawn_interval_curve` | Y = seconds between spawns, X = 0…1 over `fight_duration`. |
 | `fight_duration` | Length of the wave in seconds. |
+| `show_timer_ui` | Shows the HUD countdown (`UI/SurvivalTimer`, `src/world/ui/survival_timer.tscn`) while the wave runs (default on). After the timer ends it reads "Defeat the remaining enemies!" until the group clears. |
 
 **Spawn polygons:** each polygon node has ≥3 child `Node3D` markers as vertices. Enemies spawn at a random point inside the quad.
 
@@ -275,6 +276,7 @@ Every level in `level_select_catalog.gd` can be played with every `WeaponCatalog
 
 - `"requires": "ranged"` offers only weapons with `"ranged": true` (bazooka, catapult, pulse rifle, siege bow). Use it when some enemies can't be reached on foot, for example ones on other platforms. Levels built for a ranged weapon have it by default, because nobody has checked they can be beaten with melee. Remove it once you have.
 - `"exclude": ["<weapon id>", …]` removes weapons known not to work in that level.
+- `"all_weapons": true` offers every weapon from the start. The dev-only playground uses it (see `DEV_GROUPS`).
 
 `"weapon"` is the weapon placed in the scene. It is listed first and picked by default, and it is the only weapon that uses the checkpoint markers as authored. `LevelSelectCatalog.weapons_for(level)` gives the final list.
 
@@ -300,6 +302,8 @@ When the chosen weapon isn't the scene's own, `WorldLocal` replaces the `Weapon`
 Checkpoint progress and completion are saved under `<level id>@<weapon id>`, for example `res://src/world/levels/world_boss_scene.tscn@saw`. The level id is `WorldLocal.level_id`, or the scene path if that's empty. The weapon id is the `WeaponCatalog` id of the weapon being carried, so a level played with its own weapon also has the `@` suffix. A level with no weapon, or with one not in the catalog, uses the bare level id.
 
 `WorldLocal.get_level_id()` builds the key in game, and `LevelSelectCatalog.save_id()` builds it in the menu. Both must agree, so a new weapon must be added to `WeaponCatalog` before a level uses it.
+
+Version 4 replaced Level 2 (`world_local_level_2.tscn`) with its medieval reskin; `SaveMigration.V3_RENAMED_LEVELS` moves its progress over, keeping each key's weapon. Replacing another level with a reskin means adding it there and raising `SAVE_VERSION`.
 
 Saves older than version 3 used the bare level id. `SaveMigration` (`src/autoload/save_migration.gd`) renames them on load: each level maps to the weapon placed in its scene, and the old sword and saw boss scenes map to `world_boss_scene.tscn@sword` / `@saw`. The renaming happens in memory, and the file is rewritten on the next save. Renaming or merging a level scene means adding its old key to that table. `tools/level_gen/verify_save_keys.gd` checks that every poster's old progress migrates.
 

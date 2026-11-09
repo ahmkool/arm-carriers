@@ -1,0 +1,162 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/medieval/castle_stone.gdshader" id="1_shader"]
+[ext_resource type="Shader" path="res://src/world/elements/medieval/heraldry_cloth.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+render_priority = 0
+shader = ExtResource("1_shader")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2"]
+albedo_color = Color(0.24, 0.29, 0.42, 1)
+roughness = 0.7
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3"]
+albedo_color = Color(0.05, 0.045, 0.05, 1)
+roughness = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4"]
+albedo_color = Color(0.32, 0.22, 0.14, 1)
+roughness = 0.85
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_5"]
+render_priority = 0
+shader = ExtResource("2_shader")
+shader_parameter/pennant = true
+shader_parameter/sway = 0.1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6"]
+material = SubResource("ShaderMaterial_1")
+top_radius = 2.1
+bottom_radius = 2.25
+height = 8
+radial_segments = 20
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_7"]
+material = SubResource("ShaderMaterial_1")
+top_radius = 2.55
+bottom_radius = 2.1
+height = 0.55
+radial_segments = 20
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_8"]
+material = SubResource("ShaderMaterial_1")
+size = Vector3(0.75, 0.8, 0.45)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_9"]
+material = SubResource("StandardMaterial3D_2")
+top_radius = 0
+bottom_radius = 2.25
+height = 3.8
+radial_segments = 16
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_10"]
+material = SubResource("StandardMaterial3D_3")
+size = Vector3(0.22, 1, 0.3)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_11"]
+material = SubResource("StandardMaterial3D_4")
+top_radius = 0.05
+bottom_radius = 0.06
+height = 2.4
+radial_segments = 6
+rings = 1
+
+[sub_resource type="QuadMesh" id="QuadMesh_12"]
+material = SubResource("ShaderMaterial_5")
+size = Vector2(2, 0.85)
+subdivide_width = 10
+subdivide_depth = 2
+
+[node name="CastleTower" type="Node3D"]
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+mesh = SubResource("CylinderMesh_6")
+
+[node name="Corbel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.27, 0)
+mesh = SubResource("CylinderMesh_7")
+
+[node name="Merlon0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 8.95, 2.3)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.809, 0, 0.5878, 0, 1, 0, -0.5878, 0, 0.809, 1.3519, 8.95, 1.8607)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.309, 0, 0.9511, 0, 1, 0, -0.9511, 0, 0.309, 2.1874, 8.95, 0.7107)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.309, 0, 0.9511, 0, 1, 0, -0.9511, 0, -0.309, 2.1874, 8.95, -0.7107)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.809, 0, 0.5878, 0, 1, 0, -0.5878, 0, -0.809, 1.3519, 8.95, -1.8607)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 8.95, -2.3)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon6" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.809, 0, -0.5878, 0, 1, 0, 0.5878, 0, -0.809, -1.3519, 8.95, -1.8607)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon7" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.309, 0, -0.9511, 0, 1, 0, 0.9511, 0, -0.309, -2.1874, 8.95, -0.7107)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon8" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.309, 0, -0.9511, 0, 1, 0, 0.9511, 0, 0.309, -2.1874, 8.95, 0.7107)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Merlon9" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.809, 0, -0.5878, 0, 1, 0, 0.5878, 0, 0.809, -1.3519, 8.95, 1.8607)
+mesh = SubResource("BoxMesh_8")
+
+[node name="Roof" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 10.45, 0)
+mesh = SubResource("CylinderMesh_9")
+
+[node name="Slit0" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, 2.1)
+mesh = SubResource("BoxMesh_10")
+cast_shadow = 0
+
+[node name="Slit1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 2.1)
+mesh = SubResource("BoxMesh_10")
+cast_shadow = 0
+
+[node name="Slit2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.342, 0, 0.9397, 0, 1, 0, -0.9397, 0, 0.342, 1.9734, 5.6, 0.7182)
+mesh = SubResource("BoxMesh_10")
+cast_shadow = 0
+
+[node name="Slit3" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.342, 0, -0.9397, 0, 1, 0, 0.9397, 0, 0.342, -1.9734, 5.6, 0.7182)
+mesh = SubResource("BoxMesh_10")
+cast_shadow = 0
+
+[node name="Slit4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 6, -2.1)
+mesh = SubResource("BoxMesh_10")
+cast_shadow = 0
+
+[node name="Pole" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 13.3, 0)
+mesh = SubResource("CylinderMesh_11")
+
+[node name="Pennant" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.02, 14.05, 0)
+cast_shadow = 0
+mesh = SubResource("QuadMesh_12")
+instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)

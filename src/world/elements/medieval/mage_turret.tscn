@@ -1,0 +1,73 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/medieval/castle_stone.gdshader" id="1_shader"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_torch.tscn" id="2_packed"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1"]
+render_priority = 0
+shader = ExtResource("1_shader")
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_2"]
+material = SubResource("ShaderMaterial_1")
+top_radius = 0.97
+bottom_radius = 1.08
+height = 7.8
+radial_segments = 14
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+material = SubResource("ShaderMaterial_1")
+top_radius = 1.32
+bottom_radius = 0.97
+height = 0.5
+radial_segments = 14
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_4"]
+material = SubResource("ShaderMaterial_1")
+size = Vector3(0.42, 0.45, 0.28)
+
+[node name="MageTurret" type="Node3D"]
+
+[node name="Shaft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.05, 0)
+mesh = SubResource("CylinderMesh_2")
+
+[node name="Corbel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("CylinderMesh_3")
+
+[node name="Merlon0" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9239, 0, 0.3827, 0, 1, 0, -0.3827, 0, 0.9239, 0.4516, 1.07, 1.0902)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3827, 0, 0.9239, 0, 1, 0, -0.9239, 0, 0.3827, 1.0902, 1.07, 0.4516)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon2" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.3827, 0, 0.9239, 0, 1, 0, -0.9239, 0, -0.3827, 1.0902, 1.07, -0.4516)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon3" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.9239, 0, 0.3827, 0, 1, 0, -0.3827, 0, -0.9239, 0.4516, 1.07, -1.0902)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon4" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.9239, 0, -0.3827, 0, 1, 0, 0.3827, 0, -0.9239, -0.4516, 1.07, -1.0902)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon5" type="MeshInstance3D" parent="."]
+transform = Transform3D(-0.3827, 0, -0.9239, 0, 1, 0, 0.9239, 0, -0.3827, -1.0902, 1.07, -0.4516)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon6" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.3827, 0, -0.9239, 0, 1, 0, 0.9239, 0, 0.3827, -1.0902, 1.07, 0.4516)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Merlon7" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9239, 0, -0.3827, 0, 1, 0, 0.3827, 0, 0.9239, -0.4516, 1.07, 1.0902)
+mesh = SubResource("BoxMesh_4")
+
+[node name="Torch" parent="." instance=ExtResource("2_packed")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.25, 1.02)

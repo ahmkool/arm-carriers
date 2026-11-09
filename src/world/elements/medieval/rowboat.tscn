@@ -1,0 +1,64 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/sky/floating_bob.gd" id="1_script"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(0.4, 0.26, 0.15, 1)
+roughness = 0.85
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2"]
+albedo_color = Color(0.24, 0.15, 0.09, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_3"]
+material = SubResource("StandardMaterial3D_1")
+top_radius = 0.62
+bottom_radius = 0.42
+height = 0.5
+radial_segments = 14
+rings = 1
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_4"]
+material = SubResource("StandardMaterial3D_2")
+top_radius = 0.54
+bottom_radius = 0.4
+height = 0.42
+radial_segments = 14
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_5"]
+material = SubResource("StandardMaterial3D_1")
+size = Vector3(0.22, 0.06, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_6"]
+material = SubResource("StandardMaterial3D_1")
+size = Vector3(2.2, 0.04, 0.12)
+
+[node name="Rowboat" type="Node3D"]
+script = ExtResource("1_script")
+amplitude = 0.06
+period_seconds = 3.2
+
+[node name="Hull" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.3, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0)
+mesh = SubResource("CylinderMesh_3")
+
+[node name="Inside" type="MeshInstance3D" parent="."]
+transform = Transform3D(2.3, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.16, 0)
+mesh = SubResource("CylinderMesh_4")
+
+[node name="Bench1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.35, 0.3, 0)
+mesh = SubResource("BoxMesh_5")
+
+[node name="Bench2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0.3, 0)
+mesh = SubResource("BoxMesh_5")
+
+[node name="Oar1" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9781, 0, 0.2079, 0, 1, 0, -0.2079, 0, 0.9781, 0.05, 0.36, 0.3)
+mesh = SubResource("BoxMesh_6")
+
+[node name="Oar2" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.9781, 0, -0.2079, 0, 1, 0, 0.2079, 0, 0.9781, 0.05, 0.36, -0.3)
+mesh = SubResource("BoxMesh_6")
