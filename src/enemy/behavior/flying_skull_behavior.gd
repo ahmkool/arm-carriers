@@ -1,6 +1,10 @@
 class_name FlyingSkullBehavior
 extends EnemyBehavior
 
+## Height above the target's feet the skull flies at. At 0 it skims the floor, under a carried sword's blade;
+## about 1 m puts it at the blade's height, so the sword can hit it.
+@export var aim_height := 0.0
+
 func _think(_delta: float) -> void:
 	if enemy == null or not enemy.is_offensive:
 		return
@@ -12,7 +16,7 @@ func _think(_delta: float) -> void:
 	if not is_instance_valid(enemy.target_player):
 		return
 
-	var to_target := enemy.target_player.global_position - enemy.global_position
+	var to_target := enemy.target_player.global_position + Vector3.UP * aim_height - enemy.global_position
 	if to_target.length_squared() < 0.0001:
 		return
 

@@ -1,0 +1,935 @@
+[gd_scene load_steps=42 format=3 uid="uid://dfsqj553gck1f"]
+
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="17_2xwjt"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_aviator.tscn" id="aviator"]
+[ext_resource type="PackedScene" uid="uid://lsnmitig1grl" path="res://src/enemy/enemy_aviator_gunner.tscn" id="aviator_gunner"]
+[ext_resource type="Script" path="res://src/enemy/barge_crew_group.gd" id="barge_crew"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky_decks/rotor_barge_small.tscn" id="barge_small"]
+[ext_resource type="Script" uid="uid://el5p0jngj2vj" path="res://src/events/barge_voyage_event.gd" id="barge_voyage"]
+[ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="bazooka"]
+[ext_resource type="Script" uid="uid://byx44q8u7e5lt" path="res://src/world/elements/sky/floating_bob.gd" id="bob"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky/sky_bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky/cloud_layers.tscn" id="clouds"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="MeshLibrary" uid="uid://naqh6to77nue" path="res://src/world/elements/sky_decks/deck_tiles.tres" id="deck_tiles"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2so3l4xat73n" path="res://src/enemy/enemy_aviator_gun_shield.tscn" id="gun_shield_aviator"]
+[ext_resource type="AudioStream" uid="uid://dxb245ts7cdnt" path="res://assets/music/PeriTune_Ticking_Labyrinth.mp3" id="music"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="PackedScene" path="res://src/world/elements/sky_decks/deck_rotor.tscn" id="rotor"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
+panorama = ExtResource("sky")
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_sky_contribution = 0.4
+ambient_light_energy = 0.3
+
+[sub_resource type="Curve" id="Curve_south_hold"]
+_limits = [0.0, 10.0, 0.0, 1.0]
+_data = [Vector2(0, 5), 0.0, 0.0, 0, 0, Vector2(1, 5), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(400, 1, 400)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(8.757999, -0.5500002, 8.2525, 11.257999, -0.5500002, 8.0025, 11.507999, -0.5500002, 2.7524996, 8.257999, -0.5500002, 8.7525, 11.257999, -0.5500002, -4.9975004, 8.757999, -0.5500002, -5.2475004, 8.257999, -0.5500002, -5.7475004, -8.242001, -0.5500002, -4.9975004, -8.242001, -0.5500002, 8.0025, -5.7420006, -0.5500002, 8.2525, -5.7420006, -0.5500002, -5.2475004, -5.2420006, -0.5500002, 8.7525, -4.9920006, -0.5500002, 11.2525, 8.007999, -0.5500002, 11.2525, 8.007999, -0.5500002, -8.2475, -4.9920006, -0.5500002, -8.2475, -5.2420006, -0.5500002, -5.7475004, -20.742, -0.5500002, 5.7524996, -20.742, -0.5500002, 8.5025, -15.492001, -0.5500002, 8.5025, -15.492001, -0.5500002, 5.7524996, -12.492001, -0.5500002, 5.5024996, -12.492001, -0.5500002, -2.7475004, -15.492001, -0.5500002, -2.9975004, -23.492, -0.5500002, -2.7475004, -23.492, -0.5500002, 5.5024996, -15.492001, -0.5500002, -5.7475004, -20.742, -0.5500002, -5.7475004, -20.742, -0.5500002, -2.9975004, 18.258, -0.5500002, 8.5025, 23.508, -0.5500002, 8.5025, 23.508, -0.5500002, 5.7524996, 18.008, -0.5500002, 5.5024996, 15.257999, -0.5500002, -2.7475004, 15.257999, -0.5500002, 5.5024996, 18.008, -0.5500002, -2.7475004, 23.508, -0.5500002, -2.9975004, 23.508, -0.5500002, -5.7475004, 18.258, -0.5500002, -5.7475004, 26.508, -0.5500002, 5.5024996, 26.508, -0.5500002, -2.7475004, 30.008, -0.5500002, 9.2525, 30.008, -0.5500002, 14.7525, 42.008, -0.5500002, 14.7525, 42.008, -0.5500002, 9.2525, 30.258, -0.5500002, 21.252499, 30.258, -0.5500002, 26.502499, 41.508, -0.5500002, 26.502499, 41.508, -0.5500002, 21.252499, 35.758, -0.5500002, 33.7525, 35.508, -0.5500002, 33.2525, 33.258, -0.5500002, 33.2525, 33.008, -0.5500002, 33.7525, 41.008, -0.5500002, 44.2525, 41.508, -0.5500002, 41.5025, 41.508, -0.5500002, 36.2525, 30.758, -0.5500002, 36.2525, 31.008, -0.5500002, 44.2525, 31.008, -0.5500002, 33.7525, 27.758, -0.5500002, 37.0025, 27.758, -0.5500002, 41.0025, 30.258, -0.5500002, 41.2525, 30.258, -0.5500002, 36.7525, 41.008, -0.5500002, 33.7525, 30.758, -0.5500002, 41.7525, 44.508, -0.5500002, 41.5025, 44.508, -0.5500002, 36.2525, 122.757996, -0.5500002, 41.2525, 125.007996, -0.5500002, 41.2525, 125.257996, -0.5500002, 40.7525, 125.257996, -0.5500002, 37.0025, 122.757996, -0.5500002, 36.7525, 112.007996, -0.5500002, 44.2525, 122.007996, -0.5500002, 44.2525, 122.257996, -0.5500002, 36.2525, 122.007996, -0.5500002, 33.7525, 112.007996, -0.5500002, 33.7525, 111.507996, -0.5500002, 41.5025, 111.507996, -0.5500002, 36.5025, 122.257996, -0.5500002, 41.7525, 108.257996, -0.5500002, 36.2525, 108.257996, -0.5500002, 41.5025)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(2, 0, 3), PackedInt32Array(2, 5, 4), PackedInt32Array(6, 5, 2), PackedInt32Array(7, 10, 8), PackedInt32Array(8, 10, 9), PackedInt32Array(12, 11, 13), PackedInt32Array(13, 11, 3), PackedInt32Array(14, 6, 15), PackedInt32Array(15, 6, 16), PackedInt32Array(9, 10, 11), PackedInt32Array(11, 10, 3), PackedInt32Array(3, 10, 2), PackedInt32Array(2, 10, 6), PackedInt32Array(10, 16, 6), PackedInt32Array(20, 19, 17), PackedInt32Array(17, 19, 18), PackedInt32Array(21, 20, 22), PackedInt32Array(22, 20, 23), PackedInt32Array(23, 20, 25), PackedInt32Array(23, 25, 24), PackedInt32Array(28, 27, 23), PackedInt32Array(23, 27, 26), PackedInt32Array(24, 28, 23), PackedInt32Array(20, 17, 25), PackedInt32Array(30, 29, 31), PackedInt32Array(31, 29, 32), PackedInt32Array(35, 32, 33), PackedInt32Array(33, 32, 34), PackedInt32Array(37, 36, 38), PackedInt32Array(38, 36, 35), PackedInt32Array(36, 40, 35), PackedInt32Array(35, 40, 39), PackedInt32Array(35, 39, 31), PackedInt32Array(35, 31, 32), PackedInt32Array(44, 43, 41), PackedInt32Array(41, 43, 42), PackedInt32Array(48, 47, 45), PackedInt32Array(45, 47, 46), PackedInt32Array(50, 49, 51), PackedInt32Array(51, 49, 52), PackedInt32Array(54, 53, 55), PackedInt32Array(55, 53, 49), PackedInt32Array(49, 53, 56), PackedInt32Array(56, 53, 57), PackedInt32Array(56, 58, 52), PackedInt32Array(59, 62, 60), PackedInt32Array(60, 62, 61), PackedInt32Array(49, 63, 55), PackedInt32Array(62, 56, 61), PackedInt32Array(61, 56, 64), PackedInt32Array(64, 56, 57), PackedInt32Array(56, 52, 49), PackedInt32Array(55, 66, 54), PackedInt32Array(54, 66, 65), PackedInt32Array(68, 67, 69), PackedInt32Array(69, 67, 70), PackedInt32Array(70, 67, 71), PackedInt32Array(74, 73, 75), PackedInt32Array(75, 73, 72), PackedInt32Array(75, 72, 77), PackedInt32Array(75, 77, 76), PackedInt32Array(77, 78, 76), PackedInt32Array(67, 79, 71), PackedInt32Array(71, 79, 74), PackedInt32Array(79, 73, 74), PackedInt32Array(77, 81, 78), PackedInt32Array(78, 81, 80)]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_island"]
+size = Vector3(21, 3, 21)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_south_hold"]
+size = Vector3(8.997, 3, 5.998)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gunner_deck"]
+size = Vector3(11.996, 3, 5.998)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_final_island"]
+size = Vector3(14.995, 3, 11.996)
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+skip_save = true
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
+
+[node name="EnemyAviator1" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("aviator")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.7944, 0, 0)
+is_offensive = false
+
+[node name="EnemyAviator2" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("aviator")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -19.1936, 0, 1.4995)
+is_offensive = false
+
+[node name="EnemyAviator3" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("aviator")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -16.7944, 0, 2.999)
+is_offensive = false
+
+[node name="EnemyAviator4" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("aviator")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 19.7934, 0, 0)
+is_offensive = false
+
+[node name="EnemyAviator5" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("aviator")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 22.1926, 0, 1.4995)
+is_offensive = false
+
+[node name="EnemyAviator6" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("aviator")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 19.7934, 0, 2.999)
+is_offensive = false
+
+[node name="SouthHold" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+enemy_scene = ExtResource("aviator_gunner")
+spawn_interval_curve = SubResource("Curve_south_hold")
+fight_duration = 40
+enemy_max_hp = 6
+
+[node name="Enemies" type="Node3D" parent="Enemies/SouthHold"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SouthHold"]
+
+[node name="Spawn1" type="Node3D" parent="Enemies/SouthHold/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.2, 0, 22.2)
+
+[node name="Spawn2" type="Node3D" parent="Enemies/SouthHold/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4, 0, 23.6)
+
+[node name="Spawn3" type="Node3D" parent="Enemies/SouthHold/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.6, 0, 22.2)
+
+[node name="Spawn4" type="Node3D" parent="Enemies/SouthHold/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8, 0, 23.6)
+
+[node name="IslandGuard" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/IslandGuard"]
+
+[node name="EnemyAviatorGunShield" parent="Enemies/IslandGuard/InstancedEnemies" instance=ExtResource("gun_shield_aviator")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.5, 0, 34.5)
+is_offensive = false
+
+[node name="BargeWave1" type="Node3D" parent="Enemies" node_paths=PackedStringArray("barge")]
+script = ExtResource("barge_crew")
+barge = NodePath("../../Level/Barges/BargeWave1Barge")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/BargeWave1"]
+
+[node name="Shield1" parent="Enemies/BargeWave1/InstancedEnemies" instance=ExtResource("gun_shield_aviator")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 67.48, 0, -2.503)
+is_offensive = false
+holds_position = true
+
+[node name="Gunner1" parent="Enemies/BargeWave1/InstancedEnemies" instance=ExtResource("aviator_gunner")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 64.48, 0, -8.503)
+is_offensive = false
+holds_position = true
+
+[node name="Gunner2" parent="Enemies/BargeWave1/InstancedEnemies" instance=ExtResource("aviator_gunner")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 67.48, 0, -9.803)
+is_offensive = false
+holds_position = true
+
+[node name="Gunner3" parent="Enemies/BargeWave1/InstancedEnemies" instance=ExtResource("aviator_gunner")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 70.48, 0, -8.503)
+is_offensive = false
+holds_position = true
+
+[node name="BargeWave2" type="Node3D" parent="Enemies" node_paths=PackedStringArray("barge")]
+script = ExtResource("barge_crew")
+barge = NodePath("../../Level/Barges/BargeWave2Barge")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/BargeWave2"]
+
+[node name="Shield1" parent="Enemies/BargeWave2/InstancedEnemies" instance=ExtResource("gun_shield_aviator")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 83.28, 0, 80.477)
+is_offensive = false
+holds_position = true
+
+[node name="Shield2" parent="Enemies/BargeWave2/InstancedEnemies" instance=ExtResource("gun_shield_aviator")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 87.68, 0, 80.477)
+is_offensive = false
+holds_position = true
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 4.4985)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/FocusDecksSW"), NodePath("../../Level/Events/FocusDecksSE"), NodePath("../../Level/Events/FocusDecksNW"), NodePath("../../Level/Events/FocusDecksNE")]
+areas_to_reactivate = [NodePath("../../Level/Areas/FiringLineTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -1.4995)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/SouthHold")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/SouthHoldTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/FiringLineTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.988, 1.8026, 11.196)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/CloseHoldBridges"), NodePath("../../Level/Events/OpenGunnerDeckBridge")]
+enemy_groups_reset = [NodePath("../../Enemies/IslandGuard")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SouthHold")]
+areas_to_reactivate = [NodePath("../../Level/Areas/GunnerDeckTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/FiringLineTrigger"), NodePath("../../Level/Areas/SouthHoldTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.988, 1.8026, 38.187)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/CloseHoldBridges"), NodePath("../../Level/Events/OpenGunnerDeckBridge"), NodePath("../../Level/Events/OpenIslandBridge"), NodePath("../../Level/Events/BargeRun")]
+enemy_groups_reset = [NodePath("../../Enemies/BargeWave1"), NodePath("../../Enemies/BargeWave2")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SouthHold"), NodePath("../../Enemies/IslandGuard")]
+areas_already_activated = [NodePath("../../Level/Areas/FiringLineTrigger"), NodePath("../../Level/Areas/SouthHoldTrigger"), NodePath("../../Level/Areas/GunnerDeckTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint5" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 116.961, 1.8026, 38.187)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/CloseHoldBridges"), NodePath("../../Level/Events/OpenGunnerDeckBridge"), NodePath("../../Level/Events/OpenIslandBridge")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SouthHold"), NodePath("../../Enemies/IslandGuard"), NodePath("../../Enemies/BargeWave1"), NodePath("../../Enemies/BargeWave2")]
+areas_already_activated = [NodePath("../../Level/Areas/FiringLineTrigger"), NodePath("../../Level/Areas/SouthHoldTrigger"), NodePath("../../Level/Areas/GunnerDeckTrigger"), NodePath("../../Level/Areas/FinalIslandTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -17, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -40)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131075, 65534, 655410, -131075, 65535, 1441840, -131075, 0, 1441840, -131075, 1, 1441840, -131075, 2, 1441842, -3, 65534, 1441823, -3, 65535, 655416, -3, 0, 1441850, -3, 1, 655416, -3, 2, 31, -131074, 65533, 655410, -131074, 65534, 655409, -131074, 2, 1441841, -131074, 3, 1441842, -2, 65533, 1441823, -2, 65534, 1441849, -2, 65535, 55, -2, 0, 55, -2, 1, 55, -2, 2, 57, -2, 3, 31, -131073, 65533, 655408, -131073, 3, 48, -1, 65533, 655418, -1, 65534, 55, -1, 65535, 55, -1, 0, 55, -1, 1, 55, -1, 2, 55, -1, 3, 58, -196608, 65533, 655408, -196608, 3, 48, -65536, 65533, 1048632, -65536, 65534, 55, -65536, 65535, 55, -65536, 0, 55, -65536, 1, 55, -65536, 2, 55, -65536, 3, 1441848, -196607, 65533, 655408, -196607, 3, 48, -65535, 65533, 655418, -65535, 65534, 55, -65535, 65535, 55, -65535, 0, 55, -65535, 1, 55, -65535, 2, 55, -65535, 3, 1441848, -196606, 65533, 1048626, -196606, 65534, 1048625, -196606, 2, 49, -196606, 3, 50, -65534, 65533, 655391, -65534, 65534, 655417, -65534, 65535, 55, -65534, 0, 55, -65534, 1, 55, -65534, 2, 1048633, -65534, 3, 1048607, -196605, 65534, 1048626, -196605, 65535, 1048624, -196605, 0, 1048624, -196605, 1, 1048624, -196605, 2, 50, -65533, 65534, 655391, -65533, 65535, 56, -65533, 0, 55, -65533, 1, 56, -65533, 2, 1048607, -65531, 65535, 55, -196599, 12, 655410, -196599, 13, 1441842, -65527, 12, 1441823, -65527, 13, 31, -196598, 11, 655410, -196598, 12, 655409, -196598, 13, 1441841, -196598, 14, 1441842, -65526, 11, 1441823, -65526, 12, 1441849, -65526, 13, 57, -65526, 14, 31, -196597, 11, 655408, -196597, 14, 48, -65525, 11, 55, -65525, 12, 55, -65525, 13, 55, -65525, 14, 58, -196596, 11, 655408, -196596, 14, 48, -65524, 11, 1048632, -65524, 12, 55, -65524, 13, 55, -65524, 14, 58, -196595, 11, 1048626, -196595, 12, 1048625, -196595, 13, 49, -196595, 14, 50, -65523, 11, 655391, -65523, 12, 655417, -65523, 13, 1048633, -65523, 14, 1048607, -196594, 12, 1048626, -196594, 13, 50, -65522, 12, 52, -65522, 13, 655412, -196572, 12, 655410, -196572, 13, 1441842, -65500, 12, 52, -65500, 13, 655412, -196571, 11, 655410, -196571, 12, 655409, -196571, 13, 1441841, -196571, 14, 1441842, -65499, 11, 1441823, -65499, 12, 1441849, -65499, 13, 57, -65499, 14, 31, -196570, 11, 655408, -196570, 14, 48, -65498, 11, 1048632, -65498, 12, 55, -65498, 13, 55, -65498, 14, 58, -196569, 11, 655408, -196569, 14, 48, -65497, 11, 1048632, -65497, 12, 55, -65497, 13, 55, -65497, 14, 58, -196568, 11, 1048626, -196568, 12, 1048625, -196568, 13, 49, -196568, 14, 50, -65496, 11, 655391, -65496, 12, 655417, -65496, 13, 1048633, -65496, 14, 1048607, -196567, 12, 1048626, -196567, 13, 50, -65495, 12, 655391, -65495, 13, 1048607)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="GridMapDecks" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-8, 65535, 0, -8, 0, 0, -8, 1, 0, -7, 65534, 0, -7, 65535, 0, -7, 0, 0, -7, 1, 0, -7, 2, 0, -6, 65534, 0, -6, 65535, 0, -6, 0, 0, -6, 1, 0, -6, 2, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -65531, 65535, 0, -65531, 0, 0, -65531, 1, 0, -65530, 65534, 0, -65530, 65535, 0, -65530, 0, 0, -65530, 1, 0, -65530, 2, 0, -65529, 65534, 0, -65529, 65535, 0, -65529, 0, 0, -65529, 1, 0, -65529, 2, 0, -65528, 65535, 0, -65528, 0, 0, -65528, 1, 0, -65526, 4, 0, -65525, 4, 0, -65524, 4, 0, -65523, 4, 0, -65523, 3, 0, -65524, 3, 0, -65525, 3, 0, -65526, 3, 0, -327671, 4, 5, -327671, 3, 5, -131062, 3, 2, -131061, 3, 2, -131060, 3, 2, -131059, 3, 2, -196598, 4, 3, -196597, 4, 3, -196596, 4, 3, -196595, 4, 3, -262130, 4, 4, -262130, 3, 4, -65526, 7, 0, -65526, 8, 0, -65525, 7, 0, -65525, 8, 0, -65524, 7, 0, -65524, 8, 0, -65523, 7, 0, -65523, 8, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -4, 0)
+
+[node name="Decoration" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+data = {
+"cells": PackedInt32Array(-3, 65535, 109, -3, 0, 655465, -3, 2, 1441901, -1, 65533, 107, -1, 65535, 1441897, -1, 0, 655469, -1, 2, 1048685, -1, 3, 1048683, -65536, 65533, 105, -65536, 65535, 655465, -65536, 0, 655465, -65536, 2, 1441901, -65536, 3, 655465, -65534, 65533, 107, -65534, 65535, 1441901, -65534, 0, 1441899, -65534, 2, 109, -65534, 3, 1441905, -65533, 65535, 1048689, -65533, 0, 1441897, -65533, 2, 655467, -65519, 18, 109, -65519, 20, 107, -65518, 18, 105, -65518, 20, 1441897, -65479, 18, 109, -65479, 20, 107, -65477, 18, 105, -65477, 20, 1441897)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="FocusDecksSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusDecksSW")
+
+[node name="FocusDecksSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusDecksSE")
+
+[node name="FocusDecksNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusDecksNW")
+
+[node name="FocusDecksNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusDecksNE")
+
+[node name="UnfocusCamera" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("17_2xwjt")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+
+[node name="CloseHoldBridges" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("17_2xwjt")
+platforms = [NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.3
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../StartSouthHold")
+
+[node name="StartSouthHold" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/SouthHold")
+
+[node name="FocusSouthHoldSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSouthHoldSW")
+
+[node name="FocusSouthHoldSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSouthHoldSE")
+
+[node name="FocusSouthHoldNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSouthHoldNW")
+
+[node name="FocusSouthHoldNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSouthHoldNE")
+
+[node name="UnfocusSouthHold" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="OpenGunnerDeckBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("17_2xwjt")
+platforms = [NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="WakeIslandGuard" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/IslandGuard")
+
+[node name="FocusIslandSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusIslandSW")
+
+[node name="FocusIslandSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusIslandSE")
+
+[node name="FocusIslandNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusIslandNW")
+
+[node name="FocusIslandNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusIslandNE")
+
+[node name="UnfocusIsland" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="OpenIslandBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("17_2xwjt")
+platforms = [NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="BargeRun" type="Node" parent="Level/Events" node_paths=PackedStringArray("barge", "waves", "leg_events")]
+script = ExtResource("barge_voyage")
+barge = NodePath("../../Barges/PlayerBarge")
+waves = [NodePath("../../../Enemies/BargeWave1"), NodePath("../../../Enemies/BargeWave2")]
+leg_events = [NodePath("../FocusBargeWave1SW"), NodePath("../FocusBargeWave1SE"), NodePath("../FocusBargeWave1NW"), NodePath("../FocusBargeWave1NE"), NodePath("../FocusBargeWave2SW"), NodePath("../FocusBargeWave2SE"), NodePath("../FocusBargeWave2NW"), NodePath("../FocusBargeWave2NE")]
+leg_event_legs = PackedInt32Array(0, 0, 0, 0, 1, 1, 1, 1)
+
+[node name="FocusBargeWave1SW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("")
+
+[node name="FocusBargeWave1SE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("")
+
+[node name="FocusBargeWave1NW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBargeWave1NW")
+
+[node name="FocusBargeWave1NE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBargeWave1NE")
+
+[node name="FocusBargeWave2SW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBargeWave2SW")
+
+[node name="FocusBargeWave2SE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBargeWave2SE")
+
+[node name="FocusBargeWave2NW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("")
+
+[node name="FocusBargeWave2NE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("")
+
+[node name="UnfocusBargeWave" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="CloudLayers" parent="Level" instance=ExtResource("clouds")]
+
+[node name="IslandCliffs" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-393219, 65534, 655410, -393219, 65535, 1441840, -393219, 0, 1441840, -393219, 1, 1441840, -393219, 2, 1441842, -262147, 65534, 655410, -262147, 65535, 1441840, -262147, 0, 1441840, -262147, 1, 1441840, -262147, 2, 1441842, -393218, 65533, 655410, -393218, 65534, 655409, -393218, 2, 1441841, -393218, 3, 1441842, -262146, 65533, 655410, -262146, 65534, 655409, -262146, 2, 1441841, -262146, 3, 1441842, -393217, 65533, 655408, -393217, 3, 48, -262145, 65533, 655408, -262145, 3, 48, -458752, 65533, 655408, -458752, 3, 48, -327680, 65533, 655408, -327680, 3, 48, -458751, 65533, 655408, -458751, 3, 48, -327679, 65533, 655408, -327679, 3, 48, -458750, 65533, 1048626, -458750, 65534, 1048625, -458750, 2, 49, -458750, 3, 50, -327678, 65533, 1048626, -327678, 65534, 1048625, -327678, 2, 49, -327678, 3, 50, -458749, 65534, 1048626, -458749, 65535, 1048624, -458749, 0, 1048624, -458749, 1, 1048624, -458749, 2, 50, -327677, 65534, 1048626, -327677, 65535, 1048624, -327677, 0, 1048624, -327677, 1, 1048624, -327677, 2, 50, -458743, 12, 655410, -458743, 13, 1441842, -327671, 12, 655410, -327671, 13, 1441842, -458742, 11, 655410, -458742, 12, 655409, -458742, 13, 1441841, -458742, 14, 1441842, -327670, 11, 655410, -327670, 12, 655409, -327670, 13, 1441841, -327670, 14, 1441842, -458741, 11, 655408, -458741, 14, 48, -327669, 11, 655408, -327669, 14, 48, -458740, 11, 655408, -458740, 14, 48, -327668, 11, 655408, -327668, 14, 48, -458739, 11, 1048626, -458739, 12, 1048625, -458739, 13, 49, -458739, 14, 50, -327667, 11, 1048626, -327667, 12, 1048625, -327667, 13, 49, -327667, 14, 50, -458738, 12, 1048626, -458738, 13, 50, -327666, 12, 1048626, -327666, 13, 50, -458716, 12, 655410, -458716, 13, 1441842, -327644, 12, 655410, -327644, 13, 1441842, -458715, 11, 655410, -458715, 12, 655409, -458715, 13, 1441841, -458715, 14, 1441842, -327643, 11, 655410, -327643, 12, 655409, -327643, 13, 1441841, -327643, 14, 1441842, -458714, 11, 655408, -458714, 14, 48, -327642, 11, 655408, -327642, 14, 48, -458713, 11, 655408, -458713, 14, 48, -327641, 11, 655408, -327641, 14, 48, -458712, 11, 1048626, -458712, 12, 1048625, -458712, 13, 49, -458712, 14, 50, -327640, 11, 1048626, -327640, 12, 1048625, -327640, 13, 49, -327640, 14, 50, -458711, 12, 1048626, -458711, 13, 50, -327639, 12, 1048626, -327639, 13, 50)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="DeckFrame" type="GridMap" parent="Level"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196616, 65535, 4, -196616, 0, 4, -196616, 1, 4, -131080, 1, 3, -65544, 65535, 2, -8, 65535, 1, -8, 0, 1, -8, 1, 1, -196615, 65534, 4, -196615, 2, 4, -131079, 2, 3, -65543, 65534, 2, -7, 65534, 1, -7, 65535, 1, -7, 0, 1, -7, 1, 1, -7, 2, 1, -262150, 65534, 5, -262150, 2, 5, -131078, 2, 3, -65542, 65534, 2, -6, 65534, 1, -6, 65535, 1, -6, 0, 1, -6, 1, 1, -6, 2, 1, -262149, 65535, 5, -262149, 0, 5, -262149, 1, 5, -131077, 1, 3, -65541, 65535, 2, -5, 65535, 1, -5, 0, 1, -5, 1, 1, -262139, 65535, 4, -262139, 0, 4, -262139, 1, 4, -196603, 1, 3, -131067, 65535, 2, -65531, 65535, 1, -65531, 0, 1, -65531, 1, 1, -262138, 65534, 4, -262138, 2, 4, -196602, 2, 3, -131066, 65534, 2, -65530, 65534, 1, -65530, 65535, 1, -65530, 0, 1, -65530, 1, 1, -65530, 2, 1, -327673, 65534, 5, -327673, 2, 5, -196601, 2, 3, -131065, 65534, 2, -65529, 65534, 1, -65529, 65535, 1, -65529, 0, 1, -65529, 1, 1, -65529, 2, 1, -327672, 65535, 5, -327672, 0, 5, -327672, 1, 5, -196600, 1, 3, -131064, 65535, 2, -65528, 65535, 1, -65528, 0, 1, -65528, 1, 1, -262134, 7, 4, -262134, 8, 4, -196598, 8, 3, -131062, 7, 2, -65526, 7, 1, -65526, 8, 1, -196597, 8, 3, -131061, 7, 2, -65525, 7, 1, -65525, 8, 1, -196596, 8, 3, -131060, 7, 2, -65524, 7, 1, -65524, 8, 1, -327667, 7, 5, -327667, 8, 5, -196595, 8, 3, -131059, 7, 2, -65523, 7, 1, -65523, 8, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotors" type="Node3D" parent="Level"]
+
+[node name="Rotor1" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -23.9925, -1, -1.4995)
+
+[node name="Rotor2" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -23.9925, -1, 4.4985)
+
+[node name="Rotor3" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -19.4935, -1, -5.9985)
+
+[node name="Rotor4" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -19.4935, -1, 8.9975)
+
+[node name="Rotor5" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.9915, -1, -1.4995)
+
+[node name="Rotor6" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.9915, -1, 4.4985)
+
+[node name="Rotor7" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22.4925, -1, -5.9985)
+
+[node name="Rotor8" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 22.4925, -1, 8.9975)
+
+[node name="Rotor9" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 22.4925, -1, 8.9975)
+
+[node name="Rotor10" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 4.371139e-08, 0, 1, 0, -4.371139e-08, 0, 1, 41.986, -1, 11.9965)
+
+[node name="Rotor11" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 29.9895, -1, 22.4925)
+
+[node name="Rotor12" parent="Level/Rotors" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.9865, -1, 25.4915)
+
+[node name="DistantDecks" type="Node" parent="Level"]
+
+[node name="DeckA" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -58, -26, 10)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckA"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65535, 0, -3, 0, 0, -3, 1, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckA"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196611, 65535, 4, -196611, 0, 4, -196611, 1, 4, -131075, 1, 3, -65539, 65535, 2, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -196610, 65534, 4, -196610, 2, 4, -131074, 2, 3, -65538, 65534, 2, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -131073, 2, 3, -65537, 65534, 2, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -196608, 2, 3, -131072, 65534, 2, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -196607, 2, 3, -131071, 65534, 2, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -327678, 65534, 5, -327678, 2, 5, -196606, 2, 3, -131070, 65534, 2, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -327677, 65535, 5, -327677, 0, 5, -327677, 1, 5, -196605, 1, 3, -131069, 65535, 2, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, 1.4995)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, -4.4985)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -5.9985)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, 7.4975)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 8.9975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -5.9985)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 8.9975)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9975, -1, -4.4985)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -5.9985)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9975, -1, 7.4975)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 8.9975)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckA" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, 1.4995)
+
+[node name="DeckB" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64, -32, -16)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckB"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckB"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196612, 65534, 4, -196612, 65535, 4, -196612, 0, 4, -196612, 1, 4, -196612, 2, 4, -131076, 2, 3, -65540, 65534, 2, -4, 65534, 1, -4, 65535, 1, -4, 0, 1, -4, 1, 1, -4, 2, 1, -196611, 65533, 4, -196611, 3, 4, -131075, 3, 3, -65539, 65533, 2, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -3, 3, 1, -131074, 3, 3, -65538, 65533, 2, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -131073, 3, 3, -65537, 65533, 2, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -196608, 3, 3, -131072, 65533, 2, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -196607, 3, 3, -131071, 65533, 2, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -196606, 3, 3, -131070, 65533, 2, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -327677, 65533, 5, -327677, 3, 5, -196605, 3, 3, -131069, 65533, 2, -65533, 65533, 1, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1, -65533, 3, 1, -327676, 65534, 5, -327676, 65535, 5, -327676, 0, 5, -327676, 1, 5, -327676, 2, 5, -196604, 2, 3, -131068, 65534, 2, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, -4.4985)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -10.4965, -1, -5.9985)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 1.4995)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -11.9965, -1, 7.4975)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -10.4965, -1, 8.9975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -8.9975)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 11.9965)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -8.9975)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 11.9965)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -8.9975)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 11.9965)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -4.4985)
+
+[node name="Rotor13" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.4955, -1, -5.9985)
+
+[node name="Rotor14" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 1.4995)
+
+[node name="Rotor15" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 7.4975)
+
+[node name="Rotor16" parent="Level/DistantDecks/DeckB" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.4955, -1, 8.9975)
+
+[node name="DeckC" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -70, -34, -46)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckC"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckC"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196611, 65533, 4, -196611, 65534, 4, -196611, 65535, 4, -196611, 0, 4, -196611, 1, 4, -196611, 2, 4, -131075, 2, 3, -65539, 65533, 2, -3, 65533, 1, -3, 65534, 1, -3, 65535, 1, -3, 0, 1, -3, 1, 1, -3, 2, 1, -196610, 65532, 4, -196610, 3, 4, -131074, 3, 3, -65538, 65532, 2, -2, 65532, 1, -2, 65533, 1, -2, 65534, 1, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -2, 2, 1, -2, 3, 1, -131073, 3, 3, -65537, 65532, 2, -1, 65532, 1, -1, 65533, 1, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -1, 3, 1, -196608, 3, 3, -131072, 65532, 2, -65536, 65532, 1, -65536, 65533, 1, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -65536, 3, 1, -196607, 3, 3, -131071, 65532, 2, -65535, 65532, 1, -65535, 65533, 1, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -65535, 3, 1, -196606, 3, 3, -131070, 65532, 2, -65534, 65532, 1, -65534, 65533, 1, -65534, 65534, 1, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1, -65534, 2, 1, -65534, 3, 1, -327677, 65532, 5, -327677, 3, 5, -196605, 3, 3, -131069, 65532, 2, -65533, 65532, 1, -65533, 65533, 1, -65533, 65534, 1, -65533, 65535, 1, -65533, 0, 1, -65533, 1, 1, -65533, 2, 1, -65533, 3, 1, -327676, 65533, 5, -327676, 65534, 5, -327676, 65535, 5, -327676, 0, 5, -327676, 1, 5, -327676, 2, 5, -196604, 2, 3, -131068, 65533, 2, -65532, 65533, 1, -65532, 65534, 1, -65532, 65535, 1, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, -4.4985)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, 1.4995)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -8.9975, -1, 7.4975)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, -10.4965)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -11.9965)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 11.9965)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -11.9965)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 11.9965)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -11.9965)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 11.9965)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.9965, -1, -10.4965)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.4955, -1, -8.9975)
+
+[node name="Rotor13" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, -4.4985)
+
+[node name="Rotor14" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 1.4995)
+
+[node name="Rotor15" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.9955, -1, 7.4975)
+
+[node name="Rotor16" parent="Level/DistantDecks/DeckC" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 13.4955, -1, 8.9975)
+
+[node name="DeckD" type="Node3D" parent="Level/DistantDecks"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 60, -26, -70)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantDecks/DeckD"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-2, 65535, 0, -2, 0, 0, -2, 1, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Frame" type="GridMap" parent="Level/DistantDecks/DeckD"]
+mesh_library = ExtResource("deck_tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196610, 65535, 4, -196610, 0, 4, -196610, 1, 4, -131074, 1, 3, -65538, 65535, 2, -2, 65535, 1, -2, 0, 1, -2, 1, 1, -196609, 65534, 4, -196609, 2, 4, -131073, 2, 3, -65537, 65534, 2, -1, 65534, 1, -1, 65535, 1, -1, 0, 1, -1, 1, 1, -1, 2, 1, -196608, 2, 3, -131072, 65534, 2, -65536, 65534, 1, -65536, 65535, 1, -65536, 0, 1, -65536, 1, 1, -65536, 2, 1, -327679, 65534, 5, -327679, 2, 5, -196607, 2, 3, -131071, 65534, 2, -65535, 65534, 1, -65535, 65535, 1, -65535, 0, 1, -65535, 1, 1, -65535, 2, 1, -327678, 65535, 5, -327678, 0, 5, -327678, 1, 5, -196606, 1, 3, -131070, 65535, 2, -65534, 65535, 1, -65534, 0, 1, -65534, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Rotor1" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -4.4985, -1, -2.9995)
+
+[node name="Rotor2" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -5.9985, -1, 1.4995)
+
+[node name="Rotor3" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -4.4985, -1, 5.9985)
+
+[node name="Rotor4" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.9995, -1, -4.4985)
+
+[node name="Rotor5" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -2.9995, -1, 7.4975)
+
+[node name="Rotor6" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 1.4995, -1, -5.9985)
+
+[node name="Rotor7" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 1.4995, -1, 8.9975)
+
+[node name="Rotor8" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9985, -1, -4.4985)
+
+[node name="Rotor9" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9985, -1, 7.4975)
+
+[node name="Rotor10" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 7.4975, -1, -2.9995)
+
+[node name="Rotor11" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.9975, -1, 1.4995)
+
+[node name="Rotor12" parent="Level/DistantDecks/DeckD" instance=ExtResource("rotor")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 7.4975, -1, 5.9985)
+
+[node name="FocusPoints" type="Node3D" parent="Level"]
+
+[node name="FocusDecksSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, 7.4975)
+
+[node name="FocusDecksSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, 7.4975)
+
+[node name="FocusDecksNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -4.4985)
+
+[node name="FocusDecksNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -4.4985)
+
+[node name="FocusSouthHoldSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 0, 25.4915)
+
+[node name="FocusSouthHoldSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.4865, 0, 25.4915)
+
+[node name="FocusSouthHoldNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 0, 10.4965)
+
+[node name="FocusSouthHoldNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.4865, 0, 10.4965)
+
+[node name="FocusIslandSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4905, 0, 43.4855)
+
+[node name="FocusIslandSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.4855, 0, 43.4855)
+
+[node name="FocusIslandNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4905, 0, 22.4925)
+
+[node name="FocusIslandNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.4855, 0, 22.4925)
+
+[node name="FocusBargeWave1NW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.485, 0, 16.001)
+
+[node name="FocusBargeWave1NE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.475, 0, 16.001)
+
+[node name="FocusBargeWave2SW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.485, 0, 58.974)
+
+[node name="FocusBargeWave2SE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.475, 0, 58.974)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="FiringLineTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, 1.4995)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/FiringLineTrigger"]
+shape = SubResource("BoxShape3D_island")
+
+[node name="SouthHoldTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.4875, 0, 11.996)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/SouthHoldTrigger"]
+shape = SubResource("BoxShape3D_south_hold")
+
+[node name="GunnerDeckTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 35.988, 0, 23.992)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/GunnerDeckTrigger"]
+shape = SubResource("BoxShape3D_gunner_deck")
+
+[node name="FinalIslandTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 118.461, 0, 38.987)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/FinalIslandTrigger"]
+shape = SubResource("BoxShape3D_final_island")
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.495501, -3.9928, 1.4995003)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, -3.9928, 7.4975004)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, -3.9928, 10.4965)
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.490501, -3.9928, 10.4965)
+
+[node name="BridgePlatform5" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, -3.9928, 16.4945)
+
+[node name="BridgePlatform6" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, -3.9928, 19.4935)
+
+[node name="BridgePlatform7" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, -3.9928, 28.4905)
+
+[node name="BridgePlatform8" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, -3.9928, 31.4895)
+
+[node name="Barges" type="Node3D" parent="Level"]
+
+[node name="PlayerBarge" parent="Level/Barges" instance=ExtResource("barge_small")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.48, -0.99277, 38.987)
+stops = PackedVector3Array(0, 0, 0, 0, 0, 0, 18, 0, 0, 36, 0, 0, 53.989, 0, 0)
+
+[node name="BargeWave1Barge" parent="Level/Barges" instance=ExtResource("barge_small")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.48, -0.99277, -6.003)
+stops = PackedVector3Array(0, 0, 0, 0, 0, 25)
+speed = 8
+
+[node name="BargeWave2Barge" parent="Level/Barges" instance=ExtResource("barge_small")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 85.48, -0.99277, 83.977)
+stops = PackedVector3Array(0, 0, 0, 0, 0, -25)
+speed = 8
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="Bazooka" parent="Weapon" instance=ExtResource("bazooka")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, 0.593, 4.5)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/UnfocusCamera" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="_trigger_event"]
+[connection signal="enemies_defeated" from="Enemies/SouthHold" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/SouthHold" to="Level/Events/UnfocusSouthHold" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SouthHold" to="Level/Events/OpenGunnerDeckBridge" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/IslandGuard" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/IslandGuard" to="Level/Events/UnfocusIsland" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/IslandGuard" to="Level/Events/OpenIslandBridge" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/IslandGuard" to="Level/Events/BargeRun" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/BargeWave1" to="Level/Events/UnfocusBargeWave" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/BargeWave2" to="Level/Events/UnfocusBargeWave" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/FiringLineTrigger" to="Level/Events/FocusDecksSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/FiringLineTrigger" to="Level/Events/FocusDecksSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/FiringLineTrigger" to="Level/Events/FocusDecksNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/FiringLineTrigger" to="Level/Events/FocusDecksNE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SouthHoldTrigger" to="Level/Events/CloseHoldBridges" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SouthHoldTrigger" to="Level/Events/FocusSouthHoldSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SouthHoldTrigger" to="Level/Events/FocusSouthHoldSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SouthHoldTrigger" to="Level/Events/FocusSouthHoldNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SouthHoldTrigger" to="Level/Events/FocusSouthHoldNE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/GunnerDeckTrigger" to="Level/Events/WakeIslandGuard" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/GunnerDeckTrigger" to="Level/Events/FocusIslandSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/GunnerDeckTrigger" to="Level/Events/FocusIslandSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/GunnerDeckTrigger" to="Level/Events/FocusIslandNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/GunnerDeckTrigger" to="Level/Events/FocusIslandNE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/FinalIslandTrigger" to="CheckpointManager/Checkpoint5" method="_trigger_checkpoint"]

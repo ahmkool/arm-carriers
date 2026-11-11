@@ -100,15 +100,17 @@ static func _cross_floor(from: Vector3, to: Vector3, floor_y: float) -> Vector3:
 func _on_hit_area_body_entered(body: Node3D) -> void:
 	if body is not EnemyLocal:
 		return
-	_detonate(global_position)
+	_detonate(global_position, FrontalGuard.absorb_strike(body, global_position))
 
 
-func _detonate(at_position: Vector3) -> void:
+## `on_shield`: it struck a shield head on, so the blast is only for show and hurts no one.
+func _detonate(at_position: Vector3, on_shield := false) -> void:
 	if _spent:
 		return
 	_spent = true
 	exploded.emit(at_position)
 	var explosion := EXPLOSION_SCENE.instantiate() as Node3D
+	explosion.set("hurts_enemies", not on_shield)
 	get_tree().current_scene.add_child(explosion)
 	explosion.global_position = at_position
 	CameraFeedback.add_trauma_explosion()

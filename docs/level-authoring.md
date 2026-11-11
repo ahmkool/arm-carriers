@@ -161,9 +161,11 @@ EnemyGroup                    # NormalEnemyGroup script
 ```
 
 - Set **`is_offensive = false`** on enemies that should wait until triggered.
+- Set **`spawn_on_trigger = true`** on the group when it waits further along the route. A non-offensive enemy can still be seen and shot, so players could otherwise kill it from an earlier section, and an early kill fires `enemies_defeated` (checkpoint, next bridge) before the fight. With it on, the enemies are taken out of the level on load and appear where they were placed, in a puff and already offensive, on `trigger(true)`. Like survival spawns, they play their spawn-in and stand for its 2 s (`src/enemy/state/spawning.gd`) before they act, so a driver that times their first move must wait for it. A checkpoint `reset()` takes the group back to not spawned, so the area or event that triggers it must fire again after that respawn (list the area in the checkpoint's `areas_to_reactivate`). Leave it off for a group that is never triggered, such as a passive warm-up, or it never appears. `levelgen.py`'s `enemy_group(name, spawn_on_trigger=True)` sets it. Used in `world_local.tscn`, `world_local_level_2.tscn` (and so its medieval reskin), `world_local_02_medieval.tscn` (the horde), `world_local_space_station_2.tscn`, `world_local_sky_station_2.tscn` and `world_local_rotor_decks_2.tscn` (the island guard).
+- Set **`holds_position = true`** on an enemy that should stay on its spot, such as a guard at a bridge or a shooter on a ledge. It never walks or flies, and hits don't knock it back, but it still turns to its target and attacks from there. Works for every enemy that moves through its behaviour (chasers, gunners, shielded aviators, ground and winged mechs, whose dash it also turns off); boss moves aren't covered. `MageBehavior.mobility = STATIONARY` predates it and only applies to mages. Tested by `tools/level_gen/verify_holds_position.gd` in the playground.
 - Group **`transform`** positions the whole encounter in world space.
 - Emits **`enemies_defeated`** when every `EnemyLocal` in `InstancedEnemies` is dead.
-- **`trigger(true)`** sets all enemies offensive (via `change_enemies_behavior` event or direct call).
+- **`trigger(true)`** sets all enemies offensive (via `change_enemies_behavior` event or direct call), spawning them first with `spawn_on_trigger`.
 - **`reset()`** / **`mark_as_defeated()`** used by checkpoints.
 
 ### Survival enemy group (`survival_enemy_group.gd`)
@@ -184,6 +186,7 @@ SurvivalEnemyGroup            # SurvivalEnemyGroup script
 | `enemy_scene` | Prefab to spawn (default `enemy_local.tscn`; level 2 uses `enemy_mage_static.tscn`). |
 | `spawn_interval_curve` | Y = seconds between spawns, X = 0…1 over `fight_duration`. |
 | `fight_duration` | Length of the wave in seconds. |
+| `enemy_max_hp` | Max HP of each spawned enemy; 0 keeps the enemy scene's own. |
 | `show_timer_ui` | Shows the HUD countdown (`UI/SurvivalTimer`, `src/world/ui/survival_timer.tscn`) while the wave runs (default on). After the timer ends it reads "Defeat the remaining enemies!" until the group clears. |
 
 **Spawn polygons:** each polygon node has ≥3 child `Node3D` markers as vertices. Enemies spawn at a random point inside the quad.
@@ -395,6 +398,7 @@ Copy from a reference level:
 - [ ] Floor GridMap has `collision_layer = 4`; navigation mesh baked.
 - [ ] Fall area covers all out-of-bounds drops.
 - [ ] All `NormalEnemyGroup` nodes have an `InstancedEnemies` child.
+- [ ] Groups players could see or shoot from an earlier section have `spawn_on_trigger = true`, and their trigger area is re-armed by the checkpoint that resets them.
 - [ ] Survival groups have `Enemies` container + spawn points or polygons + `spawn_interval_curve`.
 - [ ] Bridge `platforms` arrays match real node paths.
 - [ ] Close-bridge events that should chain use `next_event`.

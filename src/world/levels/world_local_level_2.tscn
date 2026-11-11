@@ -206,6 +206,7 @@ cast_cooldown = 9.0
 [node name="EnemyGroup2" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.46787, 0.98599815, -78.51936)
 script = ExtResource("10_ar1ik")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup2"]
 
@@ -257,6 +258,7 @@ cast_cooldown = 9.0
 [node name="EnemyGroup3" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.467871, 0.98599815, -104.51936)
 script = ExtResource("10_ar1ik")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup3"]
 
@@ -339,6 +341,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.0117416, 0, 2.2425919)
 [node name="EnemyGroup4" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 101.53213, 0.98599815, -158.51936)
 script = ExtResource("10_ar1ik")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup4"]
 
@@ -482,11 +485,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 
-[node name="Checkpoint5" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+[node name="Checkpoint5" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52, 1.8026123, -130.67946)
 script = ExtResource("15_3slf2")
 events_completed = [NodePath("../../Level/Events/OpenParallelBridge1")]
-enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup")]
 enemy_groups_defeated = [NodePath("../../Enemies/SurvivalEnemyGroup")]
 areas_to_reactivate = [NodePath("../../Level/Areas/SinglePlayerParallelBridge1_1AreaTrigger"), NodePath("../../Level/Areas/SinglePlayerParallelBridge1_2AreaTrigger2")]
 areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger3")]
@@ -527,11 +529,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5082588)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint7"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002235)
 
-[node name="Checkpoint8" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_already_activated")]
+[node name="Checkpoint8" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_already_activated")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 95, 1.8026123, -226.67946)
 script = ExtResource("15_3slf2")
 events_completed = [NodePath("../../Level/Events/OpenParallelBridge5")]
-enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup2")]
 enemy_groups_defeated = [NodePath("../../Enemies/SurvivalEnemyGroup2")]
 areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger5"), NodePath("../../Level/Areas/SinglePlayerParallelBridge4_1AreaTrigger"), NodePath("../../Level/Areas/SinglePlayerParallelBridge4_2AreaTrigger")]
 
@@ -638,21 +639,19 @@ script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge1_1"), NodePath("../../Bridges/ParallelBridge1_2")]
 platform_animation_stagger_seconds = 0.5
 
-[node name="CloseParallelBridge1_1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseParallelBridge1_1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge1_1")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeSurvivalGroup1Offensive")
 
-[node name="CloseParallelBridge1_2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseParallelBridge1_2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge1_2")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeSurvivalGroup1Offensive")
 
 [node name="OpenParallelBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
@@ -660,21 +659,19 @@ platforms = [NodePath("../../Bridges/ParallelBridge2_1"), NodePath("../../Bridge
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 
-[node name="CloseParallelBridge2_1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseParallelBridge2_1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge2_1")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeSurvivalGroup1Offensive")
 
-[node name="CloseParallelBridge2_2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseParallelBridge2_2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge2_2")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeSurvivalGroup1Offensive")
 
 [node name="OpenParallelBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
 script = ExtResource("19_mwvyj")
@@ -697,21 +694,19 @@ platforms = [NodePath("../../Bridges/ParallelBridge4_1"), NodePath("../../Bridge
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 
-[node name="CloseParallelBridge4_1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseParallelBridge4_1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge4_1")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeSurvivalGroup1Offensive")
 
-[node name="CloseParallelBridge4_2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseParallelBridge4_2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")
 platforms = [NodePath("../../Bridges/ParallelBridge4_2")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeSurvivalGroup1Offensive")
 
 [node name="OpenParallelBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("19_mwvyj")

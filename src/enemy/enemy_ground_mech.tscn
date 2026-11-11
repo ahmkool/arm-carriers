@@ -151,3 +151,5 @@ max_hp = 6
 
 [node name="EnemyHealthBar3D" parent="." instance=ExtResource("health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.0, 0)
+
+[editable path="Visual/Mech"]

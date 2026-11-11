@@ -1,0 +1,8 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://cje8utfev8m5t" path="res://src/enemy/enemy_flying_skull.tscn" id="1_skull"]
+
+[node name="EnemyFlyingSkull" instance=ExtResource("1_skull")]
+
+[node name="FlyingSkullBehavior" parent="."]
+aim_height = 1.0

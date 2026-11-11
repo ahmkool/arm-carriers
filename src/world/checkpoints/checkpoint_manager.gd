@@ -9,10 +9,16 @@ var _checkpoints: Array[Checkpoint] = []
 
 func _ready() -> void:
 	_refresh_checkpoints()
-	_apply_saved_progress()
+	_apply_initial_checkpoint()
 	if current_checkpoint == null and not _checkpoints.is_empty():
 		current_checkpoint = _checkpoints[0]
 	_connect_save_tracking()
+
+
+func get_checkpoints() -> Array[Checkpoint]:
+	var ordered := _checkpoints.duplicate()
+	ordered.sort_custom(_is_checkpoint_before)
+	return ordered
 
 
 func register_checkpoint(checkpoint: Checkpoint) -> void:
@@ -115,6 +121,29 @@ func _refresh_checkpoints() -> void:
 		if checkpoint == null:
 			continue
 		_checkpoints.append(checkpoint)
+
+
+func _apply_initial_checkpoint() -> void:
+	var dev_checkpoint_id := DevSettings.consume_pending_checkpoint_id()
+	if not dev_checkpoint_id.is_empty():
+		_apply_dev_checkpoint(dev_checkpoint_id)
+		return
+	_apply_saved_progress()
+
+
+func _apply_dev_checkpoint(checkpoint_id: String) -> void:
+	var world := get_parent() as WorldLocal
+	if DevSettings.consume_pending_skip_save() and world != null:
+		world.skip_save = true
+	apply_saved_checkpoint(checkpoint_id)
+
+
+func _is_checkpoint_before(a: Checkpoint, b: Checkpoint) -> bool:
+	var order_a := get_progress_order(a)
+	var order_b := get_progress_order(b)
+	if order_a != order_b:
+		return order_a < order_b
+	return _checkpoints.find(a) < _checkpoints.find(b)
 
 
 func _apply_saved_progress() -> void:

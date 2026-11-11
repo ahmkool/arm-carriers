@@ -1,4 +1,4 @@
-[gd_scene format=3]
+[gd_scene load_steps=56 format=3 uid="uid://bfqc1csx5rwwp"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
@@ -15,23 +15,33 @@
 [ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="19_khskr"]
 [ext_resource type="PackedScene" uid="uid://bgdgrubg87row" path="res://src/weapon/sword.tscn" id="20_iifxy"]
 [ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="21_dvkoh"]
-[ext_resource type="MeshLibrary" path="res://src/world/elements/medieval/castle_tiles.tres" id="21_jq7lx"]
+[ext_resource type="MeshLibrary" uid="uid://mcns4hd002ua" path="res://src/world/elements/medieval/castle_tiles.tres" id="21_jq7lx"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="22_jq7lx"]
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="22_khskr"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="22_shkpiv"]
 [ext_resource type="AudioStream" uid="uid://duaul8r11ug66" path="res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3" id="22_tak01"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="24_g7rls"]
 [ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="25_ui"]
-
-[ext_resource type="Shader" uid="uid://1omvlp44jb2k" path="res://water.gdshader" id="m_water"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="lb_skeleton"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_banner.tscn" id="m_banner"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/rowboat.tscn" id="m_boat"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_gatehouse.tscn" id="m_gatehouse"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/lily_pads.tscn" id="m_lilies"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/reeds.tscn" id="m_reeds"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_torch.tscn" id="m_torch"]
 [ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_tower.tscn" id="m_tower"]
 [ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_wall.tscn" id="m_wall"]
-[ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_gatehouse.tscn" id="m_gatehouse"]
-[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_banner.tscn" id="m_banner"]
-[ext_resource type="PackedScene" path="res://src/world/elements/medieval/wall_torch.tscn" id="m_torch"]
-[ext_resource type="PackedScene" path="res://src/world/elements/medieval/rowboat.tscn" id="m_boat"]
-[ext_resource type="PackedScene" path="res://src/world/elements/medieval/reeds.tscn" id="m_reeds"]
-[ext_resource type="PackedScene" path="res://src/world/elements/medieval/lily_pads.tscn" id="m_lilies"]
+[ext_resource type="Shader" uid="uid://1omvlp44jb2k" path="res://water.gdshader" id="m_water"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="nm_behavior"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/castle_bridge_platform.tscn" id="nm_bridge"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="nm_clear"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="nm_focus"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="nm_group"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="nm_mage"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/mage_turret_post.tscn" id="nm_post"]
+[ext_resource type="PackedScene" path="res://src/world/elements/medieval/round_wooden_platform.tscn" id="sk_platform"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_flying_skull_high.tscn" id="sk_skull"]
+[ext_resource type="Script" uid="uid://dtkii2ukneu3c" path="res://src/events/start_enemy_group_event.gd" id="sk_start"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("5_g7rls")
@@ -66,18 +76,20 @@ _limits = [0.0, 1.0, 0.0, 5.0]
 _data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(5, 1), 0.0, 0.0, 0, 0]
 point_count = 2
 
+[sub_resource type="Curve" id="Curve_skulls"]
+_limits = [0.0, 5.0, 0.0, 1.0]
+_data = [Vector2(0, 5), 0.0, 0.0, 0, 0, Vector2(1, 4.018367), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_lpgms"]
 size = Vector3(4, 4, 4)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_65eof"]
-size = Vector3(105, 1, 94)
+size = Vector3(105, 1, 260)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_dvkoh"]
-vertices = PackedVector3Array(-35.7345, -0.5500002, 2.2544994, -35.2345, -0.5500002, 3.0044994, -27.7345, -0.5500002, 2.7544994, -44.2345, -0.5500002, -0.24550056, -43.9845, -0.5500002, 2.2544994, -44.7345, -0.5500002, -0.74550056, -27.9845, -0.5500002, -14.245501, -46.9845, -0.5500002, -14.245501, -47.2345, -0.5500002, -0.99550056, -9.734501, -0.5500002, -5.7455006, -9.984501, -0.5500002, -8.245501, -13.984501, -0.5500002, -8.245501, -14.234501, -0.5500002, -5.7455006, -17.2345, -0.5500002, 3.2544994, -17.7345, -0.5500002, 3.7544994, -17.7345, -0.5500002, 14.254499, -17.2345, -0.5500002, 14.754499, -9.234501, -0.5500002, -5.2455006, -14.734501, -0.5500002, -5.2455006, 5.265499, -0.5500002, 5.7544994, 5.765499, -0.5500002, 5.2544994, 8.265499, -0.5500002, -4.9955006, -17.2345, -0.5500002, -4.9955006, 8.265499, -0.5500002, 5.0044994, -19.7345, -0.5500002, 3.7544994, -19.7345, -0.5500002, 14.254499, -16.9845, -0.5500002, 17.2545, 5.015499, -0.5500002, 17.2545, -27.7345, -0.5500002, 3.2544994, -26.9845, -0.5500002, 11.254499, -26.7345, -0.5500002, 3.7544994, -35.2345, -0.5500002, 11.004499, -26.2345, -0.5500002, 11.754499, -25.9845, -0.5500002, 14.254499)
-polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(4, 3, 0), PackedInt32Array(3, 5, 0), PackedInt32Array(0, 5, 2), PackedInt32Array(2, 5, 6), PackedInt32Array(6, 5, 7), PackedInt32Array(5, 8, 7), PackedInt32Array(10, 9, 11), PackedInt32Array(11, 9, 12), PackedInt32Array(14, 13, 15), PackedInt32Array(15, 13, 16), PackedInt32Array(9, 17, 12), PackedInt32Array(12, 17, 18), PackedInt32Array(20, 19, 21), PackedInt32Array(21, 19, 17), PackedInt32Array(18, 17, 22), PackedInt32Array(22, 17, 13), PackedInt32Array(21, 23, 20), PackedInt32Array(14, 15, 24), PackedInt32Array(24, 15, 25), PackedInt32Array(16, 13, 26), PackedInt32Array(26, 13, 17), PackedInt32Array(26, 17, 19), PackedInt32Array(26, 19, 27), PackedInt32Array(1, 2, 28), PackedInt32Array(30, 29, 28), PackedInt32Array(28, 29, 31), PackedInt32Array(28, 31, 1), PackedInt32Array(33, 32, 25), PackedInt32Array(32, 29, 25), PackedInt32Array(25, 29, 30), PackedInt32Array(25, 30, 24)]
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_h2fuj"]
-size = Vector3(10, 3, 11)
+vertices = PackedVector3Array(-35.7345, -0.5500002, 2.2544994, -35.2345, -0.5500002, 3.0044994, -27.7345, -0.5500002, 2.7544994, -44.2345, -0.5500002, -0.24550056, -43.9845, -0.5500002, 2.2544994, -44.7345, -0.5500002, -0.74550056, -27.9845, -0.5500002, -14.245501, -46.9845, -0.5500002, -14.245501, -47.2345, -0.5500002, -0.99550056, -9.734501, -0.5500002, -5.7455006, -9.984501, -0.5500002, -8.245501, -13.984501, -0.5500002, -8.245501, -14.234501, -0.5500002, -5.7455006, -17.2345, -0.5500002, 3.2544994, -17.7345, -0.5500002, 3.7544994, -17.7345, -0.5500002, 14.254499, -17.2345, -0.5500002, 14.754499, -9.234501, -0.5500002, -5.2455006, -14.734501, -0.5500002, -5.2455006, 5.265499, -0.5500002, 5.7544994, 5.765499, -0.5500002, 5.2544994, 8.265499, -0.5500002, -4.9955006, -17.2345, -0.5500002, -4.9955006, 8.265499, -0.5500002, 5.0044994, -19.7345, -0.5500002, 3.7544994, -19.7345, -0.5500002, 14.254499, -16.9845, -0.5500002, 17.2545, 5.015499, -0.5500002, 17.2545, -27.7345, -0.5500002, 3.2544994, -26.9845, -0.5500002, 11.254499, -26.7345, -0.5500002, 3.7544994, -35.2345, -0.5500002, 11.004499, -26.2345, -0.5500002, 11.754499, -25.9845, -0.5500002, 14.254499, -14.991501, -0.5500002, 147.4505, -26.2415, -0.5500002, 147.9505, -25.9915, -0.5500002, 164.2005, -15.241501, -0.5500002, 164.4505, -3.7415009, -0.5500002, 163.9505, -3.9915009, -0.5500002, 147.7005, -15.241501, -0.5500002, 171.7005, -15.491501, -0.5500002, 171.2005, -17.7415, -0.5500002, 171.2005, -17.9915, -0.5500002, 171.7005, -6.991501, -0.5500002, 171.7005, -23.2415, -0.5500002, 171.9505, -22.9915, -0.5500002, 188.2005, -6.741501, -0.5500002, 187.9505, -6.4835014, -0.5500002, 56.482502, -6.4835014, -0.5500002, 54.232502, -6.9835014, -0.5500002, 51.732502, -16.983501, -0.5500002, 51.732502, -17.483501, -0.5500002, 54.232502, -17.483501, -0.5500002, 56.482502, -11.983501, -0.5500002, 51.482502, -16.983501, -0.5500002, 59.232502, -6.9835014, -0.5500002, 59.232502, -26.983501, -0.5500002, 60.232502, -33.4835, -0.5500002, 60.232502, -33.4835, -0.5500002, 62.482502, -24.483501, -0.5500002, 62.482502, -24.233501, -0.5500002, 56.482502, -26.733501, -0.5500002, 54.232502, -2.7335014, -0.5500002, 56.732502, -0.48350143, -0.5500002, 54.232502, -2.7335014, -0.5500002, 65.4825, -0.48350143, -0.5500002, 62.982502, 3.5164986, -0.5500002, 65.4825, 3.5164986, -0.5500002, 63.232502, 9.266499, -0.5500002, 60.482502, 11.516499, -0.5500002, 60.482502, 11.766499, -0.5500002, 56.482502, 9.266499, -0.5500002, 54.232502, 18.266499, -0.5500002, 56.732502, 18.266499, -0.5500002, 81.4825, 20.516499, -0.5500002, 81.4825, 20.516499, -0.5500002, 54.232502, -36.4835, -0.5500002, 65.4825, -33.9835, -0.5500002, 65.2325, -33.9835, -0.5500002, 57.732502, -38.7335, -0.5500002, 65.4825, -44.2335, -0.5500002, 57.982502, -44.2335, -0.5500002, 64.9825, 4.0164986, -0.5500002, 60.732502, 14.266499, -0.5500002, 60.982502, 4.0164986, -0.5500002, 68.2325, 14.016499, -0.5500002, 68.2325, -38.9835, -0.5500002, 69.2325, -36.4835, -0.5500002, 71.4825, -47.7335, -0.5500002, 81.4825, -45.4835, -0.5500002, 81.4825, -45.4835, -0.5500002, 71.7325, -47.7335, -0.5500002, 69.2325, -8.733501, -0.5500002, 83.9825, -12.483501, -0.5500002, 84.2325, -12.483501, -0.5500002, 86.4825, -6.4835014, -0.5500002, 86.4825, -6.2335014, -0.5500002, 77.4825, 3.0164986, -0.5500002, 77.4825, 5.5164986, -0.5500002, 75.2325, -8.733501, -0.5500002, 75.2325, 5.5164986, -0.5500002, 83.9825, 3.2664986, -0.5500002, 86.4825, 12.516499, -0.5500002, 86.4825, 12.516499, -0.5500002, 84.2325, -15.483501, -0.5500002, 89.4825, -12.983501, -0.5500002, 89.2325, -17.733501, -0.5500002, 89.4825, -12.983501, -0.5500002, 78.7325, -23.233501, -0.5500002, 78.9825, -23.233501, -0.5500002, 88.9825, -50.2335, -0.5500002, 81.9825, -50.2335, -0.5500002, 88.9825, -47.7335, -0.5500002, 89.4825, -45.4835, -0.5500002, 89.4825, -42.7335, -0.5500002, 88.9825, -42.7335, -0.5500002, 81.9825, 12.766499, -0.5500002, 88.9825, 15.266499, -0.5500002, 89.4825, 17.516499, -0.5500002, 89.4825, 13.016499, -0.5500002, 81.7325, 23.266499, -0.5500002, 81.9825, 23.266499, -0.5500002, 88.9825, -45.2335, -0.5500002, 96.2325, -47.7335, -0.5500002, 98.4825, -35.9835, -0.5500002, 98.4825, -33.4835, -0.5500002, 96.2325, -35.7335, -0.5500002, 105.4825, -33.4835, -0.5500002, 105.4825, -15.233501, -0.5500002, 93.2325, -17.733501, -0.5500002, 95.4825, -12.483501, -0.5500002, 101.7325, -6.4835014, -0.5500002, 101.4825, -8.983501, -0.5500002, 99.2325, -14.733501, -0.5500002, 99.2325, -8.733501, -0.5500002, 95.7325, -6.4835014, -0.5500002, 93.2325, -14.733501, -0.5500002, 114.4825, -12.483501, -0.5500002, 114.4825, 15.016499, -0.5500002, 93.2325, 17.516499, -0.5500002, 95.4825, 9.266499, -0.5500002, 105.4825, 11.516499, -0.5500002, 105.4825, 11.516499, -0.5500002, 95.7325, 9.266499, -0.5500002, 93.2325, -30.483501, -0.5500002, 108.2325, -30.983501, -0.5500002, 105.7325, -30.983501, -0.5500002, 113.2325, -30.483501, -0.5500002, 110.4825, -41.2335, -0.5500002, 105.9825, -40.9835, -0.5500002, 113.2325, 14.516499, -0.5500002, 108.2325, 14.016499, -0.5500002, 105.7325, 14.016499, -0.5500002, 113.2325, 14.516499, -0.5500002, 110.4825, 3.7664986, -0.5500002, 105.9825, 4.0164986, -0.5500002, 113.2325, -26.733501, -0.5500002, 110.7325, -24.483501, -0.5500002, 108.2325, -17.483501, -0.5500002, 122.4825, -17.483501, -0.5500002, 120.2325, -21.483501, -0.5500002, 119.9825, -23.733501, -0.5500002, 122.4825, -24.483501, -0.5500002, 113.9825, -26.733501, -0.5500002, 116.4825, -23.733501, -0.5500002, 116.7325, -21.483501, -0.5500002, 114.2325, 18.266499, -0.5500002, 110.7325, 20.516499, -0.5500002, 108.2325, 18.016499, -0.5500002, 120.2325, -6.4835014, -0.5500002, 120.2325, -6.4835014, -0.5500002, 122.4825, 20.516499, -0.5500002, 122.4825, -17.233501, -0.5500002, 124.9825, -14.983501, -0.5500002, 125.4825, -17.233501, -0.5500002, 114.9825, -6.9835014, -0.5500002, 125.2325, -6.9835014, -0.5500002, 114.7325)
+polygons = [PackedInt32Array(2, 1, 0), PackedInt32Array(4, 3, 0), PackedInt32Array(3, 5, 0), PackedInt32Array(0, 5, 2), PackedInt32Array(2, 5, 6), PackedInt32Array(6, 5, 7), PackedInt32Array(5, 8, 7), PackedInt32Array(10, 9, 11), PackedInt32Array(11, 9, 12), PackedInt32Array(14, 13, 15), PackedInt32Array(15, 13, 16), PackedInt32Array(9, 17, 12), PackedInt32Array(12, 17, 18), PackedInt32Array(20, 19, 21), PackedInt32Array(21, 19, 17), PackedInt32Array(18, 17, 22), PackedInt32Array(22, 17, 13), PackedInt32Array(21, 23, 20), PackedInt32Array(14, 15, 24), PackedInt32Array(24, 15, 25), PackedInt32Array(16, 13, 26), PackedInt32Array(26, 13, 17), PackedInt32Array(26, 17, 19), PackedInt32Array(26, 19, 27), PackedInt32Array(1, 2, 28), PackedInt32Array(30, 29, 28), PackedInt32Array(28, 29, 31), PackedInt32Array(28, 31, 1), PackedInt32Array(33, 32, 25), PackedInt32Array(32, 29, 25), PackedInt32Array(25, 29, 30), PackedInt32Array(25, 30, 24), PackedInt32Array(37, 36, 38), PackedInt32Array(38, 36, 39), PackedInt32Array(39, 36, 34), PackedInt32Array(34, 36, 35), PackedInt32Array(41, 40, 42), PackedInt32Array(42, 40, 43), PackedInt32Array(40, 44, 45), PackedInt32Array(45, 44, 47), PackedInt32Array(45, 47, 46), PackedInt32Array(45, 43, 40), PackedInt32Array(50, 49, 48), PackedInt32Array(52, 51, 53), PackedInt32Array(53, 51, 54), PackedInt32Array(48, 56, 50), PackedInt32Array(50, 56, 54), PackedInt32Array(54, 56, 53), PackedInt32Array(53, 56, 55), PackedInt32Array(58, 57, 59), PackedInt32Array(59, 57, 60), PackedInt32Array(53, 61, 52), PackedInt32Array(52, 61, 62), PackedInt32Array(62, 61, 57), PackedInt32Array(57, 61, 60), PackedInt32Array(48, 49, 63), PackedInt32Array(63, 49, 64), PackedInt32Array(64, 66, 63), PackedInt32Array(63, 66, 65), PackedInt32Array(68, 67, 66), PackedInt32Array(66, 67, 65), PackedInt32Array(70, 69, 71), PackedInt32Array(71, 69, 72), PackedInt32Array(74, 73, 75), PackedInt32Array(75, 73, 76), PackedInt32Array(73, 71, 76), PackedInt32Array(76, 71, 72), PackedInt32Array(59, 78, 77), PackedInt32Array(79, 58, 59), PackedInt32Array(77, 80, 59), PackedInt32Array(59, 80, 79), PackedInt32Array(79, 80, 82), PackedInt32Array(79, 82, 81), PackedInt32Array(67, 68, 83), PackedInt32Array(69, 70, 84), PackedInt32Array(67, 83, 85), PackedInt32Array(85, 83, 69), PackedInt32Array(85, 69, 84), PackedInt32Array(85, 84, 86), PackedInt32Array(80, 77, 87), PackedInt32Array(87, 77, 88), PackedInt32Array(90, 89, 91), PackedInt32Array(91, 89, 92), PackedInt32Array(92, 87, 91), PackedInt32Array(91, 87, 88), PackedInt32Array(94, 93, 95), PackedInt32Array(95, 93, 96), PackedInt32Array(97, 100, 98), PackedInt32Array(98, 100, 99), PackedInt32Array(100, 97, 93), PackedInt32Array(93, 97, 96), PackedInt32Array(99, 101, 98), PackedInt32Array(98, 101, 102), PackedInt32Array(104, 103, 101), PackedInt32Array(101, 103, 102), PackedInt32Array(105, 107, 106), PackedInt32Array(106, 107, 95), PackedInt32Array(94, 95, 108), PackedInt32Array(108, 95, 107), PackedInt32Array(108, 107, 110), PackedInt32Array(108, 110, 109), PackedInt32Array(111, 89, 90), PackedInt32Array(114, 113, 112), PackedInt32Array(114, 112, 115), PackedInt32Array(115, 112, 111), PackedInt32Array(115, 111, 90), PackedInt32Array(115, 90, 116), PackedInt32Array(117, 103, 118), PackedInt32Array(118, 103, 119), PackedInt32Array(103, 104, 120), PackedInt32Array(74, 75, 121), PackedInt32Array(120, 74, 103), PackedInt32Array(103, 74, 119), PackedInt32Array(119, 74, 121), PackedInt32Array(119, 121, 122), PackedInt32Array(114, 123, 113), PackedInt32Array(113, 123, 124), PackedInt32Array(126, 125, 123), PackedInt32Array(123, 125, 124), PackedInt32Array(127, 125, 128), PackedInt32Array(128, 125, 126), PackedInt32Array(105, 129, 107), PackedInt32Array(107, 129, 130), PackedInt32Array(134, 133, 131), PackedInt32Array(131, 133, 132), PackedInt32Array(136, 135, 129), PackedInt32Array(129, 135, 130), PackedInt32Array(138, 137, 131), PackedInt32Array(131, 137, 134), PackedInt32Array(133, 135, 132), PackedInt32Array(132, 135, 136), PackedInt32Array(118, 119, 139), PackedInt32Array(139, 119, 140), PackedInt32Array(142, 141, 143), PackedInt32Array(143, 141, 144), PackedInt32Array(144, 139, 143), PackedInt32Array(143, 139, 140), PackedInt32Array(128, 146, 145), PackedInt32Array(145, 148, 147), PackedInt32Array(128, 145, 127), PackedInt32Array(127, 145, 147), PackedInt32Array(127, 147, 149), PackedInt32Array(149, 147, 150), PackedInt32Array(142, 152, 151), PackedInt32Array(151, 154, 153), PackedInt32Array(142, 151, 141), PackedInt32Array(141, 151, 153), PackedInt32Array(141, 153, 155), PackedInt32Array(155, 153, 156), PackedInt32Array(148, 145, 157), PackedInt32Array(157, 145, 158), PackedInt32Array(160, 159, 161), PackedInt32Array(161, 159, 162), PackedInt32Array(164, 157, 163), PackedInt32Array(163, 157, 158), PackedInt32Array(166, 161, 165), PackedInt32Array(165, 161, 162), PackedInt32Array(166, 165, 163), PackedInt32Array(163, 165, 164), PackedInt32Array(154, 151, 167), PackedInt32Array(167, 151, 168), PackedInt32Array(170, 169, 171), PackedInt32Array(171, 169, 172), PackedInt32Array(169, 167, 172), PackedInt32Array(172, 167, 168), PackedInt32Array(173, 159, 174), PackedInt32Array(174, 159, 160), PackedInt32Array(137, 138, 175), PackedInt32Array(175, 138, 160), PackedInt32Array(170, 171, 176), PackedInt32Array(177, 170, 138), PackedInt32Array(138, 170, 176), PackedInt32Array(138, 176, 160), PackedInt32Array(160, 176, 174)]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_moat"]
 render_priority = 0
@@ -86,6 +98,18 @@ shader_parameter/water_color = Color(0.05, 0.19, 0.2, 1)
 shader_parameter/foam_color = Color(0.42, 0.56, 0.5, 1)
 shader_parameter/wave_scale = 0.8
 shader_parameter/wave_scale_detail = 1.2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_h2fuj"]
+size = Vector3(10, 3, 11)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_arena_arrival"]
+size = Vector3(14, 4, 11)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_HordeArrival"]
+size = Vector3(21.992, 4, 15.994)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_SkullArrival"]
+size = Vector3(6, 4, 6)
 
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("1_iifxy")
@@ -177,15 +201,462 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 27.987476, 0, 13.897949)
 [node name="Node3D8" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.358948, 0, 16.023647)
 
+[node name="MageTurretGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("nm_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/MageTurretGroup"]
+
+[node name="WestMage1" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -0.75, 32.9875)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/WestMage1"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 7.0
+
+[node name="WestMage2" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -0.75, 37.4875)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/WestMage2"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 6.0
+
+[node name="WestMage3" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -0.75, 41.9875)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/WestMage3"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 8.0
+
+[node name="NorthMage1" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9985, -0.75, 22.19)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/NorthMage1"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 6.0
+
+[node name="NorthMage2" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4985, -0.75, 22.19)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/NorthMage2"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 8.0
+
+[node name="NorthMage3" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9985, -0.75, 22.19)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/NorthMage3"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 7.0
+
+[node name="EastMage1" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -0.75, 32.9875)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/EastMage1"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 8.0
+
+[node name="EastMage2" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -0.75, 37.4875)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/EastMage2"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 7.0
+
+[node name="EastMage3" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -0.75, 41.9875)
+
+[node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/EastMage3"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 6.0
+
+[node name="LabyrinthMages" type="Node3D" parent="Enemies"]
+script = ExtResource("nm_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/LabyrinthMages"]
+
+[node name="StartMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -0.95, 115.4615)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/StartMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 6.5
+
+[node name="SouthWestMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.4865, -0.95, 112.4625)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/SouthWestMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 5.0
+
+[node name="SouthEastMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -0.95, 112.4625)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/SouthEastMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 5.5
+
+[node name="CentreMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -0.95, 79.4735)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/CentreMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 4.5
+
+[node name="WestMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.4855, -0.95, 85.4715)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/WestMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 5.0
+
+[node name="EastMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, -0.95, 88.4705)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/EastMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 5.5
+
+[node name="NorthWestMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.4855, -0.95, 58.4805)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/NorthWestMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 4.5
+
+[node name="NorthEastMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -0.95, 67.4775)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/NorthEastMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 5.0
+
+[node name="ExitMage" parent="Enemies/LabyrinthMages/InstancedEnemies" instance=ExtResource("nm_mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -0.95, 58.4805)
+
+[node name="MageBehavior" type="Node" parent="Enemies/LabyrinthMages/InstancedEnemies/ExitMage"]
+script = ExtResource("nm_behavior")
+mobility = 1
+cast_max_distance = 14.0
+cast_cooldown = 4.5
+
+[node name="LabyrinthSkeletons" type="Node3D" parent="Enemies"]
+script = ExtResource("nm_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/LabyrinthSkeletons"]
+
+[node name="SouthWestSkeleton1" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -37.4875, -0.95, 109.4635)
+
+[node name="WestSkeleton2" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -49.4835, -0.95, 85.4715)
+
+[node name="WestSkeleton3" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -49.4835, -0.95, 82.4725)
+
+[node name="NorthWestSkeleton4" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -40.4865, -0.95, 61.4795)
+
+[node name="ExitSkeleton5" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -10.4965, -0.95, 55.4815)
+
+[node name="SouthEastSkeleton6" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 7.4975, -0.95, 109.4635)
+
+[node name="EastSkeleton7" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 16.4945, -0.95, 85.4715)
+
+[node name="EastSkeleton8" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 22.4925, -0.95, 82.4725)
+
+[node name="NorthEastSkeleton9" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 7.4975, -0.95, 64.4785)
+
+[node name="CentreSkeleton10" parent="Enemies/LabyrinthSkeletons/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -19.4935, -0.95, 85.4715)
+
+[node name="SkullSurvival" type="Node3D" parent="Enemies"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, 136.356)
+script = ExtResource("9_nixuq")
+enemy_scene = ExtResource("sk_skull")
+spawn_interval_curve = SubResource("Curve_skulls")
+
+[node name="Enemies" type="Node3D" parent="Enemies/SkullSurvival"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SkullSurvival"]
+
+[node name="Skull1" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3262, 0, 13.3148)
+
+[node name="Skull2" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.3262, 0, 8.229)
+
+[node name="Skull3" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14, 0, 0)
+
+[node name="Skull4" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.3262, 0, -8.229)
+
+[node name="Skull5" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.3262, 0, -13.3148)
+
+[node name="Skull6" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3262, 0, -13.3148)
+
+[node name="Skull7" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.3262, 0, -8.229)
+
+[node name="Skull8" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14, 0, 0)
+
+[node name="Skull9" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.3262, 0, 8.229)
+
+[node name="Skull10" type="Node3D" parent="Enemies/SkullSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.3262, 0, 13.3148)
+
+[node name="Warmup" type="Node3D" parent="Enemies"]
+script = ExtResource("nm_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Warmup"]
+
+[node name="WarmupSkeleton1" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.995, -0.95, 184.94)
+is_offensive = false
+
+[node name="WarmupSkeleton2" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(0.809, 0, 0.5878, 0, 1, 0, -0.5878, 0, 0.809, -12.0561, -0.95, 183.9851)
+is_offensive = false
+
+[node name="WarmupSkeleton3" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(0.309, 0, 0.9511, 0, 1, 0, -0.9511, 0, 0.309, -10.2397, -0.95, 181.4851)
+is_offensive = false
+
+[node name="WarmupSkeleton4" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-0.309, 0, 0.9511, 0, 1, 0, -0.9511, 0, -0.309, -10.2397, -0.95, 178.3949)
+is_offensive = false
+
+[node name="WarmupSkeleton5" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-0.809, 0, 0.5878, 0, 1, 0, -0.5878, 0, -0.809, -12.0561, -0.95, 175.8949)
+is_offensive = false
+
+[node name="WarmupSkeleton6" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -14.995, -0.95, 174.94)
+is_offensive = false
+
+[node name="WarmupSkeleton7" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-0.809, 0, -0.5878, 0, 1, 0, 0.5878, 0, -0.809, -17.9339, -0.95, 175.8949)
+is_offensive = false
+
+[node name="WarmupSkeleton8" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-0.309, 0, -0.9511, 0, 1, 0, 0.9511, 0, -0.309, -19.7503, -0.95, 178.3949)
+is_offensive = false
+
+[node name="WarmupSkeleton9" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(0.309, 0, -0.9511, 0, 1, 0, 0.9511, 0, 0.309, -19.7503, -0.95, 181.4851)
+is_offensive = false
+
+[node name="WarmupSkeleton10" parent="Enemies/Warmup/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(0.809, 0, -0.5878, 0, 1, 0, 0.5878, 0, 0.809, -17.9339, -0.95, 183.9851)
+is_offensive = false
+
+[node name="Horde" type="Node3D" parent="Enemies"]
+script = ExtResource("nm_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Horde"]
+
+[node name="HordeSkeleton1" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -25.4915, -0.95, 148.4505)
+is_offensive = false
+
+[node name="HordeSkeleton2" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -22.4925, -0.95, 148.4505)
+is_offensive = false
+
+[node name="HordeSkeleton3" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -19.4935, -0.95, 148.4505)
+is_offensive = false
+
+[node name="HordeSkeleton4" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.4975, -0.95, 148.4505)
+is_offensive = false
+
+[node name="HordeSkeleton5" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4.4985, -0.95, 148.4505)
+is_offensive = false
+
+[node name="HordeSkeleton6" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -25.4915, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton7" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -22.4925, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton8" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -19.4935, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton9" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -16.4945, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton10" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -10.4965, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton11" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.4975, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton12" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4.4985, -0.95, 151.4495)
+is_offensive = false
+
+[node name="HordeSkeleton13" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -25.4915, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton14" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -22.4925, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton15" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -19.4935, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton16" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -16.4945, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton17" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -13.4955, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton18" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -10.4965, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton19" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -7.4975, -0.95, 154.4485)
+is_offensive = false
+
+[node name="HordeSkeleton20" parent="Enemies/Horde/InstancedEnemies" instance=ExtResource("lb_skeleton")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, -4.4985, -0.95, 154.4485)
+is_offensive = false
+
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("13_f7b5o")
-current_checkpoint = NodePath("Checkpoint")
+current_checkpoint = NodePath("CheckpointWarmup")
 
-[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset", "areas_to_reactivate")]
+[node name="CheckpointWarmup" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.995, 4, 179.14)
+script = ExtResource("14_lj4gk")
+events_completed = [NodePath("../../Level/Events/RaiseWalkways")]
+enemy_groups_reset = [NodePath("../../Enemies/Warmup"), NodePath("../../Enemies/Horde"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
+areas_to_reactivate = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/ArenaArrival")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointWarmup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointWarmup"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="CheckpointHorde" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, 4, 174.943)
+script = ExtResource("14_lj4gk")
+events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenWarmupBridge")]
+enemy_groups_reset = [NodePath("../../Enemies/Horde"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
+enemy_groups_defeated = [NodePath("../../Enemies/Warmup")]
+areas_to_reactivate = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/ArenaArrival")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointHorde"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointHorde"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="CheckpointSkulls" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 4, 151.5)
+script = ExtResource("14_lj4gk")
+events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
+enemy_groups_reset = [NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
+enemy_groups_defeated = [NodePath("../../Enemies/Horde"), NodePath("../../Enemies/Warmup")]
+areas_to_reactivate = [NodePath("../../Level/SkullArrival"), NodePath("../../Level/ArenaArrival")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointSkulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointSkulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="CheckpointLabyrinth" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 4, 120.5)
+script = ExtResource("14_lj4gk")
+events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
+enemy_groups_reset = [NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
+areas_to_reactivate = [NodePath("../../Level/ArenaArrival")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointLabyrinth"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointLabyrinth"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="CheckpointStart" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 4, 40)
+script = ExtResource("14_lj4gk")
+events_completed = [NodePath("../../Level/Events/FocusMagesNW"), NodePath("../../Level/Events/FocusMagesNE"), NodePath("../../Level/Events/FocusMagesSW"), NodePath("../../Level/Events/FocusMagesSE"), NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenLabyrinthExit"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
+enemy_groups_reset = [NodePath("../../Enemies/MageTurretGroup")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointStart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointStart"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 8.754402)
 script = ExtResource("14_lj4gk")
+events_completed = [NodePath("../../Level/Events/OpenMageBridge"), NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenLabyrinthExit"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
 enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup")]
+enemy_groups_defeated = [NodePath("../../Enemies/MageTurretGroup"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/Warmup"), NodePath("../../Enemies/Horde")]
 areas_to_reactivate = [NodePath("../../Level/AllPlayersAreaTrigger")]
+areas_already_activated = [NodePath("../../Level/ArenaArrival"), NodePath("../../Level/SkullArrival")]
 
 [node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
 
@@ -205,7 +676,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -3.3937292, 0)
 script = ExtResource("15_xb4ls")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.650024, -0.69485664, -7.3463745)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -18.650024, -0.69485664, 76)
 shape = SubResource("BoxShape3D_65eof")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
@@ -217,7 +688,7 @@ cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 4
 collision_mask = 0
 data = {
-"cells": PackedInt32Array(-3, 3, 62, -4, 3, 62, -3, 4, 62, -4, 4, 62, -4, 65533, 655404, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1048619, -65536, 65535, 62, -65535, 65535, 62, -65535, 65534, 1048619, -65534, 65535, 43, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 43, -65536, 5, 1441835, -1, 5, 1441835, -2, 5, 1441835, -2, 4, 62, -2, 3, 62, -5, 65534, 1441855, -5, 65535, 62, -5, 0, 62, -5, 1, 62, -5, 2, 62, -5, 3, 62, -6, 65535, 655403, -6, 0, 655403, -6, 1, 1441855, -6, 2, 62, -6, 3, 62, -7, 0, 1443024, -7, 1, 1048619, -7, 2, 62, -7, 3, 62, -8, 1, 1048619, -9, 1, 1048619, -9, 2, 62, -9, 3, 63, -8, 3, 62, -8, 2, 62, -4, 65534, 655423, -3, 65534, 1048619, -2, 65534, 1048619, -1, 65534, 1048619, -1, 65535, 62, -3, 65535, 62, -4, 65535, 62, -4, 0, 62, -4, 1, 62, -4, 2, 62, -3, 2, 62, -2, 2, 62, -2, 1, 62, -2, 0, 62, -2, 65535, 62, -3, 0, 62, -3, 1, 62, -1, 1, 62, -1, 0, 62, -65536, 0, 62, -65535, 0, 62, -65534, 0, 43, -65534, 1, 1048620, -65535, 1, 1048639, -65536, 1, 62, -65536, 2, 62, -1, 2, 62, -65535, 2, 43, -65534, 2, 1443041, -65535, 3, 43, -65536, 3, 62, -1, 3, 62, -1, 4, 62, -65536, 4, 62, -10, 3, 1441835, -10, 2, 62, -10, 1, 655423, -196608, 5, 57, -196607, 4, 1048633, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 57, -131076, 4, 1443039, -131082, 3, 57, -131079, 0, 656607, -131078, 65535, 1441849, -131077, 65534, 1441848, -131076, 65533, 655397, -196608, 65533, 1049823, -196607, 65534, 655417, -196606, 65535, 1048633, -196605, 0, 1049823, -196608, 65534, 655417, -196607, 65535, 1049822, -196606, 0, 1048633, -196606, 2, 1246, -196607, 3, 1048633, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 655417, -131078, 0, 1441849, -131077, 65535, 656606, -131076, 65534, 655416, -131081, 3, 56, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 57, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131080, 1, 655417, -10, 0, 43, -10, 65535, 43, -11, 1, 62, -11, 0, 62, -11, 65535, 62, -13, 0, 1441835, -12, 0, 63, -12, 65535, 62, -13, 65535, 62, -10, 65534, 43, -11, 65534, 62, -11, 65533, 62, -10, 65533, 43, -12, 65533, 62, -13, 65533, 62, -13, 65534, 62, -12, 65534, 62, -10, 65532, 43, -11, 65532, 62, -12, 65532, 62, -12, 65531, 1048619, -13, 65531, 62, -14, 65531, 1048619, -14, 65532, 62, -13, 65532, 62, -15, 65532, 62, -15, 65533, 62, -15, 65534, 62, -14, 65534, 62, -14, 65535, 62, -14, 0, 1441835, -15, 0, 44, -15, 65535, 63, -14, 65533, 62, -11, 2, 62, -131083, 2, 1443039, -131087, 0, 37, -131087, 65532, 656607, -131086, 65531, 655417, -131084, 65531, 655417, -131082, 65532, 1048633, -131082, 1, 655416, -131084, 65532, 1049822, -131086, 65532, 656606, -131083, 0, 1443038, -131082, 2, 1443038, -131083, 1, 1443037, -131084, 0, 56, -131085, 0, 57, -131086, 0, 57, -131087, 65535, 56, -131087, 65534, 1443037, -131087, 65533, 1443037, -131085, 65531, 655417, -131083, 65532, 656605, -131082, 65533, 1048633, -131082, 65534, 1048633, -131082, 65535, 1048633, -131082, 0, 1048633, -131081, 1, 655417, -13, 65528, 1250, -13, 65527, 1250, -13, 65526, 1250, -13, 65525, 1250, -14, 65525, 1250, -15, 65525, 1250, -16, 65525, 1250, -16, 65526, 1250, -16, 65527, 1250, -15, 65527, 1250, -14, 65527, 1250, -12, 65527, 1250, -11, 65527, 1250, -10, 65527, 1250, -10, 65526, 1250, -10, 65525, 1250, -11, 65525, 1250, -12, 65525, 1250, -12, 65526, 1250, -11, 65526, 1250, -14, 65526, 1250, -15, 65526, 1250, -65534, 65534, 655404, -65535, 5, 1048620, -3, 5, 1441835, -4, 5, 1441835, -5, 5, 1441835, -6, 5, 44, -6, 4, 63, -6, 65534, 1441836, -5, 65533, 1441836, -5, 4, 62, -12, 1, 655403, -12, 2, 655403, -12, 3, 44, -11, 3, 1441835, -9, 4, 44, -8, 4, 1441835, -7, 4, 1441835, -10, 65531, 655404, -11, 65531, 1048619, -15, 65531, 1048619, -16, 65531, 1441836, -16, 65532, 655403, -16, 65533, 655403, -16, 65534, 655403, -16, 65535, 44, -131075, 5, 57, -131076, 5, 57, -131077, 5, 57, -131079, 4, 57, -131080, 4, 57, -131083, 3, 57, -131084, 3, 37, -131088, 65534, 1441849, -131088, 65533, 1441849, -131088, 65532, 1441849, -131087, 65531, 655417, -131083, 65531, 655417, -131075, 65534, 655417, -131074, 65534, 655417, -131073, 65534, 655417, -196607, 2, 1048633, -196607, 5, 1048613, -196606, 1, 1048613, -131078, 5, 37, -131081, 4, 37, -131088, 65535, 37, -131088, 65531, 1441829, -131082, 65531, 655397, -196606, 65534, 655397, -131078, 65534, 1441829, -131077, 65533, 1441829, -131078, 1, 1441848, -196607, 1, 1048632, -131078, 4, 56)
+"cells": PackedInt32Array(-3, 3, 62, -4, 3, 62, -3, 4, 62, -4, 4, 62, -4, 65533, 655404, -3, 65533, 656612, -2, 65533, 656612, -1, 65533, 656612, -65536, 65533, 1228, -65536, 65534, 1048619, -65536, 65535, 62, -65535, 65535, 62, -65535, 65534, 1048619, -65534, 65535, 43, -65533, 0, 1228, -65533, 1, 1049828, -65533, 2, 1443020, -65534, 3, 1443020, -65535, 4, 43, -65536, 5, 1441835, -1, 5, 1441835, -2, 5, 62, -2, 4, 62, -2, 3, 62, -5, 65534, 1441855, -5, 65535, 62, -5, 0, 62, -5, 1, 62, -5, 2, 62, -5, 3, 62, -6, 65535, 655403, -6, 0, 655403, -6, 1, 1441855, -6, 2, 62, -6, 3, 62, -7, 0, 1443024, -7, 1, 1048619, -7, 2, 62, -7, 3, 62, -8, 1, 1048619, -9, 1, 1048619, -9, 2, 62, -9, 3, 63, -8, 3, 62, -8, 2, 62, -4, 65534, 655423, -3, 65534, 1048619, -2, 65534, 1048619, -1, 65534, 1048619, -1, 65535, 62, -3, 65535, 62, -4, 65535, 62, -4, 0, 62, -4, 1, 62, -4, 2, 62, -3, 2, 62, -2, 2, 62, -2, 1, 62, -2, 0, 62, -2, 65535, 62, -3, 0, 62, -3, 1, 62, -1, 1, 62, -1, 0, 62, -65536, 0, 62, -65535, 0, 62, -65534, 0, 43, -65534, 1, 1048620, -65535, 1, 1048639, -65536, 1, 62, -65536, 2, 62, -1, 2, 62, -65535, 2, 43, -65534, 2, 1443041, -65535, 3, 43, -65536, 3, 62, -1, 3, 62, -1, 4, 62, -65536, 4, 62, -10, 3, 1441835, -10, 2, 62, -10, 1, 655423, -196608, 5, 57, -196607, 4, 1048633, -196606, 3, 1247, -196605, 2, 1247, -131074, 5, 57, -131076, 4, 1443039, -131082, 3, 57, -131079, 0, 656607, -131078, 65535, 1441849, -131077, 65534, 1441848, -131076, 65533, 655397, -196608, 65533, 1049823, -196607, 65534, 655417, -196606, 65535, 1048633, -196605, 0, 1049823, -196608, 65534, 655417, -196607, 65535, 1049822, -196606, 0, 1048633, -196606, 2, 1246, -196607, 3, 1048633, -196608, 4, 1246, -131074, 4, 1443038, -131076, 3, 1443038, -131079, 1, 655417, -131078, 0, 1441849, -131077, 65535, 656606, -131076, 65534, 655416, -131081, 3, 56, -131080, 3, 1245, -131079, 3, 1245, -131078, 3, 1245, -131077, 3, 1245, -131075, 4, 1245, -131073, 5, 57, -131075, 65533, 656605, -131074, 65533, 656605, -131073, 65533, 656605, -196605, 1, 1049821, -131080, 1, 655417, -10, 0, 43, -10, 65535, 43, -11, 1, 62, -11, 0, 62, -11, 65535, 62, -13, 0, 1441835, -12, 0, 63, -12, 65535, 62, -13, 65535, 62, -10, 65534, 43, -11, 65534, 62, -11, 65533, 62, -10, 65533, 43, -12, 65533, 62, -13, 65533, 62, -13, 65534, 62, -12, 65534, 62, -10, 65532, 43, -11, 65532, 62, -12, 65532, 62, -12, 65531, 1048619, -13, 65531, 62, -14, 65531, 1048619, -14, 65532, 62, -13, 65532, 62, -15, 65532, 62, -15, 65533, 62, -15, 65534, 62, -14, 65534, 62, -14, 65535, 62, -14, 0, 1441835, -15, 0, 44, -15, 65535, 63, -14, 65533, 62, -11, 2, 62, -131083, 2, 1443039, -131087, 0, 37, -131087, 65532, 656607, -131086, 65531, 655417, -131084, 65531, 655417, -131082, 65532, 1048633, -131082, 1, 655416, -131084, 65532, 1049822, -131086, 65532, 656606, -131083, 0, 1443038, -131082, 2, 1443038, -131083, 1, 1443037, -131084, 0, 56, -131085, 0, 57, -131086, 0, 57, -131087, 65535, 56, -131087, 65534, 1443037, -131087, 65533, 1443037, -131085, 65531, 655417, -131083, 65532, 656605, -131082, 65533, 1048633, -131082, 65534, 1048633, -131082, 65535, 1048633, -131082, 0, 1048633, -131081, 1, 655417, -13, 65528, 1250, -13, 65527, 1250, -13, 65526, 1250, -13, 65525, 1250, -14, 65525, 1250, -15, 65525, 1250, -16, 65525, 1250, -16, 65526, 1250, -16, 65527, 1250, -15, 65527, 1250, -14, 65527, 1250, -12, 65527, 1250, -11, 65527, 1250, -10, 65527, 1250, -10, 65526, 1250, -10, 65525, 1250, -11, 65525, 1250, -12, 65525, 1250, -12, 65526, 1250, -11, 65526, 1250, -14, 65526, 1250, -15, 65526, 1250, -65534, 65534, 655404, -65535, 5, 1048620, -3, 5, 1441835, -4, 5, 1441835, -5, 5, 1441835, -6, 5, 44, -6, 4, 63, -6, 65534, 1441836, -5, 65533, 1441836, -5, 4, 62, -12, 1, 655403, -12, 2, 655403, -12, 3, 44, -11, 3, 1441835, -9, 4, 44, -8, 4, 1441835, -7, 4, 1441835, -10, 65531, 655404, -11, 65531, 1048619, -15, 65531, 1048619, -16, 65531, 1441836, -16, 65532, 655403, -16, 65533, 655403, -16, 65534, 655403, -16, 65535, 44, -131075, 5, 57, -131076, 5, 57, -131077, 5, 57, -131079, 4, 57, -131080, 4, 57, -131083, 3, 57, -131084, 3, 37, -131088, 65534, 1441849, -131088, 65533, 1441849, -131088, 65532, 1441849, -131087, 65531, 655417, -131083, 65531, 655417, -131075, 65534, 655417, -131074, 65534, 655417, -131073, 65534, 655417, -196607, 2, 1048633, -196607, 5, 1048613, -196606, 1, 1048613, -131078, 5, 37, -131081, 4, 37, -131088, 65535, 37, -131088, 65531, 1441829, -131082, 65531, 655397, -196606, 65534, 655397, -131078, 65534, 1441829, -131077, 65533, 1441829, -131078, 1, 1441848, -196607, 1, 1048632, -131078, 4, 56, -6, 10, 1441836, -131078, 10, 1441829, -6, 11, 655403, -131078, 11, 1441849, -6, 12, 655403, -131078, 12, 1441849, -6, 13, 655403, -131078, 13, 1441849, -6, 14, 44, -131078, 14, 37, -5, 10, 1048619, -131077, 10, 655417, -5, 11, 62, -5, 12, 62, -5, 13, 62, -5, 14, 1441835, -131077, 14, 57, -4, 10, 1048619, -131076, 10, 655417, -4, 11, 62, -4, 12, 62, -4, 13, 62, -4, 14, 62, -131076, 14, 57, -3, 10, 1048619, -131075, 10, 655417, -3, 11, 62, -3, 12, 62, -3, 13, 62, -3, 14, 1441835, -131075, 14, 57, -2, 10, 62, -131074, 10, 655417, -2, 11, 62, -2, 12, 62, -2, 13, 62, -2, 14, 1441835, -131074, 14, 57, -1, 10, 655404, -131073, 10, 655397, -1, 11, 43, -131073, 11, 1048633, -1, 12, 43, -131073, 12, 1048633, -1, 13, 43, -131073, 13, 1048633, -1, 14, 1048620, -131073, 14, 1048613, -6, 17, 1441836, -131078, 17, 1441829, -6, 18, 62, -131078, 18, 1441849, -6, 19, 44, -131078, 19, 37, -5, 17, 1048619, -131077, 17, 655417, -5, 18, 62, -5, 19, 1441835, -131077, 19, 57, -4, 17, 62, -131076, 17, 655417, -4, 18, 62, -4, 19, 1441835, -131076, 19, 57, -3, 17, 655404, -131075, 17, 655397, -3, 18, 62, -131075, 18, 1048633, -3, 19, 1048620, -131075, 19, 1048613, -15, 19, 1441836, -131087, 19, 1441829, -15, 20, 655403, -131087, 20, 1441849, -15, 21, 44, -131087, 21, 37, -14, 19, 1048619, -131086, 19, 655417, -14, 20, 62, -14, 21, 1441835, -131086, 21, 57, -13, 19, 1048619, -131085, 19, 655417, -13, 20, 62, -13, 21, 62, -131085, 21, 57, -12, 19, 655404, -131084, 19, 655397, -12, 20, 62, -131084, 20, 1048633, -12, 21, 1048620, -131084, 21, 1048613, -65535, 20, 1441836, -196607, 20, 1441829, -65535, 21, 62, -196607, 21, 1441849, -65535, 22, 44, -196607, 22, 37, -65534, 20, 1048619, -196606, 20, 655417, -65534, 21, 62, -65534, 22, 1441835, -196606, 22, 57, -65533, 20, 62, -196605, 20, 655417, -65533, 21, 62, -65533, 22, 1441835, -196605, 22, 57, -65532, 20, 655404, -196604, 20, 655397, -65532, 21, 43, -196604, 21, 1048633, -65532, 22, 1048620, -196604, 22, 1048613, -17, 27, 1441836, -131089, 27, 1441829, -17, 28, 655403, -131089, 28, 1441849, -17, 29, 44, -131089, 29, 37, -16, 27, 62, -131088, 27, 655417, -16, 28, 62, -16, 29, 62, -131088, 29, 57, -15, 27, 655404, -131087, 27, 655397, -15, 28, 43, -131087, 28, 1048633, -15, 29, 1048620, -131087, 29, 1048613, -8, 26, 1441836, -131080, 26, 1441829, -8, 27, 655403, -131080, 27, 1441849, -8, 28, 655403, -131080, 28, 1441849, -8, 29, 44, -131080, 29, 37, -7, 26, 1048619, -131079, 26, 655417, -7, 27, 62, -7, 28, 62, -7, 29, 1441835, -131079, 29, 57, -6, 26, 1048619, -131078, 26, 655417, -6, 27, 62, -6, 28, 62, -6, 29, 62, -131078, 29, 57, -5, 26, 655404, -131077, 26, 655397, -5, 27, 43, -131077, 27, 1048633, -5, 28, 62, -131077, 28, 1048633, -5, 29, 1048620, -131077, 29, 1048613, -65532, 27, 1441836, -196604, 27, 1441829, -65532, 28, 62, -196604, 28, 1441849, -65532, 29, 44, -196604, 29, 37, -65531, 27, 1048619, -196603, 27, 655417, -65531, 28, 62, -65531, 29, 62, -196603, 29, 57, -65530, 27, 62, -196602, 27, 655417, -65530, 28, 62, -65530, 29, 1441835, -196602, 29, 57, -65529, 27, 655404, -196601, 27, 655397, -65529, 28, 43, -196601, 28, 1048633, -65529, 29, 1048620, -196601, 29, 1048613, -14, 35, 1441836, -131086, 35, 1441829, -14, 36, 655403, -131086, 36, 1441849, -14, 37, 44, -131086, 37, 37, -13, 35, 1048619, -131085, 35, 655417, -13, 36, 62, -13, 37, 1441835, -131085, 37, 57, -12, 35, 62, -131084, 35, 655417, -12, 36, 62, -12, 37, 1441835, -131084, 37, 57, -11, 35, 655404, -131083, 35, 655397, -11, 36, 62, -131083, 36, 1048633, -11, 37, 1048620, -131083, 37, 1048613, -65535, 35, 1441836, -196607, 35, 1441829, -65535, 36, 655403, -196607, 36, 1441849, -65535, 37, 44, -196607, 37, 37, -65534, 35, 1048619, -196606, 35, 655417, -65534, 36, 62, -65534, 37, 1441835, -196606, 37, 57, -65533, 35, 62, -196605, 35, 655417, -65533, 36, 62, -65533, 37, 1441835, -196605, 37, 57, -65532, 35, 655404, -196604, 35, 655397, -65532, 36, 62, -196604, 36, 1048633, -65532, 37, 1048620, -196604, 37, 1048613, -6, 38, 1441836, -131078, 38, 1441829, -6, 39, 655403, -131078, 39, 1441849, -6, 40, 62, -131078, 40, 1441849, -6, 41, 44, -131078, 41, 37, -5, 38, 62, -131077, 38, 655417, -5, 39, 62, -5, 40, 62, -5, 41, 62, -131077, 41, 57, -4, 38, 1048619, -131076, 38, 655417, -4, 39, 62, -4, 40, 62, -4, 41, 1441835, -131076, 41, 57, -3, 38, 655404, -131075, 38, 655397, -3, 39, 43, -131075, 39, 1048633, -3, 40, 62, -131075, 40, 1048633, -3, 41, 1048620, -131075, 41, 1048613, -9, 49, 1441836, -131081, 49, 1441829, -9, 50, 655403, -131081, 50, 1441849, -9, 51, 655403, -131081, 51, 1441849, -9, 52, 655403, -131081, 52, 1441849, -9, 53, 655403, -131081, 53, 1441849, -9, 54, 44, -131081, 54, 37, -8, 49, 1048619, -131080, 49, 655417, -8, 50, 62, -8, 51, 62, -8, 52, 62, -8, 53, 62, -8, 54, 1441835, -131080, 54, 57, -7, 49, 1048619, -131079, 49, 655417, -7, 50, 62, -7, 51, 62, -7, 52, 62, -7, 53, 62, -7, 54, 1441835, -131079, 54, 57, -6, 49, 1048619, -131078, 49, 655417, -6, 50, 62, -6, 51, 62, -6, 52, 62, -6, 53, 62, -6, 54, 62, -131078, 54, 57, -5, 49, 62, -131077, 49, 655417, -5, 50, 62, -5, 51, 62, -5, 52, 62, -5, 53, 62, -5, 54, 1441835, -131077, 54, 57, -4, 49, 1048619, -131076, 49, 655417, -4, 50, 62, -4, 51, 62, -4, 52, 62, -4, 53, 62, -4, 54, 1441835, -131076, 54, 57, -3, 49, 1048619, -131075, 49, 655417, -3, 50, 62, -3, 51, 62, -3, 52, 62, -3, 53, 62, -3, 54, 1441835, -131075, 54, 57, -2, 49, 655404, -131074, 49, 655397, -2, 50, 43, -131074, 50, 1048633, -2, 51, 43, -131074, 51, 1048633, -2, 52, 43, -131074, 52, 1048633, -2, 53, 43, -131074, 53, 1048633, -2, 54, 1048620, -131074, 54, 1048613, -8, 57, 1441836, -131080, 57, 1441829, -8, 58, 655403, -131080, 58, 1441849, -8, 59, 655403, -131080, 59, 1441849, -8, 60, 655403, -131080, 60, 1441849, -8, 61, 655403, -131080, 61, 1441849, -8, 62, 44, -131080, 62, 37, -7, 57, 1048619, -131079, 57, 655417, -7, 58, 62, -7, 59, 62, -7, 60, 62, -7, 61, 62, -7, 62, 1441835, -131079, 62, 57, -6, 57, 62, -131078, 57, 655417, -6, 58, 62, -6, 59, 62, -6, 60, 62, -6, 61, 62, -6, 62, 1441835, -131078, 62, 57, -5, 57, 1048619, -131077, 57, 655417, -5, 58, 62, -5, 59, 62, -5, 60, 62, -5, 61, 62, -5, 62, 1441835, -131077, 62, 57, -4, 57, 1048619, -131076, 57, 655417, -4, 58, 62, -4, 59, 62, -4, 60, 62, -4, 61, 62, -4, 62, 1441835, -131076, 62, 57, -3, 57, 655404, -131075, 57, 655397, -3, 58, 43, -131075, 58, 1048633, -3, 59, 43, -131075, 59, 1048633, -3, 60, 43, -131075, 60, 1048633, -3, 61, 43, -131075, 61, 1048633, -3, 62, 1048620, -131075, 62, 1048613)
 }
 metadata/_editor_floor_ = Vector3(0, -3, 0)
 
@@ -232,20 +703,12 @@ data = {
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
 [node name="Water" parent="Level" instance=ExtResource("18_iifxy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1.5, -10, -5, 75)
 surface_material_override/0 = SubResource("ShaderMaterial_moat")
 
 [node name="Medieval" type="Node3D" parent="Level"]
 
 [node name="Towers" type="Node3D" parent="Level/Medieval"]
-
-[node name="Walls" type="Node3D" parent="Level/Medieval"]
-
-[node name="Banners" type="Node3D" parent="Level/Medieval"]
-
-[node name="Torches" type="Node3D" parent="Level/Medieval"]
-
-[node name="Moat" type="Node3D" parent="Level/Medieval"]
 
 [node name="CastleTower1" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17, -5, -14)
@@ -273,6 +736,14 @@ transform = Transform3D(-0.9455, 0, 0.3256, 0, 1, 0, -0.3256, 0, -0.9455, -32.5,
 
 [node name="CastleGatehouse1" parent="Level/Medieval/Towers" instance=ExtResource("m_gatehouse")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.5, -5, -23)
+
+[node name="MageTower1" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(0.766, 0, 0.6428, 0, 1, 0, -0.6428, 0, 0.766, -37.994, -5, 37.5)
+
+[node name="MageTower2" parent="Level/Medieval/Towers" instance=ExtResource("m_tower")]
+transform = Transform3D(-0.342, 0, 0.9397, 0, 1, 0, -0.9397, 0, -0.342, 16, -5, 37.5)
+
+[node name="Walls" type="Node3D" parent="Level/Medieval"]
 
 [node name="CastleWall1" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
 transform = Transform3D(0.95, 0, 0, 0, 1, 0, 0, 0, 1, -16.75, -5, -14)
@@ -331,83 +802,75 @@ transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, -1.56)
 [node name="CastleWall19" parent="Level/Medieval/Walls" instance=ExtResource("m_wall")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 0.9067, 0, 0, -55, -5, 3.88)
 
+[node name="Banners" type="Node3D" parent="Level/Medieval"]
+
 [node name="WallBanner1" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 1.7, -13.2)
-instance_shader_parameters/charge = 0
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
 
 [node name="WallBanner2" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 1.7, -13.2)
-instance_shader_parameters/charge = 1
-instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
-instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
 
 [node name="WallBanner3" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.5, 1.7, -13.2)
-instance_shader_parameters/charge = 2
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
 
 [node name="WallBanner4" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -50, 1.7, -22.2)
-instance_shader_parameters/charge = 3
-instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
-instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
 
 [node name="WallBanner5" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -27, 1.7, -22.2)
-instance_shader_parameters/charge = 0
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
 
 [node name="WallBanner6" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, 1.7, -3)
-instance_shader_parameters/charge = 1
-instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
-instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
 
 [node name="WallBanner7" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 16.2, 1.7, 6)
-instance_shader_parameters/charge = 2
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
 
 [node name="WallBanner8" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, 1.7, -12)
-instance_shader_parameters/charge = 3
-instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
-instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
 
 [node name="WallBanner9" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -54.2, 1.7, -1)
-instance_shader_parameters/charge = 0
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
 
 [node name="WallBanner10" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -12, -1.75, 17.52)
-instance_shader_parameters/charge = 1
-instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
-instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
 
 [node name="WallBanner11" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 0, -1.75, 17.52)
-instance_shader_parameters/charge = 2
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
 
 [node name="WallBanner12" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -31.5, -1.75, 11.52)
-instance_shader_parameters/charge = 3
-instance_shader_parameters/charge_color = Color(0.95, 0.85, 0.45, 1)
-instance_shader_parameters/field_color = Color(0.12, 0.2, 0.5, 1)
 
 [node name="WallBanner13" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
 transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -41.5, -1.75, 2.52)
-instance_shader_parameters/charge = 0
-instance_shader_parameters/charge_color = Color(0.95, 0.76, 0.25, 1)
-instance_shader_parameters/field_color = Color(0.6, 0.09, 0.1, 1)
+
+[node name="MageBanner1" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -13.494, -1.75, 44.505)
+
+[node name="MageBanner2" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -4.5, -1.75, 44.505)
+
+[node name="LabyrinthStartBanner" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -9, -1.75, 125.478)
+
+[node name="LabyrinthSouthWestBanner" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -35.988, -1.75, 113.482)
+
+[node name="LabyrinthSouthEastBanner" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, 8.997, -1.75, 113.482)
+
+[node name="LabyrinthCentreBanner" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -17.994, -1.75, 89.49)
+
+[node name="WarmupBanner1" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -16.5, -1.75, 188.457)
+
+[node name="HordeBanner1" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -22.5, -1.75, 164.465)
+
+[node name="HordeBanner2" parent="Level/Medieval/Banners" instance=ExtResource("m_banner")]
+transform = Transform3D(1, 0, 0, 0, 0.8, 0, 0, 0, 1, -10.5, -1.75, 164.465)
+
+[node name="Torches" type="Node3D" parent="Level/Medieval"]
 
 [node name="WallTorch1" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17, -0.3, -13.2)
@@ -469,6 +932,56 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.5, -2.5, 2.52)
 [node name="WallTorch20" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -39.5, -2.5, 2.52)
 
+[node name="MageTorch1" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.494, -2.5, 44.505)
+
+[node name="MageTorch2" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.494, -2.5, 44.505)
+
+[node name="MageTorch3" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, -2.5, 44.505)
+
+[node name="MageTorch4" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5, -2.5, 44.505)
+
+[node name="LabyrinthStartTorchW" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.494, -2.5, 125.478)
+
+[node name="LabyrinthStartTorchE" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.498, -2.5, 125.478)
+
+[node name="LabyrinthSouthWestTorchW" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.486, -2.5, 113.482)
+
+[node name="LabyrinthSouthWestTorchE" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.49, -2.5, 113.482)
+
+[node name="LabyrinthSouthEastTorchW" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.499, -2.5, 113.482)
+
+[node name="LabyrinthSouthEastTorchE" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.495, -2.5, 113.482)
+
+[node name="LabyrinthCentreTorchW" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.492, -2.5, 89.49)
+
+[node name="LabyrinthCentreTorchE" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.496, -2.5, 89.49)
+
+[node name="WarmupTorch1" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.5, -2.5, 188.457)
+
+[node name="WarmupTorch2" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, -2.5, 188.457)
+
+[node name="HordeTorch1" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.5, -2.5, 164.465)
+
+[node name="HordeTorch2" parent="Level/Medieval/Torches" instance=ExtResource("m_torch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.5, -2.5, 164.465)
+
+[node name="Moat" type="Node3D" parent="Level/Medieval"]
+
 [node name="Rowboat1" parent="Level/Medieval/Moat" instance=ExtResource("m_boat")]
 transform = Transform3D(0.1736, 0, 0.9848, 0, 1, 0, -0.9848, 0, 0.1736, -22.5, -5, -3)
 
@@ -526,6 +1039,63 @@ transform = Transform3D(0.5736, 0, -0.8192, 0, 1, 0, 0.8192, 0, 0.5736, -45, -5,
 [node name="LilyPads7" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
 transform = Transform3D(0.9945, 0, 0.1045, 0, 1, 0, -0.1045, 0, 0.9945, -34, -5, -18)
 
+[node name="MageReeds1" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(0.9397, 0, 0.342, 0, 1, 0, -0.342, 0, 0.9397, -26.994, -5, 48.985)
+
+[node name="MageReeds2" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(0.3907, 0, 0.9205, 0, 1, 0, -0.9205, 0, 0.3907, 8, -5, 47.985)
+
+[node name="MageReeds3" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.4067, 0, 0.9135, 0, 1, 0, -0.9135, 0, -0.4067, -24.994, -5, 25)
+
+[node name="MageLilyPads1" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.9848, 0, 0.1736, 0, 1, 0, -0.1736, 0, 0.9848, -29.994, -5, 26)
+
+[node name="MageLilyPads2" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.3256, 0, 0.9455, 0, 1, 0, -0.9455, 0, 0.3256, 9, -5, 40)
+
+[node name="MageLilyPads3" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.6691, 0, 0.7431, 0, 1, 0, -0.7431, 0, -0.6691, -3, -5, 50.985)
+
+[node name="MageRowboat" parent="Level/Medieval/Moat" instance=ExtResource("m_boat")]
+transform = Transform3D(0.2588, 0, 0.9659, 0, 1, 0, -0.9659, 0, 0.2588, 10, -5, 27)
+
+[node name="LabyrinthReeds1" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.4905, -5, 73.4755)
+
+[node name="LabyrinthLilyPads2" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.6018, 0, 0.7986, 0, 1, 0, -0.7986, 0, 0.6018, -34.4885, -5, 91.4695)
+
+[node name="LabyrinthReeds3" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.2756, 0, 0.9613, 0, 1, 0, -0.9613, 0, -0.2756, -1.4995, -5, 106.4645)
+
+[node name="LabyrinthLilyPads4" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.9336, 0, 0.3584, 0, 1, 0, -0.3584, 0, -0.9336, 25.4915, -5, 100.4665)
+
+[node name="LabyrinthReeds5" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.848, 0, -0.5299, 0, 1, 0, 0.5299, 0, -0.848, -1.4995, -5, 88.4705)
+
+[node name="LabyrinthLilyPads6" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.0872, 0, -0.9962, 0, 1, 0, 0.9962, 0, -0.0872, -52.4825, -5, 103.4655)
+
+[node name="LabyrinthReeds7" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(0.7431, 0, -0.6691, 0, 1, 0, 0.6691, 0, 0.7431, 25.4915, -5, 67.4775)
+
+[node name="LabyrinthLilyPads8" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.9816, 0, 0.1908, 0, 1, 0, -0.1908, 0, 0.9816, -25.4915, -5, 127.4575)
+
+[node name="HordeReeds1" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -33, -5, 160)
+
+[node name="HordeLilyPads2" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(0.3256, 0, 0.9455, 0, 1, 0, -0.9455, 0, 0.3256, 3, -5, 172)
+
+[node name="HordeReeds3" parent="Level/Medieval/Moat" instance=ExtResource("m_reeds")]
+transform = Transform3D(-0.788, 0, 0.6157, 0, 1, 0, -0.6157, 0, -0.788, -30, -5, 185)
+
+[node name="HordeLilyPads4" parent="Level/Medieval/Moat" instance=ExtResource("m_lilies")]
+transform = Transform3D(-0.8387, 0, -0.5446, 0, 1, 0, 0.5446, 0, -0.8387, 2, -5, 150)
+
 [node name="Bridges" type="Node" parent="Level"]
 
 [node name="BridgePlatform" parent="Level/Bridges" instance=ExtResource("21_dvkoh")]
@@ -533,6 +1103,341 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -16.49
 
 [node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("21_dvkoh")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.50609, -3.9927697, -19.493908)
+
+[node name="MageBridgePlatform1" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 19.4935)
+
+[node name="MageBridgePlatform2" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 22.4925)
+
+[node name="MageBridgePlatform3" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 25.4915)
+
+[node name="MageBridgePlatform4" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 28.4905)
+
+[node name="Labyrinth" type="Node" parent="Level/Bridges"]
+
+[node name="WalkStartSouthWest1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, -3.9928, 121.4595)
+
+[node name="WalkStartSouthWest2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -3.9928, 121.4595)
+
+[node name="WalkStartSouthWest3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -3.9928, 118.4605)
+
+[node name="WalkStartSouthWest4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -3.9928, 115.4615)
+
+[node name="WalkStartSouthWest5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4915, -3.9928, 115.4615)
+
+[node name="WalkStartSouthWest6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4915, -3.9928, 112.4625)
+
+[node name="WalkStartSouthWest7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4915, -3.9928, 109.4635)
+
+[node name="WalkStartSouthWest8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.4905, -3.9928, 109.4635)
+
+[node name="WalkStartSouthEast1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast9" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 121.4595)
+
+[node name="WalkStartSouthEast10" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 118.4605)
+
+[node name="WalkStartSouthEast11" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 115.4615)
+
+[node name="WalkStartSouthEast12" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 112.4625)
+
+[node name="WalkStartSouthEast13" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 109.4635)
+
+[node name="WalkStartSouthEast14" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, 109.4635)
+
+[node name="WalkStartCentre1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 112.4625)
+
+[node name="WalkStartCentre2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 109.4635)
+
+[node name="WalkStartCentre3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 106.4645)
+
+[node name="WalkStartCentre4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 103.4655)
+
+[node name="WalkStartCentre5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 100.4665)
+
+[node name="WalkStartCentre6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -3.9928, 100.4665)
+
+[node name="WalkStartCentre7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 100.4665)
+
+[node name="WalkStartCentre8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 97.4675)
+
+[node name="WalkStartCentre9" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 94.4685)
+
+[node name="WalkStartCentre10" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -3.9928, 94.4685)
+
+[node name="WalkStartCentre11" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 94.4685)
+
+[node name="WalkStartCentre12" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, -3.9928, 94.4685)
+
+[node name="WalkStartCentre13" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, -3.9928, 91.4695)
+
+[node name="WalkSouthWestWest1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.4885, -3.9928, 103.4655)
+
+[node name="WalkSouthWestWest2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.4885, -3.9928, 100.4665)
+
+[node name="WalkSouthWestWest3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34.4885, -3.9928, 97.4675)
+
+[node name="WalkSouthWestWest4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.4875, -3.9928, 97.4675)
+
+[node name="WalkSouthWestWest5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.4865, -3.9928, 97.4675)
+
+[node name="WalkSouthWestWest6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.4855, -3.9928, 97.4675)
+
+[node name="WalkSouthWestWest7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 97.4675)
+
+[node name="WalkSouthWestWest8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 94.4685)
+
+[node name="WalkSouthWestWest9" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 91.4695)
+
+[node name="WalkWestNorthWest1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 79.4735)
+
+[node name="WalkWestNorthWest2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 76.4745)
+
+[node name="WalkWestNorthWest3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 73.4755)
+
+[node name="WalkWestNorthWest4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -46.4845, -3.9928, 70.4765)
+
+[node name="WalkWestNorthWest5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -43.4855, -3.9928, 70.4765)
+
+[node name="WalkWestNorthWest6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.4865, -3.9928, 70.4765)
+
+[node name="WalkWestNorthWest7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.4875, -3.9928, 70.4765)
+
+[node name="WalkWestNorthWest8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -37.4875, -3.9928, 67.4775)
+
+[node name="WalkNorthWestExit1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -31.4895, -3.9928, 61.4795)
+
+[node name="WalkNorthWestExit2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.4905, -3.9928, 61.4795)
+
+[node name="WalkNorthWestExit3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4915, -3.9928, 61.4795)
+
+[node name="WalkNorthWestExit4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4915, -3.9928, 58.4805)
+
+[node name="WalkNorthWestExit5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4915, -3.9928, 55.4815)
+
+[node name="WalkNorthWestExit6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -3.9928, 55.4815)
+
+[node name="WalkNorthWestExit7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, -3.9928, 55.4815)
+
+[node name="WalkSouthEastEast1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 103.4655)
+
+[node name="WalkSouthEastEast2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 100.4665)
+
+[node name="WalkSouthEastEast3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 97.4675)
+
+[node name="WalkSouthEastEast4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 94.4685)
+
+[node name="WalkSouthEastEast5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -3.9928, 94.4685)
+
+[node name="WalkSouthEastEast6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, 94.4685)
+
+[node name="WalkSouthEastEast7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, 91.4695)
+
+[node name="WalkEastNorthEast1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 79.4735)
+
+[node name="WalkEastNorthEast2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 76.4745)
+
+[node name="WalkEastNorthEast3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 73.4755)
+
+[node name="WalkEastNorthEast4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 70.4765)
+
+[node name="WalkEastNorthEast5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 67.4775)
+
+[node name="WalkEastNorthEast6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 64.4785)
+
+[node name="WalkEastNorthEast7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 61.4795)
+
+[node name="WalkEastNorthEast8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 58.4805)
+
+[node name="WalkEastNorthEast9" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, 55.4815)
+
+[node name="WalkEastNorthEast10" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, 55.4815)
+
+[node name="WalkEastNorthEast11" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -3.9928, 55.4815)
+
+[node name="WalkEastNorthEast12" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 55.4815)
+
+[node name="WalkEastNorthEast13" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 58.4805)
+
+[node name="WalkNorthEastExit1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, 64.4785)
+
+[node name="WalkNorthEastExit2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, 64.4785)
+
+[node name="WalkNorthEastExit3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, 61.4795)
+
+[node name="WalkNorthEastExit4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, 58.4805)
+
+[node name="WalkNorthEastExit5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, 55.4815)
+
+[node name="WalkNorthEastExit6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 55.4815)
+
+[node name="WalkCentreEast1" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -3.9928, 85.4715)
+
+[node name="WalkCentreEast2" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 85.4715)
+
+[node name="WalkCentreEast3" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 82.4725)
+
+[node name="WalkCentreEast4" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 79.4735)
+
+[node name="WalkCentreEast5" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -3.9928, 76.4745)
+
+[node name="WalkCentreEast6" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -3.9928, 76.4745)
+
+[node name="WalkCentreEast7" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, 76.4745)
+
+[node name="WalkCentreEast8" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, 76.4745)
+
+[node name="WalkCentreEast9" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, 76.4745)
+
+[node name="WalkCentreEast10" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, 79.4735)
+
+[node name="WalkCentreEast11" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, 82.4725)
+
+[node name="WalkCentreEast12" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, 85.4715)
+
+[node name="WalkCentreEast13" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -3.9928, 85.4715)
+
+[node name="WalkCentreEast14" parent="Level/Bridges/Labyrinth" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -3.9928, 85.4715)
+
+[node name="LabyrinthExitPlatform1" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -3.9928, 46.4845)
+
+[node name="LabyrinthExitPlatform2" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -3.9928, 49.4835)
+
+[node name="SkullBridgePlatform1" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 127.4575)
+
+[node name="SkullBridgePlatform2" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 130.4565)
+
+[node name="WarmupBridgePlatform1" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, -3.9928, 166.4445)
+
+[node name="WarmupBridgePlatform2" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -16.4945, -3.9928, 169.4435)
+
+[node name="HordeBridgePlatform1" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 142.4525)
+
+[node name="HordeBridgePlatform2" parent="Level/Bridges" instance=ExtResource("nm_bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, -3.9928, 145.4515)
 
 [node name="Events" type="Node" parent="Level"]
 
@@ -547,6 +1452,82 @@ enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
 [node name="LevelSucceeded" type="Node" parent="Level/Events"]
 script = ExtResource("19_khskr")
 
+[node name="OpenMageBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/MageBridgePlatform1"), NodePath("../../Bridges/MageBridgePlatform2"), NodePath("../../Bridges/MageBridgePlatform3"), NodePath("../../Bridges/MageBridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="FocusMagesNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("nm_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesNW")
+
+[node name="FocusMagesNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("nm_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesNE")
+
+[node name="FocusMagesSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("nm_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesSW")
+
+[node name="FocusMagesSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("nm_focus")
+focal_point = NodePath("../../FocusPoints/FocusMagesSE")
+
+[node name="UnfocusMages" type="Node" parent="Level/Events"]
+script = ExtResource("nm_clear")
+
+[node name="FocusSkullsW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("nm_focus")
+focal_point = NodePath("../../FocusPoints/FocusSkullsW")
+
+[node name="FocusSkullsE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("nm_focus")
+focal_point = NodePath("../../FocusPoints/FocusSkullsE")
+
+[node name="UnfocusSkulls" type="Node" parent="Level/Events"]
+script = ExtResource("nm_clear")
+
+[node name="RaiseWalkways" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/Labyrinth/WalkStartSouthWest1"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest2"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest3"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest4"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest5"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest6"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest7"), NodePath("../../Bridges/Labyrinth/WalkStartSouthWest8"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast1"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast2"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast3"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast4"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast5"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast6"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast7"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast8"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast9"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast10"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast11"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast12"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast13"), NodePath("../../Bridges/Labyrinth/WalkStartSouthEast14"), NodePath("../../Bridges/Labyrinth/WalkStartCentre1"), NodePath("../../Bridges/Labyrinth/WalkStartCentre2"), NodePath("../../Bridges/Labyrinth/WalkStartCentre3"), NodePath("../../Bridges/Labyrinth/WalkStartCentre4"), NodePath("../../Bridges/Labyrinth/WalkStartCentre5"), NodePath("../../Bridges/Labyrinth/WalkStartCentre6"), NodePath("../../Bridges/Labyrinth/WalkStartCentre7"), NodePath("../../Bridges/Labyrinth/WalkStartCentre8"), NodePath("../../Bridges/Labyrinth/WalkStartCentre9"), NodePath("../../Bridges/Labyrinth/WalkStartCentre10"), NodePath("../../Bridges/Labyrinth/WalkStartCentre11"), NodePath("../../Bridges/Labyrinth/WalkStartCentre12"), NodePath("../../Bridges/Labyrinth/WalkStartCentre13"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest1"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest2"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest3"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest4"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest5"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest6"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest7"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest8"), NodePath("../../Bridges/Labyrinth/WalkSouthWestWest9"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest1"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest2"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest3"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest4"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest5"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest6"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest7"), NodePath("../../Bridges/Labyrinth/WalkWestNorthWest8"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit1"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit2"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit3"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit4"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit5"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit6"), NodePath("../../Bridges/Labyrinth/WalkNorthWestExit7"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast1"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast2"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast3"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast4"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast5"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast6"), NodePath("../../Bridges/Labyrinth/WalkSouthEastEast7"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast1"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast2"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast3"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast4"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast5"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast6"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast7"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast8"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast9"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast10"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast11"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast12"), NodePath("../../Bridges/Labyrinth/WalkEastNorthEast13"), NodePath("../../Bridges/Labyrinth/WalkNorthEastExit1"), NodePath("../../Bridges/Labyrinth/WalkNorthEastExit2"), NodePath("../../Bridges/Labyrinth/WalkNorthEastExit3"), NodePath("../../Bridges/Labyrinth/WalkNorthEastExit4"), NodePath("../../Bridges/Labyrinth/WalkNorthEastExit5"), NodePath("../../Bridges/Labyrinth/WalkNorthEastExit6"), NodePath("../../Bridges/Labyrinth/WalkCentreEast1"), NodePath("../../Bridges/Labyrinth/WalkCentreEast2"), NodePath("../../Bridges/Labyrinth/WalkCentreEast3"), NodePath("../../Bridges/Labyrinth/WalkCentreEast4"), NodePath("../../Bridges/Labyrinth/WalkCentreEast5"), NodePath("../../Bridges/Labyrinth/WalkCentreEast6"), NodePath("../../Bridges/Labyrinth/WalkCentreEast7"), NodePath("../../Bridges/Labyrinth/WalkCentreEast8"), NodePath("../../Bridges/Labyrinth/WalkCentreEast9"), NodePath("../../Bridges/Labyrinth/WalkCentreEast10"), NodePath("../../Bridges/Labyrinth/WalkCentreEast11"), NodePath("../../Bridges/Labyrinth/WalkCentreEast12"), NodePath("../../Bridges/Labyrinth/WalkCentreEast13"), NodePath("../../Bridges/Labyrinth/WalkCentreEast14")]
+platform_animation_stagger_seconds = 0.05
+use_camera_focus = false
+
+[node name="OpenLabyrinthExit" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/LabyrinthExitPlatform1"), NodePath("../../Bridges/LabyrinthExitPlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenSkullBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/SkullBridgePlatform1"), NodePath("../../Bridges/SkullBridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="StartSkullWave" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("sk_start")
+enemy_group = NodePath("../../../Enemies/SkullSurvival")
+
+[node name="OpenWarmupBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/WarmupBridgePlatform1"), NodePath("../../Bridges/WarmupBridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenHordeBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/HordeBridgePlatform1"), NodePath("../../Bridges/HordeBridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseHordeBridge" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("22_jq7lx")
+platforms = [NodePath("../../Bridges/HordeBridgePlatform1"), NodePath("../../Bridges/HordeBridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="WakeHorde" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("18_khskr")
+enemy_group = NodePath("../../../Enemies/Horde")
+
 [node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 8)
 script = ExtResource("19_g7rls")
@@ -554,6 +1535,79 @@ script = ExtResource("19_g7rls")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/AllPlayersAreaTrigger"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 shape = SubResource("BoxShape3D_h2fuj")
+
+[node name="MageTurrets" type="Node3D" parent="Level"]
+
+[node name="WestTurret1" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -1.65, 32.9875)
+
+[node name="WestTurret2" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -1.65, 37.4875)
+
+[node name="WestTurret3" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -1.65, 41.9875)
+
+[node name="NorthTurret1" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9985, -1.65, 22.19)
+
+[node name="NorthTurret2" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4985, -1.65, 22.19)
+
+[node name="NorthTurret3" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9985, -1.65, 22.19)
+
+[node name="EastTurret1" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -1.65, 32.9875)
+
+[node name="EastTurret2" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -1.65, 37.4875)
+
+[node name="EastTurret3" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -1.65, 41.9875)
+
+[node name="FocusPoints" type="Node3D" parent="Level"]
+
+[node name="FocusMagesNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.794, 0, 19.19)
+
+[node name="FocusMagesNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 0, 19.19)
+
+[node name="FocusMagesSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -28.794, 0, 47.985)
+
+[node name="FocusMagesSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.8, 0, 47.985)
+
+[node name="FocusSkullsW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.4955, 0, 136.356)
+
+[node name="FocusSkullsE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4955, 0, 136.356)
+
+[node name="ArenaArrival" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 0, 37.5)
+script = ExtResource("19_g7rls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/ArenaArrival"]
+shape = SubResource("BoxShape3D_arena_arrival")
+
+[node name="SkullPlatform" parent="Level" instance=ExtResource("sk_platform")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, 136.356)
+
+[node name="HordeArrival" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.995, 0, 155.948)
+script = ExtResource("19_g7rls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/HordeArrival"]
+shape = SubResource("BoxShape3D_HordeArrival")
+
+[node name="SkullArrival" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, 136.356)
+script = ExtResource("19_g7rls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SkullArrival"]
+shape = SubResource("BoxShape3D_SkullArrival")
 
 [node name="Weapon" type="Node" parent="."]
 
@@ -578,5 +1632,26 @@ message_string = "[color=#ff8888]Sword usage[/color]
 Use dash to swing and attack with the sword !"
 
 [connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/LevelSucceeded" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/MageTurretGroup" to="CheckpointManager/Checkpoint" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/MageTurretGroup" to="Level/Events/OpenMageBridge" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/MageTurretGroup" to="Level/Events/UnfocusMages" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/LabyrinthMages" to="CheckpointManager/CheckpointStart" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/LabyrinthMages" to="Level/Events/OpenLabyrinthExit" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SkullSurvival" to="CheckpointManager/CheckpointLabyrinth" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/SkullSurvival" to="Level/Events/UnfocusSkulls" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SkullSurvival" to="Level/Events/OpenSkullBridge" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Warmup" to="CheckpointManager/CheckpointHorde" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Warmup" to="Level/Events/OpenWarmupBridge" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Horde" to="CheckpointManager/CheckpointSkulls" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Horde" to="Level/Events/OpenHordeBridge" method="trigger"]
 [connection signal="body_entered" from="CheckpointManager/Checkpoint/TriggerArea" to="CheckpointManager/Checkpoint" method="on_checkpoint_entered"]
 [connection signal="all_players_inside" from="Level/AllPlayersAreaTrigger" to="Level/Events/MakeEnemiesGroup2Offensive" method="trigger"]
+[connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesNE" method="trigger"]
+[connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/HordeArrival" to="Level/Events/WakeHorde" method="trigger"]
+[connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/FocusSkullsW" method="trigger"]
+[connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/FocusSkullsE" method="trigger"]
+[connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/StartSkullWave" method="trigger"]
+[connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/CloseHordeBridge" method="trigger"]

@@ -60,6 +60,29 @@ func restart_game() -> void:
 
 	game_state_machine.transition_to("resettingcheckpoint")
 
+
+func jump_to_checkpoint(checkpoint: Checkpoint) -> void:
+	if checkpoint == null:
+		return
+	if scene_file_path.is_empty():
+		_jump_to_checkpoint_in_place(checkpoint)
+		return
+	var tree := get_tree()
+	if tree == null:
+		return
+	DevSettings.request_checkpoint_jump(checkpoint.get_save_id(), skip_save)
+	var err := tree.change_scene_to_file(scene_file_path)
+	if err != OK:
+		push_error("WorldLocal: failed to reload level for checkpoint '%s' (error %d)." % [checkpoint.get_save_id(), err])
+
+
+func _jump_to_checkpoint_in_place(checkpoint: Checkpoint) -> void:
+	var manager := checkpoint_manager as CheckpointManager
+	if manager == null:
+		return
+	manager.set_current_checkpoint_silent(checkpoint)
+	restart_game()
+
 func get_active_weapon() -> BigWeapon:
 	var weapon_root := get_node_or_null("Weapon")
 	if weapon_root == null:

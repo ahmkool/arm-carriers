@@ -281,6 +281,15 @@ theme_override_styles/hover = SubResource("StyleBoxFlat_checkpoint_hover")
 theme_override_styles/focus = SubResource("StyleBoxFlat_checkpoint_focus")
 text = "Last checkpoint"
 
+[node name="CheckpointsButton" type="Button" parent="Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer"]
+visible = false
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_checkpoint_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_checkpoint_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_checkpoint_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_checkpoint_focus")
+text = "Checkpoints"
+
 [node name="BackToMenuButton" type="Button" parent="Layer/MenuRoot/PauseMainRoot/PanelContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 theme_override_styles/normal = SubResource("StyleBoxFlat_menu_normal")
@@ -427,3 +436,70 @@ grow_vertical = 2
 
 [node name="PanelContainer" parent="Layer/MenuRoot/PauseControlsRoot" instance=ExtResource("6_kcxqm")]
 layout_mode = 1
+
+[node name="PauseCheckpointsRoot" type="Control" parent="Layer/MenuRoot"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="Layer/MenuRoot/PauseCheckpointsRoot"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -300.0
+offset_top = -280.0
+offset_right = 300.0
+offset_bottom = 280.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 16
+
+[node name="TitleLabel" type="Label" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+text = "Checkpoints"
+horizontal_alignment = 1
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer/MarginContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 320)
+layout_mode = 2
+size_flags_vertical = 3
+follow_focus = true
+horizontal_scroll_mode = 0
+
+[node name="ListMargin" type="MarginContainer" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 8
+
+[node name="CheckpointList" type="VBoxContainer" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer/MarginContainer/VBoxContainer/ScrollContainer/ListMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="BackButton" type="Button" parent="Layer/MenuRoot/PauseCheckpointsRoot/PanelContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_back_normal")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_back_pressed")
+theme_override_styles/hover = SubResource("StyleBoxFlat_back_hover")
+theme_override_styles/focus = SubResource("StyleBoxFlat_back_focus")
+text = "Back"

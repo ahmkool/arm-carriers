@@ -11,6 +11,8 @@ var current_hp: int
 var _invulnerable_time_remaining := 0.0
 ## While up, takes every hit in place of this health (see `EnemyShield`).
 var shield: EnemyShield
+## Blocks hits that come from in front of the enemy (see `FrontalGuard`).
+var guard: FrontalGuard
 
 func get_scene_max_hp() -> int:
 	print("Getting scene max HP for ", self, " with max_hp ", max_hp)
@@ -54,6 +56,9 @@ func take_damage(amount: int, source_position: Vector3 = Vector3.ZERO) -> bool:
 		return false
 	if is_instance_valid(shield) and shield.is_up():
 		shield.absorb(source_position)
+		return false
+	if is_instance_valid(guard) and guard.blocks(source_position):
+		guard.absorb(source_position)
 		return false
 	var applied := mini(amount, current_hp)
 	current_hp -= applied

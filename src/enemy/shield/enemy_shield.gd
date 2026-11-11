@@ -1,8 +1,9 @@
 class_name EnemyShield
 extends Node3D
 ## An energy bubble around its parent enemy that absorbs all damage until the pulse rifle's
-## vent breaks it. Bolts bounce off, but they still heat the barrel, so firing at a shielded
-## enemy charges the vent that pops it. Falling out of the level still kills.
+## vent breaks it. Bolts bounce off it like a mirror (see `BoltMirror`), and they still heat the
+## barrel, so firing at a shielded enemy charges the vent that pops it. Falling out of the level
+## still kills.
 ## It only exists in pulse rifle runs: with any other weapon it removes itself, since nothing
 ## else could break it.
 
@@ -32,6 +33,7 @@ static var _active: Array[EnemyShield] = []
 
 var _material: ShaderMaterial
 var _bubble: MeshInstance3D
+var _mirror: BoltMirror
 var _is_up := true
 var _flash := 0.0
 var _time := 0.0
@@ -50,6 +52,15 @@ static func is_shielded(enemy: Node) -> bool:
 	return shield != null and shield.is_up()
 
 
+## Whether shields belong in this run: only the pulse rifle can break or bank off them, so with
+## any other weapon they remove themselves.
+static func applies_in(tree: SceneTree) -> bool:
+	var world := tree.current_scene as WorldLocal
+	if world == null:
+		return true
+	return world.get_active_weapon_id() == PULSE_RIFLE_ID
+
+
 ## Whether a shield that forces the VENT prompt is up within `distance` of `point`.
 static func is_vent_prompt_forced_near(point: Vector3, distance: float) -> bool:
 	for shield in _active:
@@ -62,7 +73,7 @@ static func is_vent_prompt_forced_near(point: Vector3, distance: float) -> bool:
 
 
 func _ready() -> void:
-	if not _is_pulse_rifle_run():
+	if not applies_in(get_tree()):
 		queue_free()
 		return
 	_bubble = _make_bubble()
@@ -101,6 +112,7 @@ func shatter() -> void:
 	if not _is_up:
 		return
 	_is_up = false
+	_mirror.deactivate()
 	var pop := SHATTER_SCENE.instantiate() as Node3D
 	get_tree().current_scene.add_child(pop)
 	pop.global_position = _bubble.global_position
@@ -114,6 +126,7 @@ func dissolve() -> void:
 	if not _is_up:
 		return
 	_is_up = false
+	_mirror.deactivate()
 	_fade_out(0.9, DISSOLVE_SEC)
 
 
@@ -133,13 +146,6 @@ func _facing_point(source_position: Vector3) -> Vector3:
 	return centre + towards.normalized() * radius
 
 
-func _is_pulse_rifle_run() -> bool:
-	var world := get_tree().current_scene as WorldLocal
-	if world == null:
-		return true
-	return world.get_active_weapon_id() == PULSE_RIFLE_ID
-
-
 func _make_bubble() -> MeshInstance3D:
 	var sphere := SphereMesh.new()
 	sphere.radius = radius
@@ -153,4 +159,9 @@ func _make_bubble() -> MeshInstance3D:
 	bubble.position = Vector3.UP * height
 	# Internal, so a checkpoint reset's enemy snapshot doesn't copy it next to the new one.
 	add_child(bubble, false, Node.INTERNAL_MODE_FRONT)
+	var shape := SphereShape3D.new()
+	shape.radius = radius
+	_mirror = BoltMirror.create(shape)
+	_mirror.deflected.connect(absorb)
+	bubble.add_child(_mirror)
 	return bubble

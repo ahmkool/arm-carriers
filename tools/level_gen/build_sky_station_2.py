@@ -167,11 +167,11 @@ for pack, (cx, cz) in enumerate(PACKS, 1):
     level.melee("EnemyGroup", f"EnemyMeleeMech{pack}a", cx, cz)
     level.melee("EnemyGroup", f"EnemyMeleeMech{pack}b", cx - 0.35, cz - 0.35)
     level.melee("EnemyGroup", f"EnemyMeleeMech{pack}c", cx + 0.35, cz - 0.35)
-level.enemy_group("WingedGroup")  # 2: hovers over island 2 until the carriers land
+level.enemy_group("WingedGroup", spawn_on_trigger=True)  # 2: hovers over island 2 until the carriers land
 wx, wz = world(*WINGED_SPOT)
 mech_with_hp("WingedGroup", "EnemyWingedMech", "winged_mech", (wx, 0.6, wz), WINGED_HP)  # 1.6 m above the deck
 level.survival_group(SURVIVAL_SPAWNS, duration=SURVIVAL_SECONDS)  # 3: the hold on island 3
-level.enemy_group("Grenadiers")
+level.enemy_group("Grenadiers", spawn_on_trigger=True)
 for index, (cx, cz) in enumerate(GRENADIER_SPOTS, 1):
     gx, gz = world(cx, cz)
     mech_with_hp("Grenadiers", f"EnemyGrenadierMech{index}", "grenadier_mech", (gx, 0, gz), GRENADIER_HP)

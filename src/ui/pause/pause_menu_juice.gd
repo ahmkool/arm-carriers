@@ -29,6 +29,7 @@ var _title_spring := MenuSpring.new(1.0, 300.0, 0.4)
 	_main_root,
 	$"../Layer/MenuRoot/PauseOptionsRoot" as Control,
 	$"../Layer/MenuRoot/PauseControlsRoot" as Control,
+	$"../Layer/MenuRoot/PauseCheckpointsRoot" as Control,
 ]
 
 

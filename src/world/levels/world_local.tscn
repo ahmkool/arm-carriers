@@ -8,16 +8,16 @@
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="12_ykjll"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="13_dvbv8"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="14_h2fuj"]
-[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="14_iv26f"]
+[ext_resource type="MeshLibrary" path="res://assets/mesh_library/tiles_Color1_no_shadows_wood.tres" id="14_iv26f"]
 [ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="17_4muf4"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="18_oc40d"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="19_yghaq"]
 [ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="20_iv26f"]
 [ext_resource type="PackedScene" uid="uid://cq5v348mrgy7q" path="res://src/weapon/bazooka.tscn" id="20_kj30a"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="20_n7rb1"]
-[ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="21_4muf4"]
+[ext_resource type="MeshLibrary" path="res://assets/mesh_library/tiles_Color1_no_shadows_wood.tres" id="21_4muf4"]
 [ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="21_h2fuj"]
-[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="22_h2fuj"]
+[ext_resource type="PackedScene" path="res://src/world/elements/forest_bridge_platform.tscn" id="22_h2fuj"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="23_iv26f"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="23_qrvdl"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="23_shkpiv"]
@@ -188,6 +188,7 @@ is_offensive = false
 [node name="EnemyGroup2" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3287868, 0, -56.585575)
 script = ExtResource("14_h2fuj")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup2"]
 
@@ -252,6 +253,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.641052, 0, 0.023647308)
 [node name="EnemyGroup3" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.3287868, 0, -56.585575)
 script = ExtResource("14_h2fuj")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup3"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 47, 0, 65)
@@ -311,6 +313,7 @@ is_offensive = false
 [node name="EnemyGroup4" type="Node3D" parent="Enemies"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 92.67121, 0, 10.414425)
 script = ExtResource("14_h2fuj")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.000002, 0, -2)

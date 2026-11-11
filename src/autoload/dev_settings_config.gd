@@ -8,3 +8,5 @@ extends Resource
 @export var enemy_hp_multiplier := 1.0
 ## Opens every level, world and weapon in the level select, ignoring save progress.
 @export var unlock_all_levels := false
+## Adds a checkpoint selector menu to the pause menu during levels.
+@export var checkpoint_selector := false

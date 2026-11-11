@@ -59,6 +59,7 @@ var _panel_tween: Tween
 
 func _process(delta: float) -> void:
 	var step_delta := minf(delta, MAX_DELTA)
+	_prune_freed_entries()
 	for entry in _entries:
 		_update_if_visible(entry, step_delta)
 
@@ -97,6 +98,8 @@ func _play_tick(pitch: float) -> void:
 
 ## Parented to the tree root so it survives scene changes and plays while the game is paused.
 func _play_sound(stream: AudioStream, volume_db: float, pitch: float) -> void:
+	if not is_inside_tree():
+		return
 	var player := AudioStreamPlayer.new()
 	player.stream = stream
 	player.bus = &"SFX"
@@ -117,13 +120,27 @@ func _now() -> float:
 	return Time.get_ticks_msec() / 1000.0
 
 
+func _prune_freed_entries() -> void:
+	_entries = _entries.filter(_is_entry_alive)
+
+
+func _is_entry_alive(entry: ButtonJuice) -> bool:
+	if not is_instance_valid(entry.button):
+		return false
+	return not entry.button.is_queued_for_deletion()
+
+
 func _update_if_visible(entry: ButtonJuice, delta: float) -> void:
+	if not _is_entry_alive(entry):
+		return
 	if not entry.button.is_visible_in_tree():
 		return
 	entry.update(delta)
 
 
 func _register_button(button: BaseButton) -> void:
+	if _entry_for(button) != null:
+		return
 	var entry := ButtonJuice.new(button)
 	_entries.append(entry)
 	button.mouse_entered.connect(_on_button_hover_changed.bind(entry, true))

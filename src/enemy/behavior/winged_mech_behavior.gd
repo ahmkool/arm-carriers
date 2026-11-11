@@ -5,13 +5,13 @@ extends EnemyBehavior
 
 @export_group("Hover")
 ## How far from the middle of the players the mech circles, flat. Kept inside the gameplay camera's view.
-@export var orbit_radius := 5.0
+@export var orbit_radius := 10.0
 ## The orbit's reach on the camera's side (+z). The camera sits south of the carriers looking north, so a mech as far
 ## south as `orbit_radius`, and hovering, leaves the bottom of the screen. The ring eases between the two.
-@export var camera_side_radius := 3.5
+@export var camera_side_radius := 7.0
 ## Height of the mech's feet above the targeted player's. Low enough that the carriers' shots, which fly about a
 ## metre up, still reach its hurt box.
-@export var hover_height := 1.6
+@export var hover_height := 0.6
 ## Up-and-down bob while hovering, in metres.
 @export var bob_amplitude := 0.25
 @export var bob_speed := 2.0
@@ -30,9 +30,9 @@ extends EnemyBehavior
 ## Chance that an attack is a dash instead of a gun burst. Never two dashes in a row.
 @export_range(0.0, 1.0) var dash_chance := 0.4
 ## The gun only fires at a target within this flat distance.
-@export var shoot_max_distance := 18.0
+@export var shoot_max_distance := 26.0
 ## The dash only starts when the target is within this flat distance.
-@export var dash_max_distance := 14.0
+@export var dash_max_distance := 20.0
 
 @export_group("Dash")
 @export var dash_windup_seconds := 0.7
@@ -165,6 +165,8 @@ func _pick_attack() -> StringName:
 
 
 func _wants_dash(distance: float) -> bool:
+	if enemy.holds_position:
+		return false
 	if _last_attack == &"dashing":
 		return false
 	if distance > dash_max_distance:

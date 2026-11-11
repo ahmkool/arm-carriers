@@ -28,7 +28,10 @@ func _physics_process(delta: float) -> void:
 		_fizzle()
 
 func _on_hit_area_body_entered(body: Node) -> void:
-	if body is EnemyLocal or _is_terrain(body):
+	if body is EnemyLocal:
+		_detonate(FrontalGuard.absorb_strike(body, global_position))
+		return
+	if _is_terrain(body):
 		_detonate()
 
 
@@ -75,12 +78,14 @@ func detonate() -> void:
 	_detonate()
 
 
-func _detonate() -> void:
+## `on_shield`: it struck a shield head on, so the blast is only for show and hurts no one.
+func _detonate(on_shield := false) -> void:
 	if _spent:
 		return
 	_spent = true
 	set_physics_process(false)
 	var explosion := ExplosionScene.instantiate() as Node3D
+	explosion.set("hurts_enemies", not on_shield)
 	get_tree().current_scene.add_child(explosion)
 	explosion.global_position = global_position
 	_free_non_particle_children()

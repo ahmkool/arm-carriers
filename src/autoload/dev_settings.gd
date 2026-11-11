@@ -4,6 +4,8 @@ const CONFIG_PATH := "res://dev/dev_settings.tres"
 const USER_OVERRIDES_PATH := "user://dev_settings.json"
 
 var _config: DevSettingsConfig = null
+var _pending_checkpoint_id := ""
+var _pending_skip_save := false
 
 
 func _ready() -> void:
@@ -23,6 +25,29 @@ func unlocks_all_levels() -> bool:
 	if not is_active():
 		return false
 	return _config.unlock_all_levels
+
+
+func has_checkpoint_selector() -> bool:
+	if not is_active():
+		return false
+	return _config.checkpoint_selector
+
+
+func request_checkpoint_jump(checkpoint_id: String, skip_save: bool = false) -> void:
+	_pending_checkpoint_id = checkpoint_id
+	_pending_skip_save = skip_save
+
+
+func consume_pending_checkpoint_id() -> String:
+	var checkpoint_id := _pending_checkpoint_id
+	_pending_checkpoint_id = ""
+	return checkpoint_id
+
+
+func consume_pending_skip_save() -> bool:
+	var skip_save := _pending_skip_save
+	_pending_skip_save = false
+	return skip_save
 
 
 func apply_to_health(health: Health) -> void:
@@ -107,3 +132,5 @@ func _apply_user_overrides(data: Dictionary) -> void:
 		_config.enemy_hp_multiplier = float(data["enemy_hp_multiplier"])
 	if data.has("unlock_all_levels"):
 		_config.unlock_all_levels = bool(data["unlock_all_levels"])
+	if data.has("checkpoint_selector"):
+		_config.checkpoint_selector = bool(data["checkpoint_selector"])

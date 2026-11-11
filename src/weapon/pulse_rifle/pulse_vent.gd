@@ -2,8 +2,9 @@ class_name PulseVent
 extends RefCounted
 ## The pulse rifle's vent blast: a cone in front of the muzzle that damages and shoves back
 ## every living enemy inside it and pops any plasma bolt. It also breaks enemy shields, the
-## only thing that can, and then hits the enemy as usual. Its size, damage and push all
-## scale with the heat the front carrier dumps, from 0 (barely warm) to 1 (about to overheat).
+## only thing that can, and then hits the enemy as usual. A `FlatShield` between the muzzle and an
+## enemy protects it, so enemies behind one must be reached from an open side. Its size, damage
+## and push all scale with the heat the front carrier dumps, from 0 (barely warm) to 1 (about to overheat).
 
 ## Enemies (layer 2) and enemy projectiles such as plasma bolts (layer 4).
 const HIT_MASK := 10
@@ -18,6 +19,10 @@ const KNOCKBACK_SEC := 0.22
 ## Enemy body radius, so an enemy whose edge pokes into the cone still counts.
 const ENEMY_MARGIN := 0.6
 const MAX_QUERY_RESULTS := 64
+## Height above an enemy's feet that the line of sight to it is checked at, roughly its chest.
+const SIGHT_HEIGHT := 1.0
+## Enemy bubbles the line of sight passes through before it can reach a flat shield.
+const MAX_SIGHT_RAYS := 4
 const POP_SCENE := preload("res://src/vfx/small_explosion.tscn")
 
 
@@ -81,6 +86,8 @@ static func _try_hit_enemy(collider: Object, origin: Vector3, forward: Vector3, 
 		return false
 	if not is_in_cone(enemy.global_position, origin, forward, reach, ENEMY_MARGIN):
 		return false
+	if is_behind_flat_shield(enemy, origin):
+		return false
 	_try_break_shield(enemy)
 	# Damage comes from the muzzle, so the hit reaction already pushes away from the rifle.
 	Health.apply_damage(enemy, get_damage(heat), origin)
@@ -89,6 +96,25 @@ static func _try_hit_enemy(collider: Object, origin: Vector3, forward: Vector3, 
 	# The hit state starts its own small knockback; this replaces it with the vent's shove.
 	enemy.begin_knockback(lerpf(MIN_KNOCKBACK_SPEED, MAX_KNOCKBACK_SPEED, heat), KNOCKBACK_SEC, true)
 	return true
+
+
+## Whether a flat shield stands between `origin` and `enemy`. Enemy bubbles along the way don't count.
+static func is_behind_flat_shield(enemy: EnemyLocal, origin: Vector3) -> bool:
+	var target := enemy.global_position + Vector3.UP * SIGHT_HEIGHT
+	var query := PhysicsRayQueryParameters3D.create(Vector3(origin.x, target.y, origin.z), target, BoltMirror.LAYER)
+	query.collide_with_areas = true
+	query.collide_with_bodies = false
+	var space := enemy.get_world_3d().direct_space_state
+	for attempt in MAX_SIGHT_RAYS:
+		var hit := space.intersect_ray(query)
+		if hit.is_empty():
+			return false
+		if hit.collider.get_parent() is FlatShield:
+			return true
+		var excluded := query.exclude
+		excluded.append(hit.rid)
+		query.exclude = excluded
+	return false
 
 
 static func _try_break_shield(enemy: EnemyLocal) -> void:

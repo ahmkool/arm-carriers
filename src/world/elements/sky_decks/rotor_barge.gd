@@ -16,6 +16,14 @@ var _elapsed := 0.0
 var _duration := 0.0
 var _target_stop := 0
 var _moving := false
+var _swaying := false
+var _sway_centre := Vector3.ZERO
+var _sway_amplitude := 0.0
+var _sway_period := 1.0
+var _sway_time := 0.0
+
+## Seconds over which a sway grows to its full width, so riders aren't jerked.
+const SWAY_EASE_IN_SECONDS := 1.5
 
 @onready var body: AnimatableBody3D = $AnimatableBody3D
 @onready var deck: MovingFloor = $AnimatableBody3D/MovingFloor
@@ -30,7 +38,26 @@ func target_stop() -> int:
 	return _target_stop
 
 
+## Swings left and right (along x) around where it is now, `amplitude` metres each way, once every `period` seconds.
+func sway(amplitude: float, period: float) -> void:
+	_sway_centre = body.position
+	_sway_amplitude = amplitude
+	_sway_period = maxf(period, 0.1)
+	_sway_time = 0.0
+	_swaying = true
+
+
+## Stops swaying where it is.
+func stop_sway() -> void:
+	_swaying = false
+
+
+func is_swaying() -> bool:
+	return _swaying
+
+
 func fly_to(stop: int) -> void:
+	_swaying = false
 	_from = body.position
 	_to = stops[stop]
 	_target_stop = stop
@@ -42,11 +69,15 @@ func fly_to(stop: int) -> void:
 
 func snap_to(stop: int) -> void:
 	_moving = false
+	_swaying = false
 	_target_stop = stop
 	body.position = stops[stop]
 
 
 func _physics_process(delta: float) -> void:
+	if _swaying:
+		_advance_sway(delta)
+		return
 	if not _moving:
 		return
 	_elapsed = minf(_elapsed + delta, _duration)
@@ -55,3 +86,9 @@ func _physics_process(delta: float) -> void:
 		return
 	_moving = false
 	arrived.emit(_target_stop)
+
+
+func _advance_sway(delta: float) -> void:
+	_sway_time += delta
+	var reach := _sway_amplitude * smoothstep(0.0, SWAY_EASE_IN_SECONDS, _sway_time)
+	body.position = _sway_centre + Vector3.RIGHT * sin(_sway_time * TAU / _sway_period) * reach

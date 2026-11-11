@@ -297,9 +297,20 @@ func _run() -> void:
 	check("no second arrow before renocking", shots.is_empty(), str(shots))
 	check("bow is empty after firing", not specifics.is_nocked())
 
-	await close_bow()
+	var max_gap: float = (bow.get_node("WeaponMovement") as WeaponMovement).max_carrier_distance
+	await draw_bow(2.0)
+	check("an empty bow lets the carriers walk past the distance limit", gap() > max_gap + 2.0, "gap=%.2f max=%.2f" % [gap(), max_gap])
+	await shot("bow_empty_apart.png")
+	for i in 6:
+		if specifics.is_nocked():
+			break
+		await close_bow()
 	check("coming back together nocks a new arrow", specifics.is_nocked(), "gap=%.2f" % gap())
 	check("the string is back in the carrier's hand after reloading", tail_to_back_hand() < 0.2 and specifics.get_node("Grip/HandleBack").visible, "%.2f m" % tail_to_back_hand())
+	await draw_bow(2.0)
+	check("a loaded bow holds the distance limit again", gap() <= max_gap + 0.1, "gap=%.2f max=%.2f" % [gap(), max_gap])
+	await close_bow()
+	await close_bow()
 
 	await draw_bow(0.3)
 	var mid_draw := specifics.get_draw(gap())

@@ -31,7 +31,7 @@ const GROUPS: Array[Dictionary] = [
 		"levels": [
 			{"title": "Level 1", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Level 2", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_level_2_medieval.tscn", "weapon": "siege_bow", "requires": "ranged"},
-			{"title": "Gauntlet", "difficulty": 2, "label": "Medium", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_bazooka.tscn", "weapon": "bazooka", "requires": "ranged"},
+			{"title": "Level 3", "difficulty": 2, "label": "Medium", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_02_medieval.tscn", "weapon": "sword"},
 			{"title": "Skeleton Boss", "difficulty": 2, "label": "Boss", "art": Art.BOSS, "scene": DUNGEON_BOSS, "weapon": "bazooka"},
 		],
 	},
@@ -90,6 +90,8 @@ const DEV_GROUPS: Array[Dictionary] = [
 			{"title": "Playground", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": PLAYGROUND, "weapon": "bazooka", "all_weapons": true},
 			{"title": "Spike Trap", "difficulty": 2, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_spike_trap_prototype.tscn", "weapon": "bazooka", "all_weapons": true},
 			{"title": "Sky Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky_station_2.tscn", "weapon": "fork_cannon", "requires": "ranged"},
+			{"title": "Rotor Decks II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks_2.tscn", "weapon": "bazooka", "requires": "ranged"},
+			{"title": "Space Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station_2.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
 		],
 	},
 ]

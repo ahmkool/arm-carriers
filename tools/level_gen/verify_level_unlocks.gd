@@ -67,7 +67,7 @@ func _check_fresh_save() -> void:
 func _check_partial_progress() -> void:
 	_set_completed(_cleared(["res://src/world/levels/world_local.tscn"]))
 	check("after level 1: level 2 open", LevelSelectCatalog.is_level_open(0, 1))
-	check("after level 1: gauntlet locked", not LevelSelectCatalog.is_level_open(0, 2), LevelSelectCatalog.lock_reason(0, 2))
+	check("after level 1: level 3 locked", not LevelSelectCatalog.is_level_open(0, 2), LevelSelectCatalog.lock_reason(0, 2))
 	check("after level 1: 1/4 cleared", LevelSelectCatalog.cleared_count(0) == 1)
 	_set_completed(_cleared([LevelSelectCatalog.DUNGEON_BOSS]))
 	check("after boss: crypt open", LevelSelectCatalog.is_group_open(1))

@@ -2,7 +2,8 @@ class_name ForkCannonSpecifics
 extends Node3D
 ## A gun that forks into two barrels, one per carrier. The back carrier holds the shoot button
 ## to stream bolts from the right prong, like the pulse rifle. The front carrier presses theirs
-## to fire a missile from the left prong, which blows up like a bazooka rocket.
+## to fire a missile from the left prong, which blows up like a bazooka rocket; holding it
+## fires again each time the tube reloads.
 ##
 ## The barrels work together: bolts paint the enemy they hit, and a few hits on the same enemy
 ## lock it. A missile fired with a lock steers to that enemy, so the back carrier marks the
@@ -138,12 +139,14 @@ func _try_fire_bolt(shooter: PlayerLocal) -> void:
 func _try_launch(front_carrier: PlayerLocal) -> void:
 	if GameplayInput.is_locked():
 		return
-	if not Input.is_action_just_pressed(front_carrier.action_shoot):
+	if not Input.is_action_pressed(front_carrier.action_shoot):
 		return
-	if not is_missile_loaded():
+	if is_missile_loaded():
+		launch_missile()
+		return
+	# Holding the button waits for the reload and fires again; only a fresh press clicks dry.
+	if Input.is_action_just_pressed(front_carrier.action_shoot):
 		_play_dry_click(front_carrier, missile_muzzle.global_position)
-		return
-	launch_missile()
 
 
 ## A hit on the painted enemy adds to its paint. A hit on another enemy moves the paint there,

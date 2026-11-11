@@ -10,6 +10,10 @@ extends Node3D
 @export var ground_raycast_up: float = 0.5
 @export var ground_raycast_down: float = 50.0
 
+## While true, two carriers can walk as far apart as they like; `min_carrier_distance` still holds.
+## A weapon sets this when its own rules allow it, like an unloaded siege bow.
+var is_max_distance_free: bool = false
+
 var _carrier_collision_exceptions: Array[PlayerLocal] = []
 var _fixed_shooter_end_world: Vector3 = Vector3.ZERO
 var _has_fixed_shooter_end: bool = false
@@ -56,6 +60,7 @@ func _physics_process(delta: float) -> void:
 	var carrier_count: int = int(has_shooter) + int(has_direction_setter)
 	if carrier_count == 1 and _previous_carrier_count == 2:
 		_anchor_free_end_to_ground(has_shooter, has_direction_setter)
+		_pull_anchor_within_reach(carry_info)
 		_clear_dual_carry_position_history()
 	_previous_carrier_count = carrier_count
 
@@ -191,6 +196,24 @@ func _anchor_free_end_to_ground(has_shooter: bool, has_direction_setter: bool) -
 		_ensure_fixed_shooter_end(pick_and_drop_handler.shooter_position_marker)
 
 
+## When a carrier lets go beyond `max_carrier_distance`, which only happens while the limit is freed, the end
+## they dropped lands at the limit towards the one still holding, so that one is not yanked across the gap.
+func _pull_anchor_within_reach(carry_info: CarryInfo) -> void:
+	if is_instance_valid(carry_info.main_carrier):
+		_fixed_direction_setter_end_world = _within_reach(_fixed_direction_setter_end_world, carry_info.main_carrier)
+		return
+	_fixed_shooter_end_world = _within_reach(_fixed_shooter_end_world, carry_info.secondary_carrier)
+
+
+func _within_reach(anchored_end: Vector3, carrier: PlayerLocal) -> Vector3:
+	var feet: Vector3 = carrier.global_position
+	var flat_offset: Vector3 = _flat_delta(anchored_end, feet)
+	if flat_offset.length() <= max_carrier_distance:
+		return anchored_end
+	var reach: Vector3 = feet + flat_offset.normalized() * max_carrier_distance
+	return _project_to_ground(Vector3(reach.x, anchored_end.y, reach.z))
+
+
 func _project_to_ground(world_pos: Vector3) -> Vector3:
 	var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
 	var ray_start: Vector3 = world_pos + Vector3.UP * ground_raycast_up
@@ -271,7 +294,8 @@ func _enforce_carrier_distance(
 		_store_dual_carry_positions(shooter, direction_setter)
 		return
 
-	if carry_distance >= min_carrier_distance and carry_distance <= max_carrier_distance:
+	var is_within_max: bool = is_max_distance_free or carry_distance <= max_carrier_distance
+	if carry_distance >= min_carrier_distance and is_within_max:
 		_store_dual_carry_positions(shooter, direction_setter)
 		return
 

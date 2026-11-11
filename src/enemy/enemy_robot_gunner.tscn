@@ -220,3 +220,5 @@ spawn_scene = ExtResource("plasma_spawn")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("2_health")
+
+[editable path="Robot"]

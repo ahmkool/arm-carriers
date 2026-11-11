@@ -224,7 +224,7 @@ func _run() -> void:
 	for h in hover_heights:
 		avg += h
 	avg /= maxf(hover_heights.size(), 1)
-	check("hovers about 1.6 m above the carriers", avg > 1.0 and avg < 2.6, "avg %.2f over %d samples" % [avg, hover_heights.size()])
+	check("hovers about 0.6 m above the carriers", avg > 0.1 and avg < 1.5, "avg %.2f over %d samples" % [avg, hover_heights.size()])
 	check("circles the carriers", orbit_angle > PI * 0.5, "%.0f degrees swept" % rad_to_deg(orbit_angle))
 	var flat := m.global_position - centre()
 	info("distance from carriers' middle at the end: %.1f m" % Vector2(flat.x, flat.z).length())

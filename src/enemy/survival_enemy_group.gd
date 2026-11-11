@@ -9,6 +9,8 @@ const SURVIVAL_TIMER_PATH := "UI/SurvivalTimer"
 @export_range(0.1, 600.0, 0.1) var fight_duration: float = 60.0
 ## Shows the HUD countdown (UI/SurvivalTimer) while this wave runs.
 @export var show_timer_ui := true
+## Max HP given to each spawned enemy. 0 keeps the enemy scene's own.
+@export_range(0, 999) var enemy_max_hp := 0
 
 var signal_emitted := false
 
@@ -169,9 +171,20 @@ func _spawn_one() -> void:
 	if spawner_scene == null:
 		return
 	var enemy := enemy_scene.instantiate() as EnemyLocal
+	_apply_max_hp(enemy)
 	_enemies_parent.add_child(enemy)
 	enemy.global_transform = _pick_spawn_transform()
 	enemy.is_offensive = true
+
+
+## Set before the enemy enters the tree, so its Health fills up to the new max in _ready.
+func _apply_max_hp(enemy: EnemyLocal) -> void:
+	if enemy_max_hp <= 0:
+		return
+	var health := Health.from_target(enemy)
+	if health == null:
+		return
+	health.max_hp = enemy_max_hp
 
 
 func _pick_spawn_transform() -> Transform3D:

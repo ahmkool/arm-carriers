@@ -17,6 +17,13 @@ var _is_offensive := true
 ## Whether a strong shove, such as the pulse rifle's vent, can push this enemy off a ledge.
 ## Bosses turn it off so a fight can't be won by pushing them into the water.
 @export var can_fall_off_ledges := true
+## Keeps the enemy on its spot: it never walks or flies anywhere, and hits don't knock it back. It still turns to
+## face its target and attacks from where it stands. For enemies posted somewhere on purpose, such as a guard at a
+## bridge or a shooter on a ledge. Gravity still applies.
+@export var holds_position := false
+## Caps how fast the enemy turns, in degrees per second; 0 leaves turning uncapped.
+## A shield carrier uses it so the carriers can get round his flank.
+@export var max_turn_speed_degrees := 0.0
 
 const BODY_HIT_SOUND := preload("res://assets/sounds/punch/Punch 3_1.wav")
 const DAMAGE_VFX_SCENE := preload("res://src/vfx/enemy_damage.tscn")
@@ -254,7 +261,7 @@ func _find_animation_player() -> AnimationPlayer:
 
 
 func get_move_direction() -> Vector3:
-	if behavior == null:
+	if behavior == null or holds_position:
 		return Vector3.ZERO
 	return behavior.get_move_direction()
 
@@ -271,7 +278,16 @@ func smooth_rotate_toward(flat_direction: Vector3, delta: float) -> void:
 	var current_basis := global_basis.orthonormalized()
 	var target_basis := Basis.looking_at(flat_direction.normalized(), Vector3.UP)
 	var w := 1.0 - exp(-ROTATION_SMOOTH_LAMBDA * delta)
-	global_basis = current_basis.slerp(target_basis, w)
+	global_basis = current_basis.slerp(target_basis, _cap_turn_weight(current_basis, target_basis, w, delta))
+
+
+func _cap_turn_weight(from: Basis, to: Basis, weight: float, delta: float) -> float:
+	if max_turn_speed_degrees <= 0.0:
+		return weight
+	var angle := from.get_rotation_quaternion().angle_to(to.get_rotation_quaternion())
+	if angle < 0.0001:
+		return weight
+	return minf(weight, deg_to_rad(max_turn_speed_degrees) * delta / angle)
 
 
 func update_target_player() -> void:
@@ -457,6 +473,8 @@ func hold_stagger(seconds: float) -> void:
 func begin_knockback(knockback_speed: float, duration: float, leaves_ledges := false) -> void:
 	_knockback_time_remaining = 0.0
 	_knockback_leaves_ledges = leaves_ledges and can_fall_off_ledges
+	if holds_position:
+		return
 	if knockback_speed <= 0.0 or duration <= 0.0:
 		return
 	var direction := _get_knockback_direction()

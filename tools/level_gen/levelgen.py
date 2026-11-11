@@ -271,30 +271,47 @@ class Level:
         self.node("InfoLabel", f"{box}/PanelContainer/MarginContainer", "RichTextLabel", props={
             "layout_mode": "2", "bbcode_enabled": "true", "text": self.hint, "fit_content": "true", "scroll_active": "false"})
 
-    def enemy_group(self, name):
-        self.node(name, "Enemies", "Node3D", props={"script": 'ExtResource("normal_group")'})
+    def enemy_group(self, name, spawn_on_trigger=False):
+        """spawn_on_trigger: the group's enemies only appear when it is triggered, so it can't be seen or killed
+        from an earlier section. Leave it off for a group that is never triggered (it would never appear)."""
+        props = {"script": 'ExtResource("normal_group")'}
+        if spawn_on_trigger:
+            props["spawn_on_trigger"] = "true"
+        self.node(name, "Enemies", "Node3D", props=props)
         self.node("InstancedEnemies", f"Enemies/{name}", "Node3D")
 
-    def melee(self, group, name, cx, cz, shielded=False):
-        """shielded: an EnemyShield bubble that only the pulse rifle's vent breaks. It removes itself in runs with any other weapon."""
+    def melee(self, group, name, cx, cz, shielded=False, forces_vent_prompt=False):
+        """shielded: an EnemyShield bubble that only the pulse rifle's vent breaks. It removes itself in runs with any other weapon.
+        forces_vent_prompt: the shield keeps showing the front carrier's VENT prompt nearby, even once it has been learned."""
         wx, wz = world(cx, cz)
         parent = f"Enemies/{group}/InstancedEnemies"
         self.node(name, parent, instance=self.melee_scene, props={
             "transform": tf(wx, 0, wz, FACE_SOUTH), "is_offensive": "false"})
-        if not shielded:
-            return
+        if shielded:
+            self._add_shield(f"{parent}/{name}", forces_vent_prompt)
+
+    def _add_shield(self, enemy_path, forces_vent_prompt=False):
         shield_ext = ("Script", None, "res://src/enemy/shield/enemy_shield.gd", "enemy_shield")
         if shield_ext not in self.extra_ext:
             self.extra_ext.append(shield_ext)
-        self.node("EnemyShield", f"{parent}/{name}", "Node3D", props={"script": 'ExtResource("enemy_shield")'})
+        props = {"script": 'ExtResource("enemy_shield")'}
+        if forces_vent_prompt:
+            props["forces_vent_prompt"] = "true"
+        self.node("EnemyShield", enemy_path, "Node3D", props=props)
 
-    def mage(self, group, name, cx, cz, cast_max=14.0, cooldown=3.0):
-        """Stationary mage. Keep cast_max short enough that anything able to fire is on screen."""
+    def mage(self, group, name, cx, cz, cast_max=14.0, cooldown=3.0, shielded=False, holds_position=False):
+        """Stationary mage. Keep cast_max short enough that anything able to fire is on screen.
+        shielded: an EnemyShield bubble, as for melee. holds_position: hits don't knock it back either."""
         wx, wz = world(cx, cz)
         parent = f"Enemies/{group}/InstancedEnemies"
-        self.node(name, parent, instance=self.mage_scene, props={"transform": tf(wx, 0, wz), "is_offensive": "false"})
+        props = {"transform": tf(wx, 0, wz), "is_offensive": "false"}
+        if holds_position:
+            props["holds_position"] = "true"
+        self.node(name, parent, instance=self.mage_scene, props=props)
         self.node("MageBehavior", f"{parent}/{name}", "Node", props={
             "script": 'ExtResource("mage_behavior")', "mobility": "1", "cast_max_distance": fmt_decimal(cast_max), "cast_cooldown": fmt_decimal(cooldown)})
+        if shielded:
+            self._add_shield(f"{parent}/{name}")
 
     def survival_group(self, spawn_cells, duration):
         props = {"script": 'ExtResource("survival_group")', "spawn_interval_curve": 'SubResource("Curve_survival")', "fight_duration": fmt_decimal(duration)}

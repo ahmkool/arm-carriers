@@ -1,0 +1,1113 @@
+[gd_scene format=3 uid="uid://cuvf8mw3ixe3n"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/space/space_tiles.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://src/world/elements/space/hard_light_bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" uid="uid://o1x22yp71o80" path="res://src/weapon/pulse_rifle.tscn" id="pulse_rifle"]
+[ext_resource type="AudioStream" uid="uid://etr5pc8rj0ge" path="res://assets/music/PerituneMaterial_Cyber_Noir.mp3" id="music"]
+[ext_resource type="Shader" path="res://src/world/elements/space/space_sky.gdshader" id="space_sky"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot.tscn" id="robot"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot_gunner.tscn" id="robot_gunner"]
+[ext_resource type="PackedScene" path="res://src/world/elements/space/planet.tscn" id="planet"]
+[ext_resource type="PackedScene" path="res://assets/models/space_base/rocks_B.gltf" id="asteroid"]
+[ext_resource type="Script" path="res://src/world/elements/space/drifting_spin.gd" id="drift"]
+[ext_resource type="Script" path="res://src/world/elements/sky/floating_bob.gd" id="bob"]
+[ext_resource type="Script" path="res://src/events/groups_defeated_gate.gd" id="groups_gate"]
+[ext_resource type="PackedScene" path="res://src/enemy/shield/flat_shield.tscn" id="flat_shield"]
+[ext_resource type="Script" path="res://src/enemy/shield/enemy_shield.gd" id="enemy_shield"]
+
+[sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
+shader = ExtResource("space_sky")
+
+
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+reflected_light_source = 2
+ambient_light_source = 2
+ambient_light_color = Color(0.42, 0.48, 0.66, 1)
+ambient_light_energy = 0.55
+tonemap_mode = 3
+glow_enabled = true
+glow_intensity = 0.6
+glow_bloom = 0.04
+glow_hdr_threshold = 1.0
+
+[sub_resource type="Curve" id="Curve_survival"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3.0), 0.0, 0.0, 0, 0, Vector2(1, 3.0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(400, 1, 400)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_deck2"]
+size = Vector3(27, 3, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_deck3"]
+size = Vector3(27, 3, 6)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_bankdeck"]
+size = Vector3(6, 3, 15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(9, 3, 9)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(42.257, -0.49, -140.453, 42.257, -0.49, -129.453, 65.507, -0.49, -129.453, 65.507, -0.49, -140.453, 21.257, -0.49, -124.953, 22.007, -0.49, -125.703, 18.257, -0.49, -125.703, 35.507, -0.49, -125.703, 32.007, -0.49, -125.703, 32.507, -0.49, -123.953, 21.257, -0.49, -123.953, 32.007, -0.49, -123.203, 35.507, -0.49, -111.453, 22.007, -0.49, -123.203, 18.257, -0.49, -111.453, 30.257, -0.49, -124.953, 31.007, -0.49, -125.703, 23.007, -0.49, -125.703, 23.507, -0.49, -123.953, 23.007, -0.49, -123.203, 30.257, -0.49, -123.953, 31.007, -0.49, -123.203, 86.507, -0.49, -116.703, 85.507, -0.49, -116.703, 84.757, -0.49, -115.703, 86.507, -0.49, -111.453, 84.757, -0.49, -121.203, 85.507, -0.49, -120.203, 86.507, -0.49, -120.203, 86.507, -0.49, -125.703, 72.257, -0.49, -124.953, 73.007, -0.49, -125.703, 69.257, -0.49, -125.703, 69.257, -0.49, -111.453, 72.757, -0.49, -111.453, 72.257, -0.49, -112.953, 72.257, -0.49, -123.953, 73.007, -0.49, -113.703, 73.007, -0.49, -123.203, 74.257, -0.49, -113.453, 83.257, -0.49, -115.953, 83.257, -0.49, -120.953, 74.007, -0.49, -123.203, 74.507, -0.49, -123.953, 74.007, -0.49, -125.703, 74.257, -0.49, -111.453, 62.507, -0.49, -114.453, 62.507, -0.49, -120.953, 62.007, -0.49, -120.203, 61.007, -0.49, -120.203, 45.257, -0.49, -122.703, 45.257, -0.49, -115.953, 46.007, -0.49, -116.703, 47.007, -0.49, -116.703, 60.257, -0.49, -120.953, 47.507, -0.49, -115.953, 47.257, -0.49, -114.453, 60.257, -0.49, -121.953, 61.007, -0.49, -122.703, 62.007, -0.49, -122.703, 62.507, -0.49, -121.953, 62.507, -0.49, -122.703, -14.743, -0.49, -119.703, -14.743, -0.49, -111.703, -12.243, -0.49, -111.453, 11.507, -0.49, -111.453, 11.507, -0.49, -119.703, 86.007, 0.76, -118.203, 86.507, 0.76, -118.203, 86.007, 0.76, -119.203, 84.757, 0.76, -117.703, 86.007, 0.76, -117.703, 84.757, 0.76, -119.203, 84.507, 0.76, -118.703, -20.493, -0.49, -97.203, -18.493, -0.49, -97.203, -18.243, -0.49, -99.453, -20.493, -0.49, -101.703, -14.743, -0.49, -101.953, -12.493, -0.49, -99.453, -5.743, -0.49, -107.703, -5.743, -0.49, -93.453, 8.507, -0.49, -93.453, 8.507, -0.49, -107.703, 42.257, -0.49, -107.703, 42.257, -0.49, -96.453, 65.507, -0.49, -96.453, 65.507, -0.49, -107.703, 15.257, -0.49, -104.703, 15.257, -0.49, -93.453, 38.507, -0.49, -93.453, 38.507, -0.49, -104.703, -11.993, -0.49, -90.453, -11.743, -0.49, -86.453, -9.243, -0.49, -86.703, -9.493, -0.49, -92.703, -18.243, -0.49, -92.703, -20.493, -0.49, -90.453, -11.993, -0.49, -83.703, -11.743, -0.49, -72.453, -4.993, -0.49, -72.453, -5.743, -0.49, -72.953, -5.743, -0.49, -73.953, -11.993, -0.49, -75.453, -14.743, -0.49, -83.703, -14.743, -0.49, -75.453, -4.493, -0.49, -74.703, -4.493, -0.49, -86.703, -3.243, -0.49, -72.953, -3.993, -0.49, -72.453, 7.007, -0.49, -72.453, 6.257, -0.49, -72.953, -3.243, -0.49, -73.953, 6.257, -0.49, -73.953, 7.507, -0.49, -74.703, 7.507, -0.49, -86.703, 8.757, -0.49, -72.953, 8.007, -0.49, -72.453, 14.507, -0.49, -72.453, 8.757, -0.49, -73.953, 14.507, -0.49, -75.203, 17.507, -0.49, -75.453, 17.507, -0.49, -83.703, 14.507, -0.49, -83.953, 14.507, -0.49, -86.703, -12.493, -0.49, -48.703003, -11.493, -0.49, -47.453003, -8.743, -0.49, -48.203003, -8.993, -0.49, -50.453003, -6.493, -0.49, -50.953003, -6.243, -0.49, -50.453003, -4.493, -0.49, -63.453003, -8.493, -0.49, -50.953003, -11.993, -0.49, -62.703003, -14.743, -0.49, -62.703003, -14.743, -0.49, -48.453003, -5.743, -0.49, -64.953, -4.993, -0.49, -65.703, -11.743, -0.49, -65.703, -5.743, -0.49, -63.953003, 6.257, -0.49, -64.953, 7.007, -0.49, -65.703, -3.993, -0.49, -65.703, -3.243, -0.49, -64.953, 7.507, -0.49, -63.453003, -5.993, -0.49, -49.703003, 9.007, -0.49, -49.703003, 9.007, -0.49, -50.203003, 6.257, -0.49, -63.953003, -3.243, -0.49, -63.953003, 12.007, -0.49, -49.453003, 11.757, -0.49, -48.203003, 14.507, -0.49, -47.703003, 16.007, -0.49, -48.953003, 11.507, -0.49, -50.953003, 9.507, -0.49, -50.953003, 14.507, -0.49, -65.703, 8.007, -0.49, -65.703, 8.757, -0.49, -64.953, 8.757, -0.49, -63.953003, 14.507, -0.49, -62.953003, 17.507, -0.49, -48.703003, 17.507, -0.49, -62.703003, -7.993, 1.01, -49.953003, -7.993, 1.01, -49.203003, -7.243, 1.01, -49.203003, -7.243, 1.01, -49.953003, 10.007, 1.01, -49.953003, 10.007, 1.01, -49.203003, 10.757, 1.01, -49.203003, 10.757, 1.01, -49.953003, -11.243, -0.49, -45.203003, -6.493, -0.49, -48.203003, 14.507, -0.49, -44.953003, 9.257, -0.49, -48.203003, 7.007, -0.49, -32.703003, 15.257, -0.49, -44.453003, -3.993, -0.49, -32.703003, 8.757, -0.49, -31.203003, 8.007, -0.49, -30.453003, 14.507, -0.49, -30.453003, 8.757, -0.49, -31.953003, 14.507, -0.49, -33.203003, -11.743, -0.49, -30.453003, -4.993, -0.49, -30.453003, -5.743, -0.49, -30.953003, -3.243, -0.49, -31.953003, -3.243, -0.49, -30.953003, 6.257, -0.49, -30.953003, 6.257, -0.49, -31.953003, -5.743, -0.49, -31.953003, -11.993, -0.49, -33.453003, -4.993, -0.49, -32.703003, 8.007, -0.49, -32.703003, -12.243, -0.49, -44.203003, 17.507, -0.49, -33.453003, 17.507, -0.49, -44.453003, -14.743, -0.49, -44.453003, -14.743, -0.49, -33.453003, -3.993, -0.49, -30.453003, 7.007, -0.49, -30.453003, -12.493, 1.01, -47.203003, -12.993, 1.01, -47.703003, -13.993, 1.01, -47.703003, -14.743, 1.01, -46.953003, -14.743, 1.01, -45.453003, -12.493, 1.01, -45.453003, 17.507, 1.01, -47.203003, 17.007, 1.01, -47.703003, 16.007, 1.01, -47.703003, 15.257, 1.01, -46.953003, 15.757, 1.01, -45.453003, 17.507, 1.01, -45.703003, 14.507, -0.49, 12.046997, 14.507, -0.24000001, 12.546997, 15.257, -0.49, 12.796997, -11.243, -0.49, 10.796997, -10.493, -0.49, 11.796997, -9.493, -0.49, 11.796997, -11.743, -0.49, -20.953003, -10.993, -0.49, -20.453003, -9.743, -0.49, -20.203003, -5.743, -0.49, -22.953003, -4.993, -0.49, -23.703003, -11.743, -0.49, -23.703003, 15.257, -0.49, 14.046997, 14.757, -0.49, 14.546997, 17.507, -0.49, 14.546997, 13.507, -0.49, -14.953003, 13.507, -0.49, -17.703003, 12.257, -0.49, -17.453003, 17.507, -0.49, -12.953003, 15.007, -0.49, -12.953003, 14.757, -0.49, -12.203003, 14.507, -0.49, 17.546997, 14.507, -0.49, 14.796997, 13.007, -0.49, 15.046997, 12.007, -0.49, -14.453003, 11.507, -0.49, -18.203003, -11.743, -0.49, -12.203003, -11.993, -0.49, -13.453003, -14.743, -0.49, -13.453003, -14.743, -0.49, 14.546997, -12.743, -0.49, 14.546997, -12.493, -0.49, 10.796997, 12.007, -0.49, -21.453003, 14.507, -0.49, -21.453003, 14.507, -0.49, -23.703003, 8.007, -0.49, -23.703003, 8.757, -0.49, -22.953003, -3.993, -0.49, 15.296997, -3.243, -0.49, 16.046997, 6.257, -0.49, 16.046997, 7.007, -0.49, 15.296997, -10.493, -0.49, -18.703003, -10.493, -0.49, -14.953003, -9.493, -0.49, -14.953003, -9.743, -0.49, -18.953003, -11.743, -0.49, 17.546997, -4.993, -0.49, 17.546997, -5.743, -0.49, 17.046997, -9.493, -0.49, -12.203003, 7.007, -0.49, -21.453003, 6.257, -0.49, -21.953003, 12.007, -0.49, 14.296997, 8.757, -0.49, 16.796997, 8.007, -0.49, 17.546997, 6.257, -0.49, -22.953003, 7.007, -0.49, -23.703003, -3.993, -0.49, -23.703003, -3.243, -0.49, -22.953003, -8.243, -0.49, 12.796997, -8.243, -0.49, 14.296997, -4.993, -0.49, 15.296997, 12.007, -0.49, -12.453003, -3.243, -0.49, -21.953003, -8.993, -0.49, -14.203003, 8.757, -0.49, -22.203003, 11.507, -0.49, -20.953003, -5.743, -0.49, 16.046997, 8.007, -0.49, -21.453003, -11.743, -0.49, 16.296997, -4.993, -0.49, -21.453003, 12.507, -0.49, 12.046997, 8.757, -0.49, 16.046997, 8.007, -0.49, 15.296997, 12.007, -0.49, 12.796997, -3.993, -0.49, 17.546997, 7.007, -0.49, 17.546997, 6.257, -0.49, 17.046997, -3.243, -0.49, 16.796997, -5.743, -0.49, -21.953003, -11.243, -0.49, -18.953003, -11.993, -0.49, -14.453003, -14.743, -0.49, -20.703003, 14.757, -0.49, -17.453003, 14.757, -0.49, -14.703003, 15.507, -0.49, -18.203003, 17.507, -0.49, -20.703003, 15.507, -0.49, -20.703003, 13.007, 2.26, -19.953003, 13.007, 2.26, -18.953003, 14.007, 2.26, -18.953003, 14.007, 2.26, -19.953003, 13.007, -0.49, -19.703003, 13.257, -0.49, -18.953003, 14.007, -0.49, -19.203003, 13.757, -0.49, -19.953003, -10.993, 1.01, -13.953003, -10.993, 1.01, -13.203003, -10.243, 1.01, -13.203003, -10.243, 1.01, -13.953003, 13.007, 1.01, -13.953003, 13.007, 1.01, -13.203003, 13.757, 1.01, -13.203003, 13.757, 1.01, -13.953003, -11.243, 0.76, 14.296997, -9.243, 0.51, 13.796997, -9.243, 0.51, 13.296997, -11.493, 1.01, 12.296997)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1), PackedInt32Array(6, 5, 4), PackedInt32Array(9, 8, 7), PackedInt32Array(6, 4, 10), PackedInt32Array(9, 7, 11), PackedInt32Array(11, 7, 12), PackedInt32Array(10, 13, 6), PackedInt32Array(6, 13, 14), PackedInt32Array(15, 18, 16), PackedInt32Array(16, 18, 17), PackedInt32Array(14, 13, 19), PackedInt32Array(18, 15, 20), PackedInt32Array(18, 20, 19), PackedInt32Array(19, 20, 21), PackedInt32Array(19, 21, 12), PackedInt32Array(19, 12, 14), PackedInt32Array(21, 11, 12), PackedInt32Array(23, 22, 24), PackedInt32Array(24, 22, 25), PackedInt32Array(27, 26, 28), PackedInt32Array(28, 26, 29), PackedInt32Array(32, 31, 30), PackedInt32Array(35, 34, 33), PackedInt32Array(32, 30, 36), PackedInt32Array(35, 33, 37), PackedInt32Array(37, 33, 38), PackedInt32Array(38, 33, 36), PackedInt32Array(36, 33, 32), PackedInt32Array(38, 42, 37), PackedInt32Array(37, 42, 39), PackedInt32Array(39, 42, 40), PackedInt32Array(40, 42, 41), PackedInt32Array(42, 43, 41), PackedInt32Array(26, 41, 29), PackedInt32Array(29, 41, 43), PackedInt32Array(29, 43, 44), PackedInt32Array(24, 25, 40), PackedInt32Array(40, 25, 39), PackedInt32Array(39, 25, 45), PackedInt32Array(48, 47, 46), PackedInt32Array(49, 48, 46), PackedInt32Array(52, 51, 50), PackedInt32Array(53, 52, 50), PackedInt32Array(49, 46, 54), PackedInt32Array(54, 46, 55), PackedInt32Array(55, 46, 56), PackedInt32Array(53, 50, 55), PackedInt32Array(55, 50, 57), PackedInt32Array(57, 50, 58), PackedInt32Array(57, 54, 55), PackedInt32Array(61, 60, 59), PackedInt32Array(63, 62, 64), PackedInt32Array(64, 62, 65), PackedInt32Array(65, 62, 66), PackedInt32Array(69, 68, 67), PackedInt32Array(67, 71, 70), PackedInt32Array(73, 72, 70), PackedInt32Array(70, 72, 67), PackedInt32Array(67, 72, 69), PackedInt32Array(75, 74, 76), PackedInt32Array(76, 74, 77), PackedInt32Array(63, 64, 78), PackedInt32Array(78, 64, 79), PackedInt32Array(77, 78, 76), PackedInt32Array(76, 78, 79), PackedInt32Array(83, 82, 80), PackedInt32Array(80, 82, 81), PackedInt32Array(87, 86, 84), PackedInt32Array(84, 86, 85), PackedInt32Array(91, 90, 88), PackedInt32Array(88, 90, 89), PackedInt32Array(93, 92, 94), PackedInt32Array(94, 92, 95), PackedInt32Array(97, 96, 92), PackedInt32Array(92, 96, 95), PackedInt32Array(75, 96, 74), PackedInt32Array(74, 96, 97), PackedInt32Array(98, 93, 94), PackedInt32Array(101, 100, 99), PackedInt32Array(101, 99, 102), PackedInt32Array(102, 99, 103), PackedInt32Array(103, 105, 98), PackedInt32Array(98, 105, 104), PackedInt32Array(102, 103, 106), PackedInt32Array(106, 103, 98), PackedInt32Array(106, 98, 94), PackedInt32Array(106, 94, 107), PackedInt32Array(111, 110, 108), PackedInt32Array(108, 110, 109), PackedInt32Array(112, 106, 113), PackedInt32Array(113, 106, 114), PackedInt32Array(114, 106, 107), PackedInt32Array(114, 107, 115), PackedInt32Array(113, 111, 112), PackedInt32Array(112, 111, 108), PackedInt32Array(118, 117, 116), PackedInt32Array(116, 119, 118), PackedInt32Array(118, 119, 120), PackedInt32Array(121, 120, 122), PackedInt32Array(122, 120, 123), PackedInt32Array(119, 114, 120), PackedInt32Array(120, 114, 123), PackedInt32Array(123, 114, 115), PackedInt32Array(115, 124, 123), PackedInt32Array(126, 125, 127), PackedInt32Array(127, 125, 128), PackedInt32Array(131, 130, 129), PackedInt32Array(128, 125, 132), PackedInt32Array(132, 125, 135), PackedInt32Array(132, 135, 133), PackedInt32Array(133, 135, 134), PackedInt32Array(136, 138, 137), PackedInt32Array(138, 136, 139), PackedInt32Array(139, 131, 138), PackedInt32Array(138, 131, 133), PackedInt32Array(133, 131, 132), PackedInt32Array(132, 131, 129), PackedInt32Array(143, 142, 140), PackedInt32Array(140, 142, 141), PackedInt32Array(147, 146, 144), PackedInt32Array(144, 146, 131), PackedInt32Array(131, 146, 130), PackedInt32Array(130, 146, 145), PackedInt32Array(149, 143, 148), PackedInt32Array(148, 143, 140), PackedInt32Array(148, 144, 149), PackedInt32Array(149, 144, 131), PackedInt32Array(152, 151, 150), PackedInt32Array(152, 150, 153), PackedInt32Array(153, 150, 154), PackedInt32Array(154, 155, 144), PackedInt32Array(158, 157, 156), PackedInt32Array(158, 156, 159), PackedInt32Array(159, 156, 160), PackedInt32Array(155, 147, 144), PackedInt32Array(153, 154, 161), PackedInt32Array(161, 154, 162), PackedInt32Array(162, 154, 160), PackedInt32Array(160, 154, 144), PackedInt32Array(144, 159, 160), PackedInt32Array(166, 165, 163), PackedInt32Array(163, 165, 164), PackedInt32Array(170, 169, 167), PackedInt32Array(167, 169, 168), PackedInt32Array(126, 127, 171), PackedInt32Array(171, 127, 172), PackedInt32Array(152, 173, 151), PackedInt32Array(151, 173, 174), PackedInt32Array(145, 174, 172), PackedInt32Array(172, 174, 176), PackedInt32Array(172, 176, 175), PackedInt32Array(172, 175, 177), PackedInt32Array(180, 179, 178), PackedInt32Array(178, 181, 180), PackedInt32Array(180, 181, 182), PackedInt32Array(145, 146, 174), PackedInt32Array(185, 184, 183), PackedInt32Array(189, 188, 186), PackedInt32Array(186, 188, 187), PackedInt32Array(190, 185, 183), PackedInt32Array(190, 183, 192), PackedInt32Array(192, 183, 191), PackedInt32Array(182, 181, 193), PackedInt32Array(171, 172, 194), PackedInt32Array(194, 172, 191), PackedInt32Array(191, 172, 192), PackedInt32Array(192, 172, 177), PackedInt32Array(186, 177, 189), PackedInt32Array(189, 177, 175), PackedInt32Array(176, 174, 173), PackedInt32Array(193, 175, 182), PackedInt32Array(182, 175, 195), PackedInt32Array(195, 175, 176), PackedInt32Array(195, 176, 196), PackedInt32Array(191, 198, 194), PackedInt32Array(194, 198, 197), PackedInt32Array(188, 200, 187), PackedInt32Array(187, 200, 199), PackedInt32Array(202, 201, 203), PackedInt32Array(203, 201, 204), PackedInt32Array(204, 201, 205), PackedInt32Array(205, 201, 206), PackedInt32Array(208, 207, 209), PackedInt32Array(209, 207, 210), PackedInt32Array(210, 207, 211), PackedInt32Array(211, 207, 212), PackedInt32Array(215, 214, 213), PackedInt32Array(218, 217, 216), PackedInt32Array(220, 219, 221), PackedInt32Array(221, 219, 224), PackedInt32Array(221, 224, 222), PackedInt32Array(222, 224, 223), PackedInt32Array(227, 226, 225), PackedInt32Array(230, 229, 228), PackedInt32Array(227, 225, 215), PackedInt32Array(232, 231, 233), PackedInt32Array(233, 231, 213), PackedInt32Array(213, 231, 215), PackedInt32Array(215, 231, 227), PackedInt32Array(236, 235, 234), PackedInt32Array(228, 237, 230), PackedInt32Array(230, 237, 238), PackedInt32Array(240, 239, 241), PackedInt32Array(241, 239, 244), PackedInt32Array(241, 244, 243), PackedInt32Array(241, 243, 242), PackedInt32Array(246, 245, 247), PackedInt32Array(247, 245, 249), PackedInt32Array(247, 249, 248), PackedInt32Array(251, 250, 252), PackedInt32Array(252, 250, 253), PackedInt32Array(254, 257, 255), PackedInt32Array(255, 257, 256), PackedInt32Array(260, 259, 258), PackedInt32Array(244, 239, 216), PackedInt32Array(216, 239, 261), PackedInt32Array(263, 262, 238), PackedInt32Array(236, 234, 264), PackedInt32Array(264, 234, 265), PackedInt32Array(265, 234, 266), PackedInt32Array(270, 269, 267), PackedInt32Array(267, 269, 268), PackedInt32Array(273, 272, 250), PackedInt32Array(250, 272, 271), PackedInt32Array(276, 275, 261), PackedInt32Array(261, 275, 263), PackedInt32Array(261, 263, 238), PackedInt32Array(261, 238, 274), PackedInt32Array(278, 277, 245), PackedInt32Array(245, 277, 249), PackedInt32Array(273, 279, 272), PackedInt32Array(280, 277, 278), PackedInt32Array(280, 278, 262), PackedInt32Array(262, 278, 238), PackedInt32Array(279, 260, 272), PackedInt32Array(272, 260, 281), PackedInt32Array(281, 260, 258), PackedInt32Array(256, 257, 276), PackedInt32Array(276, 257, 282), PackedInt32Array(276, 282, 275), PackedInt32Array(274, 233, 261), PackedInt32Array(261, 233, 216), PackedInt32Array(216, 233, 283), PackedInt32Array(283, 233, 213), PackedInt32Array(275, 270, 263), PackedInt32Array(263, 270, 267), PackedInt32Array(264, 265, 284), PackedInt32Array(284, 285, 264), PackedInt32Array(264, 285, 286), PackedInt32Array(289, 288, 290), PackedInt32Array(290, 288, 287), PackedInt32Array(286, 285, 283), PackedInt32Array(283, 285, 253), PackedInt32Array(251, 252, 290), PackedInt32Array(290, 252, 289), PackedInt32Array(238, 237, 274), PackedInt32Array(271, 218, 250), PackedInt32Array(250, 218, 253), PackedInt32Array(253, 218, 283), PackedInt32Array(283, 218, 216), PackedInt32Array(221, 222, 291), PackedInt32Array(291, 282, 221), PackedInt32Array(221, 282, 257), PackedInt32Array(219, 220, 292), PackedInt32Array(293, 240, 241), PackedInt32Array(219, 292, 294), PackedInt32Array(294, 292, 293), PackedInt32Array(294, 293, 241), PackedInt32Array(254, 255, 292), PackedInt32Array(292, 255, 293), PackedInt32Array(296, 228, 295), PackedInt32Array(295, 228, 229), PackedInt32Array(296, 295, 297), PackedInt32Array(297, 299, 298), PackedInt32Array(232, 296, 231), PackedInt32Array(231, 296, 297), PackedInt32Array(231, 297, 298), PackedInt32Array(303, 302, 300), PackedInt32Array(300, 302, 301), PackedInt32Array(307, 306, 304), PackedInt32Array(304, 306, 305), PackedInt32Array(311, 310, 308), PackedInt32Array(308, 310, 309), PackedInt32Array(315, 314, 312), PackedInt32Array(312, 314, 313), PackedInt32Array(317, 316, 318), PackedInt32Array(318, 316, 319)]
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+max_zoom_out = 20.0
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("theme")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#88ddff]Space Station II[/color]
+
+Shields bounce your bolts straight back.
+Get close and VENT to pop them."
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+light_color = Color(1, 0.97, 0.92, 1)
+light_energy = 1.25
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/EnemyGroup"]
+
+[node name="EnemyRobot1a" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -8.997, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyRobot1b" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.7974, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyRobot1Shielded" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -12.8957, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyRobot1Shielded"]
+script = ExtResource("enemy_shield")
+forces_vent_prompt = true
+
+[node name="EnemyRobot2a" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0.8997, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyRobot2b" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 2.0993, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyRobot2Shielded" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 5.998, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyRobot2Shielded"]
+script = ExtResource("enemy_shield")
+forces_vent_prompt = true
+
+[node name="EnemyRobot3a" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.7964, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyRobot3b" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 11.996, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyRobot3Shielded" parent="Enemies/EnemyGroup/InstancedEnemies" instance=ExtResource("robot")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 15.8947, 0, 5.0983)
+is_offensive = false
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/EnemyGroup/InstancedEnemies/EnemyRobot3Shielded"]
+script = ExtResource("enemy_shield")
+forces_vent_prompt = true
+
+[node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+spawn_interval_curve = SubResource("Curve_survival")
+fight_duration = 60.0
+enemy_scene = ExtResource("robot")
+
+[node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="Node3D1" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, 0, -61.4795)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, 0, -61.4795)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, 0, -55.4815)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, 0, -55.4815)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, 0, -40.4865)
+
+[node name="Node3D6" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, 0, -40.4865)
+
+[node name="Gunners" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Gunners"]
+
+[node name="EnemyRobotGunner1" parent="Enemies/Gunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, -34.4885)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 22.0
+cast_cooldown = 3.5
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner1"]
+script = ExtResource("enemy_shield")
+
+[node name="EnemyRobotGunner2" parent="Enemies/Gunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -34.4885)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 22.0
+cast_cooldown = 3.5
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner2"]
+script = ExtResource("enemy_shield")
+
+[node name="EnemyRobotGunner3" parent="Enemies/Gunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, -61.4795)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 22.0
+cast_cooldown = 3.5
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner3"]
+script = ExtResource("enemy_shield")
+
+[node name="EnemyRobotGunner4" parent="Enemies/Gunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -61.4795)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 22.0
+cast_cooldown = 3.5
+
+[node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner4"]
+script = ExtResource("enemy_shield")
+
+[node name="SurvivalEnemyGroup2" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+spawn_interval_curve = SubResource("Curve_survival")
+fight_duration = 40.0
+enemy_scene = ExtResource("robot")
+
+[node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup2"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SurvivalEnemyGroup2"]
+
+[node name="Node3D1" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, 0, -76.4745)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, 0, -76.4745)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, 0, -82.4725)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, 0, -85.4715)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/SurvivalEnemyGroup2/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, 0, -82.4725)
+
+[node name="IslandGunners" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/IslandGunners"]
+
+[node name="EnemyRobotGunner1" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, 0, -97.4675)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner2" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, 0, -97.4675)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner3" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, 0, -103.4655)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner4" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, 0, -103.4655)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 26.0
+cast_cooldown = 3.5
+
+[node name="BankGunners" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/BankGunners"]
+
+[node name="EnemyRobotGunner1" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -100.4665)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner2" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -100.4665)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner3" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -97.4675)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner4" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -97.4675)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="CrossfireSouth" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/CrossfireSouth"]
+
+[node name="EnemyRobotGunner1" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -103.4655)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner2" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, 0, -103.4655)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner3" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -100.4665)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner4" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, 0, -100.4665)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="CrossfireNorth" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/CrossfireNorth"]
+
+[node name="EnemyRobotGunner1" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, 0, -133.4555)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner2" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 0, -133.4555)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner3" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, 0, -136.4545)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="EnemyRobotGunner4" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 0, -136.4545)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.5
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 10.4965)
+script = ExtResource("checkpoint")
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -16.4945)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -55.4815)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/OpenBridge2")]
+enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger3")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -115.4615)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge2"), NodePath("../../Level/Events/OpenBridge3")]
+enemy_groups_reset = [NodePath("../../Enemies/BankGunners")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger4")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/AllPlayersAreaTrigger3")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint5" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 1.8026, -118.4605)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge2"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/OpenBridge4")]
+enemy_groups_reset = [NodePath("../../Enemies/CrossfireSouth"), NodePath("../../Enemies/CrossfireNorth")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners"), NodePath("../../Enemies/BankGunners")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger5")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/AllPlayersAreaTrigger3"), NodePath("../../Level/Areas/AllPlayersAreaTrigger4")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint6" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 1.8026, -118.4605)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge2"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/OpenBridge5")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners"), NodePath("../../Enemies/BankGunners"), NodePath("../../Enemies/CrossfireSouth"), NodePath("../../Enemies/CrossfireNorth")]
+areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/AllPlayersAreaTrigger3"), NodePath("../../Level/Areas/AllPlayersAreaTrigger4"), NodePath("../../Level/Areas/AllPlayersAreaTrigger5")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -17, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -60)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-7, 65502, 0, -7, 65503, 0, -7, 65504, 0, -7, 65505, 0, -6, 65502, 0, -6, 65505, 0, -5, 65496, 0, -5, 65497, 0, -5, 65498, 0, -5, 65499, 0, -5, 65500, 0, -5, 65501, 0, -5, 65502, 0, -5, 65505, 0, -5, 65508, 0, -5, 65509, 0, -5, 65510, 0, -5, 65515, 0, -5, 65516, 0, -5, 65517, 0, -5, 65518, 0, -5, 65519, 0, -5, 65520, 6, -5, 65521, 0, -5, 65522, 0, -5, 65523, 0, -5, 65524, 0, -5, 65529, 0, -5, 65530, 0, -5, 65531, 0, -5, 65532, 0, -5, 65533, 0, -5, 65534, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -5, 2, 0, -5, 3, 0, -5, 4, 0, -4, 65496, 0, -4, 65497, 0, -4, 65498, 0, -4, 65505, 0, -4, 65506, 0, -4, 65507, 0, -4, 65508, 0, -4, 65509, 0, -4, 65510, 0, -4, 65511, 0, -4, 65514, 0, -4, 65515, 0, -4, 65516, 0, -4, 65517, 0, -4, 65518, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65528, 0, -4, 65529, 25, -4, 65530, 0, -4, 65531, 18, -4, 65532, 0, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -4, 3, 0, -4, 4, 1048599, -4, 5, 0, -3, 65496, 0, -3, 65497, 0, -3, 65498, 0, -3, 65507, 0, -3, 65508, 0, -3, 65509, 0, -3, 65510, 0, -3, 65511, 0, -3, 65514, 0, -3, 65515, 0, -3, 65516, 0, -3, 65517, 0, -3, 65518, 0, -3, 65519, 18, -3, 65520, 0, -3, 65521, 0, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65528, 0, -3, 65529, 0, -3, 65530, 0, -3, 65531, 0, -3, 65532, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -3, 4, 0, -3, 5, 0, -2, 65496, 0, -2, 65497, 0, -2, 65498, 0, -2, 65500, 0, -2, 65501, 0, -2, 65502, 0, -2, 65503, 0, -2, 65504, 0, -2, 65507, 0, -2, 65508, 0, -2, 65509, 0, -2, 65510, 0, -2, 65511, 26, -2, 65514, 26, -2, 65515, 0, -2, 65516, 0, -2, 65517, 0, -2, 65518, 0, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 26, -2, 65528, 26, -2, 65529, 0, -2, 65530, 0, -2, 65531, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -2, 4, 0, -2, 5, 26, -1, 65496, 0, -1, 65497, 0, -1, 65498, 0, -1, 65500, 0, -1, 65501, 0, -1, 65502, 0, -1, 65503, 0, -1, 65504, 0, -1, 65507, 0, -1, 65508, 0, -1, 65509, 0, -1, 65510, 0, -1, 65511, 0, -1, 65514, 0, -1, 65515, 0, -1, 65516, 0, -1, 65517, 0, -1, 65518, 0, -1, 65519, 0, -1, 65520, 0, -1, 65521, 0, -1, 65522, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65528, 0, -1, 65529, 0, -1, 65530, 0, -1, 65531, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -1, 4, 0, -1, 5, 0, -65536, 65496, 0, -65536, 65497, 0, -65536, 65498, 0, -65536, 65500, 0, -65536, 65501, 0, -65536, 65502, 0, -65536, 65503, 0, -65536, 65504, 0, -65536, 65507, 0, -65536, 65508, 0, -65536, 65509, 0, -65536, 65510, 0, -65536, 65511, 0, -65536, 65514, 0, -65536, 65515, 0, -65536, 65516, 0, -65536, 65517, 0, -65536, 65518, 0, -65536, 65519, 0, -65536, 65520, 0, -65536, 65521, 0, -65536, 65522, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65528, 0, -65536, 65529, 0, -65536, 65530, 0, -65536, 65531, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65536, 4, 0, -65536, 5, 0, -65535, 65496, 0, -65535, 65497, 0, -65535, 65498, 0, -65535, 65500, 0, -65535, 65501, 0, -65535, 65502, 0, -65535, 65503, 0, -65535, 65504, 0, -65535, 65507, 0, -65535, 65508, 0, -65535, 65509, 0, -65535, 65510, 0, -65535, 65511, 0, -65535, 65514, 0, -65535, 65515, 0, -65535, 65516, 0, -65535, 65517, 0, -65535, 65518, 0, -65535, 65519, 0, -65535, 65520, 0, -65535, 65521, 0, -65535, 65522, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65528, 0, -65535, 65529, 0, -65535, 65530, 0, -65535, 65531, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65535, 4, 0, -65535, 5, 0, -65534, 65496, 0, -65534, 65497, 0, -65534, 65498, 0, -65534, 65500, 0, -65534, 65501, 0, -65534, 65502, 0, -65534, 65503, 0, -65534, 65504, 0, -65534, 65507, 0, -65534, 65508, 0, -65534, 65509, 0, -65534, 65510, 0, -65534, 65511, 26, -65534, 65514, 26, -65534, 65515, 0, -65534, 65516, 0, -65534, 65517, 0, -65534, 65518, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 26, -65534, 65528, 26, -65534, 65529, 0, -65534, 65530, 0, -65534, 65531, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65534, 4, 0, -65534, 5, 26, -65533, 65496, 0, -65533, 65497, 0, -65533, 65498, 0, -65533, 65507, 0, -65533, 65508, 0, -65533, 65509, 0, -65533, 65510, 0, -65533, 65511, 0, -65533, 65514, 0, -65533, 65515, 0, -65533, 65516, 0, -65533, 65517, 0, -65533, 65518, 0, -65533, 65519, 655379, -65533, 65520, 0, -65533, 65521, 0, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65528, 0, -65533, 65529, 0, -65533, 65530, 0, -65533, 65531, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65533, 4, 0, -65533, 5, 0, -65532, 65507, 0, -65532, 65508, 0, -65532, 65509, 0, -65532, 65510, 0, -65532, 65511, 0, -65532, 65514, 0, -65532, 65515, 0, -65532, 65516, 0, -65532, 65517, 0, -65532, 65518, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 0, -65532, 65525, 0, -65532, 65528, 0, -65532, 65529, 14, -65532, 65530, 0, -65532, 65531, 655379, -65532, 65532, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0, -65532, 3, 0, -65532, 4, 22, -65532, 5, 0, -65531, 65501, 0, -65531, 65502, 0, -65531, 65503, 0, -65531, 65504, 0, -65531, 65508, 0, -65531, 65509, 0, -65531, 65510, 0, -65531, 65515, 0, -65531, 65516, 0, -65531, 65517, 0, -65531, 65518, 0, -65531, 65519, 0, -65531, 65520, 655368, -65531, 65521, 0, -65531, 65522, 0, -65531, 65523, 0, -65531, 65524, 0, -65531, 65529, 0, -65531, 65530, 0, -65531, 65531, 0, -65531, 65532, 0, -65531, 65533, 0, -65531, 65534, 0, -65531, 65535, 0, -65531, 0, 0, -65531, 1, 0, -65531, 2, 0, -65531, 3, 0, -65531, 4, 0, -65530, 65494, 0, -65530, 65495, 0, -65530, 65496, 0, -65530, 65497, 0, -65530, 65498, 0, -65530, 65501, 0, -65530, 65502, 0, -65530, 65503, 0, -65530, 65504, 0, -65529, 65494, 26, -65529, 65495, 0, -65529, 65496, 0, -65529, 65497, 0, -65529, 65498, 0, -65529, 65501, 0, -65529, 65502, 0, -65529, 65503, 0, -65529, 65504, 0, -65528, 65494, 0, -65528, 65495, 0, -65528, 65496, 0, -65528, 65497, 0, -65528, 65498, 0, -65528, 65501, 0, -65528, 65502, 0, -65528, 65503, 0, -65528, 65504, 0, -65527, 65494, 0, -65527, 65495, 0, -65527, 65496, 0, -65527, 65497, 0, -65527, 65498, 0, -65527, 65501, 0, -65527, 65502, 0, -65527, 65503, 0, -65527, 65504, 0, -65526, 65494, 26, -65526, 65495, 0, -65526, 65496, 0, -65526, 65497, 0, -65526, 65498, 0, -65526, 65501, 0, -65526, 65502, 0, -65526, 65503, 0, -65526, 65504, 0, -65525, 65494, 0, -65525, 65495, 0, -65525, 65496, 0, -65525, 65497, 0, -65525, 65498, 0, -65525, 65501, 0, -65525, 65502, 0, -65525, 65503, 0, -65525, 65504, 0, -65524, 65501, 0, -65524, 65502, 0, -65524, 65503, 0, -65524, 65504, 0, -65522, 65489, 0, -65522, 65490, 0, -65522, 65491, 0, -65522, 65492, 0, -65522, 65500, 0, -65522, 65501, 0, -65522, 65502, 0, -65522, 65503, 0, -65521, 65489, 0, -65521, 65490, 0, -65521, 65491, 0, -65521, 65492, 0, -65521, 65495, 0, -65521, 65496, 0, -65521, 65497, 26, -65521, 65500, 0, -65521, 65501, 0, -65521, 65502, 0, -65521, 65503, 0, -65520, 65489, 0, -65520, 65490, 0, -65520, 65491, 0, -65520, 65492, 0, -65520, 65495, 0, -65520, 65496, 0, -65520, 65497, 0, -65520, 65500, 0, -65520, 65501, 0, -65520, 65502, 0, -65520, 65503, 0, -65519, 65489, 0, -65519, 65490, 0, -65519, 65491, 0, -65519, 65492, 0, -65519, 65495, 0, -65519, 65496, 0, -65519, 65497, 0, -65519, 65500, 0, -65519, 65501, 0, -65519, 65502, 0, -65519, 65503, 0, -65518, 65489, 0, -65518, 65490, 0, -65518, 65491, 0, -65518, 65492, 0, -65518, 65495, 0, -65518, 65496, 0, -65518, 65497, 0, -65518, 65500, 0, -65518, 65501, 0, -65518, 65502, 0, -65518, 65503, 0, -65517, 65489, 0, -65517, 65490, 0, -65517, 65491, 0, -65517, 65492, 0, -65517, 65495, 0, -65517, 65496, 0, -65517, 65497, 0, -65517, 65500, 0, -65517, 65501, 0, -65517, 65502, 0, -65517, 65503, 0, -65516, 65489, 0, -65516, 65490, 0, -65516, 65491, 0, -65516, 65492, 0, -65516, 65495, 26, -65516, 65496, 0, -65516, 65497, 0, -65516, 65500, 0, -65516, 65501, 0, -65516, 65502, 0, -65516, 65503, 0, -65515, 65489, 0, -65515, 65490, 0, -65515, 65491, 0, -65515, 65492, 0, -65515, 65500, 0, -65515, 65501, 0, -65515, 65502, 0, -65515, 65503, 0, -65513, 65494, 0, -65513, 65495, 0, -65513, 65496, 0, -65513, 65497, 0, -65513, 65498, 0, -65512, 65494, 26, -65512, 65495, 0, -65512, 65496, 0, -65512, 65497, 0, -65512, 65498, 26, -65511, 65494, 0, -65511, 65495, 0, -65511, 65496, 0, -65511, 65497, 0, -65511, 65498, 0, -65510, 65494, 0, -65510, 65495, 0, -65510, 65496, 0, -65510, 65497, 0, -65510, 65498, 0, -65509, 65494, 0, -65509, 65495, 0, -65509, 65496, 0, -65509, 65497, 0, -65509, 65498, 0, -65508, 65494, 0, -65508, 65495, 0, -65508, 65496, 1048599, -65508, 65497, 0, -65508, 65498, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationHull" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-327687, 65503, 5, -327687, 65504, 5, -262151, 65502, 4, -262151, 65503, 4, -262151, 65504, 4, -262151, 65505, 4, -196615, 65505, 3, -131079, 65502, 2, -65543, 65502, 1, -65543, 65503, 1, -65543, 65504, 1, -65543, 65505, 1, -196614, 65502, 3, -196614, 65505, 3, -131078, 65502, 2, -131078, 65505, 2, -65542, 65502, 1, -65542, 65505, 1, -327685, 65499, 5, -327685, 65500, 5, -327685, 65501, 5, -327685, 65502, 5, -262149, 65496, 4, -262149, 65497, 4, -262149, 65498, 4, -262149, 65499, 4, -262149, 65500, 4, -262149, 65501, 4, -262149, 65508, 4, -262149, 65509, 4, -262149, 65510, 4, -262149, 65515, 4, -262149, 65516, 4, -262149, 65517, 4, -262149, 65518, 4, -262149, 65519, 4, -262149, 65520, 4, -262149, 65521, 4, -262149, 65522, 4, -262149, 65523, 4, -262149, 65524, 4, -262149, 65529, 4, -262149, 65530, 4, -262149, 65531, 4, -262149, 65532, 4, -262149, 65533, 4, -262149, 65534, 4, -262149, 65535, 4, -262149, 0, 4, -262149, 1, 4, -262149, 2, 4, -262149, 3, 4, -262149, 4, 4, -196613, 65502, 3, -196613, 65505, 3, -196613, 65510, 3, -196613, 65524, 3, -196613, 4, 3, -131077, 65496, 2, -131077, 65505, 2, -131077, 65508, 2, -131077, 65515, 2, -131077, 65529, 2, -65541, 65496, 1, -65541, 65497, 1, -65541, 65498, 1, -65541, 65499, 1, -65541, 65500, 1, -65541, 65501, 1, -65541, 65502, 1, -65541, 65505, 1, -65541, 65508, 1, -65541, 65509, 1, -65541, 65510, 1, -65541, 65515, 1, -65541, 65516, 1, -65541, 65517, 1, -65541, 65518, 1, -65541, 65519, 1, -65541, 65520, 1, -65541, 65521, 1, -65541, 65522, 1, -65541, 65523, 1, -65541, 65524, 1, -65541, 65529, 1, -65541, 65530, 1, -65541, 65531, 1, -65541, 65532, 1, -65541, 65533, 1, -65541, 65534, 1, -65541, 65535, 1, -65541, 0, 1, -65541, 1, 1, -65541, 2, 1, -65541, 3, 1, -65541, 4, 1, -327684, 65505, 5, -327684, 65506, 5, -262148, 65506, 4, -262148, 65507, 4, -262148, 65511, 4, -262148, 65514, 4, -262148, 65525, 4, -262148, 65528, 4, -262148, 5, 4, -196612, 65498, 3, -196612, 65511, 3, -196612, 65525, 3, -196612, 5, 3, -131076, 65496, 2, -131076, 65505, 2, -131076, 65514, 2, -131076, 65528, 2, -65540, 65496, 1, -65540, 65497, 1, -65540, 65498, 1, -65540, 65505, 1, -65540, 65506, 1, -65540, 65507, 1, -65540, 65508, 1, -65540, 65509, 1, -65540, 65510, 1, -65540, 65511, 1, -65540, 65514, 1, -65540, 65515, 1, -65540, 65516, 1, -65540, 65517, 1, -65540, 65518, 1, -65540, 65519, 1, -65540, 65520, 1, -65540, 65521, 1, -65540, 65522, 1, -65540, 65523, 1, -65540, 65524, 1, -65540, 65525, 1, -65540, 65528, 1, -65540, 65529, 1, -65540, 65530, 1, -65540, 65531, 1, -65540, 65532, 1, -65540, 65533, 1, -65540, 65534, 1, -65540, 65535, 1, -65540, 0, 1, -65540, 1, 1, -65540, 2, 1, -65540, 3, 1, -65540, 4, 1, -65540, 5, 1, -196611, 65498, 3, -196611, 65511, 3, -196611, 65525, 3, -196611, 5, 3, -131075, 65496, 2, -131075, 65507, 2, -131075, 65514, 2, -131075, 65528, 2, -65539, 65496, 1, -65539, 65497, 1, -65539, 65498, 1, -65539, 65507, 1, -65539, 65508, 1, -65539, 65509, 1, -65539, 65510, 1, -65539, 65511, 1, -65539, 65514, 1, -65539, 65515, 1, -65539, 65516, 1, -65539, 65517, 1, -65539, 65518, 1, -65539, 65519, 1, -65539, 65520, 1, -65539, 65521, 1, -65539, 65522, 1, -65539, 65523, 1, -65539, 65524, 1, -65539, 65525, 1, -65539, 65528, 1, -65539, 65529, 1, -65539, 65530, 1, -65539, 65531, 1, -65539, 65532, 1, -65539, 65533, 1, -65539, 65534, 1, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -65539, 2, 1, -65539, 3, 1, -65539, 4, 1, -65539, 5, 1, -262146, 65500, 4, -262146, 65501, 4, -262146, 65502, 4, -262146, 65503, 4, -262146, 65504, 4, -196610, 65498, 3, -196610, 65504, 3, -196610, 65511, 3, -196610, 65525, 3, -196610, 5, 3, -131074, 65496, 2, -131074, 65500, 2, -131074, 65507, 2, -131074, 65514, 2, -131074, 65528, 2, -65538, 65496, 1, -65538, 65497, 1, -65538, 65498, 1, -65538, 65500, 1, -65538, 65501, 1, -65538, 65502, 1, -65538, 65503, 1, -65538, 65504, 1, -65538, 65507, 1, -65538, 65508, 1, -65538, 65509, 1, -65538, 65510, 1, -65538, 65511, 1, -65538, 65514, 1, -65538, 65515, 1, -65538, 65516, 1, -65538, 65517, 1, -65538, 65518, 1, -65538, 65519, 1, -65538, 65520, 1, -65538, 65521, 1, -65538, 65522, 1, -65538, 65523, 1, -65538, 65524, 1, -65538, 65525, 1, -65538, 65528, 1, -65538, 65529, 1, -65538, 65530, 1, -65538, 65531, 1, -65538, 65532, 1, -65538, 65533, 1, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -65538, 3, 1, -65538, 4, 1, -65538, 5, 1, -196609, 65498, 3, -196609, 65504, 3, -196609, 65511, 3, -196609, 65525, 3, -196609, 5, 3, -131073, 65496, 2, -131073, 65500, 2, -131073, 65507, 2, -131073, 65514, 2, -131073, 65528, 2, -65537, 65496, 1, -65537, 65497, 1, -65537, 65498, 1, -65537, 65500, 1, -65537, 65501, 1, -65537, 65502, 1, -65537, 65503, 1, -65537, 65504, 1, -65537, 65507, 1, -65537, 65508, 1, -65537, 65509, 1, -65537, 65510, 1, -65537, 65511, 1, -65537, 65514, 1, -65537, 65515, 1, -65537, 65516, 1, -65537, 65517, 1, -65537, 65518, 1, -65537, 65519, 1, -65537, 65520, 1, -65537, 65521, 1, -65537, 65522, 1, -65537, 65523, 1, -65537, 65524, 1, -65537, 65525, 1, -65537, 65528, 1, -65537, 65529, 1, -65537, 65530, 1, -65537, 65531, 1, -65537, 65532, 1, -65537, 65533, 1, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -65537, 3, 1, -65537, 4, 1, -65537, 5, 1, -262144, 65498, 3, -262144, 65504, 3, -262144, 65511, 3, -262144, 65525, 3, -262144, 5, 3, -196608, 65496, 2, -196608, 65500, 2, -196608, 65507, 2, -196608, 65514, 2, -196608, 65528, 2, -131072, 65496, 1, -131072, 65497, 1, -131072, 65498, 1, -131072, 65500, 1, -131072, 65501, 1, -131072, 65502, 1, -131072, 65503, 1, -131072, 65504, 1, -131072, 65507, 1, -131072, 65508, 1, -131072, 65509, 1, -131072, 65510, 1, -131072, 65511, 1, -131072, 65514, 1, -131072, 65515, 1, -131072, 65516, 1, -131072, 65517, 1, -131072, 65518, 1, -131072, 65519, 1, -131072, 65520, 1, -131072, 65521, 1, -131072, 65522, 1, -131072, 65523, 1, -131072, 65524, 1, -131072, 65525, 1, -131072, 65528, 1, -131072, 65529, 1, -131072, 65530, 1, -131072, 65531, 1, -131072, 65532, 1, -131072, 65533, 1, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -131072, 3, 1, -131072, 4, 1, -131072, 5, 1, -262143, 65498, 3, -262143, 65504, 3, -262143, 65511, 3, -262143, 65525, 3, -262143, 5, 3, -196607, 65496, 2, -196607, 65500, 2, -196607, 65507, 2, -196607, 65514, 2, -196607, 65528, 2, -131071, 65496, 1, -131071, 65497, 1, -131071, 65498, 1, -131071, 65500, 1, -131071, 65501, 1, -131071, 65502, 1, -131071, 65503, 1, -131071, 65504, 1, -131071, 65507, 1, -131071, 65508, 1, -131071, 65509, 1, -131071, 65510, 1, -131071, 65511, 1, -131071, 65514, 1, -131071, 65515, 1, -131071, 65516, 1, -131071, 65517, 1, -131071, 65518, 1, -131071, 65519, 1, -131071, 65520, 1, -131071, 65521, 1, -131071, 65522, 1, -131071, 65523, 1, -131071, 65524, 1, -131071, 65525, 1, -131071, 65528, 1, -131071, 65529, 1, -131071, 65530, 1, -131071, 65531, 1, -131071, 65532, 1, -131071, 65533, 1, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -131071, 3, 1, -131071, 4, 1, -131071, 5, 1, -393214, 65500, 5, -393214, 65501, 5, -393214, 65502, 5, -393214, 65503, 5, -393214, 65504, 5, -262142, 65498, 3, -262142, 65504, 3, -262142, 65511, 3, -262142, 65525, 3, -262142, 5, 3, -196606, 65496, 2, -196606, 65500, 2, -196606, 65507, 2, -196606, 65514, 2, -196606, 65528, 2, -131070, 65496, 1, -131070, 65497, 1, -131070, 65498, 1, -131070, 65500, 1, -131070, 65501, 1, -131070, 65502, 1, -131070, 65503, 1, -131070, 65504, 1, -131070, 65507, 1, -131070, 65508, 1, -131070, 65509, 1, -131070, 65510, 1, -131070, 65511, 1, -131070, 65514, 1, -131070, 65515, 1, -131070, 65516, 1, -131070, 65517, 1, -131070, 65518, 1, -131070, 65519, 1, -131070, 65520, 1, -131070, 65521, 1, -131070, 65522, 1, -131070, 65523, 1, -131070, 65524, 1, -131070, 65525, 1, -131070, 65528, 1, -131070, 65529, 1, -131070, 65530, 1, -131070, 65531, 1, -131070, 65532, 1, -131070, 65533, 1, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -131070, 3, 1, -131070, 4, 1, -131070, 5, 1, -393213, 65496, 5, -393213, 65497, 5, -393213, 65498, 5, -262141, 65498, 3, -262141, 65511, 3, -262141, 65525, 3, -262141, 5, 3, -196605, 65496, 2, -196605, 65507, 2, -196605, 65514, 2, -196605, 65528, 2, -131069, 65496, 1, -131069, 65497, 1, -131069, 65498, 1, -131069, 65507, 1, -131069, 65508, 1, -131069, 65509, 1, -131069, 65510, 1, -131069, 65511, 1, -131069, 65514, 1, -131069, 65515, 1, -131069, 65516, 1, -131069, 65517, 1, -131069, 65518, 1, -131069, 65519, 1, -131069, 65520, 1, -131069, 65521, 1, -131069, 65522, 1, -131069, 65523, 1, -131069, 65524, 1, -131069, 65525, 1, -131069, 65528, 1, -131069, 65529, 1, -131069, 65530, 1, -131069, 65531, 1, -131069, 65532, 1, -131069, 65533, 1, -131069, 65534, 1, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1, -131069, 2, 1, -131069, 3, 1, -131069, 4, 1, -131069, 5, 1, -393212, 65507, 5, -393212, 65511, 5, -393212, 65514, 5, -393212, 65525, 5, -393212, 65528, 5, -393212, 5, 5, -262140, 65511, 3, -262140, 65525, 3, -262140, 5, 3, -196604, 65507, 2, -196604, 65514, 2, -196604, 65528, 2, -131068, 65507, 1, -131068, 65508, 1, -131068, 65509, 1, -131068, 65510, 1, -131068, 65511, 1, -131068, 65514, 1, -131068, 65515, 1, -131068, 65516, 1, -131068, 65517, 1, -131068, 65518, 1, -131068, 65519, 1, -131068, 65520, 1, -131068, 65521, 1, -131068, 65522, 1, -131068, 65523, 1, -131068, 65524, 1, -131068, 65525, 1, -131068, 65528, 1, -131068, 65529, 1, -131068, 65530, 1, -131068, 65531, 1, -131068, 65532, 1, -131068, 65533, 1, -131068, 65534, 1, -131068, 65535, 1, -131068, 0, 1, -131068, 1, 1, -131068, 2, 1, -131068, 3, 1, -131068, 4, 1, -131068, 5, 1, -393211, 65508, 5, -393211, 65509, 5, -393211, 65510, 5, -393211, 65515, 5, -393211, 65516, 5, -393211, 65517, 5, -393211, 65518, 5, -393211, 65519, 5, -393211, 65520, 5, -393211, 65521, 5, -393211, 65522, 5, -393211, 65523, 5, -393211, 65524, 5, -393211, 65529, 5, -393211, 65530, 5, -393211, 65531, 5, -393211, 65532, 5, -393211, 65533, 5, -393211, 65534, 5, -393211, 65535, 5, -393211, 0, 5, -393211, 1, 5, -393211, 2, 5, -393211, 3, 5, -393211, 4, 5, -327675, 65501, 4, -327675, 65502, 4, -327675, 65503, 4, -327675, 65504, 4, -262139, 65504, 3, -262139, 65510, 3, -262139, 65524, 3, -262139, 4, 3, -196603, 65501, 2, -196603, 65508, 2, -196603, 65515, 2, -196603, 65529, 2, -131067, 65501, 1, -131067, 65502, 1, -131067, 65503, 1, -131067, 65504, 1, -131067, 65508, 1, -131067, 65509, 1, -131067, 65510, 1, -131067, 65515, 1, -131067, 65516, 1, -131067, 65517, 1, -131067, 65518, 1, -131067, 65519, 1, -131067, 65520, 1, -131067, 65521, 1, -131067, 65522, 1, -131067, 65523, 1, -131067, 65524, 1, -131067, 65529, 1, -131067, 65530, 1, -131067, 65531, 1, -131067, 65532, 1, -131067, 65533, 1, -131067, 65534, 1, -131067, 65535, 1, -131067, 0, 1, -131067, 1, 1, -131067, 2, 1, -131067, 3, 1, -131067, 4, 1, -327674, 65494, 4, -327674, 65495, 4, -327674, 65496, 4, -327674, 65497, 4, -327674, 65498, 4, -262138, 65498, 3, -262138, 65504, 3, -196602, 65494, 2, -196602, 65501, 2, -131066, 65494, 1, -131066, 65495, 1, -131066, 65496, 1, -131066, 65497, 1, -131066, 65498, 1, -131066, 65501, 1, -131066, 65502, 1, -131066, 65503, 1, -131066, 65504, 1, -262137, 65498, 3, -262137, 65504, 3, -196601, 65494, 2, -196601, 65501, 2, -131065, 65494, 1, -131065, 65495, 1, -131065, 65496, 1, -131065, 65497, 1, -131065, 65498, 1, -131065, 65501, 1, -131065, 65502, 1, -131065, 65503, 1, -131065, 65504, 1, -262136, 65498, 3, -262136, 65504, 3, -196600, 65494, 2, -196600, 65501, 2, -131064, 65494, 1, -131064, 65495, 1, -131064, 65496, 1, -131064, 65497, 1, -131064, 65498, 1, -131064, 65501, 1, -131064, 65502, 1, -131064, 65503, 1, -131064, 65504, 1, -262135, 65498, 3, -262135, 65504, 3, -196599, 65494, 2, -196599, 65501, 2, -131063, 65494, 1, -131063, 65495, 1, -131063, 65496, 1, -131063, 65497, 1, -131063, 65498, 1, -131063, 65501, 1, -131063, 65502, 1, -131063, 65503, 1, -131063, 65504, 1, -262134, 65498, 3, -262134, 65504, 3, -196598, 65494, 2, -196598, 65501, 2, -131062, 65494, 1, -131062, 65495, 1, -131062, 65496, 1, -131062, 65497, 1, -131062, 65498, 1, -131062, 65501, 1, -131062, 65502, 1, -131062, 65503, 1, -131062, 65504, 1, -393205, 65494, 5, -393205, 65495, 5, -393205, 65496, 5, -393205, 65497, 5, -393205, 65498, 5, -262133, 65498, 3, -262133, 65504, 3, -196597, 65494, 2, -196597, 65501, 2, -131061, 65494, 1, -131061, 65495, 1, -131061, 65496, 1, -131061, 65497, 1, -131061, 65498, 1, -131061, 65501, 1, -131061, 65502, 1, -131061, 65503, 1, -131061, 65504, 1, -393204, 65501, 5, -393204, 65502, 5, -393204, 65503, 5, -393204, 65504, 5, -262132, 65504, 3, -196596, 65501, 2, -131060, 65501, 1, -131060, 65502, 1, -131060, 65503, 1, -131060, 65504, 1, -327666, 65489, 4, -327666, 65490, 4, -327666, 65491, 4, -327666, 65492, 4, -327666, 65500, 4, -327666, 65501, 4, -327666, 65502, 4, -327666, 65503, 4, -262130, 65492, 3, -262130, 65503, 3, -196594, 65489, 2, -196594, 65500, 2, -131058, 65489, 1, -131058, 65490, 1, -131058, 65491, 1, -131058, 65492, 1, -131058, 65500, 1, -131058, 65501, 1, -131058, 65502, 1, -131058, 65503, 1, -327665, 65495, 4, -327665, 65496, 4, -327665, 65497, 4, -262129, 65492, 3, -262129, 65497, 3, -262129, 65503, 3, -196593, 65489, 2, -196593, 65495, 2, -196593, 65500, 2, -131057, 65489, 1, -131057, 65490, 1, -131057, 65491, 1, -131057, 65492, 1, -131057, 65495, 1, -131057, 65496, 1, -131057, 65497, 1, -131057, 65500, 1, -131057, 65501, 1, -131057, 65502, 1, -131057, 65503, 1, -262128, 65492, 3, -262128, 65497, 3, -262128, 65503, 3, -196592, 65489, 2, -196592, 65495, 2, -196592, 65500, 2, -131056, 65489, 1, -131056, 65490, 1, -131056, 65491, 1, -131056, 65492, 1, -131056, 65495, 1, -131056, 65496, 1, -131056, 65497, 1, -131056, 65500, 1, -131056, 65501, 1, -131056, 65502, 1, -131056, 65503, 1, -262127, 65492, 3, -262127, 65497, 3, -262127, 65503, 3, -196591, 65489, 2, -196591, 65495, 2, -196591, 65500, 2, -131055, 65489, 1, -131055, 65490, 1, -131055, 65491, 1, -131055, 65492, 1, -131055, 65495, 1, -131055, 65496, 1, -131055, 65497, 1, -131055, 65500, 1, -131055, 65501, 1, -131055, 65502, 1, -131055, 65503, 1, -262126, 65492, 3, -262126, 65497, 3, -262126, 65503, 3, -196590, 65489, 2, -196590, 65495, 2, -196590, 65500, 2, -131054, 65489, 1, -131054, 65490, 1, -131054, 65491, 1, -131054, 65492, 1, -131054, 65495, 1, -131054, 65496, 1, -131054, 65497, 1, -131054, 65500, 1, -131054, 65501, 1, -131054, 65502, 1, -131054, 65503, 1, -262125, 65492, 3, -262125, 65497, 3, -262125, 65503, 3, -196589, 65489, 2, -196589, 65495, 2, -196589, 65500, 2, -131053, 65489, 1, -131053, 65490, 1, -131053, 65491, 1, -131053, 65492, 1, -131053, 65495, 1, -131053, 65496, 1, -131053, 65497, 1, -131053, 65500, 1, -131053, 65501, 1, -131053, 65502, 1, -131053, 65503, 1, -393196, 65495, 5, -393196, 65496, 5, -393196, 65497, 5, -262124, 65492, 3, -262124, 65497, 3, -262124, 65503, 3, -196588, 65489, 2, -196588, 65495, 2, -196588, 65500, 2, -131052, 65489, 1, -131052, 65490, 1, -131052, 65491, 1, -131052, 65492, 1, -131052, 65495, 1, -131052, 65496, 1, -131052, 65497, 1, -131052, 65500, 1, -131052, 65501, 1, -131052, 65502, 1, -131052, 65503, 1, -393195, 65489, 5, -393195, 65490, 5, -393195, 65491, 5, -393195, 65492, 5, -393195, 65500, 5, -393195, 65501, 5, -393195, 65502, 5, -393195, 65503, 5, -262123, 65492, 3, -262123, 65503, 3, -196587, 65489, 2, -196587, 65500, 2, -131051, 65489, 1, -131051, 65490, 1, -131051, 65491, 1, -131051, 65492, 1, -131051, 65500, 1, -131051, 65501, 1, -131051, 65502, 1, -131051, 65503, 1, -327657, 65494, 4, -327657, 65495, 4, -327657, 65496, 4, -327657, 65497, 4, -327657, 65498, 4, -262121, 65498, 3, -196585, 65494, 2, -131049, 65494, 1, -131049, 65495, 1, -131049, 65496, 1, -131049, 65497, 1, -131049, 65498, 1, -262120, 65498, 3, -196584, 65494, 2, -131048, 65494, 1, -131048, 65495, 1, -131048, 65496, 1, -131048, 65497, 1, -131048, 65498, 1, -262119, 65498, 3, -196583, 65494, 2, -131047, 65494, 1, -131047, 65495, 1, -131047, 65496, 1, -131047, 65497, 1, -131047, 65498, 1, -262118, 65498, 3, -196582, 65494, 2, -131046, 65494, 1, -131046, 65495, 1, -131046, 65496, 1, -131046, 65497, 1, -131046, 65498, 1, -262117, 65498, 3, -196581, 65494, 2, -131045, 65494, 1, -131045, 65495, 1, -131045, 65496, 1, -131045, 65497, 1, -131045, 65498, 1, -393188, 65494, 5, -393188, 65495, 5, -393188, 65496, 5, -393188, 65497, 5, -393188, 65498, 5, -262116, 65498, 3, -196580, 65494, 2, -131044, 65494, 1, -131044, 65495, 1, -131044, 65496, 1, -131044, 65497, 1, -131044, 65498, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="Shields" type="Node3D" parent="Level"]
+
+[node name="WestShield" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, -5.6975, -1, -100.466)
+size = Vector2(14.995, 3.0)
+
+[node name="EastShield" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 8.6975, -1, -100.466)
+size = Vector2(14.995, 3.0)
+
+[node name="SouthShield" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -1, -93.2685)
+size = Vector2(14.995, 3.0)
+
+[node name="BankGunnersCover" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 22.493, -1, -104.6645)
+size = Vector2(14.995, 3.0)
+
+[node name="BankGunnersReturn" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(6.123234e-17, 0, 1, 0, 1, 0, -1, 0, 6.123234e-17, 29.9905, -1, -103.315)
+size = Vector2(2.699, 3.0)
+
+[node name="BankGunnersBank" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(0.70710678, 0, 0.70710678, 0, 1, 0, -0.70710678, 0, 0.70710678, 32.989, -1, -98.967)
+size = Vector2(7.000, 3.0)
+
+[node name="CrossfireSouthCover" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 49.484, -1, -107.6635)
+size = Vector2(14.995, 3.0)
+
+[node name="CrossfireSouthReturn" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(6.123234e-17, 0, 1, 0, 1, 0, -1, 0, 6.123234e-17, 56.9815, -1, -106.314)
+size = Vector2(2.699, 3.0)
+
+[node name="CrossfireSouthBank" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(0.70710678, 0, 0.70710678, 0, 1, 0, -0.70710678, 0, 0.70710678, 59.98, -1, -101.966)
+size = Vector2(7.000, 3.0)
+
+[node name="CrossfireNorthCover" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, -0, 0, 1, 58.48, -1, -129.2575)
+size = Vector2(14.995, 3.0)
+
+[node name="CrossfireNorthReturn" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(6.123234e-17, 0, 1, 0, 1, 0, -1, 0, 6.123234e-17, 50.9825, -1, -130.607)
+size = Vector2(2.699, 3.0)
+
+[node name="CrossfireNorthBank" parent="Level/Shields" instance=ExtResource("flat_shield")]
+transform = Transform3D(0.70710678, 0, 0.70710678, 0, 1, 0, -0.70710678, 0, 0.70710678, 47.984, -1, -134.955)
+size = Vector2(7.000, 3.0)
+
+[node name="Planet" parent="Level" instance=ExtResource("planet")]
+transform = Transform3D(280, 0, 0, 0, 280, 0, 0, 0, 280, -240, -480, -170)
+
+[node name="DistantStations" type="Node" parent="Level"]
+
+[node name="StationA" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58, -30, 2)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65535, 0, -3, 0, 0, -3, 1, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 7, -2, 1, 0, -2, 2, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 12, -65536, 1, 0, -65536, 2, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 24, -65534, 1, 0, -65534, 2, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationA"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262147, 65535, 4, -262147, 0, 4, -262147, 1, 4, -196611, 1, 3, -131075, 65535, 2, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -262146, 65534, 4, -262146, 2, 4, -196610, 2, 3, -131074, 65534, 2, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -196609, 2, 3, -131073, 65534, 2, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -262144, 2, 3, -196608, 65534, 2, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -262143, 2, 3, -196607, 65534, 2, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -393214, 65534, 5, -393214, 2, 5, -262142, 2, 3, -196606, 65534, 2, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -393213, 65535, 5, -393213, 0, 5, -393213, 1, 5, -262141, 1, 3, -196605, 65535, 2, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationB" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -64, -42, -36)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 11, -3, 2, 0, -3, 3, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 20, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 13, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationB"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262148, 65534, 4, -262148, 65535, 4, -262148, 0, 4, -262148, 1, 4, -262148, 2, 4, -196612, 2, 3, -131076, 65534, 2, -65540, 65534, 1, -65540, 65535, 1, -65540, 0, 1, -65540, 1, 1, -65540, 2, 1, -262147, 65533, 4, -262147, 3, 4, -196611, 3, 3, -131075, 65533, 2, -65539, 65533, 1, -65539, 65534, 1, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -65539, 2, 1, -65539, 3, 1, -196610, 3, 3, -131074, 65533, 2, -65538, 65533, 1, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -65538, 3, 1, -196609, 3, 3, -131073, 65533, 2, -65537, 65533, 1, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -65537, 3, 1, -262144, 3, 3, -196608, 65533, 2, -131072, 65533, 1, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -131072, 3, 1, -262143, 3, 3, -196607, 65533, 2, -131071, 65533, 1, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -131071, 3, 1, -262142, 3, 3, -196606, 65533, 2, -131070, 65533, 1, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -131070, 3, 1, -393213, 65533, 5, -393213, 3, 5, -262141, 3, 3, -196605, 65533, 2, -131069, 65533, 1, -131069, 65534, 1, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1, -131069, 2, 1, -131069, 3, 1, -393212, 65534, 5, -393212, 65535, 5, -393212, 0, 5, -393212, 1, 5, -393212, 2, 5, -262140, 2, 3, -196604, 65534, 2, -131068, 65534, 1, -131068, 65535, 1, -131068, 0, 1, -131068, 1, 1, -131068, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="StationC" type="Node3D" parent="Level/DistantStations"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70, -46, -84)
+script = ExtResource("bob")
+
+[node name="Deck" type="GridMap" parent="Level/DistantStations/StationC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 14, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 28, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 25, -65534, 3, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Hull" type="GridMap" parent="Level/DistantStations/StationC"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-262147, 65533, 4, -262147, 65534, 4, -262147, 65535, 4, -262147, 0, 4, -262147, 1, 4, -262147, 2, 4, -196611, 2, 3, -131075, 65533, 2, -65539, 65533, 1, -65539, 65534, 1, -65539, 65535, 1, -65539, 0, 1, -65539, 1, 1, -65539, 2, 1, -262146, 65532, 4, -262146, 3, 4, -196610, 3, 3, -131074, 65532, 2, -65538, 65532, 1, -65538, 65533, 1, -65538, 65534, 1, -65538, 65535, 1, -65538, 0, 1, -65538, 1, 1, -65538, 2, 1, -65538, 3, 1, -196609, 3, 3, -131073, 65532, 2, -65537, 65532, 1, -65537, 65533, 1, -65537, 65534, 1, -65537, 65535, 1, -65537, 0, 1, -65537, 1, 1, -65537, 2, 1, -65537, 3, 1, -262144, 3, 3, -196608, 65532, 2, -131072, 65532, 1, -131072, 65533, 1, -131072, 65534, 1, -131072, 65535, 1, -131072, 0, 1, -131072, 1, 1, -131072, 2, 1, -131072, 3, 1, -262143, 3, 3, -196607, 65532, 2, -131071, 65532, 1, -131071, 65533, 1, -131071, 65534, 1, -131071, 65535, 1, -131071, 0, 1, -131071, 1, 1, -131071, 2, 1, -131071, 3, 1, -262142, 3, 3, -196606, 65532, 2, -131070, 65532, 1, -131070, 65533, 1, -131070, 65534, 1, -131070, 65535, 1, -131070, 0, 1, -131070, 1, 1, -131070, 2, 1, -131070, 3, 1, -393213, 65532, 5, -393213, 3, 5, -262141, 3, 3, -196605, 65532, 2, -131069, 65532, 1, -131069, 65533, 1, -131069, 65534, 1, -131069, 65535, 1, -131069, 0, 1, -131069, 1, 1, -131069, 2, 1, -131069, 3, 1, -393212, 65533, 5, -393212, 65534, 5, -393212, 65535, 5, -393212, 0, 5, -393212, 1, 5, -393212, 2, 5, -262140, 2, 3, -196604, 65533, 2, -131068, 65533, 1, -131068, 65534, 1, -131068, 65535, 1, -131068, 0, 1, -131068, 1, 1, -131068, 2, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Asteroids" type="Node3D" parent="Level"]
+
+[node name="Asteroid1" parent="Level/Asteroids" instance=ExtResource("asteroid")]
+transform = Transform3D(5, 0, 0, 0, 5, 0, 0, 0, 5, 42, -26, -6)
+script = ExtResource("drift")
+
+[node name="Asteroid2" parent="Level/Asteroids" instance=ExtResource("asteroid")]
+transform = Transform3D(7, 0, 0, 0, 7, 0, 0, 0, 7, -46, -32, -18)
+script = ExtResource("drift")
+
+[node name="Asteroid3" parent="Level/Asteroids" instance=ExtResource("asteroid")]
+transform = Transform3D(9, 0, 0, 0, 9, 0, 0, 0, 9, 50, -40, -58)
+script = ExtResource("drift")
+
+[node name="Asteroid4" parent="Level/Asteroids" instance=ExtResource("asteroid")]
+transform = Transform3D(4, 0, 0, 0, 4, 0, 0, 0, 4, -36, -26, -70)
+script = ExtResource("drift")
+
+[node name="Asteroid5" parent="Level/Asteroids" instance=ExtResource("asteroid")]
+transform = Transform3D(12, 0, 0, 0, 12, 0, 0, 0, 12, -24, -58, -34)
+script = ExtResource("drift")
+
+[node name="Asteroid6" parent="Level/Asteroids" instance=ExtResource("asteroid")]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 30, -50, -110)
+script = ExtResource("drift")
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../StartSurvival")
+
+[node name="StartSurvival" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
+next_event = NodePath("../MakeGunnersOffensive")
+
+[node name="MakeGunnersOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/Gunners")
+
+[node name="HoldCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge2")
+groups = [NodePath("../../../Enemies/SurvivalEnemyGroup"), NodePath("../../../Enemies/Gunners")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint3")
+
+[node name="OpenBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../StartSurvival2")
+
+[node name="StartSurvival2" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup2")
+next_event = NodePath("../MakeIslandGunnersOffensive")
+
+[node name="MakeIslandGunnersOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/IslandGunners")
+
+[node name="FocusGunnerIslandSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusGunnerIslandSW")
+
+[node name="FocusGunnerIslandSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusGunnerIslandSE")
+
+[node name="FocusGunnerIslandNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusGunnerIslandNW")
+
+[node name="FocusGunnerIslandNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusGunnerIslandNE")
+
+[node name="FocusBankIslandSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBankIslandSW")
+
+[node name="FocusBankIslandSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBankIslandSE")
+
+[node name="FocusBankIslandNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBankIslandNW")
+
+[node name="FocusBankIslandNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusBankIslandNE")
+
+[node name="FocusCrossfireSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCrossfireSW")
+
+[node name="FocusCrossfireSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCrossfireSE")
+
+[node name="FocusCrossfireNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCrossfireNW")
+
+[node name="FocusCrossfireNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCrossfireNE")
+
+[node name="UnfocusCamera" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="FocusPoints" type="Node3D" parent="Level"]
+
+[node name="FocusGunnerIslandSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -79.4735)
+
+[node name="FocusGunnerIslandSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, 0, -79.4735)
+
+[node name="FocusGunnerIslandNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -115.4615)
+
+[node name="FocusGunnerIslandNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, 0, -115.4615)
+
+[node name="FocusBankIslandSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -94.4685)
+
+[node name="FocusBankIslandSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.4875, 0, -94.4685)
+
+[node name="FocusBankIslandNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -124.4585)
+
+[node name="FocusBankIslandNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.4875, 0, -124.4585)
+
+[node name="FocusCrossfireSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.4875, 0, -91.4695)
+
+[node name="FocusCrossfireSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.4765, 0, -91.4695)
+
+[node name="FocusCrossfireNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 37.4875, 0, -145.4515)
+
+[node name="FocusCrossfireNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 70.4765, 0, -145.4515)
+
+[node name="IslandCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge3")
+groups = [NodePath("../../../Enemies/SurvivalEnemyGroup2"), NodePath("../../../Enemies/IslandGunners")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint4")
+also_trigger = [NodePath("../UnfocusCamera")]
+
+[node name="OpenBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeBankGunnersOffensive")
+
+[node name="MakeBankGunnersOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/BankGunners")
+
+[node name="BankCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge4")
+groups = [NodePath("../../../Enemies/BankGunners")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint5")
+also_trigger = [NodePath("../UnfocusCamera")]
+
+[node name="OpenBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8"), NodePath("../../Bridges/BridgePlatform9")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="CloseBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8"), NodePath("../../Bridges/BridgePlatform9")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../MakeCrossfireSouthOffensive")
+
+[node name="MakeCrossfireSouthOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/CrossfireSouth")
+next_event = NodePath("../MakeCrossfireNorthOffensive")
+
+[node name="MakeCrossfireNorthOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/CrossfireNorth")
+
+[node name="CrossfireCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge5")
+groups = [NodePath("../../../Enemies/CrossfireSouth"), NodePath("../../../Enemies/CrossfireNorth")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint6")
+also_trigger = [NodePath("../UnfocusCamera")]
+
+[node name="OpenBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, 0, -118.4605)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+shape = SubResource("BoxShape3D_end")
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -25.4915)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -28.4905)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -67.4775)
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -70.4765)
+
+[node name="BridgePlatform5" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 13.4955, -3.9928, -115.4615)
+
+[node name="BridgePlatform6" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 16.4945, -3.9928, -115.4615)
+
+[node name="BridgePlatform7" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 37.4875, -3.9928, -118.4605)
+
+[node name="BridgePlatform8" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 40.4865, -3.9928, -118.4605)
+
+[node name="BridgePlatform9" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 43.4855, -3.9928, -118.4605)
+
+[node name="BridgePlatform10" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 64.4785, -3.9928, -118.4605)
+
+[node name="BridgePlatform11" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 67.4775, -3.9928, -118.4605)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="AllPlayersAreaTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -37.4875)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger"]
+shape = SubResource("BoxShape3D_deck2")
+
+[node name="AllPlayersAreaTrigger3" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -76.4745)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger3"]
+shape = SubResource("BoxShape3D_deck3")
+
+[node name="AllPlayersAreaTrigger4" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, -118.4605)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger4"]
+shape = SubResource("BoxShape3D_bankdeck")
+
+[node name="AllPlayersAreaTrigger5" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.4825, 0, -118.4605)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/AllPlayersAreaTrigger5"]
+shape = SubResource("BoxShape3D_bankdeck")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="PulseRifle" parent="Weapon" instance=ExtResource("pulse_rifle")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0.593, 10.4965)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("launch_message")
+message_string = "[color=#88ddff]Space Station II[/color]
+
+Shields bounce your bolts straight back.
+Get close and VENT to pop them."
+
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/EnemyGroup" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger" to="Level/Events/CloseBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/HoldCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Gunners" to="Level/Events/HoldCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/CloseBridge2" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusGunnerIslandSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusGunnerIslandSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusGunnerIslandNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger3" to="Level/Events/FocusGunnerIslandNE" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup2" to="Level/Events/IslandCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/IslandGunners" to="Level/Events/IslandCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/CloseBridge3" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/FocusBankIslandSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/FocusBankIslandSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/FocusBankIslandNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/FocusBankIslandNE" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/BankGunners" to="Level/Events/BankCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/CloseBridge4" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireNE" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/CrossfireSouth" to="Level/Events/CrossfireCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/CrossfireNorth" to="Level/Events/CrossfireCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]

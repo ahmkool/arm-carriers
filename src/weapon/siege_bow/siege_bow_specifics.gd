@@ -3,7 +3,8 @@ extends Node3D
 ## Giant bow: the front carrier holds the grip and the back carrier holds the string.
 ## Moving apart draws the bow, and the back carrier's shoot button looses the arrow.
 ## A longer draw hits harder, flies further and pierces more enemies. After a shot, the
-## carriers must come back together to nock the next arrow.
+## carriers must come back together to nock the next arrow. Until they do, the string hangs loose and
+## they can walk as far apart as they like; the distance limit returns once the arrow is nocked.
 ## An arrow that hits an enemy charges a shockwave, which the front carrier's shoot button
 ## sets off around them: it shoves nearby enemies back and leaves them reeling, so the back
 ## carrier has time for a full draw.
@@ -102,6 +103,7 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	weapon_movement.is_max_distance_free = not _is_nocked
 	var carry_info := pick_and_drop_handler.get_carry_info()
 	if not _is_carried_by_both(carry_info):
 		_is_full_draw_cued = false

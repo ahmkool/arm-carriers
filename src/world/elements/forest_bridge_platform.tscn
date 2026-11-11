@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="1_packed"]
+[ext_resource type="Shader" path="res://src/world/elements/wooden_platform.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wood"]
+render_priority = 0
+shader = ExtResource("2_shader")
+
+[node name="ForestBridgePlatform" instance=ExtResource("1_packed")]
+
+[node name="Wooden_Platform_Top" parent="AnimatableBody3D" index="0"]
+surface_material_override/0 = SubResource("ShaderMaterial_wood")

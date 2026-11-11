@@ -10,10 +10,12 @@ var _current_state_name := ""
 var main_root: Control
 var options_root: Control
 var controls_root: Control
+var checkpoints_root: Control
 var menu_navigator: GamepadMenuNavigator
 var main_focus: Control
 var options_focus: Control
 var controls_focus: Control
+var checkpoints_focus: Control
 
 
 func _ready() -> void:
@@ -21,6 +23,7 @@ func _ready() -> void:
 	_register_state("main", PauseMainState.new())
 	_register_state("options", PauseOptionsState.new())
 	_register_state("controls", PauseControlsState.new())
+	_register_state("checkpoints", PauseCheckpointsState.new())
 
 
 func register_pause_ui(
@@ -31,14 +34,18 @@ func register_pause_ui(
 	main_default_focus: Control,
 	options_default_focus: Control,
 	controls_default_focus: Control,
+	checkpoints: Control = null,
+	checkpoints_default_focus: Control = null,
 ) -> void:
 	main_root = main
 	options_root = options
 	controls_root = controls
+	checkpoints_root = checkpoints
 	menu_navigator = navigator
 	main_focus = main_default_focus
 	options_focus = options_default_focus
 	controls_focus = controls_default_focus
+	checkpoints_focus = checkpoints_default_focus
 	_connect_menu_cancel()
 
 
@@ -63,6 +70,7 @@ func show_pause_screen(screen_name: String) -> void:
 	set_main_visible(key == "main")
 	set_options_visible(key == "options")
 	set_controls_visible(key == "controls")
+	set_checkpoints_visible(key == "checkpoints")
 
 
 func set_main_visible(visible: bool) -> void:
@@ -81,6 +89,12 @@ func set_controls_visible(visible: bool) -> void:
 	if controls_root == null:
 		return
 	controls_root.visible = visible
+
+
+func set_checkpoints_visible(visible: bool) -> void:
+	if checkpoints_root == null:
+		return
+	checkpoints_root.visible = visible
 
 
 func set_menu_navigation_active(active: bool, focus: Control = null) -> void:
@@ -113,6 +127,9 @@ func _on_menu_cancel() -> void:
 		transition_to("main")
 		return
 	if _current_state_name == "controls":
+		transition_to("main")
+		return
+	if _current_state_name == "checkpoints":
 		transition_to("main")
 		return
 

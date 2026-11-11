@@ -12,6 +12,8 @@ shader_parameter/hull_color = Color(0.2, 0.22, 0.27, 1)
 shader_parameter/window_color = Color(0.35, 0.85, 1, 1)
 shader_parameter/panel_size = 1.5
 shader_parameter/window_strength = 2.2
+shader_parameter/local_space = false
+shader_parameter/local_y_offset = -1.0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_3lal1"]
 _surfaces = [{
@@ -39,6 +41,8 @@ shader_parameter/hull_color = Color(0.12, 0.13, 0.17, 1)
 shader_parameter/window_color = Color(0.35, 0.85, 1, 1)
 shader_parameter/panel_size = 1.5
 shader_parameter/window_strength = 0.0
+shader_parameter/local_space = false
+shader_parameter/local_y_offset = -1.0
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_ibhak"]
 _surfaces = [{

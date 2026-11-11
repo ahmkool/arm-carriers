@@ -263,3 +263,5 @@ draw_pass_1 = SubResource("CylinderMesh_cd20w")
 script = ExtResource("35_p1hda")
 
 [connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]
+
+[editable path="Orc"]
