@@ -1,0 +1,9 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot.tscn" id="1_robot"]
+[ext_resource type="Script" uid="uid://bthk41l1g4n1q" path="res://src/enemy/shield/enemy_shield.gd" id="2_shield"]
+
+[node name="EnemyRobotShielded" instance=ExtResource("1_robot")]
+
+[node name="EnemyShield" type="Node3D" parent="."]
+script = ExtResource("2_shield")

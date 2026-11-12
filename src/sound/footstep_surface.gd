@@ -21,6 +21,7 @@ const BY_MESH_LIBRARY := {
 	"res://src/world/elements/medieval/castle_tiles.tres": STONE,
 	"res://src/world/elements/sky_decks/deck_tiles.tres": WOOD,
 	"res://src/world/elements/space/space_tiles.tres": METAL,
+	"res://src/world/elements/storm_isles/isle_tiles.tres": STONE,
 }
 
 

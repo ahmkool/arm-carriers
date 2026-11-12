@@ -19,6 +19,7 @@ func setup(launch_velocity: Vector3, damage := -1) -> void:
 	_damage = damage
 
 func _ready() -> void:
+	add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
 	if _launch_velocity.length_squared() < 0.0001:
 		queue_free()
 		return

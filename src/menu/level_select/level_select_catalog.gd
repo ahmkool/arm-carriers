@@ -90,8 +90,10 @@ const DEV_GROUPS: Array[Dictionary] = [
 			{"title": "Playground", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": PLAYGROUND, "weapon": "bazooka", "all_weapons": true},
 			{"title": "Spike Trap", "difficulty": 2, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_spike_trap_prototype.tscn", "weapon": "bazooka", "all_weapons": true},
 			{"title": "Sky Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_sky_station_2.tscn", "weapon": "fork_cannon", "requires": "ranged"},
+			{"title": "Aviator Gunship", "difficulty": 3, "label": "Dev", "art": Art.BOSS, "scene": "res://src/world/levels/world_local_aviator_gunship_boss.tscn", "weapon": "fork_cannon", "requires": "ranged"},
 			{"title": "Rotor Decks II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks_2.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Space Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station_2.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
+			{"title": "Storm Isles", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_storm_isles.tscn", "weapon": "saw"},
 		],
 	},
 ]

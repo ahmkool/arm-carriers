@@ -1,0 +1,88 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/storm_isles/rain.gd" id="1_rain"]
+[ext_resource type="Shader" path="res://src/world/elements/storm_isles/rain_drop.gdshader" id="2_drop"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_drops"]
+emission_shape = 3
+emission_box_extents = Vector3(24, 0.5, 20)
+direction = Vector3(0.1, -1, 0.04)
+spread = 2.0
+initial_velocity_min = 22.0
+initial_velocity_max = 26.0
+gravity = Vector3(0, 0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_drops"]
+render_priority = 0
+shader = ExtResource("2_drop")
+
+[sub_resource type="QuadMesh" id="QuadMesh_drop"]
+material = SubResource("ShaderMaterial_drops")
+size = Vector2(0.035, 1.6)
+
+[sub_resource type="Curve" id="Curve_splash"]
+_data = [Vector2(0, 0.3), 0.0, 1.6, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_splash"]
+curve = SubResource("Curve_splash")
+
+[sub_resource type="Gradient" id="Gradient_splash_fade"]
+colors = PackedColorArray(1, 1, 1, 0.8, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_splash_fade"]
+gradient = SubResource("Gradient_splash_fade")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_splashes"]
+emission_shape = 4
+gravity = Vector3(0, 0, 0)
+scale_min = 0.35
+scale_max = 0.6
+scale_curve = SubResource("CurveTexture_splash")
+color_ramp = SubResource("GradientTexture1D_splash_fade")
+
+[sub_resource type="Gradient" id="Gradient_ring"]
+offsets = PackedFloat32Array(0, 0.6, 0.8, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 0.15, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_ring"]
+gradient = SubResource("Gradient_ring")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_splash"]
+transparency = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.85, 0.9, 1, 0.6)
+albedo_texture = SubResource("GradientTexture2D_ring")
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_splash"]
+material = SubResource("StandardMaterial3D_splash")
+orientation = 1
+
+[node name="Rain" type="Node3D"]
+script = ExtResource("1_rain")
+
+[node name="Drops" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 1800
+lifetime = 0.65
+preprocess = 0.7
+visibility_aabb = AABB(-30, -24, -30, 60, 30, 60)
+local_coords = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_drops")
+draw_pass_1 = SubResource("QuadMesh_drop")
+
+[node name="Splashes" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+lifetime = 0.3
+preprocess = 0.3
+process_material = SubResource("ParticleProcessMaterial_splashes")
+draw_pass_1 = SubResource("QuadMesh_splash")

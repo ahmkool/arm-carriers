@@ -190,6 +190,19 @@ func reach_test(mage: EnemyLocal, side: String, inset: float, lateral: float = 2
 	return is_dead(mage)
 
 
+## Walks both carriers north over the exit bridge until the turret mages appear, then waits out their spawn-in.
+## True when all nine appeared, the arena is framed, and both carriers stand on it.
+func walk_into_arena() -> bool:
+	var e := arena_edges()
+	for p in players():
+		Input.action_press(p.action_up)
+	var woke := await wait_until(func(): return living_mages().size() == 9 and focal_count() == 4, 10.0)
+	for p in players():
+		Input.action_release(p.action_up)
+	await wait(2.5)
+	return woke and players().all(func(p): return p.global_position.z > e.north and p.global_position.z < e.south and absf(p.global_position.y + 1.0) < 0.5)
+
+
 func _run() -> void:
 	var ok: bool = await wait_until(func(): return state() == "playing", 45.0)
 	check("reaches Playing", ok, state())
@@ -202,8 +215,11 @@ func _run() -> void:
 	protect_players()
 	var e := arena_edges()
 
-	# ---- Spawn. ----
+	# ---- Spawn: on the labyrinth's exit island, with no turret mages until both carriers walk onto the arena. ----
 	check("the arena section starts at CheckpointStart", cp() == "CheckpointStart", cp())
+	check("CheckpointStart is on the exit island, before the bridge", players().all(func(p): return p.global_position.z > e.south), str(players().map(func(p): return p.global_position)))
+	check("no turret mage before the carriers arrive", living_mages().is_empty() and focal_count() == 0, "%d alive, %d focal" % [living_mages().size(), focal_count()])
+	check("real input: over the bridge onto the arena wakes the mages", await walk_into_arena())
 	var list := players()
 	var on_floor := list.all(func(p): return p.global_position.x > e.west and p.global_position.x < e.east and p.global_position.z > e.north and p.global_position.z < e.south and absf(p.global_position.y - -1.0) < 0.5)
 	check("both carriers stand on the arena", on_floor, "%s %s" % [list[0].global_position, list[1].global_position])
@@ -283,7 +299,7 @@ func _run() -> void:
 	await wait(1.5)
 	protect_players()
 	var after := players()
-	check("a death after the fight respawns in the courtyard", cp() == "Checkpoint" and after.all(func(p): return p.global_position.z < courtyard_z), "%s, z %.1f" % [cp(), after[0].global_position.z])
+	check("a death after the fight respawns on the arena, before the bridge", cp() == "Checkpoint" and after.all(func(p): return p.global_position.z > e.north and p.global_position.z < e.south), "%s, z %.1f" % [cp(), after[0].global_position.z])
 	check("... with the bridge still up and the mages gone", bridge_y(2) > -2.0 and mages().all(func(m): return not m.is_alive()), "%d alive" % living_mages().size())
 	check("... and the survival hold waiting", world.get_node("Enemies/SurvivalEnemyGroup/Enemies").get_child_count() == 0)
 
@@ -294,8 +310,9 @@ func _run() -> void:
 	await wait(2.0)
 	protect_players()
 	var back := players()
-	check("a death in the arena respawns there", cp() == "CheckpointStart" and back.all(func(p): return p.global_position.z > e.north), cp())
-	check("... with nine mages again and the camera framed", living_mages().size() == 9 and focal_count() == 4, "%d alive, %d focal" % [living_mages().size(), focal_count()])
+	check("a death in the arena respawns on the exit island", cp() == "CheckpointStart" and back.all(func(p): return p.global_position.z > e.south), cp())
+	check("... with no mages until they walk in", living_mages().is_empty() and focal_count() == 0, "%d alive, %d focal" % [living_mages().size(), focal_count()])
+	check("... then nine mages again and the camera framed", await walk_into_arena() and focal_count() == 4, "%d alive, %d focal" % [living_mages().size(), focal_count()])
 	await shot("05_after_respawn.png")
 
 	print("RESULT fails=", fails)

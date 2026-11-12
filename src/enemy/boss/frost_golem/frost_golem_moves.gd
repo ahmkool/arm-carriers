@@ -90,6 +90,7 @@ func _spawn_spike(point: Vector3) -> void:
 	if not is_instance_valid(_enemy) or not _enemy.is_alive():
 		return
 	var spike := spike_scene.instantiate() as Node3D
+	spike.add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
 	get_tree().current_scene.add_child(spike)
 	spike.global_position = Vector3(point.x, _enemy.global_position.y, point.z)
 

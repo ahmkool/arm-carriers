@@ -158,6 +158,7 @@ func _launch_glob(exhaust: Node3D, target: Vector3) -> void:
 	if not is_instance_valid(_enemy) or not _enemy.is_alive():
 		return
 	var glob := slag_scene.instantiate() as SlagGlob
+	glob.add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
 	get_tree().current_scene.add_child(glob)
 	var landing := _onto_floor(target)
 	glob.global_position = Vector3(landing.x, _enemy.global_position.y, landing.z)

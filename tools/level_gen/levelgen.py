@@ -30,6 +30,7 @@ LIBRARIES = {
     "decks": ("src/world/elements/sky_decks/deck_tiles.tres", None),  # planks
     "snow": ("src/world/elements/snow/snow_tiles.tres", None),  # snow, ice and snowy props; built by build_snow_tiles.gd
     "space": ("src/world/elements/space/space_tiles.tres", None),  # station plating; built by build_space_tiles.gd
+    "isles": ("src/world/elements/storm_isles/isle_tiles.tres", None),  # wet dungeon stone in the sea; built by build_isle_tiles.gd
 }
 WEAPONS = {
     "bazooka": ("uid://cq5v348mrgy7q", "res://src/weapon/bazooka.tscn"),
@@ -118,6 +119,28 @@ fog_enabled = true
 fog_light_color = Color(0.78, 0.86, 0.96, 1)
 fog_density = 0.003
 fog_sky_affect = 0.3"""
+ENVIRONMENT_STORM = """background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 3
+ambient_light_color = Color(0.62, 0.68, 0.78, 1)
+ambient_light_sky_contribution = 0.55
+ambient_light_energy = 0.7
+tonemap_mode = 3
+fog_enabled = true
+fog_light_color = Color(0.46, 0.52, 0.6, 1)
+fog_density = 0.006
+fog_sky_affect = 0.4"""
+# Grey, not dark: the saw's blade reflects the sky, and a dark one turns it black.
+SKY_STORM = """[sub_resource type="ProceduralSkyMaterial" id="PanoramaSkyMaterial_sky"]
+sky_top_color = Color(0.34, 0.38, 0.44, 1)
+sky_horizon_color = Color(0.48, 0.52, 0.58, 1)
+sky_curve = 0.2
+ground_bottom_color = Color(0.2, 0.24, 0.28, 1)
+ground_horizon_color = Color(0.48, 0.52, 0.58, 1)
+sun_angle_max = 0.0"""
+WATER_Y = -4.6065345
+ROCK_SCALE = 6  # the hill rocks are 0.2 to 0.9 m across: this makes them sea stacks
+ROCK_SINK = 1.0  # how far a sea rock's base sits under the water
 LAVA_Y = -4.6  # lava_rock.gdshader's lava_y must match
 LAVA_FALL_Y = -9.6  # puts the top of the kill box at the lava's surface
 
@@ -299,9 +322,12 @@ class Level:
             props["forces_vent_prompt"] = "true"
         self.node("EnemyShield", enemy_path, "Node3D", props=props)
 
-    def mage(self, group, name, cx, cz, cast_max=14.0, cooldown=3.0, shielded=False, holds_position=False):
+    def mage(self, group, name, cx, cz, cast_max=14.0, cooldown=3.0, shielded=False, holds_position=False,
+             wave=None, cooldown_jitter=0.0):
         """Stationary mage. Keep cast_max short enough that anything able to fire is on screen.
-        shielded: an EnemyShield bubble, as for melee. holds_position: hits don't knock it back either."""
+        shielded: an EnemyShield bubble, as for melee. holds_position: hits don't knock it back either.
+        wave: (fewest, most) shots per cast, picked at random each cast; needs a "Casting" state (the robot gunner
+        has one). cooldown_jitter: each wait between casts is cooldown plus or minus up to this, at random."""
         wx, wz = world(cx, cz)
         parent = f"Enemies/{group}/InstancedEnemies"
         props = {"transform": tf(wx, 0, wz), "is_offensive": "false"}
@@ -309,7 +335,11 @@ class Level:
             props["holds_position"] = "true"
         self.node(name, parent, instance=self.mage_scene, props=props)
         self.node("MageBehavior", f"{parent}/{name}", "Node", props={
-            "script": 'ExtResource("mage_behavior")', "mobility": "1", "cast_max_distance": fmt_decimal(cast_max), "cast_cooldown": fmt_decimal(cooldown)})
+            "script": 'ExtResource("mage_behavior")', "mobility": "1", "cast_max_distance": fmt_decimal(cast_max), "cast_cooldown": fmt_decimal(cooldown),
+            **({"cast_cooldown_jitter": fmt_decimal(cooldown_jitter)} if cooldown_jitter else {})})
+        if wave:
+            self.node("Casting", f"{parent}/{name}/EnemyStateMachine", props={
+                "shots_per_cast_min": str(wave[0]), "shots_per_cast_max": str(wave[1])})
         if shielded:
             self._add_shield(f"{parent}/{name}")
 
@@ -325,16 +355,19 @@ class Level:
             self.node(f"Node3D{index}", "Enemies/SurvivalEnemyGroup/SpawnPoints", "Node3D", props={"transform": tf(wx, 0, wz)})
 
     def checkpoints(self, entries, setter_marker, shooter_marker):
-        """entries: (name, cx, cz, arrays). Markers are local (x, z) offsets for each carrier's spawn."""
+        """entries: (name, cx, cz, arrays), or (name, cx, cz, arrays, (setter, shooter)) for a checkpoint with its own
+        markers, such as one facing another way. Markers are local (x, z) offsets for each carrier's spawn."""
         self.node("CheckpointManager", ".", "Node", paths=["current_checkpoint"], props={
             "script": 'ExtResource("cp_manager")', "current_checkpoint": 'NodePath("Checkpoint")'})
-        for name, cx, cz, arrays in entries:
+        for entry in entries:
+            name, cx, cz, arrays = entry[:4]
+            setter, shooter = entry[4] if len(entry) > 4 else (setter_marker, shooter_marker)
             wx, wz = world(cx, cz)
             props = {"transform": tf(wx, CHECKPOINT_Y, wz), "script": 'ExtResource("checkpoint")'}
             props.update({key: node_paths(value) for key, value in arrays.items()})
             self.node(name, "CheckpointManager", "Node3D", paths=list(arrays.keys()) or None, props=props)
-            self.node("PositionDirectionSetter", f"CheckpointManager/{name}", "Marker3D", props={"transform": tf(setter_marker[0], 0, setter_marker[1])})
-            self.node("PositionShooter", f"CheckpointManager/{name}", "Marker3D", props={"transform": tf(shooter_marker[0], 0, shooter_marker[1])})
+            self.node("PositionDirectionSetter", f"CheckpointManager/{name}", "Marker3D", props={"transform": tf(setter[0], 0, setter[1])})
+            self.node("PositionShooter", f"CheckpointManager/{name}", "Marker3D", props={"transform": tf(shooter[0], 0, shooter[1])})
 
     def build_floor(self, floor, mouths, ice=frozenset(), props=None):
         """ice: cells that get the library's "Ice_" tile instead. props: {cell: (item, rotation)} replacing the top tile."""
@@ -726,6 +759,49 @@ class Level:
             cells = self.build_floor(shape, set())
             cells.update({(cx, -1, cz): (self.items[item], rot) for (cx, cz), (item, rot) in scenery.items()})
             self.nodes.append(self._grid_map("Terrain", f"Level/Isles/{name}", cells, settings))
+
+    def use_storm_isles(self):
+        """Call before add_shell: overcast sky, a dim cool sun, stone bridges, and rain (added by add_isle_terrain)."""
+        self.environment = ENVIRONMENT_STORM
+        self.sky_material = SKY_STORM
+        self.sun_extra = {"light_color": "Color(0.8, 0.86, 0.96, 1)", "light_energy": "0.75"}
+        self.bridge_scene = (None, "res://src/world/elements/medieval/castle_bridge_platform.tscn")
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/dungeon/dungeon_brazier.tscn", "brazier"))
+        self.extra_ext.append(("PackedScene", None, "res://src/world/elements/storm_isles/rain.tscn", "rain"))
+        self.extra_ext.append(("Shader", "uid://1omvlp44jb2k", "res://water.gdshader", "water_shader"))
+        self.extra_sub_resources.append("""[sub_resource type="ShaderMaterial" id="ShaderMaterial_rain_water"]
+render_priority = 0
+shader = ExtResource("water_shader")
+shader_parameter/water_color = Color(0.1, 0.27, 0.36, 1)
+shader_parameter/foam_color = Color(0.72, 0.8, 0.88, 1)
+shader_parameter/rain_ripples = 0.45""")
+
+    def add_isle_terrain(self, floor, pillars, walls, fall_z, water_z, rocks=(), fall_x=0, water_x=1.5):
+        """Stone blocks standing in the sea. pillars: {cell: "Pillar" or "PillarBroken"}; walls: cells with a low wall.
+        Both stand on a floor cell, one layer up, and block movement. rocks: (x, z, name, rotation) in metres,
+        scenery in the sea with no collision, ROCK_SCALE times the rocks' size (snapped to an 18 m grid)."""
+        assert set(pillars) <= floor and set(walls) <= floor, "pillars and walls stand on floor cells"
+        cells = {(x, -1, z): (self.items["Floor"], 0) for x, z in floor}
+        cells.update({(x, 0, z): (self.items[name], 0) for (x, z), name in pillars.items()})
+        cells.update({(x, 0, z): (self.items["WallLow"], 0) for x, z in walls})
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, -6.726822, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(fall_x, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.node("Water", "Level", instance="water", props={
+            "transform": tf(water_x, WATER_Y, water_z, "2, 0, 0, 0, 1, 0, 0, 0, 1.7"), "material_override": 'SubResource("ShaderMaterial_rain_water")'})
+        if rocks:
+            # The rock meshes stand on their own base, but a GridMap cell's centre is 1 m above its layer's floor, so
+            # the node drops by that (scaled) metre too: the rocks' bases end up ROCK_SINK under the water.
+            scale = ROCK_SCALE
+            self.node("SeaRocks", "Level", "Node3D", props={"transform": tf(0, WATER_Y - ROCK_SINK - scale, 0, f"{scale}, 0, 0, 0, {scale}, 0, 0, 0, {scale}")})
+            rock_cells = {(round(x / scale / CELL - 0.5), 0, round(z / scale / CELL - 0.5)): (self.items[name], rot) for x, z, name, rot in rocks}
+            self.nodes.append(self._grid_map("Rocks", "Level/SeaRocks", rock_cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+        self.node("Rain", "Level", instance="rain", paths=["floor_grid", "lightning_light"], props={
+            "floor_grid": 'NodePath("../NavigationRegion3D/GridMapFloor")', "lightning_light": 'NodePath("../../DirectionalLight3D")'})
+        self.node("Events", "Level", "Node")
 
     def add_braziers(self, cells):
         self.node("Braziers", "Level", "Node")

@@ -158,6 +158,7 @@ func _fire_bolt(direction: Vector3) -> void:
 
 func _spawn_grave(at_position: Vector3) -> void:
 	var grave := grave_scene.instantiate() as Node3D
+	grave.add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
 	get_tree().current_scene.add_child(grave)
 	grave.global_position = Vector3(at_position.x, _enemy.global_position.y, at_position.z)
 

@@ -219,6 +219,17 @@ func walk_route(label: String, corners: Array) -> void:
 		"leader %s, follower %s, lowest y %.2f, state %s" % [island_of(leader.global_position), island_of(follower.global_position), lowest, state()])
 
 
+## Walks both carriers north from the skull platform until the labyrinth's enemies appear, then waits out their
+## spawn-in. True when all of them appeared with both carriers on the start island.
+func walk_onto_start_island() -> bool:
+	for p in players():
+		Input.action_press(p.action_up)
+	var woke := await wait_until(func(): return group_living(MAGES).size() == 9 and group_living(SKELETONS).size() == 10, 10.0)
+	release_moves()
+	await wait(2.5)
+	return woke and players().all(func(p): return island_of(p.global_position) == "Start")
+
+
 func _run() -> void:
 	var ok: bool = await wait_until(func(): return state() == "playing", 45.0)
 	check("reaches Playing", ok, state())
@@ -230,8 +241,11 @@ func _run() -> void:
 	await wait(2.0)
 	protect_players()
 
-	# ---- Spawn. ----
+	# ---- Spawn: on the skull platform, with the labyrinth empty until both carriers step onto its first island. ----
 	check("the labyrinth starts at CheckpointLabyrinth", cp() == "CheckpointLabyrinth", cp())
+	check("CheckpointLabyrinth is on the skull platform", players().all(func(p): return p.global_position.z > 132.0), str(players().map(func(p): return p.global_position)))
+	check("no labyrinth enemy before the carriers arrive", group_living(MAGES).is_empty() and group_living(SKELETONS).is_empty())
+	check("real input: over the skull bridge onto the start island wakes the labyrinth", await walk_onto_start_island())
 	var list := players()
 	check("both carriers on the start island", list.all(func(p): return island_of(p.global_position) == "Start" and absf(p.global_position.y + 1.0) < 0.3),
 		"%s %s" % [list[0].global_position, list[1].global_position])
@@ -313,16 +327,18 @@ func _run() -> void:
 	await wait_until(func(): return state() == "playing", 20.0)
 	await wait(1.5)
 	protect_players()
-	check("a death in the arena respawns there", cp() == "CheckpointStart" and players().all(func(p): return p.global_position.z < 45.0), cp())
+	check("a death in the arena respawns on the exit island, before its bridge", cp() == "CheckpointStart" and players().all(func(p): return island_of(p.global_position) == "Exit"), cp())
 	check("... with the labyrinth cleared and its bridge up", group_living(MAGES).is_empty() and group_living(SKELETONS).is_empty() and platform_y("Level/Bridges/LabyrinthExitPlatform2") > -1.5)
-	check("... and the arena framed", focal_count() == 4, str(focal_count()))
+	check("... and the arena not framed until they walk in", focal_count() == 0, str(focal_count()))
 
 	world.checkpoint_manager.set_current_checkpoint(world.get_node("CheckpointManager/CheckpointLabyrinth"))
 	gsm.transition_to("resettingcheckpoint")
 	await wait_until(func(): return state() == "playing", 20.0)
 	await wait(1.5)
 	protect_players()
-	check("a death in the labyrinth respawns on the start island", cp() == "CheckpointLabyrinth" and players().all(func(p): return island_of(p.global_position) == "Start"), cp())
+	check("a death in the labyrinth respawns on the skull platform", cp() == "CheckpointLabyrinth" and players().all(func(p): return p.global_position.z > 132.0), cp())
+	check("... with the labyrinth empty", group_living(MAGES).is_empty() and group_living(SKELETONS).is_empty())
+	check("... until they walk onto the start island", await walk_onto_start_island())
 	check("... with every mage and skeleton back", group_living(MAGES).size() == 9 and group_living(SKELETONS).size() == 10, "%d mages, %d skeletons" % [group_living(MAGES).size(), group_living(SKELETONS).size()])
 	# The arena bridge stays up here: the driver stepped back a checkpoint, which the game never does.
 	check("... with the walkways up and no framing", walk_platforms().all(func(p): return platform_y(String(world.get_path_to(p))) > -1.5) and focal_count() == 0, "focal %d" % focal_count())

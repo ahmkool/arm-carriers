@@ -5,6 +5,8 @@ extends SceneTree
 ## BAKE_PLATFORMS_UNDER names a node whose children are walkway platforms (bridge platforms that stay raised):
 ## each adds a flat floor cell (item BAKE_PLATFORM_ITEM, default 62, the castle tiles' flat top) where it stands,
 ## so the navmesh runs over the walkways too.
+## Children of the navigation region with the metadata `bake_walkways` (true) are baked too, as they stand: decks
+## that aren't GridMap tiles, such as narrow wooden tracks, so enemies can walk them.
 ## Run through godot.sh. Compile errors about autoloads are expected in --script mode and harmless here:
 ## the scene is only instantiated, not added to the tree, so no gameplay script runs.
 
@@ -22,6 +24,9 @@ func _initialize() -> void:
 	region.add_child(source)
 	if OS.get_environment("FLOOR_GRIDMAP").is_empty():
 		for child in level.get_node("Level/NavigationRegion3D").get_children():
+			if child.get_meta("bake_walkways", false):
+				region.add_child(child.duplicate())
+				continue
 			if child is not GridMap or child.name == "GridMapFloor":
 				continue
 			var extra := (child as GridMap).duplicate() as GridMap

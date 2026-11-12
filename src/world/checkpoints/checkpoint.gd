@@ -10,6 +10,9 @@ const LEVEL_COLLISION_LAYER := 4
 const FLOOR_PROBE_UP := 1.5
 const FLOOR_PROBE_DOWN := 12.0
 const FLOOR_HEIGHT_TOLERANCE := 0.6
+## Enemy shots and hazards still in flight. All are freed on respawn, so none from before the
+## carriers died can hit them where they reappear.
+const ENEMY_PROJECTILE_GROUP := &"enemy_projectile"
 
 @export var checkpoint_id: String = ""
 @export var order: int = 0
@@ -39,6 +42,7 @@ func get_spawn_transform() -> Transform3D:
 
 func set_world_at_checkpoint_state():
 	_clear_camera_focal_points()
+	get_tree().call_group(ENEMY_PROJECTILE_GROUP, "queue_free")
 	for event in events_completed:
 		event._complete_event()
 	for enemy_group in enemy_groups_defeated:

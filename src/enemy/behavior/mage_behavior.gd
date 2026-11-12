@@ -12,6 +12,8 @@ enum Mobility {
 @export var cast_min_distance := 5.0
 @export var cast_max_distance := 30.0
 @export var cast_cooldown := 2.5
+## Each wait between casts is cast_cooldown plus or minus up to this many seconds, at random.
+@export var cast_cooldown_jitter := 0.0
 
 var _cast_cooldown_remaining := 0.0
 
@@ -76,7 +78,7 @@ func _apply_cast_band_intent(toward_player: Vector3) -> void:
 	if _cast_cooldown_remaining > 0.0:
 		return
 	intent.requested_locomotion = &"casting"
-	_cast_cooldown_remaining = cast_cooldown
+	_cast_cooldown_remaining = maxf(0.0, cast_cooldown + randf_range(-cast_cooldown_jitter, cast_cooldown_jitter))
 
 
 func _set_flee_intent(toward_player: Vector3) -> void:

@@ -283,13 +283,14 @@ func _run() -> void:
 		"z %.1f / %.1f, lowest y %.2f, state %s" % [list[1].global_position.z, list[0].global_position.z, lowest[0], state()])
 	await shot("04_start_island.png")
 
-	# ---- A death in the labyrinth respawns on its start island, with the platform behind done. ----
+	# ---- A death in the labyrinth respawns on the skull platform, where the checkpoint was earned, with it done. ----
 	gsm.transition_to("resettingcheckpoint")
 	await wait_until(func(): return state() == "playing", 20.0)
 	await wait(3.0)
 	protect_players()
-	check("a death in the labyrinth respawns on the start island", cp() == "CheckpointLabyrinth" and players().all(on_start_island), cp())
+	check("a death in the labyrinth respawns on the skull platform", cp() == "CheckpointLabyrinth" and players().all(on_platform), cp())
 	check("... with the skull bridge up and no wave", platform_y("Level/Bridges/SkullBridgePlatform2") > -1.5 and not wave().is_running() and skulls().is_empty())
+	check("... and no framing", (world.get_node("CameraFollowRig") as CameraFollowRig)._extra_focal_nodes.is_empty())
 
 	print("RESULT fails=", fails)
 	get_tree().quit(1 if fails > 0 else 0)

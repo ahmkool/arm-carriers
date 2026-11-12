@@ -15,6 +15,9 @@ var _time_alive := 0.0
 var _spent := false
 var _disappear_started := false
 
+func _ready() -> void:
+	add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
+
 func launch(initial_velocity: Vector3) -> void:
 	velocity = initial_velocity
 	if velocity.length_squared() > 0.0001:

@@ -74,6 +74,8 @@ func _apply_checkpoint_reset() -> void:
 	if players == null:
 		push_error("ResettingCheckpointState: players is not found")
 		return
+	# Again at world reset; this clears shots before the carriers stand at the checkpoint.
+	world.get_tree().call_group(Checkpoint.ENEMY_PROJECTILE_GROUP, "queue_free")
 	players.reset_players_to_spawn()
 
 	# Move active weapon to starting position.

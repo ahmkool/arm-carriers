@@ -21,12 +21,14 @@ Played with the pulse rifle. Being built section by section.
    stand on an island behind a flat cover shield (with a short return at its east end), so no bolt can reach them
    straight. East of them, on the carriers' right, a flat shield stands at 45 degrees: a bolt fired south at it
    turns 90 degrees and runs west along a row of gunners. Where along the bank it lands picks the row, so the
-   carriers strafe to reach both. Landing frames the island and wakes the gunners; once all four are down,
-   Checkpoint5 is set and a bridge projects east.
+   carriers strafe to reach both. Landing frames the island, wakes the gunners and starts 40 s of shielded robots
+   that run at the carriers, one every 6 s. Once the wave is over and all four gunners are down, Checkpoint5 is set
+   and a bridge projects east.
 5. The crossfire. Deck 5 has the same island to its south and another to its north: the south island turned 180
    degrees about the deck's centre, so its bank stands on the carriers' left (west). The carriers have to turn round
-   to bank shots both ways while both islands fire at them. Once all eight gunners are down, Checkpoint6 is set and
-   a bridge projects east.
+   to bank shots both ways while both islands fire at them, with another 40 s wave of shielded robots. Once the
+   wave is over and all eight gunners are down, Checkpoint6 is set and a bridge projects east.
+Every gunner fires waves of 2 or 3 laser bolts, with a random 2.5 to 4.5 s between waves.
 6. Placeholder: the next deck, east of deck 5, with the end area, until the rest of the level is designed.
 
 Run from the project root; see docs/level-creation-for-agents.md.
@@ -213,6 +215,19 @@ ISLAND_SHIELDS = (
 
 # Sections 4 and 5. From deck 4 the gunners are 10 to 27 m away.
 BANK_GUNNER_RANGE = 24.0
+# Every gunner in the level fires waves of 2 or 3 laser bolts, with GUNNER_COOLDOWN +/- this between waves.
+GUNNER_WAVE = (2, 3)
+GUNNER_COOLDOWN_JITTER = 1.0
+# While each bank fight lasts, shielded robots run at the carriers: one every 6 s for 40 s. They spawn on the deck's
+# far side from the gunners (deck 5: either end, off its landings and lanes), so they come at the carriers' backs.
+BANK_SURVIVAL_SECONDS = 40
+BANK_SURVIVAL_INTERVAL = 6.0
+BANK_SURVIVAL_SPAWNS = {
+    "BankSurvival": ((6, -42), (8, -42), (9, -42), (11, -42)),
+    "CrossfireSurvival": ((15, -41), (17, -41), (18, -39), (20, -39)),
+}
+assert set(BANK_SURVIVAL_SPAWNS["BankSurvival"]) <= DECK4 and set(BANK_SURVIVAL_SPAWNS["CrossfireSurvival"]) <= DECK5
+assert not {c for cells in BANK_SURVIVAL_SPAWNS.values() for c in cells} & (set(PROPS) | LANDINGS)
 BANK_SECTIONS = (  # (group, geometry, the deck it is fought from)
     ("BankGunners", BANK4, DECK4),
     ("CrossfireSouth", CROSSFIRE_SOUTH, DECK5),
@@ -320,6 +335,11 @@ level.curve = (SURVIVAL_INTERVAL, SURVIVAL_INTERVAL)  # one robot every 3 s for 
 level.boxes = {"fall": (400, 1, 400), "deck2": (27, 3, 6), "deck3": (27, 3, 6), "bankdeck": (6, 3, 15), "end": (9, 3, 9)}
 level.extra_ext.append(("Script", None, "res://src/events/groups_defeated_gate.gd", "groups_gate"))
 level.extra_ext.append(("PackedScene", None, "res://src/enemy/shield/flat_shield.tscn", "flat_shield"))
+level.extra_ext.append(("PackedScene", None, "res://src/enemy/enemy_robot_shielded.tscn", "robot_shielded"))
+level.extra_sub_resources.append(f"""[sub_resource type="Curve" id="Curve_survival_bank"]
+_limits = [0.0, {BANK_SURVIVAL_INTERVAL:.1f}, 0.0, 1.0]
+_data = [Vector2(0, {BANK_SURVIVAL_INTERVAL:.1f}), 0.0, 0.0, 0, 0, Vector2(1, {BANK_SURVIVAL_INTERVAL:.1f}), 0.0, 0.0, 0, 0]
+point_count = 2""")
 level.add_shell()
 # Framings only. The camera zooms out 0.6 m per metre its focal points spread from their middle, up to this limit.
 # The crossfire's framing corners stand a few cells past its two islands to zoom out about 19 m, which the default
@@ -329,6 +349,23 @@ rig_index = next(i for i, n in enumerate(level.nodes) if n.startswith('[node nam
 level.nodes[rig_index] += f"\nmax_zoom_out = {MAX_ZOOM_OUT:.1f}"
 
 # ---- Enemies. ----
+def survival(name, cells, seconds, curve, scene):
+    """A survival wave beside the hold's, which levelgen's survival_group() names and builds alone."""
+    level.node(name, "Enemies", "Node3D", props={
+        "script": 'ExtResource("survival_group")', "spawn_interval_curve": f'SubResource("{curve}")',
+        "fight_duration": f"{seconds:.1f}", "enemy_scene": f'ExtResource("{scene}")'})
+    level.node("Enemies", f"Enemies/{name}", "Node3D")
+    level.node("SpawnPoints", f"Enemies/{name}", "Node3D")
+    for index, (cx, cz) in enumerate(cells, 1):
+        sx, sz = world(cx, cz)
+        level.node(f"Node3D{index}", f"Enemies/{name}/SpawnPoints", "Node3D", props={"transform": tf(sx, 0, sz)})
+
+
+def gunner(group, index, cx, cz, cast_max, shielded=False):
+    level.mage(group, f"EnemyRobotGunner{index}", cx, cz, cast_max=cast_max, cooldown=GUNNER_COOLDOWN, shielded=shielded,
+               holds_position=True, wave=GUNNER_WAVE, cooldown_jitter=GUNNER_COOLDOWN_JITTER)
+
+
 level.enemy_group("EnemyGroup")  # the warm-up: never woken
 for pack, ((px, pz), (sx, sz)) in enumerate(PACKS, 1):
     for letter, (dx, dz) in zip("ab", PAIR_OFFSETS):
@@ -337,27 +374,19 @@ for pack, ((px, pz), (sx, sz)) in enumerate(PACKS, 1):
 level.survival_group(SURVIVAL_SPAWNS, duration=SURVIVAL_SECONDS)  # the hold's chasers
 level.enemy_group("Gunners", spawn_on_trigger=True)  # the hold's corners
 for index, (cx, cz) in enumerate(GUNNERS, 1):
-    level.mage("Gunners", f"EnemyRobotGunner{index}", cx, cz, cast_max=GUNNER_RANGE, cooldown=GUNNER_COOLDOWN,
-               shielded=True, holds_position=True)
+    gunner("Gunners", index, cx, cz, GUNNER_RANGE, shielded=True)
 # Section 3: the second survival wave, on the carriers' half, at the same one robot every 3 s.
-level.node("SurvivalEnemyGroup2", "Enemies", "Node3D", props={
-    "script": 'ExtResource("survival_group")', "spawn_interval_curve": 'SubResource("Curve_survival")',
-    "fight_duration": f"{SURVIVAL2_SECONDS:.1f}", "enemy_scene": 'ExtResource("robot")'})
-level.node("Enemies", "Enemies/SurvivalEnemyGroup2", "Node3D")
-level.node("SpawnPoints", "Enemies/SurvivalEnemyGroup2", "Node3D")
-for index, (cx, cz) in enumerate(SURVIVAL2_SPAWNS, 1):
-    sx, sz = world(cx, cz)
-    level.node(f"Node3D{index}", "Enemies/SurvivalEnemyGroup2/SpawnPoints", "Node3D", props={"transform": tf(sx, 0, sz)})
+survival("SurvivalEnemyGroup2", SURVIVAL2_SPAWNS, SURVIVAL2_SECONDS, "Curve_survival", "robot")
 level.enemy_group("IslandGunners", spawn_on_trigger=True)
 for index, (cx, cz) in enumerate(ISLAND_GUNNERS, 1):
-    level.mage("IslandGunners", f"EnemyRobotGunner{index}", cx, cz, cast_max=ISLAND_GUNNER_RANGE, cooldown=GUNNER_COOLDOWN,
-               holds_position=True)
-# Sections 4 and 5: the bank islands' gunners, unshielded but out of straight reach.
+    gunner("IslandGunners", index, cx, cz, ISLAND_GUNNER_RANGE)
+# Sections 4 and 5: the bank islands' gunners, unshielded but out of straight reach, and the shielded chasers.
 for group, geometry, _ in BANK_SECTIONS:
     level.enemy_group(group, spawn_on_trigger=True)
     for index, (cx, cz) in enumerate(geometry["gunners"], 1):
-        level.mage(group, f"EnemyRobotGunner{index}", cx, cz, cast_max=BANK_GUNNER_RANGE, cooldown=GUNNER_COOLDOWN,
-                   holds_position=True)
+        gunner(group, index, cx, cz, BANK_GUNNER_RANGE)
+for name, cells in BANK_SURVIVAL_SPAWNS.items():
+    survival(name, cells, BANK_SURVIVAL_SECONDS, "Curve_survival_bank", "robot_shielded")
 
 
 # ---- Checkpoints. Each one's arrays describe the world as it is once the previous fight is won. ----
@@ -376,8 +405,8 @@ def checkpoint(name, cx, cz, opened=(), reset=(), defeated=(), react=(), done=()
 SECTION1 = ["EnemyGroup"]
 SECTION2 = ["SurvivalEnemyGroup", "Gunners"]
 SECTION3 = ["SurvivalEnemyGroup2", "IslandGunners"]
-SECTION4 = ["BankGunners"]
-SECTION5 = ["CrossfireSouth", "CrossfireNorth"]
+SECTION4 = ["BankGunners", "BankSurvival"]
+SECTION5 = ["CrossfireSouth", "CrossfireNorth", "CrossfireSurvival"]
 level.checkpoints([
     checkpoint("Checkpoint", 0, 3, react=[T]),
     checkpoint("Checkpoint2", 0, -6, ["OpenBridge1"], SECTION2, SECTION1, [T]),
@@ -456,7 +485,8 @@ level.node("IslandCleared", "Level/Events", "Node", paths=["next_event", "groups
     "also_trigger": node_paths(["../UnfocusCamera"])})
 level.bridge_event("OpenBridge3", 3)
 level.bridge_event("CloseBridge3", 3, True, "MakeBankGunnersOffensive")
-offensive("MakeBankGunnersOffensive", "BankGunners")
+offensive("MakeBankGunnersOffensive", "BankGunners", "StartBankSurvival")
+offensive("StartBankSurvival", "BankSurvival")
 level.node("BankCleared", "Level/Events", "Node", paths=["next_event", "groups", "checkpoint", "also_trigger"], props={
     "script": 'ExtResource("groups_gate")', "next_event": 'NodePath("../OpenBridge4")',
     "groups": node_paths(["../../../Enemies/" + g for g in SECTION4]),
@@ -465,7 +495,8 @@ level.node("BankCleared", "Level/Events", "Node", paths=["next_event", "groups",
 level.bridge_event("OpenBridge4", 4)
 level.bridge_event("CloseBridge4", 4, True, "MakeCrossfireSouthOffensive")
 offensive("MakeCrossfireSouthOffensive", "CrossfireSouth", "MakeCrossfireNorthOffensive")
-offensive("MakeCrossfireNorthOffensive", "CrossfireNorth")
+offensive("MakeCrossfireNorthOffensive", "CrossfireNorth", "StartCrossfireSurvival")
+offensive("StartCrossfireSurvival", "CrossfireSurvival")
 level.node("CrossfireCleared", "Level/Events", "Node", paths=["next_event", "groups", "checkpoint", "also_trigger"], props={
     "script": 'ExtResource("groups_gate")', "next_event": 'NodePath("../OpenBridge5")',
     "groups": node_paths(["../../../Enemies/" + g for g in SECTION5]),

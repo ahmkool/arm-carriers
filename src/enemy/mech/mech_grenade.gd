@@ -56,6 +56,7 @@ func launch_flat(from: Vector3, to: Vector3, speed: float) -> void:
 
 
 func _ready() -> void:
+	add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
 	_ring.visible = false
 	_ring.scale = Vector3(blast_radius, 1.0, blast_radius)
 	_blink.visible = false

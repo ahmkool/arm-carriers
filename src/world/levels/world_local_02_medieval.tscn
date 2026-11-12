@@ -1,4 +1,4 @@
-[gd_scene load_steps=56 format=3 uid="uid://bfqc1csx5rwwp"]
+[gd_scene load_steps=57 format=3 uid="uid://bfqc1csx5rwwp"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_iifxy"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nixuq"]
@@ -111,6 +111,9 @@ size = Vector3(21.992, 4, 15.994)
 [sub_resource type="BoxShape3D" id="BoxShape3D_SkullArrival"]
 size = Vector3(6, 4, 6)
 
+[sub_resource type="BoxShape3D" id="BoxShape3D_LabyrinthArrival"]
+size = Vector3(12, 4, 9)
+
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("1_iifxy")
 aim_guide_color = Color(0.85, 0.12, 0.1, 0.5)
@@ -203,11 +206,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 41.358948, 0, 16.023647)
 
 [node name="MageTurretGroup" type="Node3D" parent="Enemies"]
 script = ExtResource("nm_group")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/MageTurretGroup"]
 
 [node name="WestMage1" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -0.75, 32.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.794, -0.75, 32.9875)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/WestMage1"]
 script = ExtResource("nm_behavior")
@@ -216,7 +220,7 @@ cast_max_distance = 14.0
 cast_cooldown = 7.0
 
 [node name="WestMage2" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -0.75, 37.4875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.794, -0.75, 37.4875)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/WestMage2"]
 script = ExtResource("nm_behavior")
@@ -225,7 +229,7 @@ cast_max_distance = 14.0
 cast_cooldown = 6.0
 
 [node name="WestMage3" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -0.75, 41.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.794, -0.75, 41.9875)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/WestMage3"]
 script = ExtResource("nm_behavior")
@@ -234,7 +238,7 @@ cast_max_distance = 14.0
 cast_cooldown = 8.0
 
 [node name="NorthMage1" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9985, -0.75, 22.19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9985, -0.75, 24.19)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/NorthMage1"]
 script = ExtResource("nm_behavior")
@@ -243,7 +247,7 @@ cast_max_distance = 14.0
 cast_cooldown = 6.0
 
 [node name="NorthMage2" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4985, -0.75, 22.19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4985, -0.75, 24.19)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/NorthMage2"]
 script = ExtResource("nm_behavior")
@@ -252,7 +256,7 @@ cast_max_distance = 14.0
 cast_cooldown = 8.0
 
 [node name="NorthMage3" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9985, -0.75, 22.19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9985, -0.75, 24.19)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/NorthMage3"]
 script = ExtResource("nm_behavior")
@@ -261,7 +265,7 @@ cast_max_distance = 14.0
 cast_cooldown = 7.0
 
 [node name="EastMage1" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -0.75, 32.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -0.75, 32.9875)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/EastMage1"]
 script = ExtResource("nm_behavior")
@@ -270,7 +274,7 @@ cast_max_distance = 14.0
 cast_cooldown = 8.0
 
 [node name="EastMage2" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -0.75, 37.4875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -0.75, 37.4875)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/EastMage2"]
 script = ExtResource("nm_behavior")
@@ -279,7 +283,7 @@ cast_max_distance = 14.0
 cast_cooldown = 7.0
 
 [node name="EastMage3" parent="Enemies/MageTurretGroup/InstancedEnemies" instance=ExtResource("nm_mage")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -0.75, 41.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -0.75, 41.9875)
 
 [node name="MageBehavior" type="Node" parent="Enemies/MageTurretGroup/InstancedEnemies/EastMage3"]
 script = ExtResource("nm_behavior")
@@ -289,6 +293,7 @@ cast_cooldown = 6.0
 
 [node name="LabyrinthMages" type="Node3D" parent="Enemies"]
 script = ExtResource("nm_group")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/LabyrinthMages"]
 
@@ -375,6 +380,7 @@ cast_cooldown = 4.5
 
 [node name="LabyrinthSkeletons" type="Node3D" parent="Enemies"]
 script = ExtResource("nm_group")
+spawn_on_trigger = true
 
 [node name="InstancedEnemies" type="Node3D" parent="Enemies/LabyrinthSkeletons"]
 
@@ -588,7 +594,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.995, 4, 179.14)
 script = ExtResource("14_lj4gk")
 events_completed = [NodePath("../../Level/Events/RaiseWalkways")]
 enemy_groups_reset = [NodePath("../../Enemies/Warmup"), NodePath("../../Enemies/Horde"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
-areas_to_reactivate = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/ArenaArrival")]
+areas_to_reactivate = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/LabyrinthArrival"), NodePath("../../Level/ArenaArrival")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointWarmup"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -602,7 +608,7 @@ script = ExtResource("14_lj4gk")
 events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenWarmupBridge")]
 enemy_groups_reset = [NodePath("../../Enemies/Horde"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
 enemy_groups_defeated = [NodePath("../../Enemies/Warmup")]
-areas_to_reactivate = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/ArenaArrival")]
+areas_to_reactivate = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/LabyrinthArrival"), NodePath("../../Level/ArenaArrival")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointHorde"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -616,7 +622,7 @@ script = ExtResource("14_lj4gk")
 events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
 enemy_groups_reset = [NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
 enemy_groups_defeated = [NodePath("../../Enemies/Horde"), NodePath("../../Enemies/Warmup")]
-areas_to_reactivate = [NodePath("../../Level/SkullArrival"), NodePath("../../Level/ArenaArrival")]
+areas_to_reactivate = [NodePath("../../Level/SkullArrival"), NodePath("../../Level/LabyrinthArrival"), NodePath("../../Level/ArenaArrival")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointSkulls"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -624,12 +630,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointSkulls"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 
-[node name="CheckpointLabyrinth" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 4, 120.5)
+[node name="CheckpointLabyrinth" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 4, 136.356)
 script = ExtResource("14_lj4gk")
 events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
 enemy_groups_reset = [NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/MageTurretGroup")]
-areas_to_reactivate = [NodePath("../../Level/ArenaArrival")]
+enemy_groups_defeated = [NodePath("../../Enemies/Warmup"), NodePath("../../Enemies/Horde"), NodePath("../../Enemies/SkullSurvival")]
+areas_to_reactivate = [NodePath("../../Level/LabyrinthArrival"), NodePath("../../Level/ArenaArrival")]
+areas_already_activated = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointLabyrinth"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -637,11 +645,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/CheckpointLabyrinth"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 
-[node name="CheckpointStart" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 4, 40)
+[node name="CheckpointStart" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, 4, 55.5)
 script = ExtResource("14_lj4gk")
-events_completed = [NodePath("../../Level/Events/FocusMagesNW"), NodePath("../../Level/Events/FocusMagesNE"), NodePath("../../Level/Events/FocusMagesSW"), NodePath("../../Level/Events/FocusMagesSE"), NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenLabyrinthExit"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
+events_completed = [NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenLabyrinthExit"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
 enemy_groups_reset = [NodePath("../../Enemies/MageTurretGroup")]
+enemy_groups_defeated = [NodePath("../../Enemies/Warmup"), NodePath("../../Enemies/Horde"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons")]
+areas_to_reactivate = [NodePath("../../Level/ArenaArrival")]
+areas_already_activated = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/LabyrinthArrival")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/CheckpointStart"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -650,13 +661,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 8.754402)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 4, 36)
 script = ExtResource("14_lj4gk")
 events_completed = [NodePath("../../Level/Events/OpenMageBridge"), NodePath("../../Level/Events/RaiseWalkways"), NodePath("../../Level/Events/OpenLabyrinthExit"), NodePath("../../Level/Events/OpenSkullBridge"), NodePath("../../Level/Events/OpenWarmupBridge"), NodePath("../../Level/Events/OpenHordeBridge")]
 enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup")]
 enemy_groups_defeated = [NodePath("../../Enemies/MageTurretGroup"), NodePath("../../Enemies/LabyrinthMages"), NodePath("../../Enemies/LabyrinthSkeletons"), NodePath("../../Enemies/SkullSurvival"), NodePath("../../Enemies/Warmup"), NodePath("../../Enemies/Horde")]
 areas_to_reactivate = [NodePath("../../Level/AllPlayersAreaTrigger")]
-areas_already_activated = [NodePath("../../Level/ArenaArrival"), NodePath("../../Level/SkullArrival")]
+areas_already_activated = [NodePath("../../Level/HordeArrival"), NodePath("../../Level/SkullArrival"), NodePath("../../Level/LabyrinthArrival"), NodePath("../../Level/ArenaArrival")]
 
 [node name="TriggerArea" type="Area3D" parent="CheckpointManager/Checkpoint"]
 
@@ -1528,6 +1539,18 @@ event_type = 1
 script = ExtResource("18_khskr")
 enemy_group = NodePath("../../../Enemies/Horde")
 
+[node name="WakeLabyrinthMages" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("18_khskr")
+enemy_group = NodePath("../../../Enemies/LabyrinthMages")
+
+[node name="WakeLabyrinthSkeletons" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("18_khskr")
+enemy_group = NodePath("../../../Enemies/LabyrinthSkeletons")
+
+[node name="WakeMageTurrets" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("18_khskr")
+enemy_group = NodePath("../../../Enemies/MageTurretGroup")
+
 [node name="AllPlayersAreaTrigger" type="Area3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22, 0, 8)
 script = ExtResource("19_g7rls")
@@ -1539,31 +1562,31 @@ shape = SubResource("BoxShape3D_h2fuj")
 [node name="MageTurrets" type="Node3D" parent="Level"]
 
 [node name="WestTurret1" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -1.65, 32.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.794, -1.65, 32.9875)
 
 [node name="WestTurret2" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -1.65, 37.4875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.794, -1.65, 37.4875)
 
 [node name="WestTurret3" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25.794, -1.65, 41.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -23.794, -1.65, 41.9875)
 
 [node name="NorthTurret1" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9985, -1.65, 22.19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.9985, -1.65, 24.19)
 
 [node name="NorthTurret2" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4985, -1.65, 22.19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4985, -1.65, 24.19)
 
 [node name="NorthTurret3" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9985, -1.65, 22.19)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.9985, -1.65, 24.19)
 
 [node name="EastTurret1" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -1.65, 32.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -1.65, 32.9875)
 
 [node name="EastTurret2" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -1.65, 37.4875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -1.65, 37.4875)
 
 [node name="EastTurret3" parent="Level/MageTurrets" instance=ExtResource("nm_post")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.8, -1.65, 41.9875)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.8, -1.65, 41.9875)
 
 [node name="FocusPoints" type="Node3D" parent="Level"]
 
@@ -1609,6 +1632,13 @@ script = ExtResource("19_g7rls")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/SkullArrival"]
 shape = SubResource("BoxShape3D_SkullArrival")
 
+[node name="LabyrinthArrival" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -12, 0, 118.5)
+script = ExtResource("19_g7rls")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/LabyrinthArrival"]
+shape = SubResource("BoxShape3D_LabyrinthArrival")
+
 [node name="Weapon" type="Node" parent="."]
 
 [node name="Sword" parent="Weapon" instance=ExtResource("20_iifxy")]
@@ -1650,8 +1680,11 @@ Use dash to swing and attack with the sword !"
 [connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesNE" method="trigger"]
 [connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesSW" method="trigger"]
 [connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/FocusMagesSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/ArenaArrival" to="Level/Events/WakeMageTurrets" method="trigger"]
 [connection signal="all_players_inside" from="Level/HordeArrival" to="Level/Events/WakeHorde" method="trigger"]
 [connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/FocusSkullsW" method="trigger"]
 [connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/FocusSkullsE" method="trigger"]
 [connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/StartSkullWave" method="trigger"]
 [connection signal="all_players_inside" from="Level/SkullArrival" to="Level/Events/CloseHordeBridge" method="trigger"]
+[connection signal="all_players_inside" from="Level/LabyrinthArrival" to="Level/Events/WakeLabyrinthMages" method="trigger"]
+[connection signal="all_players_inside" from="Level/LabyrinthArrival" to="Level/Events/WakeLabyrinthSkeletons" method="trigger"]

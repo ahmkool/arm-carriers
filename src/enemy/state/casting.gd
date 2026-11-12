@@ -4,17 +4,26 @@ extends EnemyState
 ## Waits before playing the cast animation. A gunner uses it so the recoil of its shoot animation lines up with
 ## the shot, which leaves FIREBALL_DELAY_SECONDS plus the spawn scene's charge-up after the cast starts.
 @export var cast_animation_delay_seconds := 0.0
+## Each cast fires a wave of this many shots, picked at random between the two bounds.
+@export var shots_per_cast_min := 1
+@export var shots_per_cast_max := 1
+## Time between the shots of one wave. The shoot animation replays for each shot.
+@export var shot_interval_seconds := 0.45
 
 const CAST_DURATION_SECONDS := 2.0
 const FIREBALL_DELAY_SECONDS := 1.0
 
 var _cast_time_remaining := 0.0
 var _fireball_delay_remaining := 0.0
-var _animation_delay_remaining := -1.0
+var _animation_delay_remaining := 0.0
+var _shots_left := 0
+var _animations_left := 0
 
 func enter() -> void:
 	super.enter()
-	_cast_time_remaining = CAST_DURATION_SECONDS
+	_shots_left = randi_range(shots_per_cast_min, maxi(shots_per_cast_min, shots_per_cast_max))
+	_animations_left = _shots_left
+	_cast_time_remaining = CAST_DURATION_SECONDS + (_shots_left - 1) * shot_interval_seconds
 	_fireball_delay_remaining = FIREBALL_DELAY_SECONDS
 	enemy.velocity = Vector3.ZERO
 	if enemy.footsteps_particles:
@@ -42,20 +51,23 @@ func physics_update(delta: float) -> void:
 	_finish_cast()
 
 func _tick_animation_delay(delta: float) -> void:
-	if _animation_delay_remaining < 0.0:
+	if _animations_left <= 0:
 		return
 	_animation_delay_remaining -= delta
 	if _animation_delay_remaining > 0.0:
 		return
-	_animation_delay_remaining = -1.0
+	_animations_left -= 1
+	_animation_delay_remaining = shot_interval_seconds
 	enemy.play_cast_animation()
 
 func _tick_fireball_delay(delta: float) -> void:
-	if _fireball_delay_remaining <= 0.0:
+	if _shots_left <= 0:
 		return
 	_fireball_delay_remaining -= delta
 	if _fireball_delay_remaining > 0.0:
 		return
+	_shots_left -= 1
+	_fireball_delay_remaining = shot_interval_seconds
 	_emit_fireball()
 
 func _emit_fireball() -> void:

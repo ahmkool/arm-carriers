@@ -1,0 +1,167 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="enemy_local"]
+[ext_resource type="PackedScene" path="res://assets/models/enemies/aviator_gunship/aviator_gunship.glb" id="model"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="state_machine"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_hovering.gd" id="hovering"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_relocating.gd" id="relocating"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_attacking.gd" id="attacking"]
+[ext_resource type="Script" uid="uid://bpwulnnwpcsdf" path="res://src/enemy/winged_mech/mech_dead.gd" id="dead"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_behavior.gd" id="behavior"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_moves.gd" id="moves"]
+[ext_resource type="PackedScene" path="res://src/enemy/robot/laser_bolt_spawn.tscn" id="bolt_spawn"]
+[ext_resource type="PackedScene" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.tscn" id="rocket"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="health"]
+[ext_resource type="Script" uid="uid://djda3j3mx1537" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
+
+[sub_resource type="BoxShape3D" id="Shape_hull"]
+size = Vector3(4, 2.8, 6.2)
+
+[sub_resource type="BoxShape3D" id="Shape_wings"]
+size = Vector3(10, 0.9, 2.6)
+
+[sub_resource type="StandardMaterial3D" id="Material_beam_core"]
+albedo_color = Color(1, 0.35, 0.2, 1)
+emission_enabled = true
+emission = Color(1, 0.25, 0.08, 1)
+emission_energy_multiplier = 6.0
+disable_receive_shadows = true
+
+[sub_resource type="CylinderMesh" id="Mesh_beam_core"]
+material = SubResource("Material_beam_core")
+top_radius = 0.42
+bottom_radius = 0.42
+height = 45.0
+radial_segments = 12
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Material_beam_glow"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.05, 0.45)
+disable_receive_shadows = true
+
+[sub_resource type="CylinderMesh" id="Mesh_beam_glow"]
+material = SubResource("Material_beam_glow")
+top_radius = 0.85
+bottom_radius = 0.85
+height = 45.0
+radial_segments = 16
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Material_aim"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.1, 0.08, 0.55)
+disable_receive_shadows = true
+
+[sub_resource type="CylinderMesh" id="Mesh_aim"]
+material = SubResource("Material_aim")
+top_radius = 0.07
+bottom_radius = 0.07
+height = 45.0
+radial_segments = 6
+rings = 1
+
+[sub_resource type="SphereMesh" id="Mesh_footsteps"]
+radius = 0.1
+height = 0.2
+
+[node name="EnemyAviatorGunship" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("enemy_local")
+speed = 3.2
+hitbox_damage = 0
+can_fall_off_ledges = false
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Model" parent="Visual" instance=ExtResource("model")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="HullShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.1, 0.2)
+shape = SubResource("Shape_hull")
+
+[node name="WingShape" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, 0.2)
+shape = SubResource("Shape_wings")
+
+[node name="LaserBeam" type="Node3D" parent="."]
+visible = false
+
+[node name="Core" type="Node3D" parent="LaserBeam"]
+
+[node name="Inner" type="MeshInstance3D" parent="LaserBeam/Core"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -22.5)
+cast_shadow = 0
+mesh = SubResource("Mesh_beam_core")
+
+[node name="Glow" type="MeshInstance3D" parent="LaserBeam/Core"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -22.5)
+cast_shadow = 0
+mesh = SubResource("Mesh_beam_glow")
+
+[node name="AimLine" type="Node3D" parent="LaserBeam"]
+
+[node name="Line" type="MeshInstance3D" parent="LaserBeam/AimLine"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, -22.5)
+cast_shadow = 0
+mesh = SubResource("Mesh_aim")
+
+[node name="ChargeLight" type="OmniLight3D" parent="LaserBeam"]
+light_color = Color(1, 0.2, 0.08, 1)
+light_energy = 0.0
+omni_range = 6.0
+
+[node name="CameraAnchor" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
+
+[node name="ThrusterLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
+light_color = Color(0.4, 0.85, 1, 1)
+light_energy = 1.5
+omni_range = 5.0
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("state_machine")
+initial_state_path = NodePath("Hovering")
+
+[node name="Hovering" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("hovering")
+
+[node name="Relocating" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("relocating")
+
+[node name="Attacking" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("attacking")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("dead")
+
+[node name="AviatorGunshipBehavior" type="Node" parent="."]
+script = ExtResource("behavior")
+
+[node name="GunshipMoves" type="Node" parent="."]
+script = ExtResource("moves")
+bolt_spawn_scene = ExtResource("bolt_spawn")
+rocket_scene = ExtResource("rocket")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+draw_pass_1 = SubResource("Mesh_footsteps")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("health")
+max_hp = 150
+
+[node name="BossPhaseController" type="Node" parent="."]
+script = ExtResource("phase")
+fire_particles_path = NodePath("")
+axe_fire_visual_path = NodePath("")

@@ -127,6 +127,7 @@ func _run() -> void:
 	check_hold_layout()
 	await enter_deck2("walking over bridge 1 onto deck 2")
 	await check_hold_runs()
+	await check_gunner_waves()
 	await check_respawn_mid_hold()
 	await check_hold_cleared()
 	check_island_layout()
@@ -318,6 +319,10 @@ func check_hold_layout() -> void:
 
 
 func enter_deck2(label: String) -> void:
+	# In line on bridge 1's axis first: walking straight north from wherever the warm-up left them sometimes
+	# missed the one-cell bridge.
+	place_in_line(w(0, -6), Vector3.BACK)
+	await wait(0.8)
 	var ok: bool = await walk_north_until(both_on_deck2, 12.0)
 	check("real input: " + label, ok and state() == "playing", "state %s" % state())
 	var closed: bool = await wait_until(func(): return not bridge_up(BRIDGE1), 4.0)
@@ -362,6 +367,59 @@ func check_hold_runs() -> void:
 		var end: Dictionary = await track(fire(from, -towards))
 		check("a bolt at %s bounces off its bubble" % e.name, end.bounces >= 1, str(end))
 	check("bounced bolts leave the gunners unhurt", hp_total(gunners()) == before, "%d -> %d" % [before, hp_total(gunners())])
+
+
+## Every gunner fires waves of 2 or 3 laser bolts (`GUNNER_WAVE`), 0.45 s apart, with a random wait between waves.
+## Each bolt's charge-up appears at its gunner's emitter, so the spawns are told apart by where they appear.
+func check_gunner_waves() -> void:
+	const WATCH_MS := 15000
+	var list := gunners()
+	var times := {}
+	for e in list:
+		times[e] = []
+	var seen := {}
+	var started := Time.get_ticks_msec()
+	while Time.get_ticks_msec() - started < WATCH_MS:
+		for node in world.get_children():
+			if not node is FireballSpawn or seen.has(node):
+				continue
+			seen[node] = true
+			for e in list:
+				if is_instance_valid(e) and node.global_position.distance_to(e.get_node("FireballEmitter").global_position) < 1.0:
+					times[e].append((Time.get_ticks_msec() - started) / 1000.0)
+		await get_tree().physics_frame
+	var sizes: Array = []
+	var waits: Array = []
+	for e in list:
+		var waves: Array = []
+		for t in times[e]:
+			if waves.is_empty() or t - waves[-1][-1] > 1.0:
+				waves.append([t])
+				continue
+			waves[-1].append(t)
+		# A wave cut off by the start or end of the watch can look short.
+		var whole := waves.filter(func(wave): return wave[0] > 0.6 and wave[-1] < WATCH_MS / 1000.0 - 1.2)
+		sizes.append_array(whole.map(func(wave): return wave.size()))
+		for i in range(1, waves.size()):
+			waits.append(snappedf(waves[i][0] - waves[i - 1][-1], 0.01))
+	print("INFO gunner wave sizes %s, waits between waves %s" % [sizes, waits])
+	check("the gunners fire in waves of 2 or 3 bolts", sizes.size() >= 4 and sizes.all(func(n): return n == 2 or n == 3), str(sizes))
+	# Too few waits fit in the watch to judge their spread, so sample a copy of a gunner's own behaviour instead.
+	if list.is_empty():
+		check("the wait between waves is random", false, "no gunners")
+		return
+	var source := list[0].get_node("MageBehavior") as MageBehavior
+	var sample := MageBehavior.new()
+	sample.cast_cooldown = source.cast_cooldown
+	sample.cast_cooldown_jitter = source.cast_cooldown_jitter
+	var cooldowns: Array = []
+	for i in 40:
+		sample._cast_cooldown_remaining = 0.0
+		sample._apply_cast_band_intent(Vector3.FORWARD)
+		cooldowns.append(sample._cast_cooldown_remaining)
+	sample.free()
+	check("the wait between waves is random, 3.5 s +/- 1 s", cooldowns.max() - cooldowns.min() > 1.0
+		and cooldowns.min() >= 2.5 and cooldowns.max() <= 4.5, "%.2f to %.2f s" % [cooldowns.min(), cooldowns.max()])
 
 
 func check_respawn_mid_hold() -> void:
@@ -648,6 +706,31 @@ func groups_alive(groups: Array) -> Array:
 	return out
 
 
+func bank_survival(survival_name: String) -> SurvivalEnemyGroup:
+	return world.get_node("Enemies/" + survival_name) as SurvivalEnemyGroup
+
+
+func bank_chasers(survival_name: String) -> Array:
+	return bank_survival(survival_name).get_node("Enemies").get_children().filter(func(c): return c is EnemyLocal and c.is_alive())
+
+
+## The shielded chasers crowd the carriers, so they are cleared before the driver lines the pair up to shoot.
+func kill_bank_chasers() -> void:
+	for survival_name in ["BankSurvival", "CrossfireSurvival"]:
+		for e in bank_chasers(survival_name):
+			e.queue_free()
+	await get_tree().physics_frame
+
+
+func check_bank_survival_layout() -> void:
+	for survival_name in ["BankSurvival", "CrossfireSurvival"]:
+		var group := bank_survival(survival_name)
+		check(survival_name + " lasts 40 s at one robot every 6 s", is_equal_approx(group.fight_duration, 40.0)
+			and is_equal_approx(group._spawn_interval_at(0.0), 6.0) and is_equal_approx(group._spawn_interval_at(39.0), 6.0),
+			"%.1f s, %.1f s" % [group.fight_duration, group._spawn_interval_at(0.0)])
+		check(survival_name + " spawns shielded robots", group.enemy_scene.resource_path.ends_with("enemy_robot_shielded.tscn"), group.enemy_scene.resource_path)
+
+
 func carry() -> CarryInfo:
 	return world.get_active_weapon().get_node("PickAndDropHandler").get_carry_info()
 
@@ -684,13 +767,19 @@ func enter_bank_deck(label: String, start: Vector3, trigger_x: float, bridge: Ar
 	await wait_until(func(): return not GameplayInput.is_locked(), 5.0)
 
 
-func check_bank_fight_starts(groups: Array, label: String) -> void:
+func check_bank_fight_starts(groups: Array, survival_name: String, label: String) -> void:
 	# They appear, awake, once the bridge behind has finished switching off, which takes longer with more platforms.
 	await wait_until(func(): return groups_alive(groups).size() == 4 * groups.size(), 4.0)
 	var gunners := groups_alive(groups)
 	var asleep := gunners.filter(func(e): return not e.is_offensive).map(func(e): return "%s/%s" % [e.get_parent().get_parent().name, e.name])
 	check(label + ": its gunners wake", gunners.size() == 4 * groups.size() and asleep.is_empty(), "%d, asleep %s" % [gunners.size(), asleep])
 	check(label + ": the islands are framed", focal_count() == 4, str(focal_count()))
+	var spawned: bool = await wait_until(func(): return not bank_chasers(survival_name).is_empty(), 2.0)
+	var chasers := bank_chasers(survival_name)
+	check(label + ": the shielded robots' wave starts", bank_survival(survival_name).is_running() and spawned
+		and chasers.all(func(e): return EnemyShield.is_shielded(e) and e.is_offensive), "%d chasers" % chasers.size())
+	var first: EnemyLocal = null if chasers.is_empty() else chasers[0]
+	var from_carriers := INF if first == null else nearest_player_distance(first.global_position)
 	var bolts := {}
 	var started := Time.get_ticks_msec()
 	while Time.get_ticks_msec() - started < 5000:
@@ -699,6 +788,9 @@ func check_bank_fight_starts(groups: Array, label: String) -> void:
 				bolts[node] = true
 		await get_tree().physics_frame
 	await shot("ss2_%s.png" % label.to_lower().replace(" ", "_"))
+	if first != null and is_instance_valid(first) and first.is_alive():
+		check(label + ": the shielded robots run at the carriers", nearest_player_distance(first.global_position) < from_carriers - 1.5,
+			"%.1f m -> %.1f m" % [from_carriers, nearest_player_distance(first.global_position)])
 	check(label + ": every gunner is on screen", visible_count(gunners, 1.0) == gunners.size(), "%d/%d" % [visible_count(gunners, 1.0), gunners.size()])
 	check(label + ": both carriers are on screen", visible_count(players(), 1.6) == 2, "%d/2" % visible_count(players(), 1.6))
 	check(label + ": the gunners shoot through their cover", bolts.size() > 0, "%d laser bolts" % bolts.size())
@@ -706,6 +798,7 @@ func check_bank_fight_starts(groups: Array, label: String) -> void:
 
 ## Bolts fired straight at each gunner from every cell of the deck, all at once: none may land.
 func check_no_straight_shots(group: String, deck_x: Vector2i, deck_rows: Vector2i) -> void:
+	await kill_bank_chasers()
 	var gunners := group_alive(group)
 	var before := hp_total(gunners)
 	var fired := 0
@@ -731,6 +824,7 @@ func check_bank_lane(group: String, row: int, toward_south: bool, deck_rows: Vec
 	var north_z := deck_rows.x * CELL + 1.5 - CELL / 2.0
 	var front_z := south_z - 1.0 if toward_south else north_z + 1.0
 	var back_dir := Vector3.FORWARD if toward_south else Vector3.BACK
+	await kill_bank_chasers()
 	place_in_line(Vector3(lane_x, 0, front_z), back_dir)
 	await wait(1.0)
 	var shift := lane_x - rifle.muzzle.global_position.x
@@ -759,12 +853,26 @@ func check_respawn_mid_bank() -> void:
 	check("a death at the bank island respawns at Checkpoint4 on the ledge", cp() == "Checkpoint4", cp())
 	check("after the respawn bridge 3 is up and the framing gone", bridge_up(BRIDGE3) and focal_count() == 0)
 	check("after the respawn the bank gunners are gone until the fight starts again", group_alive("BankGunners").is_empty(), "%d present" % group_alive("BankGunners").size())
+	check("after the respawn the shielded wave waits again", not bank_survival("BankSurvival").is_running() and bank_chasers("BankSurvival").is_empty(),
+		"%d chasers" % bank_chasers("BankSurvival").size())
 
 
-func clear_groups(groups: Array, expected_cp: String, bridge: Array, label: String) -> void:
+## Scripted kills, with the shielded wave shortened in the driver (its real 40 s is checked in the layout).
+func clear_groups(groups: Array, survival_name: String, expected_cp: String, bridge: Array, label: String) -> void:
 	for g in groups:
 		for e in group_alive(g):
 			Health.apply_damage(e, 9999, e.global_position)
+	await wait(1.5)
+	check(label + ": the gunners alone don't open the way on", not bridge_up(bridge) and cp() != expected_cp, cp())
+	var wave := bank_survival(survival_name)
+	wave.fight_duration = wave._fight_elapsed + 1.0
+	var deadline := Time.get_ticks_msec() + 15000
+	while not wave.signal_emitted and Time.get_ticks_msec() < deadline:
+		for e in bank_chasers(survival_name):
+			EnemyShield.find_on(e).shatter()
+			Health.apply_damage(e, 9999, e.global_position)
+		await wait(0.3)
+	check(label + ": the shielded wave ends once its robots are dead", wave.signal_emitted)
 	await wait(4.0)
 	await wait_until(func(): return not GameplayInput.is_locked(), 10.0)
 	await wait(1.0)
@@ -774,20 +882,23 @@ func clear_groups(groups: Array, expected_cp: String, bridge: Array, label: Stri
 
 
 func check_section_4() -> void:
+	check_bank_survival_layout()
 	await enter_bank_deck("over bridge 3 onto deck 4", w(2, -39), w(7, 0).x, BRIDGE3)
-	await check_bank_fight_starts(["BankGunners"], "Bank island")
+	await check_bank_fight_starts(["BankGunners"], "BankSurvival", "Bank island")
 	await check_no_straight_shots("BankGunners", Vector2i(6, 11), DECK4_ROWS)
 	await check_respawn_mid_bank()
 	await enter_bank_deck("over bridge 3 again after the respawn", w(2, -39), w(7, 0).x, BRIDGE3)
+	await wait_until(func(): return group_alive("BankGunners").size() == 4, 4.0)
 	check("crossing again brings back the bank gunners, awake", group_alive("BankGunners").size() == 4 and group_alive("BankGunners").all(func(e): return e.is_offensive), str(group_alive("BankGunners").size()))
+	check("crossing again restarts the shielded wave", bank_survival("BankSurvival").is_running())
 	await check_bank_lane("BankGunners", -34, true, DECK4_ROWS)
 	await check_bank_lane("BankGunners", -33, true, DECK4_ROWS)
-	await clear_groups(["BankGunners"], "Checkpoint5", BRIDGE4, "Clearing the bank island")
+	await clear_groups(["BankGunners"], "BankSurvival", "Checkpoint5", BRIDGE4, "Clearing the bank island")
 
 
 func check_section_5() -> void:
 	await enter_bank_deck("over bridge 4 onto deck 5", w(10, -40), w(16, 0).x, BRIDGE4)
-	await check_bank_fight_starts(["CrossfireSouth", "CrossfireNorth"], "Crossfire")
+	await check_bank_fight_starts(["CrossfireSouth", "CrossfireNorth"], "CrossfireSurvival", "Crossfire")
 	await check_no_straight_shots("CrossfireSouth", Vector2i(15, 20), DECK5_ROWS)
 	await check_no_straight_shots("CrossfireNorth", Vector2i(15, 20), DECK5_ROWS)
 	await check_bank_lane("CrossfireSouth", -35, true, DECK5_ROWS)
@@ -798,7 +909,7 @@ func check_section_5() -> void:
 		Health.apply_damage(e, 9999, e.global_position)
 	await wait(2.0)
 	check("clearing only the south island doesn't open the way on", cp() == "Checkpoint5" and not bridge_up(BRIDGE5) and focal_count() == 4, cp())
-	await clear_groups(["CrossfireNorth"], "Checkpoint6", BRIDGE5, "Clearing both islands")
+	await clear_groups(["CrossfireNorth"], "CrossfireSurvival", "Checkpoint6", BRIDGE5, "Clearing both islands")
 
 
 func check_walk_to_end() -> void:

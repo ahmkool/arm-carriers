@@ -37,12 +37,16 @@
 [ext_resource type="Script" path="res://src/world/elements/sky/floating_bob.gd" id="bob"]
 [ext_resource type="Script" path="res://src/events/groups_defeated_gate.gd" id="groups_gate"]
 [ext_resource type="PackedScene" path="res://src/enemy/shield/flat_shield.tscn" id="flat_shield"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot_shielded.tscn" id="robot_shielded"]
 [ext_resource type="Script" path="res://src/enemy/shield/enemy_shield.gd" id="enemy_shield"]
 
 [sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
 shader = ExtResource("space_sky")
 
-
+[sub_resource type="Curve" id="Curve_survival_bank"]
+_limits = [0.0, 6.0, 0.0, 1.0]
+_data = [Vector2(0, 6.0), 0.0, 0.0, 0, 0, Vector2(1, 6.0), 0.0, 0.0, 0, 0]
+point_count = 2
 
 [sub_resource type="Sky" id="Sky_level"]
 sky_material = SubResource("PanoramaSkyMaterial_sky")
@@ -241,6 +245,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 22.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner1/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner1"]
 script = ExtResource("enemy_shield")
@@ -255,6 +264,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 22.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner2/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner2"]
 script = ExtResource("enemy_shield")
@@ -269,6 +283,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 22.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner3/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner3"]
 script = ExtResource("enemy_shield")
@@ -283,6 +302,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 22.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner4/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyShield" type="Node3D" parent="Enemies/Gunners/InstancedEnemies/EnemyRobotGunner4"]
 script = ExtResource("enemy_shield")
@@ -328,6 +352,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 26.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner1/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner2" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, 0, -97.4675)
@@ -339,6 +368,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 26.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner2/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner3" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, 0, -103.4655)
@@ -350,6 +384,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 26.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner3/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner4" parent="Enemies/IslandGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, 0, -103.4655)
@@ -361,6 +400,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 26.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/IslandGunners/InstancedEnemies/EnemyRobotGunner4/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="BankGunners" type="Node3D" parent="Enemies"]
 script = ExtResource("normal_group")
@@ -378,6 +422,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner1/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner2" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -100.4665)
@@ -389,6 +438,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner2/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner3" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -97.4675)
@@ -400,6 +454,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner3/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner4" parent="Enemies/BankGunners/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -97.4675)
@@ -411,6 +470,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/BankGunners/InstancedEnemies/EnemyRobotGunner4/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="CrossfireSouth" type="Node3D" parent="Enemies"]
 script = ExtResource("normal_group")
@@ -428,6 +492,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner1/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner2" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, 0, -103.4655)
@@ -439,6 +508,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner2/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner3" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -100.4665)
@@ -450,6 +524,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner3/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner4" parent="Enemies/CrossfireSouth/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, 0, -100.4665)
@@ -461,6 +540,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireSouth/InstancedEnemies/EnemyRobotGunner4/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="CrossfireNorth" type="Node3D" parent="Enemies"]
 script = ExtResource("normal_group")
@@ -478,6 +562,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner1/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner2" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 0, -133.4555)
@@ -489,6 +578,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner2/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner3" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, 0, -136.4545)
@@ -500,6 +594,11 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner3/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
 
 [node name="EnemyRobotGunner4" parent="Enemies/CrossfireNorth/InstancedEnemies" instance=ExtResource("robot_gunner")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 0, -136.4545)
@@ -511,6 +610,55 @@ script = ExtResource("mage_behavior")
 mobility = 1
 cast_max_distance = 24.0
 cast_cooldown = 3.5
+cast_cooldown_jitter = 1.0
+
+[node name="Casting" parent="Enemies/CrossfireNorth/InstancedEnemies/EnemyRobotGunner4/EnemyStateMachine"]
+shots_per_cast_min = 2
+shots_per_cast_max = 3
+
+[node name="BankSurvival" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+spawn_interval_curve = SubResource("Curve_survival_bank")
+fight_duration = 40.0
+enemy_scene = ExtResource("robot_shielded")
+
+[node name="Enemies" type="Node3D" parent="Enemies/BankSurvival"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/BankSurvival"]
+
+[node name="Node3D1" type="Node3D" parent="Enemies/BankSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, 0, -124.4585)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/BankSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, -124.4585)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/BankSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4905, 0, -124.4585)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/BankSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, 0, -124.4585)
+
+[node name="CrossfireSurvival" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+spawn_interval_curve = SubResource("Curve_survival_bank")
+fight_duration = 40.0
+enemy_scene = ExtResource("robot_shielded")
+
+[node name="Enemies" type="Node3D" parent="Enemies/CrossfireSurvival"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/CrossfireSurvival"]
+
+[node name="Node3D1" type="Node3D" parent="Enemies/CrossfireSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -121.4595)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/CrossfireSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.4825, 0, -121.4595)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/CrossfireSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, 0, -115.4615)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/CrossfireSurvival/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, 0, -115.4615)
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("cp_manager")
@@ -560,7 +708,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -115.4615)
 script = ExtResource("checkpoint")
 events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge2"), NodePath("../../Level/Events/OpenBridge3")]
-enemy_groups_reset = [NodePath("../../Enemies/BankGunners")]
+enemy_groups_reset = [NodePath("../../Enemies/BankGunners"), NodePath("../../Enemies/BankSurvival")]
 enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners")]
 areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger4")]
 areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/AllPlayersAreaTrigger3")]
@@ -575,8 +723,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 1.8026, -118.4605)
 script = ExtResource("checkpoint")
 events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge2"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/OpenBridge4")]
-enemy_groups_reset = [NodePath("../../Enemies/CrossfireSouth"), NodePath("../../Enemies/CrossfireNorth")]
-enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners"), NodePath("../../Enemies/BankGunners")]
+enemy_groups_reset = [NodePath("../../Enemies/CrossfireSouth"), NodePath("../../Enemies/CrossfireNorth"), NodePath("../../Enemies/CrossfireSurvival")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners"), NodePath("../../Enemies/BankGunners"), NodePath("../../Enemies/BankSurvival")]
 areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger5")]
 areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/AllPlayersAreaTrigger3"), NodePath("../../Level/Areas/AllPlayersAreaTrigger4")]
 
@@ -590,7 +738,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 1.8026, -118.4605)
 script = ExtResource("checkpoint")
 events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge2"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/OpenBridge5")]
-enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners"), NodePath("../../Enemies/BankGunners"), NodePath("../../Enemies/CrossfireSouth"), NodePath("../../Enemies/CrossfireNorth")]
+enemy_groups_defeated = [NodePath("../../Enemies/EnemyGroup"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/Gunners"), NodePath("../../Enemies/SurvivalEnemyGroup2"), NodePath("../../Enemies/IslandGunners"), NodePath("../../Enemies/BankGunners"), NodePath("../../Enemies/BankSurvival"), NodePath("../../Enemies/CrossfireSouth"), NodePath("../../Enemies/CrossfireNorth"), NodePath("../../Enemies/CrossfireSurvival")]
 areas_already_activated = [NodePath("../../Level/Areas/AllPlayersAreaTrigger"), NodePath("../../Level/Areas/AllPlayersAreaTrigger3"), NodePath("../../Level/Areas/AllPlayersAreaTrigger4"), NodePath("../../Level/Areas/AllPlayersAreaTrigger5")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
@@ -946,14 +1094,19 @@ use_camera_focus = false
 event_type = 1
 next_event = NodePath("../MakeBankGunnersOffensive")
 
-[node name="MakeBankGunnersOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+[node name="MakeBankGunnersOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
 script = ExtResource("change_behavior")
 enemy_group = NodePath("../../../Enemies/BankGunners")
+next_event = NodePath("../StartBankSurvival")
+
+[node name="StartBankSurvival" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/BankSurvival")
 
 [node name="BankCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
 script = ExtResource("groups_gate")
 next_event = NodePath("../OpenBridge4")
-groups = [NodePath("../../../Enemies/BankGunners")]
+groups = [NodePath("../../../Enemies/BankGunners"), NodePath("../../../Enemies/BankSurvival")]
 checkpoint = NodePath("../../../CheckpointManager/Checkpoint5")
 also_trigger = [NodePath("../UnfocusCamera")]
 
@@ -975,14 +1128,19 @@ script = ExtResource("change_behavior")
 enemy_group = NodePath("../../../Enemies/CrossfireSouth")
 next_event = NodePath("../MakeCrossfireNorthOffensive")
 
-[node name="MakeCrossfireNorthOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+[node name="MakeCrossfireNorthOffensive" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
 script = ExtResource("change_behavior")
 enemy_group = NodePath("../../../Enemies/CrossfireNorth")
+next_event = NodePath("../StartCrossfireSurvival")
+
+[node name="StartCrossfireSurvival" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/CrossfireSurvival")
 
 [node name="CrossfireCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
 script = ExtResource("groups_gate")
 next_event = NodePath("../OpenBridge5")
-groups = [NodePath("../../../Enemies/CrossfireSouth"), NodePath("../../../Enemies/CrossfireNorth")]
+groups = [NodePath("../../../Enemies/CrossfireSouth"), NodePath("../../../Enemies/CrossfireNorth"), NodePath("../../../Enemies/CrossfireSurvival")]
 checkpoint = NodePath("../../../CheckpointManager/Checkpoint6")
 also_trigger = [NodePath("../UnfocusCamera")]
 
@@ -1103,6 +1261,7 @@ Get close and VENT to pop them."
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/FocusBankIslandNW" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger4" to="Level/Events/FocusBankIslandNE" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/BankGunners" to="Level/Events/BankCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/BankSurvival" to="Level/Events/BankCleared" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/CloseBridge4" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireSW" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireSE" method="trigger"]
@@ -1110,4 +1269,5 @@ Get close and VENT to pop them."
 [connection signal="all_players_inside" from="Level/Areas/AllPlayersAreaTrigger5" to="Level/Events/FocusCrossfireNE" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/CrossfireSouth" to="Level/Events/CrossfireCleared" method="trigger"]
 [connection signal="enemies_defeated" from="Enemies/CrossfireNorth" to="Level/Events/CrossfireCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/CrossfireSurvival" to="Level/Events/CrossfireCleared" method="trigger"]
 [connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]

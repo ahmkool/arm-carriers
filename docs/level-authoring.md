@@ -143,6 +143,8 @@ When a checkpoint becomes current (or when loading saved progress), `set_world_a
 
 **Rule of thumb:** each checkpoint’s exports describe the world **as if the player had just cleared the previous encounter**, not the state before it.
 
+List **every** earlier group in `enemy_groups_defeated`, not just the last one: a group without `spawn_on_trigger` is in the level from load, so one left off comes back alive on a respawn or a Continue. Put the checkpoint on the platform the carriers stand on when they earn it, not across a bridge they haven't crossed yet.
+
 ---
 
 ## Enemies
