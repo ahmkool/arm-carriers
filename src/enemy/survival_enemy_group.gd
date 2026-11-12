@@ -11,9 +11,6 @@ const SURVIVAL_TIMER_PATH := "UI/SurvivalTimer"
 @export var show_timer_ui := true
 ## Max HP given to each spawned enemy. 0 keeps the enemy scene's own.
 @export_range(0, 999) var enemy_max_hp := 0
-## When the time is up, enemies still alive crumble and the wave clears: the players only have to last the time.
-## Off, the wave clears once the time is up and every enemy it spawned has been killed.
-@export var clears_on_timer := false
 
 var signal_emitted := false
 
@@ -85,7 +82,6 @@ func _physics_process(delta: float) -> void:
 	_fight_elapsed += delta
 	_spawn_timer += delta
 	_process_spawning()
-	_crumble_survivors_when_time_is_up()
 	if not _fight_ended_and_cleared():
 		return
 	signal_emitted = true
@@ -119,20 +115,6 @@ func _validate_spawn_interval_curve() -> void:
 		return
 	if spawn_interval_curve.get_point_count() == 0:
 		push_warning("SurvivalEnemyGroup: spawn_interval_curve has no points on %s" % str(get_path()))
-
-
-func _crumble_survivors_when_time_is_up() -> void:
-	if not clears_on_timer:
-		return
-	if _fight_elapsed < fight_duration:
-		return
-	if not is_instance_valid(_enemies_parent):
-		return
-	for child in _enemies_parent.get_children():
-		var enemy := child as EnemyLocal
-		if enemy == null or not enemy.is_alive():
-			continue
-		Health.apply_damage(enemy, 9999, enemy.global_position)
 
 
 func _fight_ended_and_cleared() -> bool:

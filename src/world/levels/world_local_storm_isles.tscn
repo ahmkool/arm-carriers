@@ -492,7 +492,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 85.4715, 0, -22.4925)
 script = ExtResource("survival_group")
 spawn_interval_curve = SubResource("Curve_survival_tri")
 fight_duration = 60.0
-clears_on_timer = true
 
 [node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup3"]
 

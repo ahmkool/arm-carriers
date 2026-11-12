@@ -31,10 +31,11 @@
 (8) Three tracks (the final challenge): bridge 11 lands straight on three tracks running 72 m north, 3 m apart
     centre to centre. The carriers walk the outer two, 6 m apart, so the disc runs right over the middle one.
     Stepping onto them lowers the bridge behind and starts a 60 s survival wave, one skeleton every 10 s, spawning
-    at either end of any of the three tracks, at random, and chasing the nearer carrier. Three short crossings join each outer track to the middle one, staggered
-    so no two line up: a skeleton can use them to get round the disc and at a carrier, and on an outer track it
-    can't be cut. So this wave clears on its timer: skeletons still alive at 60 s crumble. The tracks and crossings
-    are in the navmesh. Clearing the wave sets Checkpoint9 at the tracks' far end and raises a bridge to the last pad,
+    at either end of any of the three tracks, at random, and chasing the nearer carrier. Three short crossings join
+    each outer track to the middle one, staggered so no two line up: a skeleton can use them to get round the disc
+    and at a carrier. To cut one on an outer track, the carriers stand on that track and the middle one, staggered
+    about 5 m along them (still 5.5 to 7 m apart): the disc, halfway, then reaches both tracks. As in every survival
+    wave, the remaining skeletons must be defeated once the time is up. The tracks and crossings are in the navmesh. Clearing the wave sets Checkpoint9 at the tracks' far end and raises a bridge to the last pad,
     which holds the end area.
 
 Run from the project root; see docs/level-creation-for-agents.md:
@@ -307,12 +308,9 @@ level.enemy_group("MageGroup", spawn_on_trigger=True)  # out of the level until 
 for i, (cx, cz) in enumerate(MAGES, 1):
     level.mage("MageGroup", f"EnemyMage{i}", cx, cz, cast_max=MAGE_RANGE, cooldown=3.0, cooldown_jitter=1.0)
 # The later survival waves, built here because levelgen's survival_group() only makes the one named SurvivalEnemyGroup.
-def survival(name, curve, seconds, spawns, clears_on_timer=False):
-    """clears_on_timer: survivors crumble when the time is up, so the players only have to last it."""
-    props = {"script": 'ExtResource("survival_group")', "spawn_interval_curve": f'SubResource("{curve}")', "fight_duration": f"{seconds:.1f}"}
-    if clears_on_timer:
-        props["clears_on_timer"] = "true"
-    level.node(name, "Enemies", "Node3D", props=props)
+def survival(name, curve, seconds, spawns):
+    level.node(name, "Enemies", "Node3D", props={
+        "script": 'ExtResource("survival_group")', "spawn_interval_curve": f'SubResource("{curve}")', "fight_duration": f"{seconds:.1f}"})
     level.node("Enemies", f"Enemies/{name}", "Node3D")
     level.node("SpawnPoints", f"Enemies/{name}", "Node3D")
     for i, (cx, cz) in enumerate(spawns, 1):
@@ -321,9 +319,7 @@ def survival(name, curve, seconds, spawns, clears_on_timer=False):
 
 
 survival("SurvivalEnemyGroup2", "Curve_survival_grid", GRID_HORDE_SECONDS, GRID_HORDE_SPAWNS)
-# A skeleton that takes a crossing to an outer track can't be cut there, so this wave clears on its timer: whatever
-# is still alive at 60 s crumbles.
-survival("SurvivalEnemyGroup3", "Curve_survival_tri", TRI_SURVIVAL_SECONDS, TRI_SURVIVAL_SPAWNS, clears_on_timer=True)
+survival("SurvivalEnemyGroup3", "Curve_survival_tri", TRI_SURVIVAL_SECONDS, TRI_SURVIVAL_SPAWNS)
 level.enemy_group("MageGroup2", spawn_on_trigger=True)  # out of the level until the carriers land on the fifth island
 for i, (cx, cz) in enumerate(GRID_MAGES, 1):
     level.mage("MageGroup2", f"EnemyMage{i}", cx, cz, cast_max=GRID_MAGE_RANGE, cooldown=3.0, cooldown_jitter=1.0)

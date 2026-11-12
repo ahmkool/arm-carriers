@@ -722,7 +722,6 @@ func _run() -> void:
 	# (8) Three tracks: the carriers walk the outer two, the disc over the middle one, against a 60 s wave.
 	var tri := world.get_node("Enemies/SurvivalEnemyGroup3") as SurvivalEnemyGroup
 	check("tri wave lasts 60 s, one skeleton every 10 s", is_equal_approx(tri.fight_duration, 60.0) and is_equal_approx(tri.spawn_interval_curve.sample(0.0), 10.0) and is_equal_approx(tri.spawn_interval_curve.sample(1.0), 10.0))
-	check("tri wave clears on its timer", tri.clears_on_timer)
 	check("tri wave idle before the carriers arrive", not tri.is_running())
 	var left_x := w(75, 0).x
 	var middle_x := w(76, 0).x
@@ -773,15 +772,32 @@ func _run() -> void:
 	check("real input: walking the outer tracks, the pair stays on them", met[1] > -1.3 and state() == "playing", "lowest y=%.2f" % met[1])
 	await shot("storm_tri_tracks.png")
 	await overhead_at("storm_tri_overhead.png", Vector3(229, 150, -140), 90.0)
-	# Stand still for the rest of the wave and let the skeletons come; whatever is left crumbles at 60 s.
-	var cleared: bool = await wait_until(func(): return tri.signal_emitted, 70.0)
+	# Stand still for the rest of the wave and let the skeletons come.
+	var time_up: bool = await wait_until(func(): return tri.get_time_remaining() <= 0.0, 70.0)
+	await wait(1.0)
 	get_tree().physics_frame.disconnect(watch_tri)
-	check("the wave clears on its timer", cleared, "elapsed %.1f s" % (tri.fight_duration - tri.get_time_remaining()))
+	var left_at_time_up: int = tri_live.call().size()
+	check("time up: the wave waits for the remaining skeletons", time_up and (left_at_time_up == 0 or not tri.signal_emitted), "%d left" % left_at_time_up)
+	# Then cut down the rest with the saw, wherever they stand: on the middle track the carriers stand on the outer
+	# two across from it; on an outer track, on that track and the middle one, staggered so the disc reaches both.
+	var outer_cuts := [0]
+	var finish_by := Time.get_ticks_msec() + 40000
+	while not tri.signal_emitted and Time.get_ticks_msec() < finish_by:
+		var alive: Array = tri_live.call()
+		if alive.is_empty():
+			await wait(0.5)
+			continue
+		var target: EnemyLocal = alive[0]
+		var on_outer: bool = absf(target.global_position.x - middle_x) > 1.5
+		await cut_on_tracks(target, left_x, middle_x, right_x)
+		if on_outer and not target.is_alive():
+			outer_cuts[0] += 1
+	check("the remaining skeletons are cut down and the wave clears", tri.signal_emitted, "%d still alive" % tri_live.call().size())
+	print("INFO remaining at time up: %d, of which cut on an outer track (staggered stance): %d" % [left_at_time_up, outer_cuts[0]])
 	check("six skeletons over the 60 s", tri_spawned[0] == 6 or tri_spawned[0] == 7, str(tri_spawned[0]))
 	check("no skeleton fell off the tracks", lowest_skeleton[0] > -2.0, "lowest y=%.2f" % lowest_skeleton[0])
-	# How many the parked carriers cut depends on where the skeletons spawn (either end of any track, at random): with
-	# only the middle track's two spawns it was 4 or 5 of 7, with the outer tracks' four added, 0 or 1. So it's reported,
-	# not checked; the disc's place over the middle track is checked above.
+	# How many the parked carriers cut before the time is up depends on where the skeletons spawn (either end of any
+	# track, at random), so it's reported, not checked.
 	get_tree().physics_frame.disconnect(count_cuts)
 	print("INFO tri wave: %d spawned (%d at the far end), %d cut by the saw before the time was up, some skeleton took a crossing: %s" % [tri_spawned[0], spawned_north[0], cut_by_saw[0], "yes" if crossed[0] > 0 else "no"])
 	await wait(4.0)
@@ -928,6 +944,21 @@ func overhead_at(file_name: String, centre: Vector3, size: float) -> void:
 	ui.visible = true
 	follow_cam.make_current()
 	top.queue_free()
+
+
+## Places the carriers, saw in hand, so the disc covers this skeleton: across from it on the two outer tracks if it's
+## on the middle one; otherwise on its track and the middle one, 2.7 m either side of it along them (5.85 m apart, the
+## disc halfway, 1.5 m from both tracks' middles). Then waits for it to die, a few seconds at most.
+func cut_on_tracks(target: EnemyLocal, left_x: float, middle_x: float, right_x: float) -> void:
+	var z := clampf(target.global_position.z, w(0, -57).z, w(0, -36).z)
+	var tx := target.global_position.x
+	if absf(tx - middle_x) <= 1.5:
+		place(Vector3(left_x, -1.0, z), Vector3(right_x, -1.0, z))
+	else:
+		var outer_x := left_x if tx < middle_x else right_x
+		place(Vector3(outer_x, -1.0, z + 2.7), Vector3(middle_x, -1.0, z - 2.7))
+	await wait_until(func(): return not target.is_alive(), 4.0)
+	await wait(0.3)
 
 
 func grid_horde_live() -> Array:
