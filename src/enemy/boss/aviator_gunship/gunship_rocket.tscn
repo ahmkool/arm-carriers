@@ -1,35 +1,7 @@
-[gd_scene format=3]
+[gd_scene load_steps=12 format=3 uid="uid://bqkpn5utpvvfc"]
 
-[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.gd" id="1_rocket"]
-[ext_resource type="PackedScene" path="res://assets/models/weapon/bazooka/bazooka_rocket.glb" id="2_model"]
-
-[sub_resource type="StandardMaterial3D" id="Material_edge"]
-resource_local_to_scene = true
-transparency = 1
-shading_mode = 0
-albedo_color = Color(1, 0.12, 0.08, 0.6)
-disable_receive_shadows = true
-
-[sub_resource type="StandardMaterial3D" id="Material_fill"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(1, 0.15, 0.1, 0.16)
-disable_receive_shadows = true
-
-[sub_resource type="TorusMesh" id="TorusMesh_edge"]
-material = SubResource("Material_edge")
-inner_radius = 0.92
-outer_radius = 1.0
-rings = 48
-ring_segments = 4
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_fill"]
-material = SubResource("Material_fill")
-top_radius = 1.0
-bottom_radius = 1.0
-height = 0.01
-radial_segments = 48
-rings = 1
+[ext_resource type="Script" uid="uid://crchccs0s2n2y" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.gd" id="1_rocket"]
+[ext_resource type="PackedScene" uid="uid://davvrga8jtbps" path="res://assets/models/weapon/bazooka/bazooka_rocket.glb" id="2_model"]
 
 [sub_resource type="Curve" id="Curve_smoke"]
 _data = [Vector2(0, 0.86688226), 0.0, 0.0, 0, 0, Vector2(0.41853034, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.040151), 0.0, 0.0, 0, 0]
@@ -49,15 +21,42 @@ scale_curve = SubResource("CurveTexture_smoke")
 
 [sub_resource type="StandardMaterial3D" id="Material_smoke"]
 albedo_color = Color(0.86, 0.82, 0.76, 1)
-roughness = 1.0
 
 [sub_resource type="SphereMesh" id="SphereMesh_smoke"]
 material = SubResource("Material_smoke")
 radial_segments = 10
 rings = 5
 
+[sub_resource type="StandardMaterial3D" id="Material_edge"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.08, 0.6)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="TorusMesh_edge"]
+material = SubResource("Material_edge")
+inner_radius = 0.92
+rings = 48
+ring_segments = 4
+
+[sub_resource type="StandardMaterial3D" id="Material_fill"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.15, 0.1, 0.16)
+disable_receive_shadows = true
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fill"]
+material = SubResource("Material_fill")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.01
+radial_segments = 48
+rings = 1
+
 [node name="GunshipRocket" type="Node3D"]
 script = ExtResource("1_rocket")
+damage = 1
 
 [node name="Model" parent="." instance=ExtResource("2_model")]
 transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, 0)

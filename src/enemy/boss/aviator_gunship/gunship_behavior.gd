@@ -4,7 +4,14 @@ extends EnemyBehavior
 ## stay level with the carriers. From there it fires gatling bursts, rocket salvos and its nose laser, which sweeps
 ## straight across the arena while the gunship slides slowly towards the carriers. Every `side_seconds_min` to
 ## `side_seconds_max` it flies round the arena to another edge (north, south, east or west).
-## Below half health it enrages: shorter gaps between moves and a laser that tracks faster.
+##
+## Three phases (thresholds on the BossPhaseController):
+## 1. The above.
+## 2. Below 65%: enraged (shorter gaps, faster rockets and laser). Most side switches become strafing runs straight
+##    across the deck, and rockets knock plates out of the deck for a while (GunshipMoves, BreakableDeck).
+## 3. Below 30%: GunshipCourse crumbles the arena and lays fragile tracks to platform after platform. Over a
+##    platform the gunship holds its sides as in the arena; on the tracks it escorts the carriers from the north
+##    with guns and rockets only. A respawn after phase 3 started wakes it straight into phase 3, at 30%.
 ##
 ## The states in this folder do the flying; this node decides what happens next and answers where the gunship
 ## should be. Sides are numbered by `SIDES`.
@@ -16,6 +23,11 @@ const MOVE_LASER := &"laser"
 const SIDES: Array[Vector3] = [Vector3.FORWARD, Vector3.RIGHT, Vector3.BACK, Vector3.LEFT]
 const SIDE_NAMES: Array[String] = ["north", "east", "south", "west"]
 const FLOOR_MASK := 4
+const PHASE_STRAFE := 2
+const PHASE_COURSE := 3
+## Health share it wakes with after a respawn at the phase three checkpoint.
+const PHASE_COURSE_HP_RATIO := 0.3
+const NORTH := 0
 
 @export_group("Arena")
 ## Centre of the arena's floor, flat. Its height is found with a ray when the fight starts.
@@ -65,6 +77,19 @@ const FLOOR_MASK := 4
 @export var laser_track_speed := 1.5
 @export var enraged_laser_track_speed := 2.4
 
+@export_group("Phase 2")
+## Chance that a side switch is a strafing run across the deck instead of the arc round it.
+@export_range(0.0, 1.0) var strafe_chance := 0.6
+@export var strafe_damage := 3
+
+@export_group("Phase 3")
+## Flight speed while escorting the carriers along the tracks: they walk at about 5 m/s.
+@export var escort_speed := 7.0
+## How far ahead of the carriers it flies while escorting, along the track.
+@export var escort_lead := 3.0
+## Half the width it treats the tracks as, for its standoff: tracks are 3 m apart.
+@export var escort_half_extent := 2.25
+
 ## The side being held, or flown to while relocating.
 var side := 0
 var _side_time_left := 0.0
@@ -77,12 +102,34 @@ var _bob_time := 0.0
 var _floor_y := 0.0
 var _has_floor_y := false
 var _phase_controller: BossPhaseController
+var _course: GunshipCourse
+## True while the carriers are on the tracks between platforms: the gunship escorts them from the north.
+var escorting := false
 
 
 func _ready() -> void:
 	super._ready()
 	side = first_side
 	_phase_controller = BossPhaseController.from_enemy(enemy)
+	if _phase_controller != null:
+		_phase_controller.phase_changed.connect(_on_phase_changed)
+
+
+func phase() -> int:
+	if _phase_controller == null:
+		return 1
+	return _phase_controller.get_current_phase()
+
+
+func floor_y() -> float:
+	return _get_floor_y()
+
+
+## Flight speed for the hovering and attacking states.
+func move_speed(attacking: bool) -> float:
+	if escorting:
+		return escort_speed
+	return strafe_speed * (0.5 if attacking else 1.0)
 
 
 func is_enraged() -> bool:
@@ -124,7 +171,7 @@ func altitude() -> float:
 
 ## The carriers' middle, measured along the held edge and kept off its ends.
 func players_lateral() -> float:
-	var limit := arena_half_extent - strafe_margin
+	var limit := maxf(arena_half_extent - strafe_margin, 0.0)
 	var centre: Variant = _players_centre()
 	if centre == null:
 		return 0.0
@@ -168,12 +215,16 @@ func _think(delta: float) -> void:
 	_on_wake_up()
 	# Timers run during moves and flights too, so cooldowns and side stints are measured in real time.
 	_tick_timers(delta)
+	_follow_course()
 	if _is_busy():
 		return
 	enemy.update_target_player()
 	if not _has_valid_target():
 		return
-	if _side_time_left <= 0.0:
+	if escorting and side != NORTH:
+		_relocate_to(NORTH)
+		return
+	if _side_time_left <= 0.0 and not escorting:
 		_start_relocation()
 		return
 	var move := _pick_move()
@@ -186,7 +237,9 @@ func _is_busy() -> bool:
 	var machine := enemy.enemy_state_machine
 	if machine == null:
 		return true
-	return machine.is_in_state("dead") or machine.is_in_state("attacking") or machine.is_in_state("relocating")
+	if machine.is_in_state("dead") or machine.is_in_state("attacking"):
+		return true
+	return machine.is_in_state("relocating") or machine.is_in_state("strafing")
 
 
 func _on_wake_up() -> void:
@@ -199,6 +252,7 @@ func _on_wake_up() -> void:
 	_rockets_remaining = 3.0
 	_guns_remaining = 0.0
 	_frame_with_camera()
+	_resume_phase_three()
 
 
 func _tick_timers(delta: float) -> void:
@@ -218,7 +272,7 @@ func _has_valid_target() -> bool:
 func _pick_move() -> StringName:
 	if _gap_remaining > 0.0:
 		return &""
-	if _laser_remaining <= 0.0:
+	if _laser_remaining <= 0.0 and not escorting:
 		return MOVE_LASER
 	if _rockets_remaining <= 0.0:
 		return MOVE_ROCKETS
@@ -240,14 +294,72 @@ func _start_move(move: StringName) -> void:
 			_laser_remaining = enraged_laser_cooldown if is_enraged() else laser_cooldown
 
 
-## Picks another side at random and hands over to the relocating state, which flies the arc.
+## Picks another side and hands over to the state that gets it there: from phase 2, usually a strafing run straight
+## across to the opposite edge; otherwise the arc round to any other side.
 func _start_relocation() -> void:
+	if phase() >= PHASE_STRAFE and randf() < strafe_chance:
+		side = (side + 2) % SIDES.size()
+		intent.requested_locomotion = &"strafing"
+		return
 	var others: Array[int] = []
 	for index in SIDES.size():
 		if index != side:
 			others.append(index)
-	side = others.pick_random()
+	_relocate_to(others.pick_random())
+
+
+func _relocate_to(index: int) -> void:
+	side = index
 	intent.requested_locomotion = &"relocating"
+
+
+# ---- Phase 3. ----
+
+func _on_phase_changed(phase_index: int) -> void:
+	if phase_index < PHASE_COURSE:
+		return
+	var course := _get_course()
+	if course == null:
+		return
+	course.begin_phase_three()
+
+
+## After a respawn at the phase three checkpoint, drops straight to 30%, which runs phases 2 and 3 in order.
+func _resume_phase_three() -> void:
+	var course := _get_course()
+	if course == null or not course.should_resume_phase_three():
+		return
+	var health := Health.from_target(enemy)
+	var target := int(ceil(health.max_hp * PHASE_COURSE_HP_RATIO))
+	if health.current_hp <= target:
+		return
+	health.take_damage(health.current_hp - target, enemy.global_position)
+
+
+## In phase 3 the "arena" is wherever the carriers are: the platform they stand on, or the track ahead of them.
+func _follow_course() -> void:
+	var course := _get_course()
+	if course == null or not course.is_active():
+		escorting = false
+		return
+	var platform := course.platform_under_players()
+	if platform >= 0:
+		escorting = false
+		arena_center = course.focus_center(platform)
+		arena_half_extent = course.focus_half_extent(platform)
+		return
+	escorting = true
+	var centre: Variant = _players_centre()
+	var x: float = (centre as Vector3).x if centre != null else enemy.global_position.x
+	arena_center = course.track_centre_at(x + escort_lead)
+	arena_half_extent = escort_half_extent
+
+
+func _get_course() -> GunshipCourse:
+	if _course != null and is_instance_valid(_course):
+		return _course
+	_course = GunshipCourse.find(get_tree())
+	return _course
 
 
 # ---- Helpers. ----

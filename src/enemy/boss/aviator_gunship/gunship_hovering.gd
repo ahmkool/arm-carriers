@@ -8,6 +8,6 @@ func physics_update(delta: float) -> void:
 	if behavior == null:
 		return
 	var lateral := behavior.players_lateral() if enemy.is_offensive else behavior.current_lateral()
-	fly_toward(behavior.station_point(lateral), behavior.strafe_speed, delta)
+	fly_toward(behavior.station_point(lateral), behavior.move_speed(false), delta)
 	face(behavior.facing(), delta)
 	bank(delta)

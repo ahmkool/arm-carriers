@@ -27,7 +27,7 @@ const ROCKET_ORDER: Array[String] = ["L_0", "R_0", "L_1", "R_1"]
 @export_group("Rockets")
 @export var rocket_flight_seconds := 1.3
 ## Rockets beyond one per carrier land this far off a carrier, in a random direction.
-@export var rocket_spread := 2.8
+@export var rocket_spread := 3.5
 ## How far ahead of a moving carrier a rocket is aimed, as a share of where they'd be when it lands.
 @export var rocket_lead := 0.5
 @export var rocket_reload_seconds := 2.5
@@ -111,6 +111,8 @@ func launch_rocket(index: int) -> void:
 		return
 	var rocket := rocket_scene.instantiate() as GunshipRocket
 	rocket.add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
+	var behavior := _enemy.behavior as AviatorGunshipBehavior
+	rocket.breaks_floor = behavior != null and behavior.phase() >= AviatorGunshipBehavior.PHASE_STRAFE
 	get_tree().current_scene.add_child(rocket)
 	rocket.launch(muzzle.global_position, target as Vector3, rocket_flight_seconds)
 	_hide_pod_rocket(tube)

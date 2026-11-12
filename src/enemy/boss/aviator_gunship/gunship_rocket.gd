@@ -11,6 +11,13 @@ const EXPLOSION_SCENE := preload("res://src/vfx/explosion.tscn")
 @export var damage := 3
 ## Peak height of the arc above the straight line from the tube to the landing spot.
 @export var arc_height := 3.5
+## From phase 2: the plate it lands on cracks and drops out of the deck for `hole_seconds` (BreakableDeck). Never
+## the plate a carrier stands on, so a rocket that hits someone doesn't also drop them.
+@export var breaks_floor := false
+@export var crack_seconds := 0.8
+@export var hole_seconds := 8.0
+## No more holes than this at once, so the deck can't run out.
+@export var max_holes := 6
 
 var _from := Vector3.ZERO
 var _to := Vector3.ZERO
@@ -79,12 +86,25 @@ func _explode() -> void:
 	_launched = false
 	var scene_root := get_tree().current_scene
 	_hurt_carriers(scene_root)
+	_break_floor()
 	var blast := EXPLOSION_SCENE.instantiate()
 	blast.set("hurts_enemies", false)
 	blast.set("damage_radius", blast_radius)
 	scene_root.add_child(blast)
 	blast.global_position = _to
 	queue_free()
+
+
+func _break_floor() -> void:
+	if not breaks_floor:
+		return
+	var deck := BreakableDeck.find(get_tree())
+	if deck == null or deck.hole_count() >= max_holes:
+		return
+	var cell := deck.cell_at(_to)
+	if deck.is_occupied(cell):
+		return
+	deck.break_cell(cell, crack_seconds, hole_seconds)
 
 
 func _hurt_carriers(scene_root: Node) -> void:

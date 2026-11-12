@@ -15,8 +15,6 @@ const SHOTS := {
 const LASER_CHARGE_SECONDS := 1.3
 const LASER_FIRE_SECONDS := 3.5
 const LASER_COOL_SECONDS := 0.5
-## Drift along the edge during the guns and rockets, as a share of the normal strafe speed.
-const ATTACK_STRAFE_SHARE := 0.5
 
 var _move: StringName = &""
 var _elapsed := 0.0
@@ -85,7 +83,7 @@ func _wanted_speed() -> float:
 	var behavior := gunship()
 	if _move == AviatorGunshipBehavior.MOVE_LASER:
 		return behavior.laser_slide_speed()
-	return behavior.strafe_speed * ATTACK_STRAFE_SHARE
+	return behavior.move_speed(true)
 
 
 func _run_shots() -> void:

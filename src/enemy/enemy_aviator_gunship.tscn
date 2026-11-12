@@ -1,18 +1,20 @@
-[gd_scene format=3]
+[gd_scene load_steps=29 format=3 uid="uid://76gc8nkv5jh3"]
 
-[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="enemy_local"]
-[ext_resource type="PackedScene" path="res://assets/models/enemies/aviator_gunship/aviator_gunship.glb" id="model"]
-[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="state_machine"]
-[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_hovering.gd" id="hovering"]
-[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_relocating.gd" id="relocating"]
-[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_attacking.gd" id="attacking"]
-[ext_resource type="Script" uid="uid://bpwulnnwpcsdf" path="res://src/enemy/winged_mech/mech_dead.gd" id="dead"]
-[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_behavior.gd" id="behavior"]
-[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_moves.gd" id="moves"]
+[ext_resource type="Script" uid="uid://btv8105kbv7uu" path="res://src/enemy/boss/aviator_gunship/gunship_attacking.gd" id="attacking"]
+[ext_resource type="Script" uid="uid://datbqrxxfflv5" path="res://src/enemy/boss/aviator_gunship/gunship_behavior.gd" id="behavior"]
 [ext_resource type="PackedScene" path="res://src/enemy/robot/laser_bolt_spawn.tscn" id="bolt_spawn"]
-[ext_resource type="PackedScene" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.tscn" id="rocket"]
+[ext_resource type="Script" uid="uid://bpwulnnwpcsdf" path="res://src/enemy/winged_mech/mech_dead.gd" id="dead"]
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="enemy_local"]
 [ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="health"]
+[ext_resource type="Script" uid="uid://b8pmyti0war6s" path="res://src/enemy/boss/aviator_gunship/gunship_hovering.gd" id="hovering"]
+[ext_resource type="PackedScene" uid="uid://bhbdjwqc5rb75" path="res://assets/models/enemies/aviator_gunship/aviator_gunship.glb" id="model"]
+[ext_resource type="Script" uid="uid://cgpg0dp12bj6k" path="res://src/enemy/boss/aviator_gunship/gunship_moves.gd" id="moves"]
 [ext_resource type="Script" uid="uid://djda3j3mx1537" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
+[ext_resource type="Script" uid="uid://dy63qhgse0sto" path="res://src/enemy/boss/aviator_gunship/gunship_relocating.gd" id="relocating"]
+[ext_resource type="PackedScene" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.tscn" id="rocket"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="state_machine"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_strafing.gd" id="strafing"]
+[ext_resource type="Script" uid="uid://b0odbh3r53j4i" path="res://src/enemy/boss/boss_phase_threshold.gd" id="threshold"]
 
 [sub_resource type="BoxShape3D" id="Shape_hull"]
 size = Vector3(4, 2.8, 6.2)
@@ -65,9 +67,28 @@ height = 45.0
 radial_segments = 6
 rings = 1
 
+[sub_resource type="StandardMaterial3D" id="Material_lane"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.15, 0.08, 0.3)
+disable_receive_shadows = true
+
+[sub_resource type="BoxMesh" id="Mesh_lane"]
+material = SubResource("Material_lane")
+size = Vector3(1, 0.02, 1)
+
 [sub_resource type="SphereMesh" id="Mesh_footsteps"]
 radius = 0.1
 height = 0.2
+
+[sub_resource type="Resource" id="Threshold_strafe"]
+script = ExtResource("threshold")
+hp_ratio = 0.65
+
+[sub_resource type="Resource" id="Threshold_course"]
+script = ExtResource("threshold")
+hp_ratio = 0.3
+phase_index = 3
 
 [node name="EnemyAviatorGunship" type="CharacterBody3D"]
 collision_layer = 2
@@ -118,6 +139,12 @@ light_color = Color(1, 0.2, 0.08, 1)
 light_energy = 0.0
 omni_range = 6.0
 
+[node name="StrafeLane" type="MeshInstance3D" parent="."]
+top_level = true
+visible = false
+cast_shadow = 0
+mesh = SubResource("Mesh_lane")
+
 [node name="CameraAnchor" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 
@@ -125,7 +152,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 5)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.6, 0)
 light_color = Color(0.4, 0.85, 1, 1)
 light_energy = 1.5
-omni_range = 5.0
 
 [node name="EnemyStateMachine" type="Node" parent="."]
 script = ExtResource("state_machine")
@@ -140,16 +166,21 @@ script = ExtResource("relocating")
 [node name="Attacking" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("attacking")
 
+[node name="Strafing" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("strafing")
+
 [node name="Dead" type="Node" parent="EnemyStateMachine"]
 script = ExtResource("dead")
 
 [node name="AviatorGunshipBehavior" type="Node" parent="."]
 script = ExtResource("behavior")
+strafe_damage = 1
 
 [node name="GunshipMoves" type="Node" parent="."]
 script = ExtResource("moves")
 bolt_spawn_scene = ExtResource("bolt_spawn")
 rocket_scene = ExtResource("rocket")
+laser_damage = 1
 
 [node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 
@@ -163,5 +194,6 @@ max_hp = 150
 
 [node name="BossPhaseController" type="Node" parent="."]
 script = ExtResource("phase")
+thresholds = Array[ExtResource("threshold")]([SubResource("Threshold_strafe"), SubResource("Threshold_course")])
 fire_particles_path = NodePath("")
 axe_fire_visual_path = NodePath("")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=0 format=3 uid="uid://d2q1r5idwdndt"]
+[gd_scene format=3 uid="uid://d2q1r5idwdndt"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
@@ -33,6 +33,8 @@
 [ext_resource type="PackedScene" path="res://src/enemy/enemy_aviator_gunship.tscn" id="gunship"]
 [ext_resource type="Script" uid="uid://cmsv7oeu5se3x" path="res://src/world/ui/show_boss_health_bar.gd" id="show_boss_bar"]
 [ext_resource type="Texture2D" path="res://assets/sprites/ui/icons/aviator_gunship_boss_icon.png" id="boss_icon"]
+[ext_resource type="Script" path="res://src/world/elements/space/breakable_deck.gd" id="breakable_deck"]
+[ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_course.gd" id="gunship_course"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_sky"]
 panorama = ExtResource("sky")
@@ -58,7 +60,7 @@ _data = [Vector2(0, 3.0), 0.0, 0.0, 0, 0, Vector2(1, 3.0), 0.0, 0.0, 0, 0]
 point_count = 2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
-size = Vector3(400, 1, 400)
+size = Vector3(2400, 1, 400)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_arena"]
 size = Vector3(21, 3, 15)
@@ -160,6 +162,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 
+[node name="PhaseThreeCheckpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -13.4955)
+script = ExtResource("checkpoint")
+enemy_groups_reset = [NodePath("../../Enemies/BossGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/AllPlayersAreaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/PhaseThreeCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/PhaseThreeCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
 [node name="Level" type="Node" parent="."]
 
 [node name="FallArea" type="Area3D" parent="Level"]
@@ -194,6 +208,18 @@ data = {
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
 [node name="Events" type="Node" parent="Level"]
+
+[node name="BreakableDeck" type="Node" parent="Level" node_paths=PackedStringArray("floor_map", "hull_map")]
+script = ExtResource("breakable_deck")
+floor_map = NodePath("../NavigationRegion3D/GridMapFloor")
+hull_map = NodePath("../StationHull")
+
+[node name="GunshipCourse" type="Node3D" parent="Level" node_paths=PackedStringArray("deck", "phase_three_checkpoint")]
+script = ExtResource("gunship_course")
+deck = NodePath("../BreakableDeck")
+phase_three_checkpoint = NodePath("../../CheckpointManager/PhaseThreeCheckpoint")
+arena_cells_min = Vector2i(-3, -10)
+arena_cells_max = Vector2i(3, -4)
 
 [node name="CloudLayers" parent="Level" instance=ExtResource("clouds")]
 

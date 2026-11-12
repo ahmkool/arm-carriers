@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 """Boss fight against the aviator's gunship, on a sky station deck: world_local_aviator_gunship_boss.tscn.
 
-A first prototype of the fight's base attacks; the platforming part (tiles, a separate barge) comes later.
+Three phases (see AviatorGunshipBehavior): the base attacks; below 65% strafing runs and rockets that knock plates
+out of the deck; below 30% the deck crumbles west to east and the carriers flee along twin fragile tracks to platform
+after platform (GunshipCourse, up to 16), each crumbling 15 s after they land. A death after phase 3 started
+respawns at the phase three checkpoint and the gunship wakes at 30%.
 The carriers start on the south rows of a square deck. Walking north wakes the gunship, which hovers off one edge of
 the deck facing across it. It drifts along that edge to stay level with the carriers and fires gatling bursts,
 rocket salvos (red rings mark where they land) and its nose laser, a beam straight across the deck that slides
@@ -48,13 +51,16 @@ level.sky_material = SKY_PANORAMA
 level.sun_extra = {"light_color": "Color(1, 0.98, 0.94, 1)", "light_energy": "1.1"}
 level.bridge_scene = (None, "res://src/world/elements/space/hard_light_bridge_platform.tscn")
 level.curve = (3.0, 3.0)  # no survival group here, but the scene format expects the curve
-level.boxes = {"fall": (400, 1, 400), "arena": (21, 3, 15)}
+# The fall box reaches far east: phase 3's course runs up to about 900 m that way.
+level.boxes = {"fall": (2400, 1, 400), "arena": (21, 3, 15)}
 level.extra_ext += [
     ("PackedScene", None, "res://src/world/elements/sky/cloud_layers.tscn", "clouds"),
     ("Script", None, "res://src/world/elements/sky/floating_bob.gd", "bob"),
     ("PackedScene", None, "res://src/enemy/enemy_aviator_gunship.tscn", "gunship"),
     ("Script", "uid://cmsv7oeu5se3x", "res://src/world/ui/show_boss_health_bar.gd", "show_boss_bar"),
     ("Texture2D", None, "res://assets/sprites/ui/icons/aviator_gunship_boss_icon.png", "boss_icon"),
+    ("Script", None, "res://src/world/elements/space/breakable_deck.gd", "breakable_deck"),
+    ("Script", None, "res://src/enemy/boss/aviator_gunship/gunship_course.gd", "gunship_course"),
 ]
 level.add_shell()
 
@@ -68,11 +74,22 @@ level.node("AviatorGunshipBehavior", f"{boss_path}/EnemyAviatorGunship", props={
     "arena_center": f"Vector3({fmt(cx)}, 0, {fmt(cz)})", "arena_half_extent": fmt(HALF_EXTENT), "standoff": fmt(STANDOFF)})
 level.node("Health", f"{boss_path}/EnemyAviatorGunship", props={"max_hp": str(BOSS_HP)})
 
-level.checkpoints([checkpoint("Checkpoint", *SPAWN_CELL, None, "BossGroup", None, T)],
+# The second is set when phase 3 starts; respawning there wakes the gunship at 30% (GunshipCourse).
+level.checkpoints([checkpoint("Checkpoint", *SPAWN_CELL, None, "BossGroup", None, T),
+                   checkpoint("PhaseThreeCheckpoint", *SPAWN_CELL, None, "BossGroup", None, T)],
                   setter_marker=(0, -0.5082588), shooter_marker=(0, 2.1002235))
 
 # ---- Terrain and scenery. ----
 level.add_station_terrain([ARENA], {}, fall_z=cz)
+level.node("BreakableDeck", "Level", "Node", paths=["floor_map", "hull_map"], props={
+    "script": 'ExtResource("breakable_deck")', "floor_map": 'NodePath("../NavigationRegion3D/GridMapFloor")',
+    "hull_map": 'NodePath("../StationHull")'})
+x0, x1 = min(x for x, _ in ARENA), max(x for x, _ in ARENA)
+z0, z1 = min(z for _, z in ARENA), max(z for _, z in ARENA)
+level.node("GunshipCourse", "Level", "Node3D", paths=["deck", "phase_three_checkpoint"], props={
+    "script": 'ExtResource("gunship_course")', "deck": 'NodePath("../BreakableDeck")',
+    "phase_three_checkpoint": 'NodePath("../../CheckpointManager/PhaseThreeCheckpoint")',
+    "arena_cells_min": f"Vector2i({x0}, {z0})", "arena_cells_max": f"Vector2i({x1}, {z1})"})
 level.node("CloudLayers", "Level", instance="clouds")
 level.node("DistantStations", "Level", "Node")
 for name, position, shape, props in DISTANT_STATIONS:
