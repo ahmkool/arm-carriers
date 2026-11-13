@@ -10,3 +10,5 @@ extends Resource
 @export var unlock_all_levels := false
 ## Adds a checkpoint selector menu to the pause menu during levels.
 @export var checkpoint_selector := false
+## Hides the carry and front-carrier prompts and the bottom-right info message, for recording trailers.
+@export var trailer_mode := false

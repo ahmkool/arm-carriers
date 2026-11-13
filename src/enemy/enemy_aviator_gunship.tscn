@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://cgpg0dp12bj6k" path="res://src/enemy/boss/aviator_gunship/gunship_moves.gd" id="moves"]
 [ext_resource type="Script" uid="uid://djda3j3mx1537" path="res://src/enemy/boss/boss_phase_controller.gd" id="phase"]
 [ext_resource type="Script" uid="uid://dy63qhgse0sto" path="res://src/enemy/boss/aviator_gunship/gunship_relocating.gd" id="relocating"]
-[ext_resource type="PackedScene" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.tscn" id="rocket"]
+[ext_resource type="PackedScene" uid="uid://bqkpn5utpvvfc" path="res://src/enemy/boss/aviator_gunship/gunship_rocket.tscn" id="rocket"]
 [ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="state_machine"]
 [ext_resource type="Script" path="res://src/enemy/boss/aviator_gunship/gunship_strafing.gd" id="strafing"]
 [ext_resource type="Script" uid="uid://b0odbh3r53j4i" path="res://src/enemy/boss/boss_phase_threshold.gd" id="threshold"]
@@ -190,7 +190,7 @@ draw_pass_1 = SubResource("Mesh_footsteps")
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("health")
-max_hp = 150
+max_hp = 300
 
 [node name="BossPhaseController" type="Node" parent="."]
 script = ExtResource("phase")

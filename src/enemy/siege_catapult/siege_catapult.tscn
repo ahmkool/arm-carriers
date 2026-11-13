@@ -1,0 +1,74 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/enemy/siege_catapult/siege_catapult.gd" id="1_siege"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/catapult/catapult.glb" id="2_model"]
+
+[sub_resource type="StandardMaterial3D" id="Material_wood"]
+albedo_color = Color(0.36, 0.23, 0.13, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_post"]
+material = SubResource("Material_wood")
+top_radius = 0.1
+bottom_radius = 0.14
+height = 1.5
+radial_segments = 8
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_fork"]
+material = SubResource("Material_wood")
+size = Vector3(0.5, 0.12, 0.14)
+
+[sub_resource type="StandardMaterial3D" id="Material_edge"]
+resource_local_to_scene = true
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.12, 0.08, 0.6)
+disable_receive_shadows = true
+
+[sub_resource type="StandardMaterial3D" id="Material_fill"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.15, 0.1, 0.14)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="TorusMesh_edge"]
+material = SubResource("Material_edge")
+inner_radius = 0.92
+outer_radius = 1.0
+rings = 48
+ring_segments = 4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_fill"]
+material = SubResource("Material_fill")
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.01
+radial_segments = 48
+rings = 1
+
+[node name="SiegeCatapult" type="Node3D"]
+script = ExtResource("1_siege")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="Stake" type="Node3D" parent="."]
+
+[node name="Post" type="MeshInstance3D" parent="Stake"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Fork" type="MeshInstance3D" parent="Stake"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.18, 0)
+mesh = SubResource("BoxMesh_fork")
+
+[node name="WarningRing" type="Node3D" parent="."]
+
+[node name="Edge" type="MeshInstance3D" parent="WarningRing"]
+transform = Transform3D(1, 0, 0, 0, 0.05, 0, 0, 0, 1, 0, 0.01, 0)
+cast_shadow = 0
+mesh = SubResource("TorusMesh_edge")
+
+[node name="Fill" type="MeshInstance3D" parent="WarningRing"]
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_fill")

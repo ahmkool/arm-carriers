@@ -190,6 +190,8 @@ SurvivalEnemyGroup            # SurvivalEnemyGroup script
 | `fight_duration` | Length of the wave in seconds. |
 | `enemy_max_hp` | Max HP of each spawned enemy; 0 keeps the enemy scene's own. |
 | `show_timer_ui` | Shows the HUD countdown (`UI/SurvivalTimer`, `src/world/ui/survival_timer.tscn`) while the wave runs (default on). After the timer ends it reads "Defeat the remaining enemies!" until the group clears. |
+| `endless` | Keeps spawning past `fight_duration` until `stop()` is called, then ends like a timed wave: `enemies_defeated` once the ones left are dead. The interval curve still ramps over `fight_duration`, then holds its last value. Turn `show_timer_ui` off (there's no countdown). `StopSurvivalEvent` (`src/events/stop_survival_event.gd`) calls `stop()` from an event chain; `is_spawning()` says whether new enemies can still appear. Used by the castle siege's front (`verify_castle_siege.gd`). |
+| `max_alive` | No spawn while this many of the group's enemies are alive (0: no cap), so a long endless wave can't pile up. |
 
 **Spawn polygons:** each polygon node has ≥3 child `Node3D` markers as vertices. Enemies spawn at a random point inside the quad.
 

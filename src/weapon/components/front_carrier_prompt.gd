@@ -90,6 +90,8 @@ func hide_prompt() -> void:
 
 
 func _can_show(front_carrier: PlayerLocal, ignore_learned: bool) -> bool:
+	if DevSettings.is_trailer_mode():
+		return false
 	if is_learned(_word) and not ignore_learned:
 		return false
 	if not is_instance_valid(front_carrier):

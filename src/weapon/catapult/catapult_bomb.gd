@@ -2,6 +2,8 @@ class_name CatapultBomb
 extends Node3D
 ## A bomb lobbed by the catapult. It follows an exact parabola, so the landing point the
 ## aim guide predicts with `predict_flight` is where it really lands, then it blows up.
+## An enemy's catapult (SiegeCatapult) throws the same bomb made hostile with `make_hostile`: it then ignores enemy
+## bodies, blows up only on the level, and hurts the carriers inside its blast instead of enemies.
 
 signal exploded(at_position: Vector3)
 
@@ -12,6 +14,8 @@ const PREDICTION_STEP_SEC := 1.0 / 30.0
 ## A flight that hasn't landed by then is treated as lost.
 const MAX_FLIGHT_SEC := 6.0
 const SPIN_SPEED := 7.0
+## A hostile blast reaches carriers this far above or below it, so not across floors.
+const HOSTILE_BLAST_HEIGHT := 2.5
 
 @onready var _model: Node3D = $Model
 @onready var _hit_area: Area3D = $HitArea
@@ -22,6 +26,21 @@ var _gravity := 0.0
 var _floor_y := 0.0
 var _elapsed := 0.0
 var _spent := false
+var _hostile := false
+var _hostile_damage := 3
+var _hostile_radius := 3.0
+
+
+## Thrown by an enemy: call before adding it to the tree.
+func make_hostile(damage: int, blast_radius: float) -> void:
+	_hostile = true
+	_hostile_damage = damage
+	_hostile_radius = blast_radius
+	add_to_group(Checkpoint.ENEMY_PROJECTILE_GROUP)
+
+
+func is_hostile() -> bool:
+	return _hostile
 
 
 func _ready() -> void:
@@ -98,6 +117,8 @@ static func _cross_floor(from: Vector3, to: Vector3, floor_y: float) -> Vector3:
 
 
 func _on_hit_area_body_entered(body: Node3D) -> void:
+	if _hostile:
+		return
 	if body is not EnemyLocal:
 		return
 	_detonate(global_position, FrontalGuard.absorb_strike(body, global_position))
@@ -109,9 +130,34 @@ func _detonate(at_position: Vector3, on_shield := false) -> void:
 		return
 	_spent = true
 	exploded.emit(at_position)
+	_hurt_carriers(at_position)
 	var explosion := EXPLOSION_SCENE.instantiate() as Node3D
-	explosion.set("hurts_enemies", not on_shield)
+	explosion.set("hurts_enemies", not on_shield and not _hostile)
+	if _hostile:
+		explosion.set("damage_radius", _hostile_radius)
 	get_tree().current_scene.add_child(explosion)
 	explosion.global_position = at_position
 	CameraFeedback.add_trauma_explosion()
 	queue_free()
+
+
+func _hurt_carriers(at_position: Vector3) -> void:
+	if not _hostile:
+		return
+	var players := get_tree().current_scene.get_node_or_null(^"Players")
+	if players == null:
+		return
+	for child in players.get_children():
+		_hurt_carrier(child as PlayerLocal, at_position)
+
+
+func _hurt_carrier(player: PlayerLocal, at_position: Vector3) -> void:
+	if player == null or player.is_dead:
+		return
+	var offset := player.global_position - at_position
+	if absf(offset.y) > HOSTILE_BLAST_HEIGHT:
+		return
+	if Vector2(offset.x, offset.z).length() > _hostile_radius:
+		return
+	if Health.apply_damage(player, _hostile_damage, at_position):
+		CameraFeedback.add_trauma_hurt()

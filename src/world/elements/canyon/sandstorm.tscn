@@ -1,0 +1,107 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/canyon/sandstorm.gd" id="1_storm"]
+[ext_resource type="Shader" path="res://src/world/elements/storm_isles/rain_drop.gdshader" id="2_streak"]
+[ext_resource type="Shader" path="res://src/world/elements/canyon/sand_haze.gdshader" id="3_haze"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_streaks"]
+emission_shape = 3
+emission_box_extents = Vector3(26, 3.5, 22)
+direction = Vector3(1, -0.06, 0.25)
+spread = 4.0
+initial_velocity_min = 16.0
+initial_velocity_max = 23.0
+gravity = Vector3(0, 0, 0)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_streaks"]
+render_priority = 0
+shader = ExtResource("2_streak")
+shader_parameter/tint = Color(0.95, 0.82, 0.62, 0.24)
+
+[sub_resource type="QuadMesh" id="QuadMesh_streak"]
+material = SubResource("ShaderMaterial_streaks")
+size = Vector2(0.05, 1.5)
+
+[sub_resource type="Gradient" id="Gradient_puff"]
+offsets = PackedFloat32Array(0, 0.55, 1)
+colors = PackedColorArray(1, 1, 1, 1, 1, 1, 1, 0.45, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_puff"]
+gradient = SubResource("Gradient_puff")
+width = 64
+height = 64
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="Gradient" id="Gradient_dust_life"]
+offsets = PackedFloat32Array(0, 0.25, 0.75, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_dust_life"]
+gradient = SubResource("Gradient_dust_life")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_dust"]
+emission_shape = 3
+emission_box_extents = Vector3(30, 3, 26)
+direction = Vector3(1, 0, 0.25)
+spread = 8.0
+initial_velocity_min = 6.0
+initial_velocity_max = 9.0
+gravity = Vector3(0, 0, 0)
+angle_min = -180.0
+angle_max = 180.0
+scale_min = 6.0
+scale_max = 12.0
+color_ramp = SubResource("GradientTexture1D_dust_life")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dust"]
+transparency = 1
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.9, 0.74, 0.54, 0.16)
+albedo_texture = SubResource("GradientTexture2D_puff")
+billboard_mode = 3
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_dust"]
+material = SubResource("StandardMaterial3D_dust")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_haze"]
+render_priority = 0
+shader = ExtResource("3_haze")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_haze"]
+material = SubResource("ShaderMaterial_haze")
+size = Vector2(120, 120)
+
+[node name="Sandstorm" type="Node3D"]
+script = ExtResource("1_storm")
+
+[node name="Streaks" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 700
+lifetime = 1.4
+preprocess = 1.5
+visibility_aabb = AABB(-40, -10, -40, 80, 20, 80)
+local_coords = false
+transform_align = 2
+process_material = SubResource("ParticleProcessMaterial_streaks")
+draw_pass_1 = SubResource("QuadMesh_streak")
+
+[node name="Dust" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 36
+lifetime = 6.0
+preprocess = 6.0
+visibility_aabb = AABB(-50, -12, -50, 100, 24, 100)
+local_coords = false
+process_material = SubResource("ParticleProcessMaterial_dust")
+draw_pass_1 = SubResource("QuadMesh_dust")
+
+[node name="Haze" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_haze")

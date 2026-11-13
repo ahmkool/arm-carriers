@@ -284,7 +284,7 @@ assert not any(c in PILLARS for c in BRIDGES[2]) and all((x, z) not in PILLARS f
 
 level = Level("src/world/levels/world_local_storm_isles.tscn", palette="isles", weapon="saw", floor_seed=1, deco_seed=1,
               hint="[color=#ff8888]Saw usage[/color]\n\nThe saw is always spinning : steer it into enemies together !",
-              follow_offset="Vector3(0, 11, 4.714)", music="dark_fairies")  # the saw's raised camera, as in world_local_saw
+              follow_offset="Vector3(0, 11, 4.714)", music="rainwalk")  # the saw's raised camera, as in world_local_saw
 level.use_storm_isles()
 level.curve = (SPAWN_INTERVAL, SPAWN_INTERVAL)  # seconds between survival spawns, start to end
 level.boxes = {"fall": (500, 1, 420), "horde": (36, 3, 6), "isle3": (6, 3, 15), "isle5": (15, 3, 6), "track": (2, 3, 2),

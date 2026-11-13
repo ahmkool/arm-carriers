@@ -33,6 +33,12 @@ func has_checkpoint_selector() -> bool:
 	return _config.checkpoint_selector
 
 
+func is_trailer_mode() -> bool:
+	if not is_active():
+		return false
+	return _config.trailer_mode
+
+
 func request_checkpoint_jump(checkpoint_id: String, skip_save: bool = false) -> void:
 	_pending_checkpoint_id = checkpoint_id
 	_pending_skip_save = skip_save
@@ -134,3 +140,5 @@ func _apply_user_overrides(data: Dictionary) -> void:
 		_config.unlock_all_levels = bool(data["unlock_all_levels"])
 	if data.has("checkpoint_selector"):
 		_config.checkpoint_selector = bool(data["checkpoint_selector"])
+	if data.has("trailer_mode"):
+		_config.trailer_mode = bool(data["trailer_mode"])

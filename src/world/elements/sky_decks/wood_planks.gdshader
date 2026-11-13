@@ -7,6 +7,9 @@ uniform vec3 seam_color : source_color = vec3(0.13, 0.08, 0.05);
 uniform float plank_width = 0.75;
 uniform float plank_length = 4.5;
 uniform bool local_space = false;
+// Planks run along world x by default; on runs the other way across z. A bridge along x lays them along z, so its
+// boards cross it.
+uniform bool planks_along_z = false;
 
 varying vec3 v_pos;
 varying vec3 v_normal;
@@ -31,7 +34,8 @@ void vertex() {
 
 void fragment() {
 	bool is_top = abs(v_normal.y) > 0.5;
-	vec2 uv = is_top ? v_pos.xz : vec2(v_pos.x + v_pos.z, v_pos.y * 2.0);
+	vec2 flat_pos = planks_along_z ? v_pos.zx : v_pos.xz;
+	vec2 uv = is_top ? flat_pos : vec2(v_pos.x + v_pos.z, v_pos.y * 2.0);
 	float row = floor(uv.y / plank_width);
 	float along = uv.x / plank_length + hash(vec2(row, 3.0)) * 7.0;
 	float plank = floor(along);

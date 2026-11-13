@@ -13,6 +13,8 @@ var _fade_tween: Tween = null
 func _ready() -> void:
 	if message_string.is_empty():
 		return
+	if DevSettings.is_trailer_mode():
+		return
 	var world := LevelNodes.find_world(self)
 	if world == null:
 		return

@@ -5,6 +5,16 @@ extends Node3D
 @export var damage: int = 9999
 ## Off for enemy grenades: they hurt the carriers themselves and use this only for the blast's look and sound.
 @export var hurts_enemies := true
+## Level geometry between the blast and an enemy shields it: a bomb striking a wall's face doesn't reach the guards
+## standing on top of it.
+@export var blocked_by_level := true
+
+const LEVEL_COLLISION_MASK := 4
+## Where the line of sight aims on an enemy, above its feet.
+const ENEMY_AIM_HEIGHT := 1.0
+## Blasts sit on the surface they struck, so a sight line can graze that surface right at the blast; a hit this
+## close to the blast doesn't count as cover.
+const COVER_TOLERANCE := 0.2
 
 @onready var debris = $Debris
 @onready var fire = $Fire
@@ -73,7 +83,22 @@ func _apply_damage_to_body(body: Node) -> void:
 		return
 	if body is not EnemyLocal:
 		return
+	if _is_behind_cover(body):
+		return
 	Health.apply_damage(body, damage, global_position)
+
+
+## Casts from the enemy to the blast, not the other way: a blast sitting on a wall's face would start its ray on
+## that face and could slip through it.
+func _is_behind_cover(body: Node3D) -> bool:
+	if not blocked_by_level:
+		return false
+	var from := body.global_position + Vector3.UP * ENEMY_AIM_HEIGHT
+	var query := PhysicsRayQueryParameters3D.create(from, global_position, LEVEL_COLLISION_MASK)
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if hit.is_empty():
+		return false
+	return hit.position.distance_to(global_position) > COVER_TOLERANCE
 
 
 func _extinguish_fireball_area(area: Area3D) -> void:

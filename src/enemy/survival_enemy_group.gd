@@ -11,10 +11,17 @@ const SURVIVAL_TIMER_PATH := "UI/SurvivalTimer"
 @export var show_timer_ui := true
 ## Max HP given to each spawned enemy. 0 keeps the enemy scene's own.
 @export_range(0, 999) var enemy_max_hp := 0
+## Keeps spawning past fight_duration until stop() is called (StopSurvivalEvent), then ends like a timed wave:
+## enemies_defeated once the ones left are dead. The interval curve still ramps over fight_duration, then holds its
+## last value. Turn show_timer_ui off: there's no countdown.
+@export var endless := false
+## No spawn while this many spawned enemies are alive, so a long endless wave can't pile up. 0: no cap.
+@export_range(0, 200) var max_alive := 0
 
 var signal_emitted := false
 
 var _started := false
+var _stopped := false
 var _fight_elapsed := 0.0
 var _spawn_timer := 0.0
 
@@ -46,6 +53,16 @@ func is_running() -> bool:
 	return _started and not signal_emitted
 
 
+## Ends an endless wave's spawning; enemies_defeated follows once the ones left are dead.
+func stop() -> void:
+	_stopped = true
+
+
+## True while new enemies can still appear.
+func is_spawning() -> bool:
+	return is_running() and not _spawning_over()
+
+
 func get_time_remaining() -> float:
 	return maxf(fight_duration - _fight_elapsed, 0.0)
 
@@ -65,6 +82,7 @@ func _bind_timer_ui() -> void:
 func reset() -> void:
 	signal_emitted = false
 	_started = false
+	_stopped = false
 	_fight_elapsed = 0.0
 	_spawn_timer = 0.0
 	_clear_spawned_enemies()
@@ -91,7 +109,10 @@ func _physics_process(delta: float) -> void:
 
 
 func _process_spawning() -> void:
-	if _fight_elapsed >= fight_duration:
+	if _spawning_over():
+		return
+	if max_alive > 0 and _alive_count() >= max_alive:
+		_spawn_timer = minf(_spawn_timer, _spawn_interval_at(_fight_elapsed))
 		return
 	var interval := _spawn_interval_at(_fight_elapsed)
 	if _spawn_timer < interval:
@@ -118,9 +139,21 @@ func _validate_spawn_interval_curve() -> void:
 
 
 func _fight_ended_and_cleared() -> bool:
-	if _fight_elapsed < fight_duration:
+	if not _spawning_over():
 		return false
 	return _all_spawned_dead()
+
+
+func _spawning_over() -> bool:
+	if endless:
+		return _stopped
+	return _fight_elapsed >= fight_duration
+
+
+func _alive_count() -> int:
+	if not is_instance_valid(_enemies_parent):
+		return 0
+	return _enemies_parent.get_children().filter(func(c): return c is EnemyLocal and (c as EnemyLocal).is_alive()).size()
 
 
 func _resolve_containers() -> void:

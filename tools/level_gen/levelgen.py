@@ -31,6 +31,7 @@ LIBRARIES = {
     "snow": ("src/world/elements/snow/snow_tiles.tres", None),  # snow, ice and snowy props; built by build_snow_tiles.gd
     "space": ("src/world/elements/space/space_tiles.tres", None),  # station plating; built by build_space_tiles.gd
     "isles": ("src/world/elements/storm_isles/isle_tiles.tres", None),  # wet dungeon stone in the sea; built by build_isle_tiles.gd
+    "canyon": ("src/world/elements/canyon/canyon_tiles.tres", None),  # sandstone; built by build_canyon_tiles.gd
 }
 WEAPONS = {
     "bazooka": ("uid://cq5v348mrgy7q", "res://src/weapon/bazooka.tscn"),
@@ -51,6 +52,7 @@ MUSIC = {
     "rising_tension": ("uid://bkee2kcxygr38", "res://assets/music/PeriTune_Rising_Tension.mp3"),
     "overworld_orchestra": ("uid://duaul8r11ug66", "res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3"),
     "cyber_noir": ("uid://etr5pc8rj0ge", "res://assets/music/PerituneMaterial_Cyber_Noir.mp3"),
+    "rainwalk": ("uid://tjy5vr01nwen", "res://assets/music/PeriTune_Rainwalk_loop.mp3"),
 }
 TRIGGER = "AllPlayersAreaTrigger"
 EVENTS = "Level/Events/"
@@ -409,6 +411,8 @@ class Level:
 
     def build_decoration(self, floor, count):
         """Non-colliding grass only. The Decoration GridMap keeps the default 2 m cells."""
+        if count == 0:
+            return {}  # also for tile sets without grass
         rng = random.Random(self.deco_seed)
         grass = [self.items[name] for name in ("Grass_1_A", "Grass_1_B", "Grass_1_C", "Grass_2_A")]
         interior = [c for c in sorted(floor)

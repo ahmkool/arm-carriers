@@ -1,0 +1,85 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://64pji2ifyp0g" path="res://src/vfx/fireball.gd" id="1_fireball"]
+[ext_resource type="PackedScene" path="res://assets/models/weapon/enemies/skeleton_crossbow/Skeleton_Arrow.gltf" id="2_arrow"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_hit"]
+radius = 0.35
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_disappear"]
+resource_name = "disappear"
+length = 0.5
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Visuals:scale")
+tracks/0/interp = 2
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 1), Vector3(0.05, 0.05, 0.05)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_bolt"]
+_data = {
+&"RESET": SubResource("Animation_reset"),
+&"disappear": SubResource("Animation_disappear")
+}
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_trail"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(1, 0.22, 0.12, 0.75)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_trail"]
+material = SubResource("StandardMaterial3D_trail")
+top_radius = 0.0
+bottom_radius = 0.07
+height = 1.4
+radial_segments = 6
+rings = 1
+
+[node name="CrossbowBolt" type="Node3D"]
+script = ExtResource("1_fireball")
+lifetime_seconds = 4.0
+
+[node name="Area3D" type="Area3D" parent="."]
+collision_layer = 8
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Area3D"]
+shape = SubResource("SphereShape3D_hit")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_bolt")
+}
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="Arrow" parent="Visuals" instance=ExtResource("2_arrow")]
+transform = Transform3D(1.6, 0, 0, 0, 0, 1.6, 0, -1.6, 0, 0, 0, 0)
+
+[node name="Trail" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 0, -1, 0, 1, 0, 0, 0, 1.2)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_trail")
+
+[connection signal="body_entered" from="Area3D" to="." method="_on_body_collision"]

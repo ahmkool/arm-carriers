@@ -50,6 +50,8 @@ func _resolve_carrying_weapon_data() -> void:
 func _should_show_prompt() -> bool:
 	if carrying_weapon_data == null:
 		return false
+	if DevSettings.is_trailer_mode():
+		return false
 	var player := carrying_weapon_data.get_parent() as PlayerLocal
 	if player != null and player.is_dead:
 		return false

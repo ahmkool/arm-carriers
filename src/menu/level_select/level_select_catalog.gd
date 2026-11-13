@@ -94,6 +94,7 @@ const DEV_GROUPS: Array[Dictionary] = [
 			{"title": "Rotor Decks II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks_2.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Space Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station_2.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
 			{"title": "Storm Isles", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_storm_isles.tscn", "weapon": "saw"},
+			{"title": "Castle Siege", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_castle_siege.tscn", "weapon": "catapult", "requires": "ranged"},
 		],
 	},
 ]

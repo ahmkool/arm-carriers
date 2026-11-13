@@ -27,7 +27,7 @@
 [ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
 [ext_resource type="PackedScene" uid="uid://lilxckjevvd5" path="res://src/weapon/saw.tscn" id="saw"]
-[ext_resource type="AudioStream" uid="uid://da7v13g67if2i" path="res://assets/music/Peritune_Dark_Fairies.mp3" id="music"]
+[ext_resource type="AudioStream" uid="uid://tjy5vr01nwen" path="res://assets/music/PeriTune_Rainwalk_loop.mp3" id="music"]
 [ext_resource type="PackedScene" path="res://src/world/elements/dungeon/dungeon_brazier.tscn" id="brazier"]
 [ext_resource type="PackedScene" path="res://src/world/elements/storm_isles/rain.tscn" id="rain"]
 [ext_resource type="Shader" uid="uid://1omvlp44jb2k" path="res://water.gdshader" id="water_shader"]

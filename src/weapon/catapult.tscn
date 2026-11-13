@@ -1,11 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://c4tapu1tw3apn"]
+[gd_scene load_steps=24 format=3 uid="uid://cvavm2bu6fod8"]
 
 [ext_resource type="Script" uid="uid://di26dvgsyyc87" path="res://src/weapon/big_weapon.gd" id="1_big"]
 [ext_resource type="Script" uid="uid://cicjvhi7kbpqb" path="res://src/weapon/components/pick_and_drop_handler.gd" id="2_pick"]
 [ext_resource type="Script" uid="uid://dtwqfj7m4osxe" path="res://src/weapon/weapon_movement.gd" id="3_move"]
-[ext_resource type="Script" path="res://src/weapon/catapult/catapult_specifics.gd" id="4_specifics"]
-[ext_resource type="PackedScene" path="res://assets/models/weapon/catapult/catapult.glb" id="5_model"]
-[ext_resource type="Script" path="res://src/weapon/catapult/catapult_aim_guide.gd" id="6_guide"]
+[ext_resource type="Script" uid="uid://cnvqnxxq8nfx6" path="res://src/weapon/catapult/catapult_specifics.gd" id="4_specifics"]
+[ext_resource type="PackedScene" uid="uid://dfadof1gv2sqt" path="res://assets/models/weapon/catapult/catapult.glb" id="5_model"]
+[ext_resource type="Script" uid="uid://c3lrsemnkjsl" path="res://src/weapon/catapult/catapult_aim_guide.gd" id="6_guide"]
+[ext_resource type="Script" path="res://src/weapon/catapult/catapult_blades.gd" id="7_blades"]
+[ext_resource type="Script" uid="uid://b1sdupmemvn3g" path="res://src/weapon/sword/hit_area.gd" id="8_hit_area"]
+[ext_resource type="AudioStream" uid="uid://dbfrepxvhqd4l" path="res://assets/sounds/damage.wav" id="9_hit_sfx"]
 
 [sub_resource type="BoxShape3D" id="Box_pick"]
 size = Vector3(2.2, 1.8, 2)
@@ -18,23 +21,17 @@ transparency = 1
 shading_mode = 0
 albedo_color = Color(1, 0.95, 0.75, 0.9)
 
+[sub_resource type="TorusMesh" id="Mesh_ring"]
+material = SubResource("Mat_guide_ring")
+inner_radius = 0.92
+rings = 48
+ring_segments = 6
+
 [sub_resource type="StandardMaterial3D" id="Mat_guide_fill"]
 transparency = 1
 cull_mode = 2
 shading_mode = 0
 albedo_color = Color(1, 0.95, 0.75, 0.16)
-
-[sub_resource type="StandardMaterial3D" id="Mat_guide_center"]
-transparency = 1
-shading_mode = 0
-albedo_color = Color(1, 0.95, 0.75, 0.9)
-
-[sub_resource type="TorusMesh" id="Mesh_ring"]
-material = SubResource("Mat_guide_ring")
-inner_radius = 0.92
-outer_radius = 1.0
-rings = 48
-ring_segments = 6
 
 [sub_resource type="CylinderMesh" id="Mesh_fill"]
 material = SubResource("Mat_guide_fill")
@@ -44,6 +41,11 @@ height = 0.01
 radial_segments = 48
 rings = 1
 
+[sub_resource type="StandardMaterial3D" id="Mat_guide_center"]
+transparency = 1
+shading_mode = 0
+albedo_color = Color(1, 0.95, 0.75, 0.9)
+
 [sub_resource type="CylinderMesh" id="Mesh_center"]
 material = SubResource("Mat_guide_center")
 top_radius = 0.35
@@ -51,6 +53,30 @@ bottom_radius = 0.35
 height = 0.02
 radial_segments = 24
 rings = 1
+
+[sub_resource type="StandardMaterial3D" id="Mat_blade_guard"]
+albedo_color = Color(0.3, 0.2, 0.12, 1)
+roughness = 0.8
+
+[sub_resource type="BoxMesh" id="Mesh_blade_guard"]
+material = SubResource("Mat_blade_guard")
+size = Vector3(0.12, 0.14, 0.42)
+
+[sub_resource type="StandardMaterial3D" id="Mat_blade"]
+albedo_color = Color(0.78, 0.8, 0.84, 1)
+metallic = 0.6
+roughness = 0.35
+
+[sub_resource type="BoxMesh" id="Mesh_blade"]
+material = SubResource("Mat_blade")
+size = Vector3(1.3, 0.05, 0.22)
+
+[sub_resource type="PrismMesh" id="Mesh_blade_tip"]
+material = SubResource("Mat_blade")
+size = Vector3(0.22, 0.3, 0.05)
+
+[sub_resource type="BoxShape3D" id="Box_blade_hit"]
+size = Vector3(1.7, 1.2, 0.9)
 
 [node name="Catapult" type="RigidBody3D"]
 collision_layer = 8
@@ -113,7 +139,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10)
 script = ExtResource("6_guide")
 
 [node name="Ring" type="MeshInstance3D" parent="WeaponSpecifics/AimGuide"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 cast_shadow = 0
 mesh = SubResource("Mesh_ring")
 
@@ -124,3 +149,99 @@ mesh = SubResource("Mesh_fill")
 [node name="Center" type="MeshInstance3D" parent="WeaponSpecifics/AimGuide"]
 cast_shadow = 0
 mesh = SubResource("Mesh_center")
+
+[node name="Blades" type="Node3D" parent="WeaponSpecifics" node_paths=PackedStringArray("front_grip", "pick_and_drop_handler")]
+script = ExtResource("7_blades")
+front_grip = NodePath("../Model/FrontGrip")
+pick_and_drop_handler = NodePath("../../PickAndDropHandler")
+
+[node name="LeftBlade" type="Node3D" parent="WeaponSpecifics/Blades"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, 0, 0)
+
+[node name="Guard" type="MeshInstance3D" parent="WeaponSpecifics/Blades/LeftBlade"]
+mesh = SubResource("Mesh_blade_guard")
+
+[node name="Steel" type="MeshInstance3D" parent="WeaponSpecifics/Blades/LeftBlade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.71, 0, 0)
+mesh = SubResource("Mesh_blade")
+
+[node name="Tip" type="MeshInstance3D" parent="WeaponSpecifics/Blades/LeftBlade"]
+transform = Transform3D(0, -1, 8.742278e-08, 4.371139e-08, -8.742278e-08, -1, 1, 3.821371e-15, 4.371139e-08, -1.51, 0, 0)
+mesh = SubResource("Mesh_blade_tip")
+
+[node name="HitAreaLeft" type="Area3D" parent="WeaponSpecifics/Blades"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("8_hit_area")
+damage = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/Blades/HitAreaLeft"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.35, 0, 0)
+shape = SubResource("Box_blade_hit")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="WeaponSpecifics/Blades/HitAreaLeft"]
+stream = ExtResource("9_hit_sfx")
+bus = &"SFX"
+
+[node name="RightBlade" type="Node3D" parent="WeaponSpecifics/Blades"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.55, 0, 0)
+
+[node name="Guard" type="MeshInstance3D" parent="WeaponSpecifics/Blades/RightBlade"]
+mesh = SubResource("Mesh_blade_guard")
+
+[node name="Steel" type="MeshInstance3D" parent="WeaponSpecifics/Blades/RightBlade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 0, 0)
+mesh = SubResource("Mesh_blade")
+
+[node name="Tip" type="MeshInstance3D" parent="WeaponSpecifics/Blades/RightBlade"]
+transform = Transform3D(8.742278e-08, 1, -3.821371e-15, -4.371139e-08, 0, -1, -1, 8.742278e-08, 4.371139e-08, 1.51, 0, 0)
+mesh = SubResource("Mesh_blade_tip")
+
+[node name="HitAreaRight" type="Area3D" parent="WeaponSpecifics/Blades"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("8_hit_area")
+damage = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/Blades/HitAreaRight"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.35, 0, 0)
+shape = SubResource("Box_blade_hit")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="WeaponSpecifics/Blades/HitAreaRight"]
+stream = ExtResource("9_hit_sfx")
+bus = &"SFX"
+
+[node name="FrontBlade" type="Node3D" parent="WeaponSpecifics/Blades"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 0.55)
+
+[node name="Guard" type="MeshInstance3D" parent="WeaponSpecifics/Blades/FrontBlade"]
+mesh = SubResource("Mesh_blade_guard")
+
+[node name="Steel" type="MeshInstance3D" parent="WeaponSpecifics/Blades/FrontBlade"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.71, 0, 0)
+mesh = SubResource("Mesh_blade")
+
+[node name="Tip" type="MeshInstance3D" parent="WeaponSpecifics/Blades/FrontBlade"]
+transform = Transform3D(8.742278e-08, 1, -3.821371e-15, -4.371139e-08, 0, -1, -1, 8.742278e-08, 4.371139e-08, 1.51, 0, 0)
+mesh = SubResource("Mesh_blade_tip")
+
+[node name="HitAreaFront" type="Area3D" parent="WeaponSpecifics/Blades"]
+collision_layer = 2
+collision_mask = 2
+script = ExtResource("8_hit_area")
+damage = 3
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="WeaponSpecifics/Blades/HitAreaFront"]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 0, 0, 1.35)
+shape = SubResource("Box_blade_hit")
+
+[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="WeaponSpecifics/Blades/HitAreaFront"]
+stream = ExtResource("9_hit_sfx")
+bus = &"SFX"
+
+[connection signal="body_entered" from="WeaponSpecifics/Blades/HitAreaLeft" to="WeaponSpecifics/Blades/HitAreaLeft" method="_on_hit_area_body_entered"]
+[connection signal="body_exited" from="WeaponSpecifics/Blades/HitAreaLeft" to="WeaponSpecifics/Blades/HitAreaLeft" method="_on_hit_area_body_exited"]
+[connection signal="body_entered" from="WeaponSpecifics/Blades/HitAreaRight" to="WeaponSpecifics/Blades/HitAreaRight" method="_on_hit_area_body_entered"]
+[connection signal="body_exited" from="WeaponSpecifics/Blades/HitAreaRight" to="WeaponSpecifics/Blades/HitAreaRight" method="_on_hit_area_body_exited"]
+[connection signal="body_entered" from="WeaponSpecifics/Blades/HitAreaFront" to="WeaponSpecifics/Blades/HitAreaFront" method="_on_hit_area_body_entered"]
+[connection signal="body_exited" from="WeaponSpecifics/Blades/HitAreaFront" to="WeaponSpecifics/Blades/HitAreaFront" method="_on_hit_area_body_exited"]
