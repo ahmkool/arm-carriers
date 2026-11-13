@@ -423,9 +423,12 @@ class Level:
             cells[(int(wx // 2), -1, int(wz // 2))] = (rng.choice(grass), rng.choice([0, 10, 16, 22]))
         return cells
 
-    def add_terrain(self, floor, mouths, decoration_count, fall_z, water_x=None, water_z=None, fall_y=-6.726822):
-        """Leave water_x as None for a level without water. Lower fall_y for a longer visible drop."""
-        floor_cells = _encode_cells(self.build_floor(floor, mouths))
+    def add_terrain(self, floor, mouths, decoration_count, fall_z, water_x=None, water_z=None, fall_y=-6.726822,
+                    exclude=frozenset()):
+        """Leave water_x as None for a level without water. Lower fall_y for a longer visible drop. exclude: cells
+        edged as part of `floor` but left out of its GridMap, for another tile set to fill."""
+        tiles = self.build_floor(floor, mouths)
+        floor_cells = _encode_cells({key: tile for key, tile in tiles.items() if (key[0], key[2]) not in exclude})
         deco_cells = _encode_cells(self.build_decoration(floor, decoration_count))
         self.node("Level", ".", "Node")
         self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})

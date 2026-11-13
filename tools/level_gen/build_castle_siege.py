@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Prototype of a castle siege: world_local_castle_siege.tscn ("Castle Siege", in the Dev tab). Played with the catapult.
 
-The carriers attack a castle from the desert canyon outside it, heading north along its west wall, in three sections.
+The carriers attack a castle from the desert canyon outside it, heading north along its west wall, then through its
+gate into an arena, in six sections.
 
 (1) The wall: a sandstone ledge with the castle wall on its right (east), across a one-cell chasm. Four skeleton
     crossbowmen (src/enemy/enemy_skeleton_crossbow.tscn) stand on its wall walk (top at y = 3, 4 m above the ledge) and
@@ -26,7 +27,12 @@ The carriers attack a castle from the desert canyon outside it, heading north al
     chasm, the gate in its middle. Six crossbowmen stand on the wall walk, and three catapult skeletons on wooden
     balconies behind the wall throw over it; the carriers reach them by lobbing over the wall. Skeletons keep appearing in the field (an endless SurvivalEnemyGroup) until the wall's
     crossbowmen and catapults are all dead, which stops them, sets Checkpoint6 and raises the stone bridge over the
-    chasm, through the gate, to a pad inside holding the end area. The castle's inside is the next section.
+    chasm, through the gate.
+(6) The arena: inside the gate a stone path, three cells wide, runs east (about 10 s of walking) and then a little
+    north, into a 12 x 12 arena standing over the gorge. Wooden scaffolding stands round its west, east and south
+    sides, a cell out and 4 m up (level with the wall walk). Stepping into the arena sinks the path's last row behind
+    the carriers and starts two 60 s survival waves at once: skeletons appear in the arena, and stationary crossbowmen (src/enemy/enemy_skeleton_crossbow_static.tscn) on the scaffolding. Once both
+    waves are over and their enemies dead, the level is won. Walking up the path's north leg sets Checkpoint7.
 
 The wall and the towers are generated here: StaticBody3Ds on layer 4, the level's collision layer, so bombs land on
 them and crossbowmen stand on them. The island bridges are StaticBody3D decks baked into the navmesh, so skeletons
@@ -75,17 +81,40 @@ OUTCROPS = (((-1, -46), (-1, 0)), ((5, -51), (1, 0)), ((3, -54), (0, -1)), ((-7,
 OUTCROP_LENGTH = 2
 BRIDGE_ISLAND_REACH = 5  # cells from the bridge's centre line to an island's centre
 # Section 5: the field before the castle, the castle wall on its right (east) across a one-cell chasm, like the first
-# sections' wall, with a gate in its middle, and a small pad inside the gate (a placeholder for the castle's inside).
+# sections' wall, with a gate in its middle.
 FIELD = rounded(-7, 5, -76, -64)
 FRONT_WALL_X = 7
 GATE_Z = (-71, -69)
 FRONT_WALL_RUNS = ((-80, GATE_Z[0] - 1), (GATE_Z[1] + 1, -60))  # cell z ranges, north to south
 GATE = rect(FRONT_WALL_X, FRONT_WALL_X, GATE_Z[0], GATE_Z[1])
-INSIDE_PAD = rect(FRONT_WALL_X + 1, FRONT_WALL_X + 5, GATE_Z[0], GATE_Z[1])
 # Wooden balconies behind the wall, 2 m below its walk (cell z ranges; 2 cells deep against its east face).
 BALCONIES = ((-79, -77), (-75, -73), (-66, -64))
 BALCONY_COLUMNS = (FRONT_WALL_X + 1, FRONT_WALL_X + 2)
 BALCONY_TOP = 1.0
+# Section 6: castle-stone tiles. The path runs east from the gate, 16 cells, then north 4 cells into the arena's south
+# edge. The scaffolding is decks one cell outside the arena on three sides, with a cell of void between, and an
+# opening over the path.
+PATH_EAST = rect(FRONT_WALL_X + 1, 23, GATE_Z[0], GATE_Z[1])
+PATH_NORTH = rect(21, 23, -75, GATE_Z[0] - 1)
+ARENA_X, ARENA_Z = (16, 27), (-87, -76)  # cells, west to east, north to south
+ARENA = rect(ARENA_X[0], ARENA_X[1], ARENA_Z[0], ARENA_Z[1])
+CASTLE_FLOOR = PATH_EAST | PATH_NORTH | ARENA
+# The path's last row before the arena: bridge platforms (bridge 6), raised with the gate's bridge, that sink into the
+# gorge when the arena's fight starts, so the carriers can't leave it.
+ARENA_GATE_Z = ARENA_Z[1] + 1
+ARENA_GATE = [(x, ARENA_GATE_Z) for x in (21, 22, 23)]
+assert set(ARENA_GATE) <= PATH_NORTH
+SCAFFOLD_X, SCAFFOLD_Z = (ARENA_X[0] - 2, ARENA_X[1] + 2), (ARENA_Z[0] - 1, ARENA_Z[1] + 2)  # west/east sides end level with the arena's north edge, plus a cell
+SCAFFOLD_OPENING = (20, 24)  # cell x range left open over the path
+# (first cell, last cell) per straight run: west, east, and the south side either side of the opening. None on the
+# north side: the camera, looking north, never showed it.
+SCAFFOLD_RUNS = (
+    ((SCAFFOLD_X[0], SCAFFOLD_Z[0]), (SCAFFOLD_X[0], SCAFFOLD_Z[1])),
+    ((SCAFFOLD_X[1], SCAFFOLD_Z[0]), (SCAFFOLD_X[1], SCAFFOLD_Z[1])),
+    ((SCAFFOLD_X[0] + 1, SCAFFOLD_Z[1]), (SCAFFOLD_OPENING[0] - 1, SCAFFOLD_Z[1])),
+    ((SCAFFOLD_OPENING[1] + 1, SCAFFOLD_Z[1]), (SCAFFOLD_X[1] - 1, SCAFFOLD_Z[1])),
+)
+SCAFFOLD_TOP = 3.0  # level with the wall walk: the catapult reaches it from the arena's edge, as it does the wall
 
 
 def _s_cells():
@@ -105,7 +134,7 @@ S_CELLS = _s_cells()
 OUTCROP_CELLS = _outcrop_cells()
 BRIDGE_ISLAND_CENTRES = [(jx + dx * BRIDGE_ISLAND_REACH, jz + dz * BRIDGE_ISLAND_REACH) for (jx, jz), (dx, dz) in OUTCROPS]
 BRIDGE_ISLANDS = set().union(*(rect(cx - 1, cx + 1, cz - 1, cz + 1) for cx, cz in BRIDGE_ISLAND_CENTRES))
-FLOOR = LEDGE_A | LEDGE_B | ISLAND_CELLS | START_PAD | FIELD | GATE | INSIDE_PAD
+FLOOR = LEDGE_A | LEDGE_B | ISLAND_CELLS | START_PAD | FIELD | GATE | CASTLE_FLOOR
 BALCONY_CELLS = {(x, z) for z0, z1 in BALCONIES for z in range(z0, z1 + 1) for x in range(BALCONY_COLUMNS[0], BALCONY_COLUMNS[1] + 1)}
 assert not (BALCONY_CELLS & FLOOR) and not any((FRONT_WALL_X, z) in FLOOR for z0, z1 in FRONT_WALL_RUNS for z in range(z0, z1 + 1))
 assert all((FRONT_WALL_X - 1, z) not in FLOOR for z in range(-80, -59)), "the chasm before the castle wall must be open"
@@ -114,6 +143,10 @@ DECK_CELLS = S_CELLS | OUTCROP_CELLS  # walkable, but decks, not tiles
 GROUND = FLOOR | POCKET | BRIDGE_ISLANDS  # every cell at the ledges' height, reachable or not
 assert all((jx, jz) in S_CELLS for (jx, jz), _ in OUTCROPS)
 assert not (DECK_CELLS & GROUND), DECK_CELLS & GROUND
+SCAFFOLD_CELLS = {(x, z) for (x0, z0), (x1, z1) in SCAFFOLD_RUNS for x in range(x0, x1 + 1) for z in range(z0, z1 + 1)}
+assert not (SCAFFOLD_CELLS & FLOOR), SCAFFOLD_CELLS & FLOOR
+assert all((x, z) not in FLOOR for x, z in SCAFFOLD_CELLS for dx in (-1, 0, 1) for dz in (-1, 0, 1)
+           if (x + dx, z + dz) in ARENA), "the scaffolding must stand a cell clear of the arena"
 for cell in BRIDGE_ISLANDS:
     near = [(cell[0] + dx, cell[1] + dz) for dx in (-1, 0, 1) for dz in (-1, 0, 1)]
     assert not any(n in DECK_CELLS or n in FLOOR for n in near), ("catapult island touches the bridge", cell)
@@ -123,7 +156,7 @@ WALL_X = 4
 # 2 and 3 are centred on the islands' east column: one cell off, they landed on the islands' cut corners.
 BRIDGES = {1: [(x, -6) for x in (-1, 0, 1)], 2: [(x, -18) for x in (-2, -1, 0)],
            3: [(x, z) for z in (-38, -39) for x in (-2, -1, 0)], 4: [(-1, -63)],
-           5: [(FRONT_WALL_X - 1, z) for z in range(GATE_Z[0], GATE_Z[1] + 1)]}
+           5: [(FRONT_WALL_X - 1, z) for z in range(GATE_Z[0], GATE_Z[1] + 1)], 6: ARENA_GATE}
 # Fixed wooden bridges between the islands: (first gap cell, last gap cell), in a straight line.
 ISLAND_BRIDGES = (
     ((-5, -21), (-4, -21)), ((-1, -24), (-1, -25)), ((-8, -24), (-8, -25)), ((-5, -28), (-4, -28)),
@@ -202,7 +235,7 @@ level.curve = (2.5, 1.5)  # the castle front's endless horde: a skeleton every 2
 # Triggers fire only with both carriers inside, and the catapult's carriers stand up to 7.5 m apart in line: at 6 m
 # deep, a stretched-out pair never fitted. Each starts 3 m past the bridge before it, so the bridge can't drop from
 # under the back carrier.
-level.boxes = {"fall": (400, 1, 400), "approach": (24, 3, 12), "island": (15, 3, 12), "end": (15, 3, 9)}
+level.boxes = {"fall": (400, 1, 400), "approach": (24, 3, 12), "island": (15, 3, 12), "arena": (33, 3, 21)}
 level.add_shell()
 
 # ---- Enemies. ----
@@ -308,6 +341,46 @@ for index, (cx, cz) in enumerate(FRONT_HORDE_SPAWNS, 1):
     wx, wz = world(cx, cz)
     level.node(f"Node3D{index}", "Enemies/FrontHorde/SpawnPoints", "Node3D", props={"transform": tf(wx, 0, wz)})
 FRONT_GROUPS = ["FrontGuards", "FrontCatapults", "FrontHorde"]
+
+
+def survival_wave(name, curve, duration, spawns, props=None):
+    """A SurvivalEnemyGroup under Enemies: spawns are (x, y, z, basis) world transforms."""
+    level.node(name, "Enemies", "Node3D", props={
+        "script": 'ExtResource("survival_group")', "spawn_interval_curve": f'SubResource("{curve}")',
+        "fight_duration": f"{duration:.1f}", **(props or {})})
+    level.node("Enemies", f"Enemies/{name}", "Node3D")
+    level.node("SpawnPoints", f"Enemies/{name}", "Node3D")
+    for index, (x, y, z, basis) in enumerate(spawns, 1):
+        level.node(f"Node3D{index}", f"Enemies/{name}/SpawnPoints", "Node3D", props={"transform": tf(x, y, z, basis)})
+
+
+def facing(x, z, target_x, target_z):
+    """A basis turning a node's front (+z for enemies) from (x, z) toward the target."""
+    angle = math.atan2(target_x - x, target_z - z)
+    c, s = math.cos(angle), math.sin(angle)
+    return f"{c:.4f}, 0, {-s:.4f}, 0, 1, 0, {s:.4f}, 0, {c:.4f}"
+
+
+# Section 6: 60 s of skeletons in the arena and, at the same time, crossbowmen appearing on the scaffolding.
+ARENA_DURATION = 60.0
+ARENA_CENTRE = world((ARENA_X[0] + ARENA_X[1]) / 2, (ARENA_Z[0] + ARENA_Z[1]) / 2)
+ARENA_MELEE_SPAWNS = ((17, -86), (26, -86), (21, -87), (17, -81), (26, -81), (18, -77), (25, -77))
+ARENA_CROSSBOW_SPAWNS = ((SCAFFOLD_X[0], -86), (SCAFFOLD_X[0], -83), (SCAFFOLD_X[0], -80), (SCAFFOLD_X[0], -77),
+                         (SCAFFOLD_X[1], -86), (SCAFFOLD_X[1], -83), (SCAFFOLD_X[1], -80), (SCAFFOLD_X[1], -77),
+                         (16, SCAFFOLD_Z[1]), (27, SCAFFOLD_Z[1]))
+assert all(cell in ARENA for cell in ARENA_MELEE_SPAWNS) and all(cell in SCAFFOLD_CELLS for cell in ARENA_CROSSBOW_SPAWNS)
+level.extra_ext.append(("PackedScene", None, "res://src/enemy/enemy_skeleton_crossbow_static.tscn", "crossbow_static"))
+# Crossbowmen come slower and at most six at a time: each needs a lob onto the scaffolding to kill.
+level.extra_sub_resources.append('[sub_resource type="Curve" id="Curve_arena_crossbows"]\n_limits = [0.0, 10.0, 0.0, 1.0]\n'
+                                 '_data = [Vector2(0, 7), 0.0, 0.0, 0, 0, Vector2(1, 4.5), 0.0, 0.0, 0, 0]\npoint_count = 2')
+survival_wave("ArenaMelee", "Curve_survival", ARENA_DURATION,
+              [(*(lambda w: (w[0], 0.0, w[1]))(world(cx, cz)), facing(*world(cx, cz), *ARENA_CENTRE)) for cx, cz in ARENA_MELEE_SPAWNS],
+              {"max_alive": "10"})
+survival_wave("ArenaCrossbows", "Curve_arena_crossbows", ARENA_DURATION,
+              [(*(lambda w: (w[0], SCAFFOLD_TOP + 1.0, w[1]))(world(cx, cz)), facing(*world(cx, cz), *ARENA_CENTRE))
+               for cx, cz in ARENA_CROSSBOW_SPAWNS],
+              {"enemy_scene": 'ExtResource("crossbow_static")', "show_timer_ui": "false", "max_alive": "6"})
+ARENA_GROUPS = ["ArenaMelee", "ArenaCrossbows"]
 for _name, cx, cz in TOWERS:
     assert (cx, cz) not in FLOOR and all((cx + dx, cz + dz) not in FLOOR for dx in (-1, 0, 1) for dz in (-1, 0, 1))
 
@@ -346,9 +419,18 @@ CHECKPOINTS = [
         "areas_to_reactivate": [AREAS_AT + T + "5"]}),
     # In the field before the gate, facing it (east): the front carrier east of the back one.
     ("Checkpoint6", 1, -70, {
-        "events_completed": [EVENTS_AT + "OpenBridge5"],
+        "events_completed": [EVENTS_AT + "OpenBridge5", EVENTS_AT + "OpenBridge6"],
         "enemy_groups_defeated": [GROUPS_AT + g for g in ["WallGuards", "CatapultCrew"] + ISLAND_GROUPS + ["BridgeCatapults"] + FRONT_GROUPS],
-        "areas_already_activated": [AREAS_AT + T + suffix for suffix in ("", "2", "3", "4", "5")]}, ((2.25, 0), (-2.25, 0))),
+        "enemy_groups_reset": [GROUPS_AT + g for g in ARENA_GROUPS],
+        "areas_already_activated": [AREAS_AT + T + suffix for suffix in ("", "2", "3", "4", "5")],
+        "areas_to_reactivate": [AREAS_AT + T + "6", AREAS_AT + T + "7"]}, ((2.25, 0), (-2.25, 0))),
+    # On the path's north leg, facing the arena.
+    ("Checkpoint7", 22, -73, {
+        "events_completed": [EVENTS_AT + "OpenBridge5", EVENTS_AT + "OpenBridge6"],
+        "enemy_groups_defeated": [GROUPS_AT + g for g in ["WallGuards", "CatapultCrew"] + ISLAND_GROUPS + ["BridgeCatapults"] + FRONT_GROUPS],
+        "enemy_groups_reset": [GROUPS_AT + g for g in ARENA_GROUPS],
+        "areas_already_activated": [AREAS_AT + T + suffix for suffix in ("", "2", "3", "4", "5", "6")],
+        "areas_to_reactivate": [AREAS_AT + T + "7"]}),
 ]
 for _, cx, cz, _arrays, *_markers in CHECKPOINTS:
     assert all((cx, cz + d) in FLOOR | DECK_CELLS for d in (-1, 0, 1)), (cx, cz)
@@ -421,12 +503,13 @@ def hill_tiles():
 
 # No water: the kill box sits a few metres down the chasm, so a carrier who steps off visibly drops before the game over.
 # The floor GridMap runs under the hills too, so the ledge's west edge is flat where the first tier rises from it.
-level.add_terrain(GROUND | HILL, MOUTHS, decoration_count=0, fall_z=-60, fall_y=FALL_TOP - 5.028)
+level.add_terrain(GROUND | HILL, MOUTHS, decoration_count=0, fall_z=-100, fall_y=FALL_TOP - 5.028, exclude=CASTLE_FLOOR)
 # Under the navigation region, so the bake leaves the cells under the hills out of the navmesh.
 level.nodes.append(level._grid_map("Hills", "Level/NavigationRegion3D", hill_tiles(),
                                    'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
 # Three tiers (12 m) under the tops: past the black depth, deeper ones would never show.
-level.nodes.append(level._grid_map("CanyonCliffs", "Level", level._deep_cliffs(GROUND | HILL, 3),
+level.nodes.append(level._grid_map("CanyonCliffs", "Level", {key: tile for key, tile in level._deep_cliffs(GROUND | HILL, 3).items()
+                                                               if (key[0], key[2]) not in CASTLE_FLOOR},
                                    'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
 
 
@@ -443,7 +526,7 @@ def add_gorge_floor():
     level.extra_sub_resources.append('[sub_resource type="PlaneMesh" id="PlaneMesh_canyon_floor"]\n'
                                      'material = SubResource("Material_canyon_floor")\nsize = Vector2(400, 400)')
     level.node("CanyonFloor", "Level", "MeshInstance3D", props={
-        "transform": tf(0, CANYON_FLOOR_Y, -60), "mesh": 'SubResource("PlaneMesh_canyon_floor")', "cast_shadow": "0"})
+        "transform": tf(0, CANYON_FLOOR_Y, -100), "mesh": 'SubResource("PlaneMesh_canyon_floor")', "cast_shadow": "0"})
 
 
 # Castle stone fades over a shorter depth than the rock (a hand edit, kept here).
@@ -476,6 +559,8 @@ def add_wall():
                                      'render_priority = 0\nshader = ExtResource("castle_stone_chasm")\n'
                                      'shader_parameter/timber_top = true\nshader_parameter/local_space = true\n'
                                      'shader_parameter/water_y = -4.2\nshader_parameter/damp_height = 1.4')
+    level.extra_sub_resources.append('[sub_resource type="ShaderMaterial" id="ShaderMaterial_gate_chasm"]\n'
+                                     'render_priority = 0\nshader = ExtResource("castle_stone_chasm")')
     level.extra_sub_resources.append('[sub_resource type="BoxMesh" id="BoxMesh_merlon"]\n'
                                      'material = SubResource("ShaderMaterial_wall")\nsize = Vector3(0.4, 0.75, 0.85)')
     level.node("Castle", "Level", "Node3D")
@@ -578,11 +663,48 @@ def add_void_towers():
 add_void_towers()
 
 
+def castle_floor_tiles():
+    """Castle-stone top tiles over the path and the arena: the canyon tile set's choice for each cell (edged as part
+    of the whole floor, so the path joins the gate flush), swapped for the castle set's tile of the same name. No
+    cliff tiles: a stone foundation drops from under them into the gorge, fading to black like the wall."""
+    import re
+    from pathlib import Path
+    text = Path("src/world/elements/medieval/castle_tiles.tres").read_text()
+    castle = {re.sub(r"_Color\d+$", "", name): int(index) for index, name in re.findall(r'^item/(\d+)/name = "([^"]+)"', text, re.M)}
+    names = {index: name for name, index in level.items.items()}
+    tiles = level.build_floor(GROUND | HILL, MOUTHS)
+    return {key: (castle[names[item]], rotation) for key, (item, rotation) in tiles.items()
+            if key[1] == -1 and (key[0], key[2]) in CASTLE_FLOOR and (key[0], key[2]) not in ARENA_GATE}
+
+
+def add_castle_floor():
+    level.extra_ext.append(("MeshLibrary", "uid://mcns4hd002ua", "res://src/world/elements/medieval/castle_tiles.tres", "castle_tiles"))
+    level.nodes.append(level._grid_map("CastleFloor", "Level/NavigationRegion3D", castle_floor_tiles(),
+                                       'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0')
+                       .replace('mesh_library = ExtResource("tiles")', 'mesh_library = ExtResource("castle_tiles")'))
+    top = FLOOR_TOP - 0.05
+    height = top - CANYON_FLOOR_Y
+    for index, cells in enumerate((PATH_EAST, PATH_NORTH - set(ARENA_GATE), ARENA), 1):
+        x0, x1 = min(x for x, _ in cells), max(x for x, _ in cells)
+        cells_z = (min(z for _, z in cells), max(z for _, z in cells))
+        west, east = world(x0, 0)[0] - CELL / 2, world(x1, 0)[0] + CELL / 2
+        north, south = world(0, cells_z[0])[1] - CELL / 2, world(0, cells_z[1])[1] + CELL / 2
+        name = f"Foundation{index}"
+        level.extra_sub_resources.append(f'[sub_resource type="BoxMesh" id="BoxMesh_{name}"]\nmaterial = SubResource("ShaderMaterial_wall")\n'
+                                         f'size = Vector3({east - west:.3f}, {height:.3f}, {south - north:.3f})')
+        level.node(name, "Level/Castle", "MeshInstance3D", props={
+            "transform": tf((west + east) / 2, (top + CANYON_FLOOR_Y) / 2, (north + south) / 2),
+            "mesh": f'SubResource("BoxMesh_{name}")', **fade_into_the_gorge()})
+
+
+add_castle_floor()
+
+
 def add_balconies():
     """Wooden balconies on the castle wall's east face, 2 m below its walk, on posts. In the navigation region with
     `bake_walkways`, so the catapult skeletons on them walk round their stakes."""
     level.extra_sub_resources.append('[sub_resource type="CylinderMesh" id="CylinderMesh_balcony_post"]\n'
-                                     'material = SubResource("Material_deck_beam")\ntop_radius = 0.18\nbottom_radius = 0.2\n'
+                                     'material = SubResource("Material_post_chasm")\ntop_radius = 0.18\nbottom_radius = 0.2\n'
                                      'height = 8.0\nradial_segments = 8\nrings = 1')
     level.node("Balconies", "Level/NavigationRegion3D", "Node3D", props={"metadata/bake_walkways": "true"})
     west = world(BALCONY_COLUMNS[0], 0)[0] - CELL / 2
@@ -622,11 +744,16 @@ def add_deck_materials():
                                          f'shader_parameter/planks_along_z = {along_z}')
     level.extra_sub_resources.append('[sub_resource type="StandardMaterial3D" id="Material_deck_beam"]\n'
                                      'albedo_color = Color(0.27, 0.17, 0.1, 1)\nroughness = 0.9')
+    # Posts into the gorge go dark at the same depth as the wall (wood_chasm.gdshader, CASTLE_FADE_DEPTH).
+    level.extra_ext.append(("Shader", None, "res://src/world/elements/canyon/wood_chasm.gdshader", "wood_chasm"))
+    level.extra_sub_resources.append(f'[sub_resource type="ShaderMaterial" id="Material_post_chasm"]\n'
+                                     f'render_priority = 0\nshader = ExtResource("wood_chasm")\n'
+                                     f'shader_parameter/fade_top_y = {FLOOR_TOP:.1f}\nshader_parameter/fade_depth = {CASTLE_FADE_DEPTH:.1f}')
 
 
-def wood_deck(parent, name, first, last, overhang, width=CELL - 0.4, beams=True):
-    """A wooden deck level with the floor tops over a straight run of cells, from `first` to `last`, reaching
-    `overhang` metres past each end; with low beams along its edges if `beams`."""
+def wood_deck(parent, name, first, last, overhang, width=CELL - 0.4, beams=True, top=FLOOR_TOP + DECK_LIFT):
+    """A wooden deck, its top at `top` (by default level with the floor tops), over a straight run of cells, from
+    `first` to `last`, reaching `overhang` metres past each end; with low beams along its edges if `beams`."""
     (x0, z0), (x1, z1) = first, last
     along_x = z0 == z1
     cells = (abs(x1 - x0) + 1) if along_x else (abs(z1 - z0) + 1)
@@ -640,7 +767,7 @@ def wood_deck(parent, name, first, last, overhang, width=CELL - 0.4, beams=True)
                                      f'size = Vector3({size[0]:.3f}, {size[1]}, {size[2]:.3f})')
     path = f"{parent}/{name}"
     level.node(name, parent, "StaticBody3D", props={
-        "transform": tf((ax + bx) / 2, FLOOR_TOP - 0.25 + DECK_LIFT, (az + bz) / 2), "collision_layer": "4", "collision_mask": "0",
+        "transform": tf((ax + bx) / 2, top - 0.25, (az + bz) / 2), "collision_layer": "4", "collision_mask": "0",
         "metadata/footstep_surface": '&"wood"'})
     level.node("Mesh", path, "MeshInstance3D", props={"mesh": f'SubResource("BoxMesh_{name}")'})
     level.node("CollisionShape3D", path, "CollisionShape3D", props={"shape": f'SubResource("BoxShape3D_{name}")'})
@@ -685,6 +812,24 @@ add_deck_materials()
 add_island_bridges()
 add_s_bridge()
 add_balconies()
+
+
+def add_scaffolding():
+    """The arena's ring of wooden decks, 4 m up, on posts running down into the gorge. Out of the navmesh: the
+    crossbowmen on it don't walk."""
+    level.extra_sub_resources.append('[sub_resource type="CylinderMesh" id="CylinderMesh_scaffold_post"]\n'
+                                     'material = SubResource("Material_post_chasm")\ntop_radius = 0.2\nbottom_radius = 0.22\n'
+                                     'height = 30.0\nradial_segments = 8\nrings = 1')
+    level.node("Scaffolding", "Level", "Node3D")
+    for index, (first, last) in enumerate(SCAFFOLD_RUNS, 1):
+        wood_deck("Level/Scaffolding", f"Scaffold{index}", first, last, 0.0, top=SCAFFOLD_TOP)
+    for index, (x, z) in enumerate(sorted(cell for cell in SCAFFOLD_CELLS if (cell[0] + cell[1]) % 2 == 0), 1):
+        wx, wz = world(x, z)
+        level.node(f"Post{index}", "Level/Scaffolding", "MeshInstance3D", props={
+            "transform": tf(wx, SCAFFOLD_TOP - 0.5 - 15.0, wz), "mesh": 'SubResource("CylinderMesh_scaffold_post")'})
+
+
+add_scaffolding()
 
 # ---- Rocks. ----
 # Sandstone rocks saved by build_canyon_tiles.gd, placed freely: (name, its bounds' lowest y, its width). Rock_3 are
@@ -751,8 +896,11 @@ level.node("Sandstorm", "Level", instance="sandstorm", paths=["world_environment
 
 # ---- Events. ----
 level.set_bridges(BRIDGES)
-for number in (1, 2, 3, 4, 5):
+for number in (1, 2, 3, 4):
     level.bridge_event(f"OpenBridge{number}", number)
+# The gate's bridge raises the arena's gate with it, without a second camera cut.
+level.bridge_event("OpenBridge5", 5, next_event="OpenBridge6")
+level.bridge_event("OpenBridge6", 6, camera_focus=False)
 
 
 def offensive(name, group, next_event=None):
@@ -795,18 +943,35 @@ level.node("FrontCleared", "Level/Events", "Node", paths=["next_event", "groups"
     "groups": node_paths(["../../../Enemies/FrontGuards", "../../../Enemies/FrontCatapults"]),
     "checkpoint": 'NodePath("../../../CheckpointManager/Checkpoint6")',
     "also_trigger": node_paths(["../StopFrontHorde", "../UnfocusCamera"])})
+# (6) The arena: stepping in sinks its gate behind the carriers and starts both waves; both over and their enemies
+# dead wins the level.
+level.bridge_event("CloseBridge6", 6, True, "StartArenaMelee")
+offensive("StartArenaMelee", "ArenaMelee", "StartArenaCrossbows")
+offensive("StartArenaCrossbows", "ArenaCrossbows")
+level.node("ArenaSurvived", "Level/Events", "Node", paths=["next_event", "groups", "also_trigger"], props={
+    "script": 'ExtResource("groups_gate")', "next_event": 'NodePath("../LevelSucceeded")',
+    "groups": node_paths([f"../../../Enemies/{g}" for g in ARENA_GROUPS]),
+    "also_trigger": node_paths(["../UnfocusCamera"])})
 level.node("LevelSucceeded", "Level/Events", "Node", props={"script": 'ExtResource("finished")'})
 # The crossbowmen and the hidden catapult can't be walked to, so their fights are framed. On the islands everything
 # but the two tower crossbowmen can be walked to, so that fight keeps the normal zoom.
 level.add_focus({"Wall": (-5, WALL_X + 1, 3, -6), "Pocket": (min(x for x, _ in POCKET), 2, -8, -16),
-                 "Front": (-7, FRONT_WALL_X + 3, -62, -80)})
-level.add_end_area(FRONT_WALL_X + 3, sum(GATE_Z) / 2)
+                 "Front": (-7, FRONT_WALL_X + 3, -62, -80),
+                 "Arena": (SCAFFOLD_X[0], SCAFFOLD_X[1], SCAFFOLD_Z[1], SCAFFOLD_Z[0])})
 level.add_bridge_nodes()
-for platforms in level.platforms.values():  # their stone piers hang into the gorge
+for number, platforms in level.platforms.items():  # their stone piers hang into the gorge
     for platform in platforms:
-        level.node("Pier", f"Level/Bridges/{platform}/AnimatableBody3D", props=fade_into_the_gorge("ShaderMaterial_pier_chasm"))
+        body = f"Level/Bridges/{platform}/AnimatableBody3D"
+        if number != 6:
+            level.node("Pier", body, props=fade_into_the_gorge("ShaderMaterial_pier_chasm"))
+            continue
+        # The arena's gate: flagstones on top in world space, like the path's tiles around it, and no edge beams.
+        level.node("Pier", body, props=fade_into_the_gorge("ShaderMaterial_gate_chasm"))
+        for beam in ("EdgeBeamA", "EdgeBeamB"):
+            level.node(beam, body, props={"visible": "false"})
 level.add_triggers(((T, -1.5, 3.5, "approach"), (T + "2", -1.5, -9.5, "approach"), (T + "3", -1, -21.5, "island"),
-                    (T + "4", -1, -42.5, "island"), (T + "5", -1, -66.5, "approach")))
+                    (T + "4", -1, -42.5, "island"), (T + "5", -1, -66.5, "approach"), (T + "6", 22, -73, "island"),
+                    (T + "7", 21.5, -80, "arena")))
 wx, wz = world(-1, 7)
 # Turned to throw towards -z, with its back handles (local z = -2.7) over the shooter's marker.
 level.add_weapon("Catapult", tf(wx, 1.8726845, wz + SHOOTER[1] - 2.7, "-1, 0, 0, 0, 1, 0, 0, 0, -1"))
@@ -835,6 +1000,11 @@ for corner in CORNERS:
     level.connect("all_players_inside", AREAS + T + "5", EVENTS + f"FocusFront{corner}")
 for group in ("FrontGuards", "FrontCatapults"):
     level.connect("enemies_defeated", GROUPS + group, EVENTS + "FrontCleared")
-level.connect("all_players_inside", "Level/EndLevelArea", EVENTS + "LevelSucceeded")
+level.connect("all_players_inside", AREAS + T + "6", "CheckpointManager/Checkpoint7", "_trigger_checkpoint")
+level.connect("all_players_inside", AREAS + T + "7", EVENTS + "CloseBridge6")
+for corner in CORNERS:
+    level.connect("all_players_inside", AREAS + T + "7", EVENTS + f"FocusArena{corner}")
+for group in ARENA_GROUPS:
+    level.connect("enemies_defeated", GROUPS + group, EVENTS + "ArenaSurvived")
 
 level.write(sys.argv[1:])

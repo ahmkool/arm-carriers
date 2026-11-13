@@ -22,6 +22,12 @@ const OUTCROP_TIP_X := -8.997
 const FRONT_EDGE_X := 17.994  # the field's east edge at the chasm: cell column 5 ends at 6 * 2.999
 const GATE_Z := -208.43  # the gate's middle row, -70
 const BALCONY_TOP := 1.0  # the first outcrop's far edge (cell x -3 starts at -3 * 2.999)
+## The arena (build_castle_siege.py): its east edge (cell x 27 ends at 28 * 2.999), its scaffolding's top, and its
+## gate's bridge platforms (bridge 6, the path's last row).
+const ARENA_EAST_X := 83.972
+const ARENA_GATE_PLATFORMS := [17, 18, 19]
+const SCAFFOLD_TOP := 3.0
+const ARENA_DURATION := 60.0
 ## The environment's fog between gusts (build_castle_siege.py).
 const CALM_FOG := 0.0025
 
@@ -248,6 +254,11 @@ func _run() -> void:
 		await castle_front_section()
 		await finish()
 		return
+	# SIEGE_START=6 starts at Checkpoint6, before the gate, and tests only the path and the arena.
+	if OS.get_environment("SIEGE_START") == "6":
+		await start_at("Checkpoint6")
+		await finish()
+		return
 	check("the catapult skeleton waits in his pocket from the start", alive("CatapultCrew").size() == 1 and not alive("CatapultCrew")[0].is_offensive)
 	check("the islands' enemies aren't there yet", ISLAND_GROUPS.all(func(g): return alive(g).is_empty()))
 	await shot("01_spawn.png")
@@ -263,11 +274,107 @@ func _run() -> void:
 
 
 func finish() -> void:
-	await face_east_on_row(GATE_Z)
-	var ok: bool = await hold_until([shooter.action_right, setter.action_right], func(): return state() != "playing", 12.0)
-	check("real input: crossing the stone bridge through the gate finishes the level", ok and state().contains("finished"), state())
+	await path_section()
+	await arena_section()
 	print("RESULT fails=%d" % fails)
 	get_tree().quit(1 if fails > 0 else 0)
+
+
+func wave(group: String) -> SurvivalEnemyGroup:
+	return world.get_node("Enemies/" + group) as SurvivalEnemyGroup
+
+
+func wave_alive(group: String) -> Array:
+	return wave(group).get_node("Enemies").get_children().filter(func(c): return c is EnemyLocal and c.is_alive())
+
+
+## (6) Through the gate, east along the stone path, then north up its last leg (Checkpoint7) to the arena.
+func path_section() -> void:
+	await face_east_on_row(GATE_Z)
+	var mid := func(): return (shooter.global_position.x + setter.global_position.x) * 0.5
+	var started := Time.get_ticks_msec()
+	var gate_x := w(7, 0).x
+	await hold_until([shooter.action_right, setter.action_right], func(): return shooter.global_position.x > gate_x, 8.0)
+	var through := Time.get_ticks_msec()
+	var ok: bool = await hold_until([shooter.action_right, setter.action_right], func(): return mid.call() >= w(22, 0).x, 20.0)
+	var seconds := (Time.get_ticks_msec() - through) / 1000.0
+	print("INFO the path east: %.1f s from the gate to the turn (%.1f s from the field)" % [seconds, (Time.get_ticks_msec() - started) / 1000.0])
+	check("real input: the pair walks the stone path east to its turn", ok and state() == "playing", "mid x %.1f, state %s" % [mid.call(), state()])
+	check("the path east takes about 10 s", seconds > 7.0 and seconds < 14.0, "%.1f s" % seconds)
+	check("the pair stands on the castle floor", players().all(func(p): return p.global_position.y > FLOOR_TOP - 0.5 and p.global_position.y < FLOOR_TOP + 2.5), str(players().map(func(p): return snappedf(p.global_position.y, 0.01))))
+	await shot("17_stone_path.png")
+	await face_north_on_column(w(22, 0).x)
+	ok = await hold_until([shooter.action_up, setter.action_up], func(): return cp() == "Checkpoint7", 8.0)
+	check("real input: walking up the path's north leg sets Checkpoint7", ok, cp())
+	check("the arena waves haven't started yet", not wave("ArenaMelee").is_running() and not wave("ArenaCrossbows").is_running())
+	check("the arena's gate stands level with the path", ARENA_GATE_PLATFORMS.all(func(i): return absf(bridge_y(i) - FLOOR_TOP) < 0.3), str(ARENA_GATE_PLATFORMS.map(func(i): return snappedf(bridge_y(i), 0.01))))
+	await overview("18_arena_overview.png", Vector3(66, 40, -196), Vector3(66, -4, -244))
+
+
+## (6) The arena: 60 s of skeletons and, at the same time, crossbowmen on the scaffolding. A real bomb kills one up
+## there; the waves are then cut short and their enemies killed by script.
+func arena_section() -> void:
+	var melee := wave("ArenaMelee")
+	var crossbows := wave("ArenaCrossbows")
+	check("both arena waves last 60 s", is_equal_approx(melee.fight_duration, ARENA_DURATION) and is_equal_approx(crossbows.fight_duration, ARENA_DURATION))
+	var ok: bool = await hold_until([shooter.action_up, setter.action_up], func(): return melee.is_running(), 8.0)
+	check("real input: stepping into the arena starts the skeletons", ok, "shooter z=%.1f" % shooter.global_position.z)
+	check("the crossbowmen start at the same time", crossbows.is_running())
+	check("only the skeletons show the countdown", melee.show_timer_ui and not crossbows.show_timer_ui)
+	await wait(1.5)
+	check("the arena is framed", focal_count() == 4, str(focal_count()))
+	await wait(2.0)
+	check("the arena's gate sinks behind the carriers", ARENA_GATE_PLATFORMS.all(func(i): return bridge_y(i) < -5.0), str(ARENA_GATE_PLATFORMS.map(func(i): return snappedf(bridge_y(i), 0.01))))
+	check("the carriers are still in the arena", state() == "playing" and players().all(func(p): return p.global_position.y > FLOOR_TOP - 0.5), state())
+	await wait(6.5)
+	var bows := wave_alive("ArenaCrossbows")
+	var skeletons := wave_alive("ArenaMelee")
+	check("both waves spawn at once", bows.size() >= 1 and skeletons.size() >= 3 and melee.is_spawning() and crossbows.is_spawning(), "%d crossbowmen, %d skeletons" % [bows.size(), skeletons.size()])
+	check("the crossbowmen stand on the scaffolding", bows.all(func(e): return absf(e.global_position.y - SCAFFOLD_TOP) < 0.6), str(bows.map(func(e): return snappedf(e.global_position.y, 0.01))))
+	check("the skeletons fight in the arena", skeletons.all(func(e): return absf(e.global_position.y - FLOOR_TOP) < 0.8), str(skeletons.map(func(e): return snappedf(e.global_position.y, 0.01))))
+	check("nobody can walk onto the scaffolding", bows.all(func(e): return not path_reaches(shooter.global_position, e.global_position)))
+	await shot("19_arena_fight.png")
+	await overview("19b_arena_fight_overview.png", Vector3(66, 34, -218), Vector3(66, -4, -250))
+
+	# A crossbowman on the east scaffolding, killed by a real bomb from the arena's east edge. Others are killed by
+	# script until one stands there (at most six are up at once).
+	var east := func(): return wave_alive("ArenaCrossbows").filter(func(e): return e.global_position.x > ARENA_EAST_X + 3.0)
+	ok = await wait_until(func():
+		if east.call().is_empty():
+			kill(wave_alive("ArenaCrossbows"))
+		return not east.call().is_empty(), 40.0)
+	check("a crossbowman appears on the east scaffolding", ok)
+	if ok:
+		var target: EnemyLocal = east.call()[0]
+		await face_east_on_row(target.global_position.z)
+		await hold_until([shooter.action_right, setter.action_right], func(): return setter.global_position.x > ARENA_EAST_X - 0.8, 8.0)
+		for attempt in 3:
+			if not target.is_alive():
+				break
+			await line_up_z(target.global_position.z)
+			var error := await aim_range_at(target.global_position)
+			var landing: Vector3 = current_flight().landing
+			var reach := Vector2(landing.x - target.global_position.x, landing.z - target.global_position.z).length()
+			print("INFO aimed at the scaffolding: error %.2f m, gap %.2f, landing %s, crossbowman %s" % [error, gap(), landing, target.global_position])
+			if attempt == 0:
+				check("from the arena's edge, the ring lands on the scaffolding within the blast of him", absf(landing.y - SCAFFOLD_TOP) < 0.4 and reach < 3.5, "%.2f m, landing %s" % [reach, landing])
+				await shot("20_aimed_at_scaffolding.png")
+			await wait_until(func(): return specifics.is_loaded(), 3.0)
+			await press_shoot()
+			await wait_until(func(): return not target.is_alive(), 3.5)
+		check("real input: a bomb kills a crossbowman on the scaffolding", not target.is_alive())
+
+	# Both waves cut short (their real length was checked above): spawning ends, and killing what's left wins.
+	check("still in the fight", state() == "playing" and melee.is_running() and crossbows.is_running(), state())
+	melee.fight_duration = melee._fight_elapsed + 1.0
+	crossbows.fight_duration = crossbows._fight_elapsed + 1.0
+	await wait(1.5)
+	check("both waves stop spawning", not melee.is_spawning() and not crossbows.is_spawning())
+	check("the level isn't won while their enemies live", state() == "playing" or wave_alive("ArenaMelee").is_empty() and wave_alive("ArenaCrossbows").is_empty(), state())
+	ok = await wait_until(func():
+		kill(wave_alive("ArenaMelee") + wave_alive("ArenaCrossbows"))
+		return state() != "playing", 8.0)
+	check("surviving both waves finishes the level", ok and state().contains("finished"), state())
 
 
 func start_at(checkpoint_name: String) -> void:
