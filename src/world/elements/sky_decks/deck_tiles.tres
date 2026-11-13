@@ -10,6 +10,7 @@ shader_parameter/seam_color = Color(0.13, 0.08, 0.05, 1)
 shader_parameter/plank_width = 0.75
 shader_parameter/plank_length = 4.5
 shader_parameter/local_space = false
+shader_parameter/planks_along_z = false
 
 [sub_resource type="BoxMesh" id="BoxMesh_0"]
 material = SubResource("ShaderMaterial_deck")
@@ -26,6 +27,7 @@ shader_parameter/seam_color = Color(0.13, 0.08, 0.05, 1)
 shader_parameter/plank_width = 1.2
 shader_parameter/plank_length = 4.5
 shader_parameter/local_space = false
+shader_parameter/planks_along_z = false
 
 [sub_resource type="BoxMesh" id="BoxMesh_1"]
 material = SubResource("ShaderMaterial_beam")
