@@ -32,6 +32,8 @@ LIBRARIES = {
     "space": ("src/world/elements/space/space_tiles.tres", None),  # station plating; built by build_space_tiles.gd
     "isles": ("src/world/elements/storm_isles/isle_tiles.tres", None),  # wet dungeon stone in the sea; built by build_isle_tiles.gd
     "canyon": ("src/world/elements/canyon/canyon_tiles.tres", None),  # sandstone; built by build_canyon_tiles.gd
+    "jungle": ("src/world/elements/jungle/jungle_tiles.tres", None),  # mossy temple ruin stone & jungle flora; built by build_jungle_tiles.gd
+    "rooftops": ("src/world/elements/rooftops/rooftop_tiles.tres", None),  # concrete skyscraper slabs & parapet coping
 }
 WEAPONS = {
     "bazooka": ("uid://cq5v348mrgy7q", "res://src/weapon/bazooka.tscn"),
@@ -40,6 +42,8 @@ WEAPONS = {
     "pulse_rifle": ("uid://o1x22yp71o80", "res://src/weapon/pulse_rifle.tscn"),
     "catapult": ("uid://c4tapu1tw3apn", "res://src/weapon/catapult.tscn"),
     "fork_cannon": (None, "res://src/weapon/fork_cannon.tscn"),
+    "siege_bow": (None, "res://src/weapon/siege_bow.tscn"),
+    "shuriken_launcher": (None, "res://src/weapon/shuriken_launcher.tscn"),
 }
 ## PeriTune tracks (peritune.com): free for games, but the audio files themselves must not be redistributed.
 MUSIC = {
@@ -53,6 +57,7 @@ MUSIC = {
     "overworld_orchestra": ("uid://duaul8r11ug66", "res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3"),
     "cyber_noir": ("uid://etr5pc8rj0ge", "res://assets/music/PerituneMaterial_Cyber_Noir.mp3"),
     "rainwalk": ("uid://tjy5vr01nwen", "res://assets/music/PeriTune_Rainwalk_loop.mp3"),
+    "secret_corridor": ("uid://beixrhjbhtoq", "res://assets/music/PeriTune_Secret_Corridor.mp3"),
 }
 TRIGGER = "AllPlayersAreaTrigger"
 EVENTS = "Level/Events/"
@@ -140,6 +145,54 @@ sky_curve = 0.2
 ground_bottom_color = Color(0.2, 0.24, 0.28, 1)
 ground_horizon_color = Color(0.48, 0.52, 0.58, 1)
 sun_angle_max = 0.0"""
+ENVIRONMENT_JUNGLE = """background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 3
+ambient_light_color = Color(0.56, 0.74, 0.58, 1)
+ambient_light_sky_contribution = 0.45
+ambient_light_energy = 0.58
+tonemap_mode = 3
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.3
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.04
+glow_hdr_threshold = 1.05
+fog_enabled = true
+fog_light_color = Color(0.28, 0.46, 0.38, 1)
+fog_density = 0.003
+fog_aerial_perspective = 0.28
+fog_sky_affect = 0.25"""
+SKY_JUNGLE = """[sub_resource type="ProceduralSkyMaterial" id="PanoramaSkyMaterial_sky"]
+sky_top_color = Color(0.14, 0.32, 0.28, 1)
+sky_horizon_color = Color(0.52, 0.68, 0.52, 1)
+sky_curve = 0.16
+ground_bottom_color = Color(0.08, 0.18, 0.14, 1)
+ground_horizon_color = Color(0.46, 0.62, 0.48, 1)"""
+ENVIRONMENT_ROOFTOPS = """background_mode = 2
+sky = SubResource("Sky_level")
+reflected_light_source = 2
+ambient_light_source = 3
+ambient_light_color = Color(0.34, 0.44, 0.66, 1)
+ambient_light_sky_contribution = 0.45
+ambient_light_energy = 0.56
+tonemap_mode = 3
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.35
+glow_enabled = true
+glow_intensity = 0.55
+glow_bloom = 0.05
+glow_hdr_threshold = 1.02
+fog_enabled = true
+fog_light_color = Color(0.05, 0.08, 0.16, 1)
+fog_density = 0.0018
+fog_sky_affect = 0.12"""
+SKY_ROOFTOPS = """[sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
+shader = ExtResource("rooftop_sky")"""
 WATER_Y = -4.6065345
 ROCK_SCALE = 6  # the hill rocks are 0.2 to 0.9 m across: this makes them sea stacks
 ROCK_SINK = 1.0  # how far a sea rock's base sits under the water
@@ -314,6 +367,16 @@ class Level:
             "transform": tf(wx, 0, wz, FACE_SOUTH), "is_offensive": "false"})
         if shielded:
             self._add_shield(f"{parent}/{name}", forces_vent_prompt)
+
+    def ninja(self, group, name, cx, cz):
+        """A ninja (enemy_ninja.tscn): circles the nearer carrier about 7 m out throwing shurikens, and dodges the
+        shuriken launcher's star once. Give it room to run round: it turns back at the navmesh's edge."""
+        ext = ("PackedScene", None, "res://src/enemy/enemy_ninja.tscn", "ninja")
+        if ext not in self.extra_ext:
+            self.extra_ext.append(ext)
+        wx, wz = world(cx, cz)
+        self.node(name, f"Enemies/{group}/InstancedEnemies", instance="ninja", props={
+            "transform": tf(wx, 0, wz, FACE_SOUTH), "is_offensive": "false"})
 
     def _add_shield(self, enemy_path, forces_vent_prompt=False):
         shield_ext = ("Script", None, "res://src/enemy/shield/enemy_shield.gd", "enemy_shield")
@@ -809,6 +872,102 @@ shader_parameter/rain_ripples = 0.45""")
         self.node("Rain", "Level", instance="rain", paths=["floor_grid", "lightning_light"], props={
             "floor_grid": 'NodePath("../NavigationRegion3D/GridMapFloor")', "lightning_light": 'NodePath("../../DirectionalLight3D")'})
         self.node("Events", "Level", "Node")
+
+    def use_jungle(self):
+        """Call before add_shell: emerald mist sky, warm canopy sunlight, mossy stone bridges, jade water and fireflies."""
+        self.environment = ENVIRONMENT_JUNGLE
+        self.sky_material = SKY_JUNGLE
+        self.sun_extra = {"light_color": "Color(1, 0.9, 0.68, 1)", "light_energy": "1.15"}
+        self.bridge_scene = (None, "res://src/world/elements/jungle/jungle_bridge_platform.tscn")
+        self.extra_ext += [
+            ("PackedScene", None, "res://src/world/elements/jungle/jungle_totem_brazier.tscn", "brazier"),
+            ("PackedScene", None, "res://src/world/elements/jungle/jungle_fireflies.tscn", "fireflies"),
+            ("PackedScene", None, "res://src/world/elements/jungle/jungle_temple_ziggurat.tscn", "ziggurat"),
+            ("PackedScene", None, "res://src/world/elements/jungle/jungle_ruin_arch.tscn", "ruin_arch"),
+            ("Shader", "uid://1omvlp44jb2k", "res://water.gdshader", "water_shader"),
+        ]
+        self.extra_sub_resources.append("""[sub_resource type="ShaderMaterial" id="ShaderMaterial_jade_water"]
+render_priority = 0
+shader = ExtResource("water_shader")
+shader_parameter/water_color = Color(0.05, 0.24, 0.2, 1)
+shader_parameter/foam_color = Color(0.42, 0.68, 0.54, 1)
+shader_parameter/rain_ripples = 0.12""")
+
+    def add_jungle_terrain(self, floor, mouths, props, decoration_count, fall_z, water_z, fall_x=0, water_x=1.5):
+        """Mossy temple ruin terraces over a murky jade river, with solid interior props and drifting fireflies."""
+        interior = {c for c in floor if all((c[0] + dx, c[1] + dz) in floor for dx in (-1, 0, 1) for dz in (-1, 0, 1))}
+        assert set(props) <= interior - set(mouths), sorted(set(props) - (interior - set(mouths)))
+        cells = self.build_floor(floor, mouths, props=props)
+        deco_cells = self.build_decoration(floor - set(props), decoration_count)
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, -6.726822, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(fall_x, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.nodes.append(self._grid_map("Decoration", "Level", deco_cells, 'collision_layer = 0\ncollision_mask = 0'))
+        self.node("Water", "Level", instance="water", props={
+            "transform": tf(water_x, WATER_Y, water_z, "2.5, 0, 0, 0, 1, 0, 0, 0, 2.2"), "material_override": 'SubResource("ShaderMaterial_jade_water")'})
+        self.node("JungleFireflies", "Level", instance="fireflies")
+        self.node("Events", "Level", "Node")
+
+    def add_jungle_isles(self, isles):
+        """isles: (name, (x, y, z) offset, cells, {cell: (scenery_item, rot)}). Lush jungle islets in the river, no collision."""
+        self.node("JungleIsles", "Level", "Node3D")
+        settings = 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'
+        for name, (x, y, z), shape, scenery in isles:
+            self.node(name, "Level/JungleIsles", "Node3D", props={"transform": tf(x, y, z)})
+            cells = self.build_floor(shape, set())
+            flora = {(cx, -1, cz): (self.items[item], rot) for (cx, cz), (item, rot) in scenery.items()}
+            self.nodes.append(self._grid_map("Terrain", f"Level/JungleIsles/{name}", cells, settings))
+            self.nodes.append(self._grid_map("Flora", f"Level/JungleIsles/{name}", flora, settings))
+
+    def use_rooftops(self):
+        """Call before add_shell: starry midnight urban sky, cool moonlight, and industrial metallic bridges."""
+        self.environment = ENVIRONMENT_ROOFTOPS
+        self.sky_material = SKY_ROOFTOPS
+        self.sun_extra = {
+            "transform": "Transform3D(-0.8178, 0.4491, -0.3601, 0, 0.6257, 0.7802, 0.5756, 0.638, -0.5116, 0, 8, -6)",
+            "light_color": "Color(0.72, 0.82, 1, 1)",
+            "light_energy": "0.86",
+        }
+        self.bridge_scene = (None, "res://src/world/elements/rooftops/rooftop_metal_bridge_platform.tscn")
+        self.extra_ext += [
+            ("Shader", None, "res://src/world/elements/rooftops/rooftop_night_sky.gdshader", "rooftop_sky"),
+            ("Shader", None, "res://src/world/elements/rooftops/skyscraper_facade.gdshader", "facade_shader"),
+            ("Shader", None, "res://src/world/elements/rooftops/city_streets.gdshader", "streets_shader"),
+            ("Shader", None, "res://src/world/elements/rooftops/helipad_marking.gdshader", "helipad_shader"),
+            ("Shader", None, "res://src/world/elements/sky/cloud_layer.gdshader", "mist_shader"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_hvac.tscn", "hvac"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_penthouse.tscn", "penthouse"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_skylight.tscn", "skylight"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_beacon.tscn", "beacon"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_light_post.tscn", "light_post"),
+        ]
+
+    def add_rooftop_terrain(self, floor, open_edges, fall_z, fall_y=-17):
+        """Concrete skyscraper slabs with perimeter parapet coping, leaving `open_edges` {(cx, cz, side)} open for bridges."""
+        cells = {(x, -1, z): (self.items["Slab"], 0) for x, z in floor}
+        parapets = self._rooftop_parapets(floor, open_edges)
+        self.node("Level", ".", "Node")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.nodes.append(self._grid_map("RoofParapets", "Level", parapets, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+        self.node("Events", "Level", "Node")
+
+    def _rooftop_parapets(self, floor, open_edges):
+        cells = {}
+        sides = ((2, "N", "ParapetN", 0, -1), (3, "S", "ParapetS", 0, 1),
+                 (4, "W", "ParapetW", -1, 0), (5, "E", "ParapetE", 1, 0))
+        for layer, side, item_name, dx, dz in sides:
+            for x, z in floor:
+                if (x + dx, z + dz) in floor or (x, z, side) in open_edges:
+                    continue
+                cells[(x, -layer, z)] = (self.items[item_name], 0)
+        return cells
 
     def add_braziers(self, cells):
         self.node("Braziers", "Level", "Node")

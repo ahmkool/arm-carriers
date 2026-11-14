@@ -1,0 +1,59 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" uid="uid://chaj7v8uajl4q" path="res://src/world/elements/bridge_platform.tscn" id="1_packed"]
+[ext_resource type="Shader" path="res://src/world/elements/jungle/jungle_ruin_stone.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_pier"]
+render_priority = 0
+shader = ExtResource("2_shader")
+shader_parameter/timber_top = true
+shader_parameter/local_space = true
+shader_parameter/water_y = -4.6
+shader_parameter/moss_height = 1.9
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_beam"]
+albedo_color = Color(0.22, 0.14, 0.08, 1)
+roughness = 0.86
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
+shading_mode = 0
+albedo_color = Color(0.28, 1.25, 0.82, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pier"]
+material = SubResource("ShaderMaterial_pier")
+size = Vector3(3, 5.18, 3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_beam"]
+material = SubResource("StandardMaterial3D_beam")
+size = Vector3(3, 0.16, 0.22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rune"]
+material = SubResource("StandardMaterial3D_rune")
+size = Vector3(2.5, 0.06, 0.08)
+
+[node name="JungleBridgePlatform" instance=ExtResource("1_packed")]
+
+[node name="Wooden_Platform_Top" parent="AnimatableBody3D"]
+visible = false
+
+[node name="Pier" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.59, 0)
+mesh = SubResource("BoxMesh_pier")
+
+[node name="EdgeBeamA" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, 1.39)
+mesh = SubResource("BoxMesh_beam")
+
+[node name="EdgeBeamB" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.07, -1.39)
+mesh = SubResource("BoxMesh_beam")
+
+[node name="JadeRuneA" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, 1.39)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rune")
+
+[node name="JadeRuneB" type="MeshInstance3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.02, -1.39)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rune")

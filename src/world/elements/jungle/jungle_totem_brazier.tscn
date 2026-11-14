@@ -1,0 +1,84 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/dungeon/flicker_brazier.gd" id="1_flicker"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_stone"]
+albedo_color = Color(0.28, 0.33, 0.25, 1)
+roughness = 0.88
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gold"]
+albedo_color = Color(0.68, 0.54, 0.2, 1)
+metallic = 0.55
+roughness = 0.45
+
+[sub_resource type="BoxMesh" id="BoxMesh_plinth"]
+material = SubResource("StandardMaterial3D_stone")
+size = Vector3(1.15, 0.36, 1.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_shaft"]
+material = SubResource("StandardMaterial3D_stone")
+size = Vector3(0.78, 0.72, 0.78)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_collar"]
+material = SubResource("StandardMaterial3D_gold")
+top_radius = 0.62
+bottom_radius = 0.48
+height = 0.26
+radial_segments = 8
+rings = 1
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_flame"]
+shading_mode = 0
+albedo_color = Color(0.18, 1.35, 0.78, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_flame"]
+material = SubResource("StandardMaterial3D_flame")
+radius = 0.42
+height = 1.05
+radial_segments = 10
+rings = 6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_core"]
+shading_mode = 0
+albedo_color = Color(0.75, 1.65, 1.15, 1)
+
+[sub_resource type="SphereMesh" id="SphereMesh_core"]
+material = SubResource("StandardMaterial3D_core")
+radius = 0.24
+height = 0.72
+radial_segments = 8
+rings = 4
+
+[node name="JungleTotemBrazier" type="Node3D"]
+script = ExtResource("1_flicker")
+base_energy = 2.6
+flicker_amount = 0.2
+
+[node name="Plinth" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
+mesh = SubResource("BoxMesh_plinth")
+
+[node name="Shaft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7, 0)
+mesh = SubResource("BoxMesh_shaft")
+
+[node name="Collar" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+mesh = SubResource("CylinderMesh_collar")
+
+[node name="Flame" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.62, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_flame")
+
+[node name="Core" type="MeshInstance3D" parent="Flame"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_core")
+
+[node name="Light" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.8, 0)
+light_color = Color(0.32, 0.96, 0.72, 1)
+light_energy = 2.6
+omni_range = 12.5
+omni_attenuation = 1.15

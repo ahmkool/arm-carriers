@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/rooftops/beacon_pulse.gd" id="1_pulse"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_mast"]
+albedo_color = Color(0.16, 0.18, 0.22, 1)
+metallic = 0.72
+roughness = 0.38
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bulb"]
+shading_mode = 0
+albedo_color = Color(2.1, 0.18, 0.16, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_base"]
+material = SubResource("StandardMaterial3D_mast")
+top_radius = 0.11
+bottom_radius = 0.14
+height = 0.12
+radial_segments = 10
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_post"]
+material = SubResource("StandardMaterial3D_mast")
+top_radius = 0.035
+bottom_radius = 0.045
+height = 0.55
+radial_segments = 8
+
+[sub_resource type="SphereMesh" id="SphereMesh_bulb"]
+radius = 0.095
+height = 0.19
+radial_segments = 12
+rings = 6
+
+[node name="RooftopBeacon" type="Node3D"]
+script = ExtResource("1_pulse")
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.06, 0)
+mesh = SubResource("CylinderMesh_base")
+
+[node name="Post" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.36, 0)
+mesh = SubResource("CylinderMesh_post")
+
+[node name="Bulb" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.68, 0)
+cast_shadow = 0
+mesh = SubResource("SphereMesh_bulb")
+material_override = SubResource("StandardMaterial3D_bulb")

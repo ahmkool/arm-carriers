@@ -1,0 +1,788 @@
+[gd_scene format=3 uid="uid://bgxenshetfnyk"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/rooftops/rooftop_tiles.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_metal_bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" path="res://src/weapon/shuriken_launcher.tscn" id="shuriken_launcher"]
+[ext_resource type="AudioStream" uid="uid://etr5pc8rj0ge" path="res://assets/music/PerituneMaterial_Cyber_Noir.mp3" id="music"]
+[ext_resource type="Shader" path="res://src/world/elements/rooftops/rooftop_night_sky.gdshader" id="rooftop_sky"]
+[ext_resource type="Shader" path="res://src/world/elements/rooftops/skyscraper_facade.gdshader" id="facade_shader"]
+[ext_resource type="Shader" path="res://src/world/elements/rooftops/city_streets.gdshader" id="streets_shader"]
+[ext_resource type="Shader" path="res://src/world/elements/rooftops/helipad_marking.gdshader" id="helipad_shader"]
+[ext_resource type="Shader" path="res://src/world/elements/sky/cloud_layer.gdshader" id="mist_shader"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_hvac.tscn" id="hvac"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_penthouse.tscn" id="penthouse"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_skylight.tscn" id="skylight"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_beacon.tscn" id="beacon"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_light_post.tscn" id="light_post"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_ninja.tscn" id="ninja"]
+
+[sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
+shader = ExtResource("rooftop_sky")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_facade_b1"]
+render_priority = 0
+shader = ExtResource("facade_shader")
+shader_parameter/roof_y = -1.0
+shader_parameter/lit_ratio = 0.36
+shader_parameter/emission_strength = 2.1
+shader_parameter/seed_offset = 0.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_facade_b2"]
+render_priority = 0
+shader = ExtResource("facade_shader")
+shader_parameter/wall_color = Color(0.19, 0.24, 0.33, 1)
+shader_parameter/warm_window = Color(1, 0.80, 0.48, 1)
+shader_parameter/cool_window = Color(0.48, 0.82, 1, 1)
+shader_parameter/roof_y = -1.0
+shader_parameter/lit_ratio = 0.40
+shader_parameter/emission_strength = 2.25
+shader_parameter/seed_offset = 23.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_facade_distant"]
+render_priority = 0
+shader = ExtResource("facade_shader")
+shader_parameter/wall_color = Color(0.06, 0.08, 0.13, 1)
+shader_parameter/roof_y = -24.0
+shader_parameter/lit_ratio = 0.28
+shader_parameter/emission_strength = 1.35
+shader_parameter/fade_start_depth = 10.0
+shader_parameter/fade_end_depth = 42.0
+shader_parameter/seed_offset = 51.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_streets"]
+render_priority = -3
+shader = ExtResource("streets_shader")
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mist_upper"]
+render_priority = -1
+shader = ExtResource("mist_shader")
+shader_parameter/cloud_color = Color(0.12, 0.18, 0.32, 1)
+shader_parameter/shade_color = Color(0.04, 0.07, 0.14, 1)
+shader_parameter/sky_color = Color(0.02, 0.03, 0.07, 1)
+shader_parameter/sky_opacity = 0.0
+shader_parameter/coverage = 0.22
+shader_parameter/softness = 0.16
+shader_parameter/noise_scale = 0.026
+shader_parameter/drift = Vector2(0.85, 0.22)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mist_lower"]
+render_priority = -2
+shader = ExtResource("mist_shader")
+shader_parameter/cloud_color = Color(0.09, 0.13, 0.24, 1)
+shader_parameter/shade_color = Color(0.03, 0.05, 0.10, 1)
+shader_parameter/sky_color = Color(0.015, 0.024, 0.052, 1)
+shader_parameter/sky_opacity = 0.22
+shader_parameter/coverage = 0.34
+shader_parameter/softness = 0.18
+shader_parameter/noise_scale = 0.016
+shader_parameter/drift = Vector2(0.45, 0.12)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_helipad"]
+render_priority = 0
+shader = ExtResource("helipad_shader")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_steel_dark"]
+albedo_color = Color(0.16, 0.19, 0.24, 1)
+metallic = 0.80
+roughness = 0.34
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_steel_bright"]
+albedo_color = Color(0.38, 0.43, 0.50, 1)
+metallic = 0.84
+roughness = 0.28
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_amber_glow"]
+shading_mode = 0
+albedo_color = Color(2.0, 1.25, 0.35, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_heli_led"]
+shading_mode = 0
+albedo_color = Color(0.25, 1.85, 0.72, 1)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_city"]
+size = Vector2(540, 540)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_helipad"]
+material = SubResource("ShaderMaterial_helipad")
+size = Vector2(11.2, 11.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_threshold"]
+material = SubResource("StandardMaterial3D_steel_bright")
+size = Vector3(6.16, 0.04, 0.56)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pylon"]
+material = SubResource("StandardMaterial3D_steel_dark")
+size = Vector3(0.36, 1.15, 0.36)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pylon_lamp"]
+material = SubResource("StandardMaterial3D_amber_glow")
+size = Vector3(0.18, 0.12, 0.18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_facade_strut"]
+material = SubResource("StandardMaterial3D_steel_dark")
+size = Vector3(0.20, 0.22, 2.75)
+
+[sub_resource type="BoxMesh" id="BoxMesh_gusset"]
+material = SubResource("StandardMaterial3D_steel_dark")
+size = Vector3(0.42, 0.90, 0.14)
+
+[sub_resource type="BoxMesh" id="BoxMesh_heli_light"]
+material = SubResource("StandardMaterial3D_heli_led")
+size = Vector3(0.22, 0.04, 0.22)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mast_lower"]
+material = SubResource("StandardMaterial3D_steel_dark")
+top_radius = 0.14
+bottom_radius = 0.28
+height = 3.6
+radial_segments = 8
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_mast_upper"]
+material = SubResource("StandardMaterial3D_steel_bright")
+top_radius = 0.04
+bottom_radius = 0.12
+height = 3.2
+radial_segments = 8
+
+[sub_resource type="BoxMesh" id="BoxMesh_mast_arm"]
+material = SubResource("StandardMaterial3D_steel_bright")
+size = Vector3(1.65, 0.06, 0.06)
+
+[sub_resource type="BoxMesh" id="BoxMesh_B1MainHull"]
+material = SubResource("ShaderMaterial_facade_b1")
+size = Vector3(29.91, 56, 23.912)
+
+[sub_resource type="BoxMesh" id="BoxMesh_B1WingHull"]
+material = SubResource("ShaderMaterial_facade_b1")
+size = Vector3(5.918, 56, 14.915)
+
+[sub_resource type="BoxMesh" id="BoxMesh_B2MainHull"]
+material = SubResource("ShaderMaterial_facade_b2")
+size = Vector3(35.908, 56, 26.911)
+
+[sub_resource type="BoxMesh" id="BoxMesh_B2WingHull"]
+material = SubResource("ShaderMaterial_facade_b2")
+size = Vector3(5.918, 56, 14.915)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantWest1"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(18, 44, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantWest2"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(22, 40, 22)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantEast1"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(20, 43, 18)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantEast2"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(22, 45, 24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantNorth1"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(22, 42, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantNorth2"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(26, 38, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantNorth3"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(22, 43, 20)
+
+[sub_resource type="BoxMesh" id="BoxMesh_DistantGapWest"]
+material = SubResource("ShaderMaterial_facade_distant")
+size = Vector3(18, 37, 16)
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+reflected_light_source = 2
+ambient_light_source = 3
+ambient_light_color = Color(0.34, 0.44, 0.66, 1)
+ambient_light_sky_contribution = 0.45
+ambient_light_energy = 0.56
+tonemap_mode = 3
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.35
+glow_enabled = true
+glow_intensity = 0.55
+glow_bloom = 0.05
+glow_hdr_threshold = 1.02
+fog_enabled = true
+fog_light_color = Color(0.05, 0.08, 0.16, 1)
+fog_density = 0.0018
+fog_sky_affect = 0.12
+
+[sub_resource type="Curve" id="Curve_survival"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 2.0), 0.0, 0.0, 0, 0, Vector2(1, 1.0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(280, 1, 280)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_landing"]
+size = Vector3(12, 3, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ninja_wake"]
+size = Vector3(30, 3, 3)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(-17.743, -0.5, -45.483, -15.493, -0.5, -45.483, -15.243, -0.5, -46.983, -17.743, -0.5, -50.483, -11.743, -0.5, -47.733, -10.243, -0.5, -47.733, -10.243, -0.5, -50.483, -11.993, -0.5, -46.733, 9.757, -0.5, -48.733, 11.757, -0.5, -48.983, 11.757, -0.5, -50.483, -8.493, -0.5, -47.483, 13.507, -0.5, -24.483002, 13.507, -0.5, -26.483002, 11.757, -0.5, -26.733002, 2.757, -0.5, -24.483002, -15.243, -0.5, -43.983, -17.743, -0.5, -24.483002, 11.757, -0.5, -29.233002, 12.757, -0.5, -29.483002, 12.507, -0.5, -45.233, 9.757, -0.5, -45.483, -8.743, -0.5, -44.733, -11.993, -0.5, -44.983, -12.243, -0.5, -43.983, -2.993, -0.5, -24.483002, -2.743, -0.5, -22.483002, 2.507, -0.5, -22.483002, 13.757, -0.5, -48.733, 17.507, -0.5, -50.483, 15.257, -0.5, -26.733002, 17.507, -0.5, -24.483002, 17.757, -0.5, -44.733, 13.757, -0.5, -45.483, 15.257, -0.5, -29.233002, 17.757, -0.5, -30.483002, 23.507, -0.5, -30.483002, 23.507, -0.5, -44.733, 11.757, 2, -48.233, 11.757, 2, -47.233, 12.757, 2, -47.483, 12.757, 2, -48.233, 10.757, 2, -46.233, 12.007, 2, -46.233, 10.757, 2, -46.983, -10.993, 0.75, -46.733, -10.993, 0.75, -45.733, -9.493, 0.75, -45.733, -9.493, 0.75, -46.733, -14.493, 0.75, -45.983, -14.493, 0.75, -44.983, -12.993, 0.75, -44.983, -12.993, 0.75, -45.983, 12.757, 0.75, -28.483002, 12.757, 0.75, -27.483002, 14.257, 0.75, -27.483002, 14.257, 0.75, -28.483002, -2.743, -0.5, -13.733002, 2.507, -0.5, -13.733002, 14.507, -0.5, 3.2669983, 13.007, -0.5, 3.2669983, 12.757, -0.5, 4.7669983, 14.507, -0.5, 11.516998, -10.493, -0.5, -11.733002, -10.493, -0.5, -10.733002, -8.493, -0.5, -10.483002, -2.993, -0.5, -11.733002, -12.243, -0.5, -6.9830017, -12.493, -0.5, -8.983002, -14.743, -0.5, -8.483002, -14.993, -0.5, -5.7330017, -16.493, -0.5, 3.0169983, -19.493, -0.5, 3.0169983, -20.493, -0.5, 8.516998, -14.993, -0.5, 8.516998, 9.507, -0.5, 2.0169983, 11.507, -0.5, 1.7669983, 11.507, -0.5, -2.9830017, 9.507, -0.5, -3.2330017, -8.743, -0.5, -6.9830017, -14.743, -0.5, 11.516998, 9.507, -0.5, 4.5169983, 2.757, -0.5, -11.733002, 9.507, -0.5, -5.7330017, 11.257, -0.5, -5.9830017, 11.007, -0.5, -11.733002, -16.743, -0.5, -0.23300171, -20.493, -0.5, -5.7330017, -19.493, -0.5, 0.016998291, -12.243, -0.5, -10.733002, -14.743, -0.5, -11.733002, 12.757, -0.5, 1.7669983, 13.007, -0.5, -3.2330017, 13.007, -0.5, -5.7330017, 14.507, -0.5, -11.733002, -10.493, 2, -9.733002, -10.493, 2, -8.983002, -9.493, 2, -9.233002, -9.493, 2, -9.733002, -11.493, 2, -8.733002, -11.493, 2, -7.7330017, -10.243, 2, -7.7330017, 10.507, 0.75, -4.9830017, 10.507, 0.75, -3.9830017, 12.007, 0.75, -3.9830017, 12.007, 0.75, -4.9830017, -18.493, 0.75, 0.7669983, -18.493, 0.75, 2.2669983, -17.493, 0.75, 2.2669983, -17.493, 0.75, 0.7669983, 10.507, 0.75, 2.7669983, 10.507, 0.75, 3.7669983, 12.007, 0.75, 3.7669983, 12.007, 0.75, 2.7669983)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(6, 5, 4), PackedInt32Array(4, 7, 2), PackedInt32Array(4, 2, 6), PackedInt32Array(6, 2, 3), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 11), PackedInt32Array(10, 11, 5), PackedInt32Array(10, 5, 6), PackedInt32Array(13, 12, 14), PackedInt32Array(14, 12, 15), PackedInt32Array(1, 16, 0), PackedInt32Array(0, 16, 17), PackedInt32Array(19, 18, 20), PackedInt32Array(20, 18, 21), PackedInt32Array(24, 23, 22), PackedInt32Array(26, 25, 27), PackedInt32Array(27, 25, 15), PackedInt32Array(22, 21, 24), PackedInt32Array(24, 21, 18), PackedInt32Array(24, 18, 25), PackedInt32Array(24, 25, 17), PackedInt32Array(17, 16, 24), PackedInt32Array(14, 15, 18), PackedInt32Array(18, 15, 25), PackedInt32Array(22, 11, 21), PackedInt32Array(21, 11, 8), PackedInt32Array(9, 10, 28), PackedInt32Array(28, 10, 29), PackedInt32Array(13, 30, 12), PackedInt32Array(12, 30, 31), PackedInt32Array(33, 28, 32), PackedInt32Array(32, 28, 29), PackedInt32Array(34, 19, 35), PackedInt32Array(35, 19, 32), PackedInt32Array(32, 19, 33), PackedInt32Array(33, 19, 20), PackedInt32Array(34, 35, 30), PackedInt32Array(30, 35, 31), PackedInt32Array(32, 37, 35), PackedInt32Array(35, 37, 36), PackedInt32Array(41, 40, 38), PackedInt32Array(38, 40, 39), PackedInt32Array(44, 39, 42), PackedInt32Array(42, 39, 43), PackedInt32Array(48, 47, 45), PackedInt32Array(45, 47, 46), PackedInt32Array(52, 51, 49), PackedInt32Array(49, 51, 50), PackedInt32Array(56, 55, 53), PackedInt32Array(53, 55, 54), PackedInt32Array(26, 27, 57), PackedInt32Array(57, 27, 58), PackedInt32Array(60, 59, 61), PackedInt32Array(61, 59, 62), PackedInt32Array(64, 63, 65), PackedInt32Array(65, 63, 66), PackedInt32Array(68, 67, 69), PackedInt32Array(69, 67, 70), PackedInt32Array(72, 71, 73), PackedInt32Array(73, 71, 74), PackedInt32Array(76, 75, 77), PackedInt32Array(77, 75, 78), PackedInt32Array(74, 79, 80), PackedInt32Array(80, 79, 81), PackedInt32Array(80, 81, 62), PackedInt32Array(82, 78, 75), PackedInt32Array(58, 82, 57), PackedInt32Array(57, 82, 66), PackedInt32Array(62, 81, 61), PackedInt32Array(84, 83, 85), PackedInt32Array(85, 83, 82), PackedInt32Array(67, 79, 70), PackedInt32Array(70, 79, 86), PackedInt32Array(86, 79, 71), PackedInt32Array(71, 79, 74), PackedInt32Array(88, 87, 86), PackedInt32Array(86, 87, 70), PackedInt32Array(82, 83, 78), PackedInt32Array(72, 73, 88), PackedInt32Array(88, 73, 87), PackedInt32Array(65, 66, 79), PackedInt32Array(79, 66, 82), PackedInt32Array(79, 82, 75), PackedInt32Array(79, 75, 81), PackedInt32Array(64, 89, 63), PackedInt32Array(63, 89, 90), PackedInt32Array(68, 69, 89), PackedInt32Array(89, 69, 90), PackedInt32Array(59, 60, 91), PackedInt32Array(91, 76, 77), PackedInt32Array(77, 92, 91), PackedInt32Array(91, 92, 59), PackedInt32Array(84, 85, 93), PackedInt32Array(93, 85, 94), PackedInt32Array(93, 94, 92), PackedInt32Array(92, 94, 59), PackedInt32Array(98, 97, 95), PackedInt32Array(95, 97, 96), PackedInt32Array(99, 96, 100), PackedInt32Array(100, 96, 101), PackedInt32Array(105, 104, 102), PackedInt32Array(102, 104, 103), PackedInt32Array(109, 108, 106), PackedInt32Array(106, 108, 107), PackedInt32Array(113, 112, 110), PackedInt32Array(110, 112, 111)]
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+skip_save = true
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+follow_offset = Vector3(0, 8.4, 3.6)
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.8178, 0.4491, -0.3601, 0, 0.6257, 0.7802, 0.5756, 0.638, -0.5116, 0, 8, -6)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+light_color = Color(0.72, 0.82, 1, 1)
+light_energy = 0.86
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="Ninjas" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Ninjas"]
+
+[node name="Ninja1" parent="Enemies/Ninjas/InstancedEnemies" instance=ExtResource("ninja")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -10.4965)
+is_offensive = false
+
+[node name="Ninja2" parent="Enemies/Ninjas/InstancedEnemies" instance=ExtResource("ninja")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -10.4965)
+is_offensive = false
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -1.4995)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/Ninjas")]
+areas_to_reactivate = [NodePath("../../Level/Areas/NorthBuildingLanding"), NodePath("../../Level/Areas/NinjaWake")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -32.989)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+areas_already_activated = [NodePath("../../Level/Areas/NorthBuildingLanding")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -17, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.5283, -20)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-7, 65534, 0, -7, 65535, 0, -7, 0, 0, -7, 1, 0, -7, 2, 0, -6, 65519, 0, -6, 65520, 0, -6, 65521, 0, -6, 65522, 0, -6, 65523, 0, -6, 65524, 0, -6, 65525, 0, -6, 65526, 0, -6, 65527, 0, -6, 65534, 0, -6, 65535, 0, -6, 0, 0, -6, 1, 0, -6, 2, 0, -5, 65519, 0, -5, 65520, 0, -5, 65521, 0, -5, 65522, 0, -5, 65523, 0, -5, 65524, 0, -5, 65525, 0, -5, 65526, 0, -5, 65527, 0, -5, 65532, 0, -5, 65533, 0, -5, 65534, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -5, 2, 0, -5, 3, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65526, 0, -4, 65527, 0, -4, 65532, 0, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -4, 3, 0, -3, 65519, 0, -3, 65520, 0, -3, 65521, 0, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65526, 0, -3, 65527, 0, -3, 65532, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 0, -2, 65526, 0, -2, 65527, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65519, 0, -1, 65520, 0, -1, 65521, 0, -1, 65522, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65526, 0, -1, 65527, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65519, 0, -65536, 65520, 0, -65536, 65521, 0, -65536, 65522, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65526, 0, -65536, 65527, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65519, 0, -65535, 65520, 0, -65535, 65521, 0, -65535, 65522, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65526, 0, -65535, 65527, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 0, -65534, 65526, 0, -65534, 65527, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65519, 0, -65533, 65520, 0, -65533, 65521, 0, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65526, 0, -65533, 65527, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 0, -65532, 65525, 0, -65532, 65526, 0, -65532, 65527, 0, -65532, 65532, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0, -65532, 3, 0, -65531, 65519, 0, -65531, 65520, 0, -65531, 65521, 0, -65531, 65522, 0, -65531, 65523, 0, -65531, 65524, 0, -65531, 65525, 0, -65531, 65526, 0, -65531, 65527, 0, -65530, 65521, 0, -65530, 65522, 0, -65530, 65523, 0, -65530, 65524, 0, -65530, 65525, 0, -65529, 65521, 0, -65529, 65522, 0, -65529, 65523, 0, -65529, 65524, 0, -65529, 65525, 0)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="RoofParapets" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196615, 65534, 3, -196615, 65535, 3, -196615, 0, 3, -196615, 1, 3, -196615, 2, 3, -131079, 2, 2, -65543, 65534, 1, -196614, 65519, 3, -196614, 65520, 3, -196614, 65521, 3, -196614, 65522, 3, -196614, 65523, 3, -196614, 65524, 3, -196614, 65525, 3, -196614, 65526, 3, -196614, 65527, 3, -131078, 65527, 2, -131078, 2, 2, -65542, 65519, 1, -65542, 65534, 1, -196613, 65532, 3, -196613, 65533, 3, -196613, 3, 3, -131077, 65527, 2, -131077, 3, 2, -65541, 65519, 1, -65541, 65532, 1, -131076, 65527, 2, -131076, 3, 2, -65540, 65519, 1, -65540, 65532, 1, -131075, 65527, 2, -131075, 3, 2, -65539, 65519, 1, -65539, 65532, 1, -131074, 65527, 2, -131074, 3, 2, -65538, 65519, 1, -65538, 65532, 1, -131073, 3, 2, -65537, 65519, 1, -196608, 3, 2, -131072, 65519, 1, -196607, 65527, 2, -196607, 3, 2, -131071, 65519, 1, -131071, 65532, 1, -196606, 65527, 2, -196606, 3, 2, -131070, 65519, 1, -131070, 65532, 1, -196605, 65527, 2, -196605, 3, 2, -131069, 65519, 1, -131069, 65532, 1, -327676, 65532, 4, -327676, 65533, 4, -327676, 65534, 4, -327676, 65535, 4, -327676, 0, 4, -327676, 1, 4, -327676, 2, 4, -327676, 3, 4, -196604, 65527, 2, -196604, 3, 2, -131068, 65519, 1, -131068, 65532, 1, -327675, 65519, 4, -327675, 65520, 4, -327675, 65526, 4, -327675, 65527, 4, -196603, 65527, 2, -131067, 65519, 1, -196602, 65525, 2, -131066, 65521, 1, -327673, 65521, 4, -327673, 65522, 4, -327673, 65523, 4, -327673, 65524, 4, -327673, 65525, 4, -196601, 65525, 2, -131065, 65521, 1)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="RooftopProps" type="Node3D" parent="Level/NavigationRegion3D"]
+metadata/bake_walkways = true
+
+[node name="PenthouseB1" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("penthouse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, -1, -8.8)
+
+[node name="PenthouseB2" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("penthouse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, -1, -47.2)
+
+[node name="HvacB1West" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, -1, 1.5)
+
+[node name="HvacB1East1" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, -1, -4.5)
+
+[node name="HvacB1East2" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, -1, 3.2)
+
+[node name="HvacB2West1" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.8, -1, -45.5)
+
+[node name="HvacB2West2" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2, -1, -46.2)
+
+[node name="HvacB2SouthEast" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, -1, -28)
+
+[node name="SkylightB2East" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("skylight")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.6, -1, -37.5)
+
+[node name="SkylightB2West" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("skylight")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.2, -1, -32.5)
+
+[node name="SkyscraperHulls" type="Node3D" parent="Level"]
+
+[node name="B1MainHull" type="MeshInstance3D" parent="Level/SkyscraperHulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -29.02, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_B1MainHull")
+
+[node name="B1WingHull" type="MeshInstance3D" parent="Level/SkyscraperHulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.994, -29.02, 1.4995)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_B1WingHull")
+
+[node name="B2MainHull" type="MeshInstance3D" parent="Level/SkyscraperHulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -29.02, -37.4875)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_B2MainHull")
+
+[node name="B2WingHull" type="MeshInstance3D" parent="Level/SkyscraperHulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.993, -29.02, -37.4875)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_B2WingHull")
+
+[node name="BridgeFraming" type="Node3D" parent="Level"]
+
+[node name="ThresholdSouth" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.985, -11.756)
+mesh = SubResource("BoxMesh_threshold")
+
+[node name="ThresholdNorth" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.985, -24.232)
+mesh = SubResource("BoxMesh_threshold")
+
+[node name="PylonSW" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, -0.425, -11.776)
+mesh = SubResource("BoxMesh_pylon")
+
+[node name="PylonSWLamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, 0.21, -11.776)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pylon_lamp")
+
+[node name="PylonSE" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, -0.425, -11.776)
+mesh = SubResource("BoxMesh_pylon")
+
+[node name="PylonSELamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, 0.21, -11.776)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pylon_lamp")
+
+[node name="PylonNW" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, -0.425, -24.212)
+mesh = SubResource("BoxMesh_pylon")
+
+[node name="PylonNWLamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, 0.21, -24.212)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pylon_lamp")
+
+[node name="PylonNE" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, -0.425, -24.212)
+mesh = SubResource("BoxMesh_pylon")
+
+[node name="PylonNELamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, 0.21, -24.212)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_pylon_lamp")
+
+[node name="NorthStrut1" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, -2.75, -2.18, -23.012)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthGusset1" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, -3.05, -23.942)
+mesh = SubResource("BoxMesh_gusset")
+
+[node name="SouthStrut1" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, -2.75, -2.18, -12.976)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthStrut2" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, -0.95, -2.18, -23.012)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthGusset2" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, -3.05, -23.942)
+mesh = SubResource("BoxMesh_gusset")
+
+[node name="SouthStrut2" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, -0.95, -2.18, -12.976)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthStrut3" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, 0.95, -2.18, -23.012)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthGusset3" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, -3.05, -23.942)
+mesh = SubResource("BoxMesh_gusset")
+
+[node name="SouthStrut3" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, 0.95, -2.18, -12.976)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthStrut4" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, 2.75, -2.18, -23.012)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="NorthGusset4" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, -3.05, -23.942)
+mesh = SubResource("BoxMesh_gusset")
+
+[node name="SouthStrut4" type="MeshInstance3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, 2.75, -2.18, -12.976)
+mesh = SubResource("BoxMesh_facade_strut")
+
+[node name="BridgeWashLight1" type="OmniLight3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -15)
+light_color = Color(0.66, 0.84, 1, 1)
+light_energy = 0.45
+omni_range = 8.5
+
+[node name="BridgeWashLight2" type="OmniLight3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -21)
+light_color = Color(0.66, 0.84, 1, 1)
+light_energy = 0.45
+omni_range = 8.5
+
+[node name="RooftopDetails" type="Node3D" parent="Level"]
+
+[node name="HelipadMarking" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.985, -37.5)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_helipad")
+
+[node name="HelipadLight1" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, -0.98, -37.5)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_heli_light")
+
+[node name="HelipadLight2" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, -0.98, -37.5)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_heli_light")
+
+[node name="HelipadLight3" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.98, -42.7)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_heli_light")
+
+[node name="HelipadLight4" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.98, -32.3)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_heli_light")
+
+[node name="BridgeLampB1W" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -10.8)
+
+[node name="BridgeLampB1E" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -1, -10.8)
+
+[node name="BridgeLampB2W" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -25.2)
+
+[node name="BridgeLampB2E" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -1, -25.2)
+
+[node name="CommsMastLower" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.8, -50.2)
+mesh = SubResource("CylinderMesh_mast_lower")
+
+[node name="CommsMastUpper" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 4.1, -50.2)
+mesh = SubResource("CylinderMesh_mast_upper")
+
+[node name="CommsMastArm1" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 3.1, -50.2)
+mesh = SubResource("BoxMesh_mast_arm")
+
+[node name="CommsMastArm2" type="MeshInstance3D" parent="Level/RooftopDetails"]
+transform = Transform3D(0.7, 0, 0.7, 0, 1, 0, -0.7, 0, 0.7, -3.8, 4.4, -50.2)
+mesh = SubResource("BoxMesh_mast_arm")
+
+[node name="CommsMastBeacon" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 5.65, -50.2)
+
+[node name="CornerBeacon1" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.82, -0.66, -11.82)
+
+[node name="CornerBeacon2" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.82, -0.66, -11.82)
+
+[node name="CornerBeacon3" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.82, -0.66, 11.82)
+
+[node name="CornerBeacon4" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.82, -0.66, 11.82)
+
+[node name="CornerBeacon5" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.82, -0.66, -5.82)
+
+[node name="CornerBeacon6" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -20.82, -0.66, 8.82)
+
+[node name="CornerBeacon7" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.82, -0.66, -24.16)
+
+[node name="CornerBeacon8" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.82, -0.66, -24.16)
+
+[node name="CornerBeacon9" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -17.82, -0.66, -50.8)
+
+[node name="CornerBeacon10" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.82, -0.66, -50.8)
+
+[node name="CornerBeacon11" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.8, -0.66, -30.16)
+
+[node name="CornerBeacon12" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.8, -0.66, -44.8)
+
+[node name="NightCityscape" type="Node3D" parent="Level"]
+
+[node name="StreetGrid" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -68, -24)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_city")
+material_override = SubResource("ShaderMaterial_streets")
+
+[node name="NightMistLower" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -42, -24)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_city")
+material_override = SubResource("ShaderMaterial_mist_lower")
+
+[node name="NightMistUpper" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -21, -24)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_city")
+material_override = SubResource("ShaderMaterial_mist_upper")
+
+[node name="DistantWest1" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -44, -47, -10)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantWest1")
+
+[node name="DistantWest1Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -36.08, -25, -1.2)
+
+[node name="DistantWest2" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -52, -49, -38)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantWest2")
+
+[node name="DistantWest2Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -42.32, -29, -28.32)
+
+[node name="DistantEast1" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 44, -47.5, -8)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantEast1")
+
+[node name="DistantEast1Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.8, -26, -0.08)
+
+[node name="DistantEast2" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, -46.5, -36)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantEast2")
+
+[node name="DistantEast2Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.68, -24, -25.44)
+
+[node name="DistantNorth1" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, -48, -76)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantNorth1")
+
+[node name="DistantNorth1Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.32, -27, -67.2)
+
+[node name="DistantNorth2" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, -82)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantNorth2")
+
+[node name="DistantNorth2Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.44, -31, -73.2)
+
+[node name="DistantNorth3" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, -47.5, -78)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantNorth3")
+
+[node name="DistantNorth3Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.68, -26, -69.2)
+
+[node name="DistantGapWest" type="MeshInstance3D" parent="Level/NightCityscape"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, -50.5, -22)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_DistantGapWest")
+
+[node name="DistantGapWestBeacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -40.08, -32, -14.96)
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4"), NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6"), NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -13.4955)
+start_at_bottom = false
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -13.4955)
+start_at_bottom = false
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -16.4945)
+start_at_bottom = false
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -16.4945)
+start_at_bottom = false
+
+[node name="BridgePlatform5" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -19.4935)
+start_at_bottom = false
+
+[node name="BridgePlatform6" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -19.4935)
+start_at_bottom = false
+
+[node name="BridgePlatform7" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -22.4925)
+start_at_bottom = false
+
+[node name="BridgePlatform8" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -22.4925)
+start_at_bottom = false
+
+[node name="WakeNinjas" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/Ninjas")
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="NorthBuildingLanding" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -27.8907)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/NorthBuildingLanding"]
+shape = SubResource("BoxShape3D_landing")
+
+[node name="NinjaWake" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.4985)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/NinjaWake"]
+shape = SubResource("BoxShape3D_ninja_wake")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="ShurikenLauncher" parent="Weapon" instance=ExtResource("shuriken_launcher")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.593, -1.4995)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[connection signal="all_players_inside" from="Level/Areas/NorthBuildingLanding" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="all_players_inside" from="Level/Areas/NinjaWake" to="Level/Events/WakeNinjas" method="trigger"]

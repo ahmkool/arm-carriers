@@ -1,23 +1,23 @@
-[gd_scene load_steps=31 format=4 uid="uid://wlqtp2cp6mf7"]
+[gd_scene load_steps=31 format=3 uid="uid://wlqtp2cp6mf7"]
 
-[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot.tscn" id="robot"]
-[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot_gunner.tscn" id="robot_gunner"]
-[ext_resource type="Script" path="res://src/enemy/shield/enemy_shield.gd" id="enemy_shield"]
-[ext_resource type="PackedScene" path="res://src/enemy/shield/flat_shield.tscn" id="flat_shield"]
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
-[ext_resource type="PackedScene" path="res://src/weapon/pulse_rifle.tscn" id="pulse_rifle"]
-[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://bthk41l1g4n1q" path="res://src/enemy/shield/enemy_shield.gd" id="enemy_shield"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="PackedScene" path="res://src/enemy/shield/flat_shield.tscn" id="flat_shield"]
 [ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
 [ext_resource type="AudioStream" uid="uid://duaul8r11ug66" path="res://assets/music/PerituneMaterial_OverWorld_Orchestra.mp3" id="music"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot.tscn" id="robot"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_robot_gunner.tscn" id="robot_gunner"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="PackedScene" path="res://src/weapon/shuriken_launcher.tscn" id="shuriken_launcher"]
 [ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
 [ext_resource type="MeshLibrary" uid="uid://denn6v2rnn43l" path="res://assets/mesh_library/tiles_Color1_no_shadows.tres" id="tiles"]
@@ -206,7 +206,7 @@ shape = SubResource("BoxShape3D_wake")
 
 [node name="Weapon" type="Node3D" parent="."]
 
-[node name="PulseRifle" parent="Weapon" instance=ExtResource("pulse_rifle")]
+[node name="ShurikenLauncher" parent="Weapon" instance=ExtResource("shuriken_launcher")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0.593, 4.4985)
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
@@ -220,8 +220,8 @@ parameters/looping = true
 script = ExtResource("launch_message")
 message_string = "[color=#88ff88]Playground[/color]
 
-Bolts bounce off shields like mirrors.
-Vent to pop the robot's bubble; bank shots off the angled shield to hit the gunner behind cover.
+Shuriken launcher: the back carrier flings the star.
+While it flies, the front carrier holds shoot to slow it and aim, and lets go to scatter its four kunai.
 Step forward together to wake the enemies.
 Pause > last checkpoint brings them back."
 

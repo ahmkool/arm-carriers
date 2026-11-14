@@ -1,0 +1,44 @@
+[gd_scene format=3]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_body"]
+albedo_color = Color(0.15, 0.17, 0.22, 1)
+metallic = 0.74
+roughness = 0.34
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lamp"]
+shading_mode = 0
+albedo_color = Color(1.9, 1.35, 0.72, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_post"]
+material = SubResource("StandardMaterial3D_body")
+size = Vector3(0.24, 0.92, 0.24)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cap"]
+material = SubResource("StandardMaterial3D_body")
+size = Vector3(0.32, 0.10, 0.32)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lens"]
+material = SubResource("StandardMaterial3D_lamp")
+size = Vector3(0.26, 0.14, 0.26)
+
+[node name="RooftopLightPost" type="Node3D"]
+
+[node name="Post" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.46, 0)
+mesh = SubResource("BoxMesh_post")
+
+[node name="Lens" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.96, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_lens")
+
+[node name="Cap" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.07, 0)
+mesh = SubResource("BoxMesh_cap")
+
+[node name="PoolLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.35, 0)
+light_color = Color(1, 0.80, 0.54, 1)
+light_energy = 1.25
+omni_range = 8.0
+omni_attenuation = 1.15

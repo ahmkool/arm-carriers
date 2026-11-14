@@ -1,0 +1,2059 @@
+[gd_scene format=3 uid="uid://cs2gfi1n4nuqd"]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Texture2D" uid="uid://chj3qn7lpf02" path="res://assets/material/sky/panorama_image.png" id="sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
+[ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="MeshLibrary" path="res://src/world/elements/jungle/jungle_tiles.tres" id="tiles"]
+[ext_resource type="PackedScene" uid="uid://c2hrlod45sfxd" path="res://src/world/elements/water.tscn" id="water"]
+[ext_resource type="PackedScene" path="res://src/world/elements/jungle/jungle_bridge_platform.tscn" id="bridge"]
+[ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
+[ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
+[ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
+[ext_resource type="PackedScene" path="res://src/weapon/siege_bow.tscn" id="siege_bow"]
+[ext_resource type="AudioStream" uid="uid://beixrhjbhtoq" path="res://assets/music/PeriTune_Secret_Corridor.mp3" id="music"]
+[ext_resource type="PackedScene" path="res://src/world/elements/jungle/jungle_totem_brazier.tscn" id="brazier"]
+[ext_resource type="PackedScene" path="res://src/world/elements/jungle/jungle_fireflies.tscn" id="fireflies"]
+[ext_resource type="PackedScene" path="res://src/world/elements/jungle/jungle_temple_ziggurat.tscn" id="ziggurat"]
+[ext_resource type="PackedScene" path="res://src/world/elements/jungle/jungle_ruin_arch.tscn" id="ruin_arch"]
+[ext_resource type="Shader" uid="uid://1omvlp44jb2k" path="res://water.gdshader" id="water_shader"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_orc.tscn" id="orc"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_skeleton_crossbow.tscn" id="crossbow"]
+[ext_resource type="PackedScene" uid="uid://cje8utfev8m5t" path="res://src/enemy/enemy_flying_skull.tscn" id="skull"]
+[ext_resource type="Script" path="res://src/events/groups_defeated_gate.gd" id="groups_gate"]
+[ext_resource type="Script" path="res://src/events/stop_survival_event.gd" id="stop_survival"]
+[ext_resource type="Script" path="res://src/world/elements/single_player_area_trigger.gd" id="single_player"]
+[ext_resource type="Script" path="res://src/world/elements/trap/spike_trap.gd" id="spike_trap"]
+[ext_resource type="Script" path="res://src/events/spike_trap_event.gd" id="spike_trap_event"]
+[ext_resource type="Shader" path="res://src/world/elements/jungle/jungle_ruin_stone.gdshader" id="jungle_stone"]
+
+[sub_resource type="ProceduralSkyMaterial" id="PanoramaSkyMaterial_sky"]
+sky_top_color = Color(0.14, 0.32, 0.28, 1)
+sky_horizon_color = Color(0.52, 0.68, 0.52, 1)
+sky_curve = 0.16
+ground_bottom_color = Color(0.08, 0.18, 0.14, 1)
+ground_horizon_color = Color(0.46, 0.62, 0.48, 1)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jade_water"]
+render_priority = 0
+shader = ExtResource("water_shader")
+shader_parameter/water_color = Color(0.05, 0.24, 0.2, 1)
+shader_parameter/foam_color = Color(0.42, 0.68, 0.54, 1)
+shader_parameter/rain_ripples = 0.12
+
+[sub_resource type="ShaderMaterial" id="Material_jungle_deck"]
+render_priority = 0
+shader = ExtResource("jungle_stone")
+shader_parameter/timber_top = true
+shader_parameter/water_y = -4.6
+shader_parameter/moss_height = 1.9
+
+[sub_resource type="StandardMaterial3D" id="Material_jungle_beam"]
+albedo_color = Color(0.22, 0.14, 0.08, 1)
+roughness = 0.86
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_river_pile"]
+material = SubResource("Material_jungle_beam")
+top_radius = 0.22
+bottom_radius = 0.26
+height = 6.5
+radial_segments = 8
+rings = 1
+
+[sub_resource type="BoxMesh" id="BoxMesh_NorthWalkway"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(27.491, 0.55, 2.200)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_NorthWalkway"]
+size = Vector3(27.491, 0.55, 2.200)
+
+[sub_resource type="BoxMesh" id="BoxMesh_SouthWalkway"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(27.491, 0.55, 2.200)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_SouthWalkway"]
+size = Vector3(27.491, 0.55, 2.200)
+
+[sub_resource type="BoxMesh" id="BoxMesh_NorthBay1"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_NorthBay1"]
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxMesh" id="BoxMesh_SouthBay1"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_SouthBay1"]
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxMesh" id="BoxMesh_NorthBay2"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_NorthBay2"]
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxMesh" id="BoxMesh_SouthBay2"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_SouthBay2"]
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxMesh" id="BoxMesh_NorthBay3"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_NorthBay3"]
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxMesh" id="BoxMesh_SouthBay3"]
+material = SubResource("Material_jungle_deck")
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_SouthBay3"]
+size = Vector3(3.600, 0.55, 1.900)
+
+[sub_resource type="StandardMaterial3D" id="Material_sanctuary_ring"]
+shading_mode = 0
+albedo_color = Color(0.28, 1.45, 0.88, 1)
+
+[sub_resource type="TorusMesh" id="TorusMesh_sanctuary_ring"]
+material = SubResource("Material_sanctuary_ring")
+inner_radius = 2.2
+outer_radius = 2.55
+rings = 32
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="Material_lily_pad"]
+albedo_color = Color(0.16, 0.44, 0.2, 1)
+roughness = 0.72
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lily_pad"]
+material = SubResource("Material_lily_pad")
+top_radius = 0.85
+bottom_radius = 0.85
+height = 0.06
+radial_segments = 10
+rings = 1
+
+[sub_resource type="Sky" id="Sky_level"]
+sky_material = SubResource("PanoramaSkyMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_sky"]
+background_mode = 2
+sky = SubResource("Sky_level")
+ambient_light_source = 3
+ambient_light_color = Color(0.56, 0.74, 0.58, 1)
+ambient_light_sky_contribution = 0.45
+ambient_light_energy = 0.58
+tonemap_mode = 3
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.2
+ssao_intensity = 1.3
+glow_enabled = true
+glow_intensity = 0.5
+glow_bloom = 0.04
+glow_hdr_threshold = 1.05
+fog_enabled = true
+fog_light_color = Color(0.28, 0.46, 0.38, 1)
+fog_density = 0.003
+fog_aerial_perspective = 0.28
+fog_sky_affect = 0.25
+
+[sub_resource type="Curve" id="Curve_survival"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 2.3), 0.0, 0.0, 0, 0, Vector2(1, 1.2), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(360, 1, 360)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_courtyard"]
+size = Vector3(24, 3, 13)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_river_entry"]
+size = Vector3(9, 3, 15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_rail_single"]
+size = Vector3(4.5, 3, 2.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_lattice"]
+size = Vector3(20, 3, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_trap"]
+size = Vector3(15, 3, 15)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_approach"]
+size = Vector3(7, 3, 13)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_arena"]
+size = Vector3(22, 3, 12)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_sanctuary_reveal"]
+size = Vector3(9, 3, 5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_end"]
+size = Vector3(7.5, 3, 5.5)
+
+[sub_resource type="NavigationMesh" id="NavigationMesh_level"]
+vertices = PackedVector3Array(-8.2425, -0.5500002, -175.9405, -8.2425, -0.5500002, -162.9405, -5.7425003, -0.5500002, -162.6905, -5.7425003, -0.5500002, -176.1905, -5.2425003, -0.5500002, -162.1905, -4.9925003, -0.5500002, -159.6905, 8.0075, -0.5500002, -159.6905, 8.2575, -0.5500002, -162.1905, 8.7575, -0.5500002, -162.6905, 11.2575, -0.5500002, -162.9405, 11.2575, -0.5500002, -175.9405, 8.7575, -0.5500002, -176.1905, 8.2575, -0.5500002, -176.6905, 8.0075, -0.5500002, -179.1905, -4.9925003, -0.5500002, -179.1905, -5.2425003, -0.5500002, -176.6905, -11.2425, -0.5500002, -149.9405, -8.2425, -0.5500002, -143.6905, -6.4925003, -0.5500002, -143.6905, -2.9925003, -0.5500002, -152.1905, -10.9925, -0.5500002, -152.1905, 9.5075, -0.5500002, -143.6905, 11.2575, -0.5500002, -143.6905, 14.2575, -0.5500002, -149.9405, 14.0075, -0.5500002, -152.1905, -2.7425003, -0.5500002, -152.6905, -6.2425003, -0.5500002, -142.4405, 9.2575, -0.5500002, -142.4405, -14.2425, -0.5500002, -142.4405, -8.7425, -0.5500002, -142.4405, -8.7425, -0.5500002, -143.4405, -11.7425, -0.5500002, -149.1905, -14.2425, -0.5500002, -148.9405, 11.7575, -0.5500002, -143.4405, 11.7575, -0.5500002, -142.4405, 17.2575, -0.5500002, -142.4405, 17.2575, -0.5500002, -148.9405, 14.7575, -0.5500002, -149.1905, -23.2425, -0.5500002, -142.9405, -23.2425, -0.5500002, -123.940506, -18.7425, -0.5500002, -123.940506, -18.7425, -0.5500002, -142.9405, 21.7575, -0.5500002, -142.9405, 21.7575, -0.5500002, -123.940506, 26.2575, -0.5500002, -123.940506, 26.2575, -0.5500002, -142.9405, -7.7425003, 2.9499998, -142.9405, -7.7425003, 2.9499998, -142.1905, -7.2425003, 2.9499998, -142.1905, -7.2425003, 2.9499998, -142.9405, 10.0075, 2.9499998, -142.9405, 10.0075, 2.9499998, -142.1905, 10.7575, 2.9499998, -142.1905, 10.7575, 2.9499998, -142.9405, -14.2425, -0.5500002, -124.440506, -8.7425, -0.5500002, -124.440506, -8.4925, -0.5500002, -125.690506, -8.4925, -0.5500002, -141.1905, 11.5075, -0.5500002, -141.1905, 11.5075, -0.5500002, -125.690506, 11.7575, -0.5500002, -124.440506, 17.2575, -0.5500002, -124.440506, -6.4925003, -0.5500002, -125.690506, -6.4925003, -0.5500002, -141.1905, 9.5075, -0.5500002, -125.690506, 9.5075, -0.5500002, -141.1905, -6.2425003, -0.5500002, -124.440506, 9.2575, -0.5500002, -124.440506, -7.7425003, 2.9499998, -124.940506, -7.7425003, 2.9499998, -124.190506, -7.2425003, 2.9499998, -124.190506, -7.2425003, 2.9499998, -124.940506, 10.0075, 2.9499998, -124.940506, 10.0075, 2.9499998, -124.190506, 10.7575, 2.9499998, -124.190506, 10.7575, 2.9499998, -124.940506, -8.7425, -0.5500002, -123.440506, -8.2425, -0.5500002, -123.190506, -14.2425, -0.5500002, -117.940506, -11.7425, -0.5500002, -117.690506, -11.2425, -0.5500002, -116.940506, 14.2575, -0.5500002, -116.940506, 11.2575, -0.5500002, -123.190506, 9.5075, -0.5500002, -123.190506, -2.9925003, -0.5500002, -114.440506, 14.0075, -0.5500002, -114.690506, -6.4925003, -0.5500002, -123.190506, -10.9925, -0.5500002, -114.690506, 11.7575, -0.5500002, -123.440506, 14.7575, -0.5500002, -117.690506, 17.2575, -0.5500002, -117.940506, 70.7575, -0.5500002, -113.190506, 64.0075, -0.5500002, -113.190506, 63.7575, -0.5500002, -110.690506, 60.7575, -0.5500002, -102.190506, 68.2575, -0.5500002, -101.190506, 68.7575, -0.5500002, -102.690506, 63.2575, -0.5500002, -110.190506, 60.7575, -0.5500002, -109.940506, 70.7575, -0.5500002, -102.690506, 75.0075, -0.5500002, -102.690506, 78.2575, -0.5500002, -105.690506, 78.2575, -0.5500002, -107.440506, 79.5075, -0.5500002, -107.690506, 79.5075, -0.5500002, -113.190506, 80.7575, -0.5500002, -107.440506, 80.7575, -0.5500002, -105.690506, 84.0075, -0.5500002, -102.690506, 88.2575, -0.5500002, -102.690506, 88.2575, -0.5500002, -113.190506, 95.2575, -0.5500002, -110.690506, 95.0075, -0.5500002, -113.190506, 90.7575, -0.5500002, -102.190506, 90.7575, -0.5500002, -100.190506, 98.2575, -0.5500002, -100.190506, 95.7575, -0.5500002, -110.190506, 90.2575, -0.5500002, -102.690506, 98.2575, -0.5500002, -109.940506, -2.9925003, -0.5500002, -107.190506, -5.2425003, -0.5500002, -106.940506, -5.2425003, -0.5500002, -104.690506, 5.7574997, -0.5500002, -107.190506, 8.2575, -0.5500002, -104.690506, 8.0075, -0.5500002, -107.190506, -5.7425003, -0.5500002, -104.190506, 8.7575, -0.5500002, -90.690506, 11.0075, -0.5500002, -90.690506, 11.5075, -0.5500002, -93.190506, 8.7575, -0.5500002, -104.190506, 5.5074997, -0.5500002, -107.690506, -2.7425003, -0.5500002, -107.690506, -5.7425003, -0.5500002, -90.690506, -5.2425003, -0.5500002, -90.190506, 8.2575, -0.5500002, -90.190506, -4.9925003, -0.5500002, -87.690506, 8.0075, -0.5500002, -87.690506, 11.2575, -0.5500002, -103.940506, -8.2425, -0.5500002, -103.940506, -8.2425, -0.5500002, -90.940506, 21.2575, -0.5500002, -104.190506, 19.0075, -0.5500002, -104.190506, 18.7575, -0.5500002, -101.940506, 18.7575, -0.5500002, -93.190506, 18.7575, -0.5500002, -90.940506, 21.2575, -0.5500002, -90.690506, 21.7575, -0.5500002, -104.690506, 50.7575, -0.5500002, -90.690506, 53.0075, -0.5500002, -90.690506, 53.5075, -0.5500002, -93.190506, 50.7575, -0.5500002, -104.190506, 50.2575, -0.5500002, -104.690506, 18.2575, -0.5500002, -101.690506, 18.2575, -0.5500002, -93.440506, 21.7575, -0.5500002, -90.190506, 22.0075, -0.5500002, -107.190506, 22.0075, -0.5500002, -87.690506, 50.0075, -0.5500002, -87.690506, 50.0075, -0.5500002, -107.190506, 53.2575, -0.5500002, -103.940506, 50.2575, -0.5500002, -90.190506, 79.2575, 1.1999998, -106.690506, 79.2575, 1.1999998, -106.190506, 79.7575, 1.1999998, -106.190506, 79.7575, 1.1999998, -106.690506, 83.2575, -0.5500002, -102.190506, 80.5075, -0.5500002, -105.190506, 78.5075, -0.5500002, -105.190506, 75.7575, -0.5500002, -102.190506, 75.7575, -0.5500002, -97.690506, 83.2575, -0.5500002, -97.690506, 60.2575, -0.5500002, -101.690506, 60.2575, -0.5500002, -97.690506, 68.2575, -0.5500002, -97.690506, 85.7575, -0.5500002, -95.190506, 85.7575, -0.5500002, -87.690506, 90.2575, -0.5500002, -87.690506, 90.2575, -0.5500002, -95.190506, 90.7575, -0.5500002, -87.190506, 98.2575, -0.5500002, -82.690506, 90.7575, -0.5500002, -95.690506, 90.7575, -0.5500002, -82.690506, 60.2575, -0.5500002, -93.440506, 60.7575, -0.5500002, -93.190506, 68.2575, -0.5500002, -95.690506, 60.7575, -0.5500002, -82.690506, 68.2575, -0.5500002, -82.690506, 68.2575, -0.5500002, -87.190506, 68.7575, -0.5500002, -87.690506, 68.7575, -0.5500002, -95.190506, 73.2575, -0.5500002, -87.690506, 73.2575, -0.5500002, -95.190506, 75.2575, -0.5500002, -95.190506, 75.2575, -0.5500002, -87.690506, 83.2575, -0.5500002, -87.190506, 83.7575, -0.5500002, -87.690506, 83.7575, -0.5500002, -95.190506, 75.7575, -0.5500002, -87.190506, 75.7575, -0.5500002, -85.190506, 83.2575, -0.5500002, -85.190506, 83.2575, -0.5500002, -95.690506, 75.7575, -0.5500002, -95.690506, 75.0075, -0.5500002, -80.190506, 78.2575, -0.5500002, -77.190506, 78.5075, -0.5500002, -77.690506, 75.7575, -0.5500002, -80.690506, 80.5075, -0.5500002, -77.690506, 83.2575, -0.5500002, -80.690506, 80.7575, -0.5500002, -77.190506, 84.0075, -0.5500002, -80.190506, 78.2575, -0.5500002, -75.440506, 68.2575, -0.5500002, -80.690506, 68.7575, -0.5500002, -80.190506, 60.7575, -0.5500002, -69.940506, 63.2575, -0.5500002, -69.690506, 79.5075, -0.5500002, -66.440506, 79.5075, -0.5500002, -75.190506, 63.7575, -0.5500002, -69.190506, 64.0075, -0.5500002, -66.690506, 94.7575, -0.5500002, -66.690506, 95.2575, -0.5500002, -67.190506, 95.2575, -0.5500002, -69.190506, 80.7575, -0.5500002, -75.440506, 90.7575, -0.5500002, -80.690506, 90.2575, -0.5500002, -80.190506, 98.2575, -0.5500002, -70.190506, -10.9925, -0.5500002, -72.690506, 14.2575, -0.5500002, -72.940506, 14.0075, -0.5500002, -77.190506, -11.2425, -0.5500002, -76.940506, 79.2575, 1.1999998, -76.690506, 79.2575, 1.1999998, -76.190506, 79.7575, 1.1999998, -76.190506, 79.7575, 1.1999998, -76.690506, -11.2425, -0.5500002, -65.940506, -8.2425, -0.5500002, -59.690506, -6.4925003, -0.5500002, -59.690506, 9.5075, -0.5500002, -59.690506, 11.2575, -0.5500002, -59.690506, 14.2575, -0.5500002, -65.940506, 14.0075, -0.5500002, -68.190506, -10.9925, -0.5500002, -68.190506, -6.2425003, -0.5500002, -58.440506, 9.2575, -0.5500002, -58.440506, -14.2425, -0.5500002, -58.440506, -8.7425, -0.5500002, -58.440506, -8.7425, -0.5500002, -59.440506, -11.7425, -0.5500002, -65.190506, -14.2425, -0.5500002, -64.940506, 11.7575, -0.5500002, -59.440506, 11.7575, -0.5500002, -58.440506, 17.2575, -0.5500002, -58.440506, 17.2575, -0.5500002, -64.940506, 14.7575, -0.5500002, -65.190506, 42.7575, -0.5500002, -64.940506, 43.0075, -0.5500002, -60.690506, 47.2575, -0.5500002, -60.940506, 47.0075, -0.5500002, -65.190506, 54.7575, -0.5500002, -64.940506, 55.0075, -0.5500002, -60.690506, 59.2575, -0.5500002, -60.940506, 59.0075, -0.5500002, -65.190506, 82.7575, -0.5500002, -39.690506, 83.2575, -0.5500002, -40.190506, 83.2575, -0.5500002, -42.190506, 72.2575, -0.5500002, -42.690506, 72.7575, -0.5500002, -42.190506, 75.0075, -0.5500002, -59.190506, 73.0075, -0.5500002, -59.190506, 72.7575, -0.5500002, -56.690506, 72.2575, -0.5500002, -56.190506, 70.0075, -0.5500002, -56.190506, 69.7575, -0.5500002, -53.940506, 69.7575, -0.5500002, -45.190506, 69.7575, -0.5500002, -42.940506, 69.2575, -0.5500002, -53.690506, 69.2575, -0.5500002, -45.440506, 83.5075, -0.5500002, -59.690506, 75.2575, -0.5500002, -59.690506, 83.5075, -0.5500002, -56.440506, 73.0075, -0.5500002, -39.690506, 86.2575, -0.5500002, -43.190506, 86.2575, -0.5500002, -55.940506, 27.2575, -0.5500002, -56.190506, 25.0075, -0.5500002, -56.190506, 24.7575, -0.5500002, -53.940506, 24.7575, -0.5500002, -45.190506, 24.7575, -0.5500002, -42.940506, 27.2575, -0.5500002, -42.690506, 35.7575, -0.5500002, -42.690506, 38.2575, -0.5500002, -42.940506, 38.5075, -0.5500002, -45.190506, 28.0075, -0.5500002, -39.690506, 35.2575, -0.5500002, -39.940506, 35.2575, -0.5500002, -42.190506, 27.7575, -0.5500002, -42.190506, 35.7575, -0.5500002, -56.190506, 27.7575, -0.5500002, -56.690506, 38.2575, -0.5500002, -55.940506, 35.2575, -0.5500002, -56.690506, 35.0075, -0.5500002, -59.190506, 28.0075, -0.5500002, -59.190506, 24.2575, -0.5500002, -53.690506, 24.2575, -0.5500002, -45.440506, -7.7425003, 1.1999998, -58.690506, -7.7425003, 1.1999998, -58.190506, -7.2425003, 1.1999998, -58.190506, -7.2425003, 1.1999998, -58.690506, 10.2575, 1.1999998, -58.690506, 10.2575, 1.1999998, -58.190506, 10.7575, 1.1999998, -58.190506, 10.7575, 1.1999998, -58.690506, -14.2425, -0.5500002, -43.440506, -8.7425, -0.5500002, -43.440506, -8.4925, -0.5500002, -44.690506, -8.4925, -0.5500002, -57.190506, 11.5075, -0.5500002, -57.190506, 11.5075, -0.5500002, -44.690506, 11.7575, -0.5500002, -43.440506, 17.2575, -0.5500002, -43.440506, -6.4925003, -0.5500002, -44.690506, -6.4925003, -0.5500002, -57.190506, 9.2575, -0.5500002, -43.440506, 9.5075, -0.5500002, -44.690506, 9.5075, -0.5500002, -57.190506, -6.2425003, -0.5500002, -43.440506, -7.7425003, 2.9499998, -43.940506, -7.7425003, 2.9499998, -43.190506, -7.2425003, 2.9499998, -43.190506, -7.2425003, 2.9499998, -43.940506, 10.0075, 2.9499998, -43.940506, 10.0075, 2.9499998, -43.190506, 10.7575, 2.9499998, -43.190506, 10.7575, 2.9499998, -43.940506, 11.5075, -0.5500002, -42.190506, 14.7575, -0.5500002, -30.690506, 17.2575, -0.5500002, -30.940506, -8.4925, -0.5500002, -42.190506, -14.2425, -0.5500002, -30.940506, -11.7425, -0.5500002, -30.690506, -11.2425, -0.5500002, -30.190506, -10.9925, -0.5500002, -27.690506, -2.9925003, -0.5500002, -27.440506, -6.4925003, -0.5500002, -42.190506, 14.2575, -0.5500002, -27.940506, 14.2575, -0.5500002, -30.190506, 9.5075, -0.5500002, -42.190506, 49.0075, -0.5500002, -33.690506, 52.7575, -0.5500002, -33.690506, 53.2575, -0.5500002, -34.190506, 53.0075, -0.5500002, -38.190506, 48.7575, -0.5500002, -37.940506, 61.0075, -0.5500002, -33.690506, 64.7575, -0.5500002, -33.690506, 65.2575, -0.5500002, -34.190506, 65.0075, -0.5500002, -38.190506, 60.7575, -0.5500002, -37.940506, -11.2425, -0.5500002, -10.440506, -8.7425, -0.5500002, -10.440506, -8.4925, -0.5500002, -11.690506, -8.7425, -0.5500002, -17.190506, -11.2425, -0.5500002, -16.940506, 11.5075, -0.5500002, -11.690506, 11.7575, -0.5500002, -10.440506, 14.2575, -0.5500002, -10.440506, 14.2575, -0.5500002, -16.940506, 11.7575, -0.5500002, -17.190506, -2.9925003, -0.5500002, -20.190506, -7.9925003, -0.5500002, -20.190506, -8.2425, -0.5500002, -17.690506, -6.4925003, -0.5500002, -11.690506, 9.5075, -0.5500002, -11.690506, 11.2575, -0.5500002, -17.690506, 11.0075, -0.5500002, -20.190506, -2.7425003, -0.5500002, -20.690506, 9.2575, -0.5500002, -10.440506, -6.2425003, -0.5500002, -10.440506, -7.7425003, 2.9499998, -10.940506, -7.7425003, 2.9499998, -10.190506, -7.2425003, 2.9499998, -10.190506, -7.2425003, 2.9499998, -10.940506, 10.0075, 2.9499998, -10.940506, 10.0075, 2.9499998, -10.190506, 10.7575, 2.9499998, -10.190506, 10.7575, 2.9499998, -10.940506, 11.5075, -0.5500002, -9.190506, -8.4925, -0.5500002, -9.190506, -11.2425, -0.5500002, 4.559494, -5.7425003, -0.5500002, 4.559494, -5.4925003, -0.5500002, 3.309494, 8.5075, -0.5500002, 3.309494, 8.7575, -0.5500002, 4.559494, 14.2575, -0.5500002, 4.559494, -3.4925003, -0.5500002, 3.309494, -3.2425003, -0.5500002, 4.559494, 6.2574997, -0.5500002, 4.559494, 6.5074997, -0.5500002, 3.309494, -6.4925003, -0.5500002, -9.190506, 9.5075, -0.5500002, -9.190506, -4.7425003, 1.1999998, 4.309494, -4.7425003, 1.1999998, 4.809494, -4.2425003, 1.1999998, 4.809494, -4.2425003, 1.1999998, 4.309494, 7.2574997, 1.1999998, 4.309494, 7.2574997, 1.1999998, 4.809494, 7.7574997, 1.1999998, 4.809494, 7.7574997, 1.1999998, 4.309494, -8.2425, -0.5500002, 17.809494, -8.2425, -0.5500002, 20.059494, -7.7425003, -0.5500002, 20.309494, 10.7575, -0.5500002, 20.309494, 11.2575, -0.5500002, 19.809494, 11.2575, -0.5500002, 17.809494, 8.5075, -0.5500002, 5.809494, 14.2575, -0.5500002, 16.809494, -5.4925003, -0.5500002, 5.809494, -11.2425, -0.5500002, 17.059494, -8.7425, -0.5500002, 17.309494, 6.5074997, -0.5500002, 5.809494, -3.4925003, -0.5500002, 5.809494)
+polygons = [PackedInt32Array(0, 3, 1), PackedInt32Array(1, 3, 2), PackedInt32Array(5, 4, 6), PackedInt32Array(6, 4, 7), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 11), PackedInt32Array(13, 12, 14), PackedInt32Array(8, 7, 11), PackedInt32Array(11, 7, 4), PackedInt32Array(11, 4, 2), PackedInt32Array(11, 2, 15), PackedInt32Array(15, 2, 3), PackedInt32Array(11, 15, 12), PackedInt32Array(12, 15, 14), PackedInt32Array(17, 16, 18), PackedInt32Array(18, 16, 20), PackedInt32Array(18, 20, 19), PackedInt32Array(22, 21, 23), PackedInt32Array(23, 21, 24), PackedInt32Array(24, 21, 25), PackedInt32Array(19, 25, 18), PackedInt32Array(18, 25, 26), PackedInt32Array(26, 25, 21), PackedInt32Array(26, 21, 27), PackedInt32Array(30, 29, 28), PackedInt32Array(30, 28, 17), PackedInt32Array(17, 28, 31), PackedInt32Array(31, 28, 32), PackedInt32Array(31, 16, 17), PackedInt32Array(35, 34, 33), PackedInt32Array(33, 22, 35), PackedInt32Array(35, 22, 37), PackedInt32Array(35, 37, 36), PackedInt32Array(22, 23, 37), PackedInt32Array(41, 40, 38), PackedInt32Array(38, 40, 39), PackedInt32Array(45, 44, 42), PackedInt32Array(42, 44, 43), PackedInt32Array(49, 48, 46), PackedInt32Array(46, 48, 47), PackedInt32Array(53, 52, 50), PackedInt32Array(50, 52, 51), PackedInt32Array(29, 57, 28), PackedInt32Array(28, 57, 56), PackedInt32Array(28, 56, 55), PackedInt32Array(28, 55, 54), PackedInt32Array(34, 35, 58), PackedInt32Array(58, 35, 59), PackedInt32Array(59, 35, 60), PackedInt32Array(60, 35, 61), PackedInt32Array(57, 63, 56), PackedInt32Array(56, 63, 62), PackedInt32Array(65, 58, 64), PackedInt32Array(64, 58, 59), PackedInt32Array(67, 66, 62), PackedInt32Array(26, 27, 65), PackedInt32Array(26, 65, 63), PackedInt32Array(63, 65, 64), PackedInt32Array(63, 64, 67), PackedInt32Array(63, 67, 62), PackedInt32Array(71, 70, 68), PackedInt32Array(68, 70, 69), PackedInt32Array(75, 74, 72), PackedInt32Array(72, 74, 73), PackedInt32Array(54, 55, 76), PackedInt32Array(76, 77, 54), PackedInt32Array(54, 77, 79), PackedInt32Array(54, 79, 78), PackedInt32Array(77, 80, 79), PackedInt32Array(82, 81, 83), PackedInt32Array(83, 81, 85), PackedInt32Array(83, 85, 84), PackedInt32Array(77, 86, 80), PackedInt32Array(80, 86, 87), PackedInt32Array(87, 86, 84), PackedInt32Array(86, 66, 84), PackedInt32Array(84, 66, 83), PackedInt32Array(83, 66, 67), PackedInt32Array(88, 60, 61), PackedInt32Array(88, 61, 82), PackedInt32Array(82, 61, 89), PackedInt32Array(89, 61, 90), PackedInt32Array(89, 81, 82), PackedInt32Array(93, 92, 91), PackedInt32Array(95, 94, 96), PackedInt32Array(96, 94, 97), PackedInt32Array(97, 94, 98), PackedInt32Array(93, 91, 97), PackedInt32Array(97, 91, 96), PackedInt32Array(96, 91, 99), PackedInt32Array(102, 101, 100), PackedInt32Array(104, 103, 102), PackedInt32Array(100, 99, 102), PackedInt32Array(102, 99, 104), PackedInt32Array(104, 99, 91), PackedInt32Array(107, 106, 105), PackedInt32Array(105, 103, 104), PackedInt32Array(107, 105, 108), PackedInt32Array(108, 105, 104), PackedInt32Array(108, 104, 109), PackedInt32Array(109, 111, 110), PackedInt32Array(114, 113, 112), PackedInt32Array(110, 115, 109), PackedInt32Array(109, 115, 116), PackedInt32Array(109, 116, 108), PackedInt32Array(112, 116, 114), PackedInt32Array(114, 116, 115), PackedInt32Array(114, 115, 117), PackedInt32Array(119, 118, 120), PackedInt32Array(120, 118, 121), PackedInt32Array(123, 122, 121), PackedInt32Array(121, 122, 120), PackedInt32Array(120, 122, 124), PackedInt32Array(126, 125, 127), PackedInt32Array(127, 125, 128), PackedInt32Array(128, 125, 122), PackedInt32Array(129, 121, 130), PackedInt32Array(130, 121, 118), PackedInt32Array(131, 124, 132), PackedInt32Array(132, 124, 133), PackedInt32Array(133, 124, 125), PackedInt32Array(125, 124, 122), PackedInt32Array(134, 132, 135), PackedInt32Array(135, 132, 133), PackedInt32Array(127, 128, 136), PackedInt32Array(137, 124, 138), PackedInt32Array(138, 124, 131), PackedInt32Array(140, 139, 141), PackedInt32Array(141, 139, 142), PackedInt32Array(143, 142, 144), PackedInt32Array(144, 142, 139), PackedInt32Array(144, 139, 145), PackedInt32Array(147, 146, 148), PackedInt32Array(148, 146, 149), PackedInt32Array(149, 146, 150), PackedInt32Array(151, 141, 152), PackedInt32Array(152, 141, 142), PackedInt32Array(144, 145, 153), PackedInt32Array(153, 145, 154), PackedInt32Array(153, 154, 155), PackedInt32Array(155, 154, 157), PackedInt32Array(155, 157, 150), PackedInt32Array(155, 150, 156), PackedInt32Array(148, 149, 158), PackedInt32Array(156, 150, 159), PackedInt32Array(159, 150, 146), PackedInt32Array(163, 162, 160), PackedInt32Array(160, 162, 161), PackedInt32Array(165, 106, 164), PackedInt32Array(164, 106, 107), PackedInt32Array(165, 164, 166), PackedInt32Array(166, 164, 167), PackedInt32Array(167, 164, 169), PackedInt32Array(167, 169, 168), PackedInt32Array(166, 167, 101), PackedInt32Array(101, 167, 100), PackedInt32Array(170, 94, 171), PackedInt32Array(171, 94, 95), PackedInt32Array(171, 95, 172), PackedInt32Array(176, 175, 173), PackedInt32Array(173, 175, 174), PackedInt32Array(176, 179, 175), PackedInt32Array(175, 179, 177), PackedInt32Array(177, 179, 114), PackedInt32Array(177, 114, 178), PackedInt32Array(178, 180, 177), PackedInt32Array(179, 113, 114), PackedInt32Array(181, 171, 182), PackedInt32Array(182, 171, 183), PackedInt32Array(183, 171, 172), PackedInt32Array(186, 185, 184), PackedInt32Array(187, 186, 188), PackedInt32Array(188, 186, 183), PackedInt32Array(183, 186, 182), PackedInt32Array(182, 186, 184), PackedInt32Array(188, 190, 187), PackedInt32Array(187, 190, 189), PackedInt32Array(192, 189, 191), PackedInt32Array(191, 189, 190), PackedInt32Array(195, 194, 193), PackedInt32Array(193, 198, 196), PackedInt32Array(196, 198, 197), PackedInt32Array(200, 199, 195), PackedInt32Array(195, 173, 194), PackedInt32Array(194, 173, 174), PackedInt32Array(196, 192, 193), PackedInt32Array(193, 192, 191), PackedInt32Array(193, 191, 200), PackedInt32Array(193, 200, 195), PackedInt32Array(200, 168, 199), PackedInt32Array(199, 168, 169), PackedInt32Array(203, 202, 204), PackedInt32Array(204, 202, 201), PackedInt32Array(203, 204, 205), PackedInt32Array(205, 204, 206), PackedInt32Array(206, 204, 197), PackedInt32Array(206, 197, 198), PackedInt32Array(205, 206, 207), PackedInt32Array(207, 206, 208), PackedInt32Array(201, 202, 209), PackedInt32Array(184, 185, 210), PackedInt32Array(210, 211, 184), PackedInt32Array(184, 211, 213), PackedInt32Array(184, 213, 212), PackedInt32Array(209, 215, 214), PackedInt32Array(201, 209, 211), PackedInt32Array(211, 209, 214), PackedInt32Array(211, 214, 216), PackedInt32Array(216, 214, 217), PackedInt32Array(216, 213, 211), PackedInt32Array(220, 219, 218), PackedInt32Array(221, 207, 208), PackedInt32Array(222, 180, 178), PackedInt32Array(222, 178, 223), PackedInt32Array(223, 178, 224), PackedInt32Array(223, 224, 220), PackedInt32Array(221, 214, 215), PackedInt32Array(208, 223, 221), PackedInt32Array(221, 223, 214), PackedInt32Array(214, 223, 220), PackedInt32Array(214, 220, 218), PackedInt32Array(228, 227, 225), PackedInt32Array(225, 227, 226), PackedInt32Array(232, 231, 229), PackedInt32Array(229, 231, 230), PackedInt32Array(235, 234, 233), PackedInt32Array(238, 237, 236), PackedInt32Array(233, 240, 235), PackedInt32Array(235, 240, 236), PackedInt32Array(236, 240, 238), PackedInt32Array(238, 240, 239), PackedInt32Array(241, 235, 242), PackedInt32Array(242, 235, 236), PackedInt32Array(245, 244, 243), PackedInt32Array(245, 243, 234), PackedInt32Array(234, 243, 246), PackedInt32Array(246, 243, 247), PackedInt32Array(246, 233, 234), PackedInt32Array(250, 249, 248), PackedInt32Array(248, 237, 250), PackedInt32Array(250, 237, 252), PackedInt32Array(250, 252, 251), PackedInt32Array(237, 238, 252), PackedInt32Array(256, 255, 253), PackedInt32Array(253, 255, 254), PackedInt32Array(260, 259, 257), PackedInt32Array(257, 259, 258), PackedInt32Array(262, 261, 263), PackedInt32Array(263, 261, 265), PackedInt32Array(263, 265, 264), PackedInt32Array(268, 267, 266), PackedInt32Array(270, 269, 271), PackedInt32Array(271, 269, 272), PackedInt32Array(272, 269, 264), PackedInt32Array(264, 273, 272), PackedInt32Array(274, 271, 275), PackedInt32Array(275, 271, 272), PackedInt32Array(266, 277, 276), PackedInt32Array(269, 268, 278), PackedInt32Array(276, 278, 266), PackedInt32Array(266, 278, 268), PackedInt32Array(261, 279, 265), PackedInt32Array(278, 281, 269), PackedInt32Array(269, 281, 280), PackedInt32Array(269, 280, 263), PackedInt32Array(269, 263, 264), PackedInt32Array(283, 282, 284), PackedInt32Array(284, 282, 285), PackedInt32Array(287, 286, 285), PackedInt32Array(290, 289, 288), PackedInt32Array(292, 291, 293), PackedInt32Array(293, 291, 294), PackedInt32Array(296, 295, 282), PackedInt32Array(282, 295, 297), PackedInt32Array(299, 298, 300), PackedInt32Array(300, 298, 296), PackedInt32Array(301, 284, 302), PackedInt32Array(302, 284, 285), PackedInt32Array(294, 287, 293), PackedInt32Array(293, 287, 288), PackedInt32Array(296, 298, 295), PackedInt32Array(287, 285, 288), PackedInt32Array(288, 285, 290), PackedInt32Array(290, 285, 282), PackedInt32Array(290, 282, 297), PackedInt32Array(306, 305, 303), PackedInt32Array(303, 305, 304), PackedInt32Array(310, 309, 307), PackedInt32Array(307, 309, 308), PackedInt32Array(244, 314, 243), PackedInt32Array(243, 314, 313), PackedInt32Array(243, 313, 312), PackedInt32Array(243, 312, 311), PackedInt32Array(249, 250, 315), PackedInt32Array(315, 250, 316), PackedInt32Array(316, 250, 317), PackedInt32Array(317, 250, 318), PackedInt32Array(314, 320, 313), PackedInt32Array(313, 320, 319), PackedInt32Array(241, 319, 320), PackedInt32Array(321, 323, 322), PackedInt32Array(319, 241, 324), PackedInt32Array(324, 241, 242), PackedInt32Array(324, 242, 323), PackedInt32Array(324, 323, 321), PackedInt32Array(323, 315, 322), PackedInt32Array(322, 315, 316), PackedInt32Array(328, 327, 325), PackedInt32Array(325, 327, 326), PackedInt32Array(332, 331, 329), PackedInt32Array(329, 331, 330), PackedInt32Array(317, 318, 333), PackedInt32Array(333, 318, 334), PackedInt32Array(334, 318, 335), PackedInt32Array(312, 336, 311), PackedInt32Array(311, 336, 338), PackedInt32Array(311, 338, 337), PackedInt32Array(341, 340, 339), PackedInt32Array(339, 338, 341), PackedInt32Array(341, 338, 336), PackedInt32Array(341, 336, 342), PackedInt32Array(344, 343, 345), PackedInt32Array(345, 343, 341), PackedInt32Array(345, 341, 342), PackedInt32Array(345, 342, 324), PackedInt32Array(324, 321, 345), PackedInt32Array(334, 344, 333), PackedInt32Array(333, 344, 345), PackedInt32Array(347, 346, 348), PackedInt32Array(348, 346, 349), PackedInt32Array(349, 346, 350), PackedInt32Array(352, 351, 353), PackedInt32Array(353, 351, 354), PackedInt32Array(354, 351, 355), PackedInt32Array(357, 356, 358), PackedInt32Array(358, 356, 360), PackedInt32Array(358, 360, 359), PackedInt32Array(362, 361, 363), PackedInt32Array(363, 361, 364), PackedInt32Array(364, 361, 365), PackedInt32Array(368, 367, 366), PackedInt32Array(359, 368, 358), PackedInt32Array(358, 368, 369), PackedInt32Array(369, 368, 366), PackedInt32Array(372, 371, 370), PackedInt32Array(369, 366, 373), PackedInt32Array(370, 374, 372), PackedInt32Array(372, 374, 373), PackedInt32Array(373, 374, 369), PackedInt32Array(369, 374, 375), PackedInt32Array(365, 361, 371), PackedInt32Array(371, 361, 370), PackedInt32Array(379, 378, 376), PackedInt32Array(376, 378, 377), PackedInt32Array(383, 382, 380), PackedInt32Array(380, 382, 381), PackedInt32Array(384, 362, 363), PackedInt32Array(356, 357, 385), PackedInt32Array(387, 386, 388), PackedInt32Array(388, 386, 385), PackedInt32Array(385, 386, 356), PackedInt32Array(390, 389, 391), PackedInt32Array(391, 389, 384), PackedInt32Array(391, 384, 363), PackedInt32Array(393, 392, 394), PackedInt32Array(394, 392, 395), PackedInt32Array(392, 388, 396), PackedInt32Array(396, 388, 385), PackedInt32Array(395, 397, 389), PackedInt32Array(389, 397, 384), PackedInt32Array(396, 375, 392), PackedInt32Array(392, 375, 395), PackedInt32Array(395, 375, 397), PackedInt32Array(397, 375, 374), PackedInt32Array(401, 400, 398), PackedInt32Array(398, 400, 399), PackedInt32Array(405, 404, 402), PackedInt32Array(402, 404, 403), PackedInt32Array(408, 407, 406), PackedInt32Array(411, 410, 409), PackedInt32Array(390, 391, 412), PackedInt32Array(412, 391, 413), PackedInt32Array(412, 413, 411), PackedInt32Array(387, 414, 386), PackedInt32Array(386, 414, 416), PackedInt32Array(386, 416, 415), PackedInt32Array(394, 417, 393), PackedInt32Array(393, 417, 418), PackedInt32Array(416, 414, 406), PackedInt32Array(406, 414, 418), PackedInt32Array(411, 409, 417), PackedInt32Array(417, 409, 418), PackedInt32Array(418, 409, 406), PackedInt32Array(406, 409, 408), PackedInt32Array(417, 412, 411)]
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+aim_guide_color = Color(1, 0.86, 0.3, 0.95)
+arrow_shaft_color = Color(0.95, 0.72, 0.22, 1)
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.246593, 0.96911913, 0, -0.96911913, 0.246593, 0, 13.292481, 5.3253326)
+script = ExtResource("rig")
+max_zoom_out = 18.5
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("theme")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#7ef2b5]Sunken Temple[/color]
+
+Stretch apart to draw power and pierce lines of foes.
+Step back together to nock the next arrow.
+Hit an enemy to charge [color=#ffd966]SHOCKWAVE[/color]."
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_sky")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.6213803, 0.78350914, 0, -0.78350914, -0.6213803, 0, 5.421253, -5.724377)
+shadow_enabled = true
+shadow_normal_bias = 5.0
+shadow_blur = 2.0
+light_color = Color(1, 0.9, 0.68, 1)
+light_energy = 1.15
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="CausewayGuard" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/CausewayGuard"]
+
+[node name="Skeleton1" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -4.4985)
+is_offensive = false
+
+[node name="Skeleton2" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -10.4965)
+is_offensive = false
+
+[node name="Skeleton3" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -16.4945)
+is_offensive = false
+
+[node name="Skeleton4" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -4.4985)
+is_offensive = false
+
+[node name="Skeleton5" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -10.4965)
+is_offensive = false
+
+[node name="Skeleton6" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, 0, -16.4945)
+is_offensive = false
+
+[node name="Skeleton7" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -4.4985)
+is_offensive = false
+
+[node name="Skeleton8" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -10.4965)
+is_offensive = false
+
+[node name="Skeleton9" parent="Enemies/CausewayGuard/InstancedEnemies" instance=ExtResource("enemy")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -16.4945)
+is_offensive = false
+
+[node name="CourtyardArchers" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/CourtyardArchers"]
+
+[node name="Crossbowman1" parent="Enemies/CourtyardArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -73.4755)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/CourtyardArchers/InstancedEnemies/Crossbowman1"]
+mobility = 1
+cast_max_distance = 23.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.9
+
+[node name="Crossbowman2" parent="Enemies/CourtyardArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -73.4755)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/CourtyardArchers/InstancedEnemies/Crossbowman2"]
+mobility = 1
+cast_max_distance = 23.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.9
+
+[node name="Crossbowman3" parent="Enemies/CourtyardArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -73.4755)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/CourtyardArchers/InstancedEnemies/Crossbowman3"]
+mobility = 1
+cast_max_distance = 23.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.9
+
+[node name="Crossbowman4" parent="Enemies/CourtyardArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 10.4965, 0, -73.4755)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/CourtyardArchers/InstancedEnemies/Crossbowman4"]
+mobility = 1
+cast_max_distance = 23.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.9
+
+[node name="CourtyardRaiders" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/CourtyardRaiders"]
+
+[node name="OrcRaider1" parent="Enemies/CourtyardRaiders/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -10.4965, 0, -61.4795)
+is_offensive = false
+
+[node name="OrcRaider2" parent="Enemies/CourtyardRaiders/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -4.4985, 0, -64.4785)
+is_offensive = false
+
+[node name="OrcRaider3" parent="Enemies/CourtyardRaiders/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -58.4805)
+is_offensive = false
+
+[node name="OrcRaider4" parent="Enemies/CourtyardRaiders/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -58.4805)
+is_offensive = false
+
+[node name="OrcRaider5" parent="Enemies/CourtyardRaiders/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -64.4785)
+is_offensive = false
+
+[node name="OrcRaider6" parent="Enemies/CourtyardRaiders/InstancedEnemies" instance=ExtResource("orc")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 13.4955, 0, -61.4795)
+is_offensive = false
+
+[node name="RiverIdolMages" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/RiverIdolMages"]
+
+[node name="IdolShaman1" parent="Enemies/RiverIdolMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -61.4795)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/RiverIdolMages/InstancedEnemies/IdolShaman1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 20.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.8
+
+[node name="IdolShaman2" parent="Enemies/RiverIdolMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, 0, -37.4875)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/RiverIdolMages/InstancedEnemies/IdolShaman2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 20.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.8
+
+[node name="IdolShaman3" parent="Enemies/RiverIdolMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, 0, -61.4795)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/RiverIdolMages/InstancedEnemies/IdolShaman3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 20.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.8
+
+[node name="IdolShaman4" parent="Enemies/RiverIdolMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, 0, -37.4875)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/RiverIdolMages/InstancedEnemies/IdolShaman4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 20.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.8
+
+[node name="LatticeMages" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/LatticeMages"]
+
+[node name="LatticeShaman1" parent="Enemies/LatticeMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, 0, -82.4725)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/LatticeMages/InstancedEnemies/LatticeShaman1"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 16.0
+cast_cooldown = 3.0
+cast_cooldown_jitter = 0.7
+
+[node name="LatticeShaman2" parent="Enemies/LatticeMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, 0, -91.4695)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/LatticeMages/InstancedEnemies/LatticeShaman2"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 16.0
+cast_cooldown = 3.0
+cast_cooldown_jitter = 0.7
+
+[node name="LatticeShaman3" parent="Enemies/LatticeMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.4685, 0, -82.4725)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/LatticeMages/InstancedEnemies/LatticeShaman3"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 16.0
+cast_cooldown = 3.0
+cast_cooldown_jitter = 0.7
+
+[node name="LatticeShaman4" parent="Enemies/LatticeMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, 0, -103.4655)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/LatticeMages/InstancedEnemies/LatticeShaman4"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 16.0
+cast_cooldown = 3.0
+cast_cooldown_jitter = 0.7
+
+[node name="LatticeShaman5" parent="Enemies/LatticeMages/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.4685, 0, -103.4655)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/LatticeMages/InstancedEnemies/LatticeShaman5"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 16.0
+cast_cooldown = 3.0
+cast_cooldown_jitter = 0.7
+
+[node name="LatticeSkulls" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/LatticeSkulls"]
+
+[node name="CursedSkull1" parent="Enemies/LatticeSkulls/InstancedEnemies" instance=ExtResource("skull")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 64.4785, 0, -97.4675)
+is_offensive = false
+
+[node name="CursedSkull2" parent="Enemies/LatticeSkulls/InstancedEnemies" instance=ExtResource("skull")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 79.4735, 0, -103.4655)
+is_offensive = false
+
+[node name="CursedSkull3" parent="Enemies/LatticeSkulls/InstancedEnemies" instance=ExtResource("skull")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 94.4685, 0, -97.4675)
+is_offensive = false
+
+[node name="CursedSkull4" parent="Enemies/LatticeSkulls/InstancedEnemies" instance=ExtResource("skull")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 67.4775, 0, -76.4745)
+is_offensive = false
+
+[node name="CursedSkull5" parent="Enemies/LatticeSkulls/InstancedEnemies" instance=ExtResource("skull")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 91.4695, 0, -76.4745)
+is_offensive = false
+
+[node name="SurvivalEnemyGroup" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+spawn_interval_curve = SubResource("Curve_survival")
+fight_duration = 40.0
+enemy_scene = ExtResource("orc")
+
+[node name="Enemies" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/SurvivalEnemyGroup"]
+
+[node name="Node3D1" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -97.4675)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, -100.4665)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/SurvivalEnemyGroup/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, -94.4685)
+
+[node name="ZigguratShrineArchers" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/ZigguratShrineArchers"]
+
+[node name="WestCrossbow1" parent="Enemies/ZigguratShrineArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -19.4935, 0, -139.4535)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/ZigguratShrineArchers/InstancedEnemies/WestCrossbow1"]
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.4
+cast_cooldown_jitter = 0.9
+
+[node name="WestCrossbow2" parent="Enemies/ZigguratShrineArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -19.4935, 0, -127.4575)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/ZigguratShrineArchers/InstancedEnemies/WestCrossbow2"]
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.4
+cast_cooldown_jitter = 0.9
+
+[node name="EastCrossbow1" parent="Enemies/ZigguratShrineArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22.4925, 0, -139.4535)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/ZigguratShrineArchers/InstancedEnemies/EastCrossbow1"]
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.4
+cast_cooldown_jitter = 0.9
+
+[node name="EastCrossbow2" parent="Enemies/ZigguratShrineArchers/InstancedEnemies" instance=ExtResource("crossbow")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 22.4925, 0, -127.4575)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" parent="Enemies/ZigguratShrineArchers/InstancedEnemies/EastCrossbow2"]
+mobility = 1
+cast_max_distance = 24.0
+cast_cooldown = 3.4
+cast_cooldown_jitter = 0.9
+
+[node name="WestHighShaman" parent="Enemies/ZigguratShrineArchers/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -19.4935, 0, -133.4555)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/ZigguratShrineArchers/InstancedEnemies/WestHighShaman"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 22.0
+cast_cooldown = 3.5
+cast_cooldown_jitter = 0.8
+
+[node name="EastHighShaman" parent="Enemies/ZigguratShrineArchers/InstancedEnemies" instance=ExtResource("mage")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, -133.4555)
+is_offensive = false
+holds_position = true
+
+[node name="MageBehavior" type="Node" parent="Enemies/ZigguratShrineArchers/InstancedEnemies/EastHighShaman"]
+script = ExtResource("mage_behavior")
+mobility = 1
+cast_max_distance = 22.0
+cast_cooldown = 3.5
+cast_cooldown_jitter = 0.8
+
+[node name="ZigguratHorde" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+enemy_scene = ExtResource("orc")
+spawn_interval_curve = SubResource("Curve_survival")
+fight_duration = 60.0
+endless = true
+max_alive = 7
+show_timer_ui = false
+
+[node name="Enemies" type="Node3D" parent="Enemies/ZigguratHorde"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/ZigguratHorde"]
+
+[node name="Node3D1" type="Node3D" parent="Enemies/ZigguratHorde/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, 0, -145.4515)
+
+[node name="Node3D2" type="Node3D" parent="Enemies/ZigguratHorde/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, 0, -145.4515)
+
+[node name="Node3D3" type="Node3D" parent="Enemies/ZigguratHorde/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, 0, -121.4595)
+
+[node name="Node3D4" type="Node3D" parent="Enemies/ZigguratHorde/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, 0, -121.4595)
+
+[node name="Node3D5" type="Node3D" parent="Enemies/ZigguratHorde/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -148.4505)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Checkpoint")
+
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, 10.4965)
+script = ExtResource("checkpoint")
+enemy_groups_reset = [NodePath("../../Enemies/CausewayGuard")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -13.4955)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge1")]
+enemy_groups_reset = [NodePath("../../Enemies/CourtyardArchers"), NodePath("../../Enemies/CourtyardRaiders")]
+enemy_groups_defeated = [NodePath("../../Enemies/CausewayGuard")]
+areas_to_reactivate = [NodePath("../../Level/Areas/CourtyardTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 10.4965, 1.8026, -49.4835)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge2"), NodePath("../../Level/Events/OpenSplitRails")]
+enemy_groups_reset = [NodePath("../../Enemies/RiverIdolMages")]
+enemy_groups_defeated = [NodePath("../../Enemies/CausewayGuard"), NodePath("../../Enemies/CourtyardArchers"), NodePath("../../Enemies/CourtyardRaiders")]
+areas_to_reactivate = [NodePath("../../Level/Areas/RiverWestTrigger"), NodePath("../../Level/Areas/NorthRailTrigger"), NodePath("../../Level/Areas/SouthRailTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/CourtyardTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, 1.8026, -49.4835)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge3")]
+enemy_groups_reset = [NodePath("../../Enemies/LatticeMages"), NodePath("../../Enemies/LatticeSkulls")]
+enemy_groups_defeated = [NodePath("../../Enemies/CausewayGuard"), NodePath("../../Enemies/CourtyardArchers"), NodePath("../../Enemies/CourtyardRaiders"), NodePath("../../Enemies/RiverIdolMages")]
+areas_to_reactivate = [NodePath("../../Level/Areas/LatticeTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/CourtyardTrigger"), NodePath("../../Level/Areas/RiverWestTrigger"), NodePath("../../Level/Areas/NorthRailTrigger"), NodePath("../../Level/Areas/SouthRailTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Checkpoint5" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 67.4775, 1.8026, -97.4675)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge4")]
+enemy_groups_reset = [NodePath("../../Enemies/SurvivalEnemyGroup")]
+enemy_groups_defeated = [NodePath("../../Enemies/CausewayGuard"), NodePath("../../Enemies/CourtyardArchers"), NodePath("../../Enemies/CourtyardRaiders"), NodePath("../../Enemies/RiverIdolMages"), NodePath("../../Enemies/LatticeMages"), NodePath("../../Enemies/LatticeSkulls")]
+areas_to_reactivate = [NodePath("../../Level/Areas/TrapTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/CourtyardTrigger"), NodePath("../../Level/Areas/RiverWestTrigger"), NodePath("../../Level/Areas/NorthRailTrigger"), NodePath("../../Level/Areas/SouthRailTrigger"), NodePath("../../Level/Areas/LatticeTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Checkpoint6" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, 1.8026, -97.4675)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenArenaGate")]
+enemy_groups_reset = [NodePath("../../Enemies/ZigguratShrineArchers"), NodePath("../../Enemies/ZigguratHorde")]
+enemy_groups_defeated = [NodePath("../../Enemies/CausewayGuard"), NodePath("../../Enemies/CourtyardArchers"), NodePath("../../Enemies/CourtyardRaiders"), NodePath("../../Enemies/RiverIdolMages"), NodePath("../../Enemies/LatticeMages"), NodePath("../../Enemies/LatticeSkulls"), NodePath("../../Enemies/SurvivalEnemyGroup")]
+areas_to_reactivate = [NodePath("../../Level/Areas/ZigguratArenaTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/CourtyardTrigger"), NodePath("../../Level/Areas/RiverWestTrigger"), NodePath("../../Level/Areas/NorthRailTrigger"), NodePath("../../Level/Areas/SouthRailTrigger"), NodePath("../../Level/Areas/LatticeTrigger"), NodePath("../../Level/Areas/TrapTrigger"), NodePath("../../Level/Areas/ApproachTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Checkpoint7" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 1.8026, -142.4525)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge7")]
+enemy_groups_defeated = [NodePath("../../Enemies/CausewayGuard"), NodePath("../../Enemies/CourtyardArchers"), NodePath("../../Enemies/CourtyardRaiders"), NodePath("../../Enemies/RiverIdolMages"), NodePath("../../Enemies/LatticeMages"), NodePath("../../Enemies/LatticeSkulls"), NodePath("../../Enemies/SurvivalEnemyGroup"), NodePath("../../Enemies/ZigguratShrineArchers"), NodePath("../../Enemies/ZigguratHorde")]
+areas_to_reactivate = [NodePath("../../Level/Areas/SanctuaryRevealTrigger")]
+areas_already_activated = [NodePath("../../Level/Areas/CourtyardTrigger"), NodePath("../../Level/Areas/RiverWestTrigger"), NodePath("../../Level/Areas/NorthRailTrigger"), NodePath("../../Level/Areas/SouthRailTrigger"), NodePath("../../Level/Areas/LatticeTrigger"), NodePath("../../Level/Areas/TrapTrigger"), NodePath("../../Level/Areas/ApproachTrigger"), NodePath("../../Level/Areas/ZigguratArenaTrigger")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.51)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -6.7268, 0)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28, 4.5283, -80)
+shape = SubResource("BoxShape3D_fall")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="Level"]
+navigation_mesh = SubResource("NavigationMesh_level")
+
+[node name="GridMapFloor" type="GridMap" parent="Level/NavigationRegion3D"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 4
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131080, 65488, 655366, -131080, 65489, 1441797, -131080, 65490, 1441797, -131080, 65491, 1441797, -131080, 65492, 1441797, -131080, 65493, 1441797, -131080, 65494, 1441798, -8, 65488, 1441795, -8, 65489, 1441794, -8, 65490, 1441794, -8, 65491, 1441794, -8, 65492, 1441794, -8, 65493, 655361, -8, 65494, 3, -131079, 65488, 1048582, -131079, 65489, 1048581, -131079, 65490, 1048581, -131079, 65491, 1048581, -131079, 65492, 1048581, -131079, 65493, 1048581, -131079, 65494, 6, -7, 65488, 655363, -7, 65489, 1048578, -7, 65490, 1, -7, 65491, 1, -7, 65492, 1, -7, 65493, 1, -7, 65494, 1048579, -131077, 65486, 655366, -131077, 65487, 1441797, -131077, 65488, 1441797, -131077, 65489, 1441797, -131077, 65490, 1441797, -131077, 65491, 1441797, -131077, 65492, 1441797, -131077, 65493, 1441797, -131077, 65494, 1441797, -131077, 65495, 1441797, -131077, 65496, 1441798, -131077, 65514, 655366, -131077, 65515, 1441797, -131077, 65516, 1441797, -131077, 65517, 1441797, -131077, 65518, 1441797, -131077, 65519, 1441797, -131077, 65520, 1441797, -131077, 65521, 1441797, -131077, 65522, 1441797, -131077, 65523, 1441797, -131077, 65524, 1441797, -131077, 65525, 1441798, -5, 65486, 1441795, -5, 65487, 655361, -5, 65488, 655361, -5, 65489, 655361, -5, 65490, 655361, -5, 65491, 655361, -5, 65492, 1441794, -5, 65493, 655361, -5, 65494, 655361, -5, 65495, 655361, -5, 65496, 3, -5, 65514, 1441795, -5, 65515, 1441794, -5, 65516, 655361, -5, 65517, 1441794, -5, 65518, 1441794, -5, 65519, 655361, -5, 65520, 655361, -5, 65521, 1441794, -5, 65522, 1441794, -5, 65523, 655361, -5, 65524, 1441794, -5, 65525, 3, -131076, 65485, 655366, -131076, 65486, 655367, -131076, 65496, 1441799, -131076, 65497, 1441798, -131076, 65510, 655366, -131076, 65511, 1441798, -131076, 65513, 655366, -131076, 65514, 655367, -131076, 65525, 1441799, -131076, 65526, 1441798, -131076, 65530, 655366, -131076, 65531, 1441797, -131076, 65532, 1441797, -131076, 65533, 1441797, -131076, 65534, 1441797, -131076, 65535, 1441797, -131076, 0, 1441797, -131076, 1, 1441797, -131076, 2, 1441797, -131076, 3, 1441797, -131076, 4, 1441797, -131076, 5, 1441798, -4, 65485, 1441795, -4, 65486, 1441796, -4, 65487, 0, -4, 65488, 0, -4, 65489, 0, -4, 65490, 0, -4, 65491, 0, -4, 65492, 0, -4, 65493, 0, -4, 65494, 0, -4, 65495, 0, -4, 65496, 4, -4, 65497, 3, -4, 65510, 1441795, -4, 65511, 3, -4, 65513, 1441795, -4, 65514, 1441796, -4, 65515, 0, -4, 65516, 0, -4, 65517, 0, -4, 65518, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 4, -4, 65526, 3, -4, 65530, 1441795, -4, 65531, 655361, -4, 65532, 1441794, -4, 65533, 1441794, -4, 65534, 1441794, -4, 65535, 1441794, -4, 0, 655361, -4, 1, 1441794, -4, 2, 1441794, -4, 3, 1441794, -4, 4, 655361, -4, 5, 3, -131075, 65477, 655366, -131075, 65478, 1441797, -131075, 65479, 1441797, -131075, 65480, 1441797, -131075, 65481, 1441798, -131075, 65485, 655365, -131075, 65497, 5, -131075, 65501, 655366, -131075, 65502, 1441797, -131075, 65503, 1441797, -131075, 65504, 1441797, -131075, 65505, 1441798, -131075, 65510, 655365, -131075, 65511, 5, -131075, 65513, 655365, -131075, 65526, 5, -131075, 65529, 655366, -131075, 65530, 655367, -131075, 5, 1441799, -131075, 6, 1441798, -3, 65477, 1441795, -3, 65478, 655361, -3, 65479, 1441794, -3, 65480, 655361, -3, 65481, 3, -3, 65485, 655362, -3, 65486, 0, -3, 65487, 0, -3, 65488, 12, -3, 65489, 0, -3, 65490, 0, -3, 65491, 0, -3, 65492, 0, -3, 65493, 0, -3, 65494, 12, -3, 65495, 0, -3, 65496, 0, -3, 65497, 1441793, -3, 65501, 1441795, -3, 65502, 655361, -3, 65503, 655361, -3, 65504, 655361, -3, 65505, 3, -3, 65510, 1048577, -3, 65511, 2, -3, 65513, 1048577, -3, 65514, 0, -3, 65515, 0, -3, 65516, 13, -3, 65517, 0, -3, 65518, 0, -3, 65519, 0, -3, 65520, 0, -3, 65521, 12, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65526, 2, -3, 65529, 1441795, -3, 65530, 1441796, -3, 65531, 0, -3, 65532, 12, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -3, 4, 0, -3, 5, 4, -3, 6, 3, -131074, 65476, 655366, -131074, 65477, 655367, -131074, 65481, 1441799, -131074, 65482, 1441798, -131074, 65485, 655365, -131074, 65497, 5, -131074, 65500, 655366, -131074, 65501, 655367, -131074, 65505, 1441799, -131074, 65506, 1441798, -131074, 65510, 655365, -131074, 65511, 5, -131074, 65513, 655365, -131074, 65526, 5, -131074, 65529, 655365, -131074, 6, 5, -2, 65476, 1441795, -2, 65477, 1441796, -2, 65478, 0, -2, 65479, 0, -2, 65480, 0, -2, 65481, 4, -2, 65482, 3, -2, 65485, 655362, -2, 65486, 0, -2, 65487, 0, -2, 65488, 0, -2, 65489, 0, -2, 65490, 0, -2, 65491, 0, -2, 65492, 0, -2, 65493, 0, -2, 65494, 0, -2, 65495, 0, -2, 65496, 0, -2, 65497, 2, -2, 65500, 1441795, -2, 65501, 1441796, -2, 65502, 0, -2, 65503, 0, -2, 65504, 0, -2, 65505, 4, -2, 65506, 3, -2, 65510, 1048577, -2, 65511, 1441793, -2, 65513, 1048577, -2, 65514, 0, -2, 65515, 0, -2, 65516, 0, -2, 65517, 0, -2, 65518, 0, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 0, -2, 65526, 1441793, -2, 65529, 655362, -2, 65530, 0, -2, 65531, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 13, -2, 2, 0, -2, 3, 0, -2, 4, 0, -2, 5, 0, -2, 6, 1441793, -131073, 65476, 655365, -131073, 65482, 5, -131073, 65485, 655365, -131073, 65497, 5, -131073, 65500, 655365, -131073, 65506, 5, -131073, 65510, 655365, -131073, 65511, 5, -131073, 65513, 655365, -131073, 65526, 5, -131073, 65529, 655365, -131073, 6, 5, -1, 65476, 1048577, -1, 65477, 0, -1, 65478, 0, -1, 65479, 0, -1, 65480, 0, -1, 65481, 0, -1, 65482, 0, -1, 65485, 0, -1, 65486, 0, -1, 65487, 0, -1, 65488, 0, -1, 65489, 0, -1, 65490, 0, -1, 65491, 0, -1, 65492, 0, -1, 65493, 0, -1, 65494, 0, -1, 65495, 0, -1, 65496, 0, -1, 65497, 0, -1, 65500, 0, -1, 65501, 0, -1, 65502, 0, -1, 65503, 0, -1, 65504, 0, -1, 65505, 0, -1, 65506, 1441793, -1, 65510, 655362, -1, 65511, 1441793, -1, 65513, 1048577, -1, 65514, 0, -1, 65515, 0, -1, 65516, 0, -1, 65517, 0, -1, 65518, 0, -1, 65519, 0, -1, 65520, 0, -1, 65521, 0, -1, 65522, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65526, 0, -1, 65529, 0, -1, 65530, 0, -1, 65531, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -1, 4, 0, -1, 5, 0, -1, 6, 1441793, -196608, 65476, 655365, -196608, 65482, 5, -196608, 65485, 655365, -196608, 65497, 5, -196608, 65500, 655365, -196608, 65506, 5, -196608, 65510, 655365, -196608, 65511, 5, -196608, 65513, 655365, -196608, 65526, 5, -196608, 65529, 655365, -196608, 6, 5, -65536, 65476, 1048577, -65536, 65477, 0, -65536, 65478, 0, -65536, 65479, 0, -65536, 65480, 0, -65536, 65481, 0, -65536, 65482, 0, -65536, 65485, 0, -65536, 65486, 0, -65536, 65487, 0, -65536, 65488, 0, -65536, 65489, 0, -65536, 65490, 0, -65536, 65491, 0, -65536, 65492, 0, -65536, 65493, 0, -65536, 65494, 0, -65536, 65495, 0, -65536, 65496, 0, -65536, 65497, 0, -65536, 65500, 0, -65536, 65501, 0, -65536, 65502, 0, -65536, 65503, 0, -65536, 65504, 0, -65536, 65505, 0, -65536, 65506, 1441793, -65536, 65510, 1048577, -65536, 65511, 1441793, -65536, 65513, 1048577, -65536, 65514, 0, -65536, 65515, 0, -65536, 65516, 0, -65536, 65517, 0, -65536, 65518, 0, -65536, 65519, 0, -65536, 65520, 0, -65536, 65521, 0, -65536, 65522, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65526, 0, -65536, 65529, 0, -65536, 65530, 0, -65536, 65531, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65536, 4, 0, -65536, 5, 0, -65536, 6, 2, -196607, 65476, 655365, -196607, 65482, 5, -196607, 65485, 655365, -196607, 65497, 5, -196607, 65500, 655365, -196607, 65506, 5, -196607, 65510, 655365, -196607, 65511, 5, -196607, 65513, 655365, -196607, 65526, 5, -196607, 65529, 655365, -196607, 6, 5, -65535, 65476, 655362, -65535, 65477, 0, -65535, 65478, 0, -65535, 65479, 0, -65535, 65480, 0, -65535, 65481, 0, -65535, 65482, 0, -65535, 65485, 0, -65535, 65486, 0, -65535, 65487, 0, -65535, 65488, 0, -65535, 65489, 0, -65535, 65490, 0, -65535, 65491, 0, -65535, 65492, 0, -65535, 65493, 0, -65535, 65494, 0, -65535, 65495, 0, -65535, 65496, 0, -65535, 65497, 0, -65535, 65500, 0, -65535, 65501, 0, -65535, 65502, 0, -65535, 65503, 0, -65535, 65504, 0, -65535, 65505, 0, -65535, 65506, 1441793, -65535, 65510, 1048577, -65535, 65511, 2, -65535, 65513, 655362, -65535, 65514, 0, -65535, 65515, 0, -65535, 65516, 0, -65535, 65517, 0, -65535, 65518, 0, -65535, 65519, 0, -65535, 65520, 0, -65535, 65521, 0, -65535, 65522, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65526, 0, -65535, 65529, 0, -65535, 65530, 0, -65535, 65531, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65535, 4, 0, -65535, 5, 0, -65535, 6, 2, -196606, 65476, 1048582, -196606, 65477, 1048583, -196606, 65481, 7, -196606, 65482, 6, -196606, 65485, 655365, -196606, 65497, 5, -196606, 65500, 1048582, -196606, 65501, 1048583, -196606, 65505, 7, -196606, 65506, 6, -196606, 65510, 655365, -196606, 65511, 5, -196606, 65513, 655365, -196606, 65526, 5, -196606, 65529, 655365, -196606, 6, 5, -65534, 65476, 655363, -65534, 65477, 655364, -65534, 65478, 0, -65534, 65479, 0, -65534, 65480, 0, -65534, 65481, 1048580, -65534, 65482, 1048579, -65534, 65485, 655362, -65534, 65486, 0, -65534, 65487, 0, -65534, 65488, 0, -65534, 65489, 0, -65534, 65490, 0, -65534, 65491, 0, -65534, 65492, 0, -65534, 65493, 0, -65534, 65494, 0, -65534, 65495, 0, -65534, 65496, 0, -65534, 65497, 1441793, -65534, 65500, 655363, -65534, 65501, 655364, -65534, 65502, 0, -65534, 65503, 0, -65534, 65504, 0, -65534, 65505, 1048580, -65534, 65506, 1048579, -65534, 65510, 655362, -65534, 65511, 1441793, -65534, 65513, 655362, -65534, 65514, 0, -65534, 65515, 0, -65534, 65516, 0, -65534, 65517, 0, -65534, 65518, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 0, -65534, 65526, 2, -65534, 65529, 1048577, -65534, 65530, 0, -65534, 65531, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 13, -65534, 2, 0, -65534, 3, 0, -65534, 4, 0, -65534, 5, 0, -65534, 6, 1441793, -196605, 65477, 1048582, -196605, 65478, 1048581, -196605, 65479, 1048581, -196605, 65480, 1048581, -196605, 65481, 6, -196605, 65485, 655365, -196605, 65497, 5, -196605, 65501, 1048582, -196605, 65502, 1048581, -196605, 65503, 1048581, -196605, 65504, 1048581, -196605, 65505, 6, -196605, 65510, 655365, -196605, 65511, 5, -196605, 65513, 655365, -196605, 65526, 5, -196605, 65529, 1048582, -196605, 65530, 1048583, -196605, 5, 7, -196605, 6, 6, -65533, 65477, 655363, -65533, 65478, 1048578, -65533, 65479, 1048578, -65533, 65480, 1, -65533, 65481, 1048579, -65533, 65485, 1048577, -65533, 65486, 0, -65533, 65487, 0, -65533, 65488, 12, -65533, 65489, 0, -65533, 65490, 0, -65533, 65491, 0, -65533, 65492, 0, -65533, 65493, 0, -65533, 65494, 12, -65533, 65495, 0, -65533, 65496, 0, -65533, 65497, 2, -65533, 65501, 655363, -65533, 65502, 0, -65533, 65503, 0, -65533, 65504, 0, -65533, 65505, 1048579, -65533, 65510, 655362, -65533, 65511, 2, -65533, 65513, 655362, -65533, 65514, 0, -65533, 65515, 0, -65533, 65516, 13, -65533, 65517, 0, -65533, 65518, 0, -65533, 65519, 0, -65533, 65520, 0, -65533, 65521, 12, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65526, 1441793, -65533, 65529, 655363, -65533, 65530, 655364, -65533, 65531, 0, -65533, 65532, 12, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65533, 4, 0, -65533, 5, 1048580, -65533, 6, 1048579, -196604, 65485, 1048582, -196604, 65486, 1048583, -196604, 65496, 7, -196604, 65497, 6, -196604, 65510, 1048582, -196604, 65511, 6, -196604, 65513, 1048582, -196604, 65514, 1048583, -196604, 65525, 7, -196604, 65526, 6, -196604, 65530, 1048582, -196604, 65531, 1048581, -196604, 65532, 1048581, -196604, 65533, 1048581, -196604, 65534, 1048581, -196604, 65535, 1048581, -196604, 0, 1048581, -196604, 1, 1048581, -196604, 2, 1048581, -196604, 3, 1048581, -196604, 4, 1048581, -196604, 5, 6, -65532, 65485, 655363, -65532, 65486, 655364, -65532, 65487, 0, -65532, 65488, 0, -65532, 65489, 0, -65532, 65490, 0, -65532, 65491, 0, -65532, 65492, 0, -65532, 65493, 0, -65532, 65494, 0, -65532, 65495, 0, -65532, 65496, 1048580, -65532, 65497, 1048579, -65532, 65510, 655363, -65532, 65511, 1048579, -65532, 65513, 655363, -65532, 65514, 655364, -65532, 65515, 0, -65532, 65516, 0, -65532, 65517, 0, -65532, 65518, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 0, -65532, 65525, 1048580, -65532, 65526, 1048579, -65532, 65530, 655363, -65532, 65531, 1048578, -65532, 65532, 1, -65532, 65533, 1, -65532, 65534, 1, -65532, 65535, 1048578, -65532, 0, 1, -65532, 1, 1, -65532, 2, 1048578, -65532, 3, 1048578, -65532, 4, 1048578, -65532, 5, 1048579, -196603, 65486, 1048582, -196603, 65487, 1048581, -196603, 65488, 1048581, -196603, 65489, 1048581, -196603, 65490, 1048581, -196603, 65491, 1048581, -196603, 65492, 1048581, -196603, 65493, 1048581, -196603, 65494, 1048581, -196603, 65495, 1048581, -196603, 65496, 6, -196603, 65514, 1048582, -196603, 65515, 1048581, -196603, 65516, 1048581, -196603, 65517, 1048581, -196603, 65518, 1048581, -196603, 65519, 1048581, -196603, 65520, 1048581, -196603, 65521, 1048581, -196603, 65522, 1048581, -196603, 65523, 1048581, -196603, 65524, 1048581, -196603, 65525, 6, -65531, 65486, 655363, -65531, 65487, 1, -65531, 65488, 1, -65531, 65489, 1, -65531, 65490, 1, -65531, 65491, 1, -65531, 65492, 1, -65531, 65493, 1048578, -65531, 65494, 1048578, -65531, 65495, 1, -65531, 65496, 1048579, -65531, 65514, 655363, -65531, 65515, 1048578, -65531, 65516, 1048578, -65531, 65517, 1, -65531, 65518, 0, -65531, 65519, 0, -65531, 65520, 0, -65531, 65521, 1, -65531, 65522, 1048578, -65531, 65523, 1, -65531, 65524, 1, -65531, 65525, 1048579, -196602, 65501, 655366, -196602, 65502, 1441797, -196602, 65503, 1441797, -196602, 65504, 1441797, -196602, 65505, 1441798, -65530, 65501, 1441795, -65530, 65502, 0, -65530, 65503, 0, -65530, 65504, 0, -65530, 65505, 3, -196601, 65488, 655366, -196601, 65489, 1441797, -196601, 65490, 1441797, -196601, 65491, 1441797, -196601, 65492, 1441797, -196601, 65493, 1441797, -196601, 65494, 1441798, -196601, 65500, 655366, -196601, 65501, 655367, -196601, 65505, 1441799, -196601, 65506, 1441798, -65529, 65488, 1441795, -65529, 65489, 1441794, -65529, 65490, 655361, -65529, 65491, 1441794, -65529, 65492, 1441794, -65529, 65493, 1441794, -65529, 65494, 3, -65529, 65500, 1441795, -65529, 65501, 1441796, -65529, 65502, 0, -65529, 65503, 0, -65529, 65504, 0, -65529, 65505, 4, -65529, 65506, 3, -196600, 65488, 1048582, -196600, 65489, 1048581, -196600, 65490, 1048581, -196600, 65491, 1048581, -196600, 65492, 1048581, -196600, 65493, 1048581, -196600, 65494, 6, -196600, 65500, 655365, -196600, 65506, 5, -196600, 65517, 655366, -196600, 65518, 1441797, -196600, 65519, 1441797, -196600, 65520, 1441797, -196600, 65521, 1441798, -65528, 65488, 655363, -65528, 65489, 1048578, -65528, 65490, 1048578, -65528, 65491, 1048578, -65528, 65492, 1, -65528, 65493, 1048578, -65528, 65494, 1048579, -65528, 65500, 655362, -65528, 65501, 0, -65528, 65502, 0, -65528, 65503, 0, -65528, 65504, 0, -65528, 65505, 0, -65528, 65506, 1441793, -65528, 65517, 1441795, -65528, 65518, 0, -65528, 65519, 0, -65528, 65520, 0, -65528, 65521, 3, -196599, 65500, 655365, -196599, 65506, 5, -196599, 65516, 655366, -196599, 65517, 655367, -196599, 65521, 1441799, -196599, 65522, 1441798, -65527, 65500, 1048577, -65527, 65501, 0, -65527, 65502, 0, -65527, 65503, 0, -65527, 65504, 0, -65527, 65505, 0, -65527, 65506, 1441793, -65527, 65516, 1441795, -65527, 65517, 1441796, -65527, 65518, 0, -65527, 65519, 0, -65527, 65520, 0, -65527, 65521, 4, -65527, 65522, 3, -196598, 65500, 655365, -196598, 65506, 5, -196598, 65516, 655365, -196598, 65522, 5, -65526, 65500, 655362, -65526, 65501, 0, -65526, 65502, 0, -65526, 65503, 0, -65526, 65504, 0, -65526, 65505, 0, -65526, 65506, 1441793, -65526, 65516, 1048577, -65526, 65517, 0, -65526, 65518, 0, -65526, 65519, 0, -65526, 65520, 0, -65526, 65521, 0, -65526, 65522, 1441793, -196597, 65500, 655365, -196597, 65506, 5, -196597, 65516, 1048582, -196597, 65517, 1048583, -196597, 65521, 7, -196597, 65522, 6, -65525, 65500, 655362, -65525, 65501, 0, -65525, 65502, 0, -65525, 65503, 0, -65525, 65504, 0, -65525, 65505, 0, -65525, 65506, 2, -65525, 65516, 655363, -65525, 65517, 655364, -65525, 65518, 0, -65525, 65519, 0, -65525, 65520, 0, -65525, 65521, 1048580, -65525, 65522, 1048579, -196596, 65500, 655365, -196596, 65506, 5, -196596, 65517, 1048582, -196596, 65518, 1048581, -196596, 65519, 1048581, -196596, 65520, 1048581, -196596, 65521, 6, -65524, 65500, 1048577, -65524, 65501, 0, -65524, 65502, 0, -65524, 65503, 0, -65524, 65504, 0, -65524, 65505, 0, -65524, 65506, 2, -65524, 65517, 655363, -65524, 65518, 0, -65524, 65519, 0, -65524, 65520, 0, -65524, 65521, 1048579, -196595, 65500, 655365, -196595, 65506, 5, -65523, 65500, 655362, -65523, 65501, 0, -65523, 65502, 0, -65523, 65503, 0, -65523, 65504, 0, -65523, 65505, 0, -65523, 65506, 1441793, -196594, 65500, 655365, -196594, 65506, 5, -196594, 65514, 655366, -196594, 65515, 1441798, -65522, 65500, 1048577, -65522, 65501, 0, -65522, 65502, 0, -65522, 65503, 0, -65522, 65504, 0, -65522, 65505, 0, -65522, 65506, 1441793, -65522, 65514, 1441795, -65522, 65515, 3, -196593, 65500, 655365, -196593, 65506, 5, -196593, 65514, 1048582, -196593, 65515, 6, -65521, 65500, 655362, -65521, 65501, 0, -65521, 65502, 0, -65521, 65503, 0, -65521, 65504, 0, -65521, 65505, 0, -65521, 65506, 2, -65521, 65514, 655363, -65521, 65515, 1048579, -196592, 65500, 1048582, -196592, 65501, 1048583, -196592, 65505, 7, -196592, 65506, 6, -196592, 65523, 655366, -196592, 65524, 1441798, -65520, 65500, 655363, -65520, 65501, 655364, -65520, 65502, 0, -65520, 65503, 0, -65520, 65504, 0, -65520, 65505, 1048580, -65520, 65506, 1048579, -65520, 65523, 1441795, -65520, 65524, 3, -196591, 65501, 1048582, -196591, 65502, 1048581, -196591, 65503, 1048581, -196591, 65504, 1048581, -196591, 65505, 6, -196591, 65523, 1048582, -196591, 65524, 6, -65519, 65501, 655363, -65519, 65502, 0, -65519, 65503, 0, -65519, 65504, 0, -65519, 65505, 1048579, -65519, 65523, 655363, -65519, 65524, 1048579, -196590, 65514, 655366, -196590, 65515, 1441798, -65518, 65514, 1441795, -65518, 65515, 3, -196589, 65514, 1048582, -196589, 65515, 6, -65517, 65514, 655363, -65517, 65515, 1048579, -196588, 65499, 655366, -196588, 65500, 1441797, -196588, 65501, 1441797, -196588, 65502, 1441797, -196588, 65503, 1441797, -196588, 65504, 1441797, -196588, 65505, 1441797, -196588, 65506, 1441797, -196588, 65507, 1441797, -196588, 65508, 1441797, -196588, 65509, 1441797, -196588, 65510, 1441797, -196588, 65511, 1441797, -196588, 65512, 1441798, -196588, 65523, 655366, -196588, 65524, 1441798, -65516, 65499, 1441795, -65516, 65500, 655361, -65516, 65501, 1441794, -65516, 65502, 0, -65516, 65503, 0, -65516, 65504, 0, -65516, 65505, 1441794, -65516, 65506, 655361, -65516, 65507, 655361, -65516, 65508, 655361, -65516, 65509, 655361, -65516, 65510, 1441794, -65516, 65511, 655361, -65516, 65512, 3, -65516, 65523, 1441795, -65516, 65524, 3, -196587, 65498, 655366, -196587, 65499, 655367, -196587, 65512, 1441799, -196587, 65513, 1441798, -196587, 65523, 1048582, -196587, 65524, 6, -65515, 65498, 1441795, -65515, 65499, 1441796, -65515, 65500, 0, -65515, 65501, 0, -65515, 65502, 0, -65515, 65503, 0, -65515, 65504, 0, -65515, 65505, 0, -65515, 65506, 0, -65515, 65507, 0, -65515, 65508, 0, -65515, 65509, 0, -65515, 65510, 0, -65515, 65511, 0, -65515, 65512, 4, -65515, 65513, 3, -65515, 65523, 655363, -65515, 65524, 1048579, -196586, 65498, 655365, -196586, 65501, 7, -196586, 65502, 1048581, -196586, 65503, 1048581, -196586, 65504, 1048583, -196586, 65506, 7, -196586, 65507, 1048581, -196586, 65508, 1048581, -196586, 65509, 1048583, -196586, 65513, 5, -65514, 65498, 1048577, -65514, 65499, 0, -65514, 65500, 0, -65514, 65501, 1048580, -65514, 65502, 1048578, -65514, 65503, 1, -65514, 65504, 655364, -65514, 65505, 0, -65514, 65506, 1048580, -65514, 65507, 1, -65514, 65508, 1048578, -65514, 65509, 655364, -65514, 65510, 0, -65514, 65511, 0, -65514, 65512, 0, -65514, 65513, 1441793, -196585, 65498, 655365, -196585, 65501, 5, -196585, 65504, 655365, -196585, 65506, 5, -196585, 65509, 655365, -196585, 65513, 5, -196585, 65517, 655366, -196585, 65518, 1441797, -196585, 65519, 1441797, -196585, 65520, 1441797, -196585, 65521, 1441798, -65513, 65498, 655362, -65513, 65499, 0, -65513, 65500, 0, -65513, 65501, 1441793, -65513, 65504, 1048577, -65513, 65505, 0, -65513, 65506, 2, -65513, 65509, 655362, -65513, 65510, 0, -65513, 65511, 0, -65513, 65512, 0, -65513, 65513, 2, -65513, 65517, 1441795, -65513, 65518, 0, -65513, 65519, 0, -65513, 65520, 0, -65513, 65521, 3, -196584, 65498, 655365, -196584, 65501, 5, -196584, 65504, 655365, -196584, 65506, 5, -196584, 65509, 655365, -196584, 65513, 5, -196584, 65516, 655366, -196584, 65517, 655367, -196584, 65521, 1441799, -196584, 65522, 1441798, -65512, 65498, 1048577, -65512, 65499, 0, -65512, 65500, 0, -65512, 65501, 2, -65512, 65504, 1048577, -65512, 65505, 0, -65512, 65506, 2, -65512, 65509, 1048577, -65512, 65510, 0, -65512, 65511, 0, -65512, 65512, 0, -65512, 65513, 1441793, -65512, 65516, 1441795, -65512, 65517, 1441796, -65512, 65518, 0, -65512, 65519, 0, -65512, 65520, 0, -65512, 65521, 4, -65512, 65522, 3, -196583, 65498, 655365, -196583, 65501, 1441799, -196583, 65502, 1441797, -196583, 65503, 1441797, -196583, 65504, 655367, -196583, 65506, 1441799, -196583, 65507, 1441797, -196583, 65508, 1441797, -196583, 65509, 655367, -196583, 65513, 5, -196583, 65516, 655365, -196583, 65522, 5, -65511, 65498, 1048577, -65511, 65499, 0, -65511, 65500, 0, -65511, 65501, 4, -65511, 65502, 655361, -65511, 65503, 655361, -65511, 65504, 1441796, -65511, 65505, 0, -65511, 65506, 4, -65511, 65507, 1441794, -65511, 65508, 1441794, -65511, 65509, 1441796, -65511, 65510, 0, -65511, 65511, 0, -65511, 65512, 0, -65511, 65513, 0, -65511, 65516, 0, -65511, 65517, 0, -65511, 65518, 0, -65511, 65519, 0, -65511, 65520, 0, -65511, 65521, 0, -65511, 65522, 1441793, -196582, 65498, 655365, -196582, 65513, 5, -196582, 65516, 655365, -196582, 65522, 5, -65510, 65498, 1048577, -65510, 65499, 0, -65510, 65500, 13, -65510, 65501, 0, -65510, 65502, 0, -65510, 65503, 0, -65510, 65504, 0, -65510, 65505, 0, -65510, 65506, 0, -65510, 65507, 0, -65510, 65508, 0, -65510, 65509, 0, -65510, 65510, 13, -65510, 65511, 0, -65510, 65512, 0, -65510, 65513, 0, -65510, 65516, 0, -65510, 65517, 0, -65510, 65518, 0, -65510, 65519, 0, -65510, 65520, 0, -65510, 65521, 0, -65510, 65522, 1441793, -196581, 65498, 655365, -196581, 65501, 7, -196581, 65502, 1048581, -196581, 65503, 1048581, -196581, 65504, 1048583, -196581, 65506, 7, -196581, 65507, 1048581, -196581, 65508, 1048581, -196581, 65509, 1048583, -196581, 65513, 5, -196581, 65516, 1048582, -196581, 65517, 1048583, -196581, 65521, 7, -196581, 65522, 6, -65509, 65498, 1048577, -65509, 65499, 0, -65509, 65500, 0, -65509, 65501, 1048580, -65509, 65502, 1048578, -65509, 65503, 1048578, -65509, 65504, 655364, -65509, 65505, 0, -65509, 65506, 1048580, -65509, 65507, 1048578, -65509, 65508, 1, -65509, 65509, 655364, -65509, 65510, 0, -65509, 65511, 0, -65509, 65512, 0, -65509, 65513, 0, -65509, 65516, 0, -65509, 65517, 655364, -65509, 65518, 0, -65509, 65519, 0, -65509, 65520, 0, -65509, 65521, 1048580, -65509, 65522, 1048579, -196580, 65498, 655365, -196580, 65501, 5, -196580, 65504, 655365, -196580, 65506, 5, -196580, 65509, 655365, -196580, 65513, 5, -196580, 65517, 1048582, -196580, 65518, 1048581, -196580, 65519, 1048581, -196580, 65520, 1048581, -196580, 65521, 6, -65508, 65498, 655362, -65508, 65499, 0, -65508, 65500, 0, -65508, 65501, 2, -65508, 65504, 1048577, -65508, 65505, 0, -65508, 65506, 2, -65508, 65509, 1048577, -65508, 65510, 0, -65508, 65511, 0, -65508, 65512, 0, -65508, 65513, 1441793, -65508, 65517, 655363, -65508, 65518, 1048578, -65508, 65519, 1, -65508, 65520, 1, -65508, 65521, 1048579, -196579, 65498, 655365, -196579, 65501, 5, -196579, 65504, 655365, -196579, 65506, 5, -196579, 65509, 655365, -196579, 65513, 5, -65507, 65498, 1048577, -65507, 65499, 0, -65507, 65500, 0, -65507, 65501, 2, -65507, 65504, 1048577, -65507, 65505, 0, -65507, 65506, 1441793, -65507, 65509, 655362, -65507, 65510, 0, -65507, 65511, 0, -65507, 65512, 0, -65507, 65513, 1441793, -196578, 65498, 655365, -196578, 65501, 1441799, -196578, 65502, 1441797, -196578, 65503, 1441797, -196578, 65504, 655367, -196578, 65506, 1441799, -196578, 65507, 1441797, -196578, 65508, 1441797, -196578, 65509, 655367, -196578, 65513, 5, -65506, 65498, 655362, -65506, 65499, 0, -65506, 65500, 0, -65506, 65501, 4, -65506, 65502, 1441794, -65506, 65503, 655361, -65506, 65504, 1441796, -65506, 65505, 0, -65506, 65506, 4, -65506, 65507, 1441794, -65506, 65508, 655361, -65506, 65509, 1441796, -65506, 65510, 0, -65506, 65511, 0, -65506, 65512, 0, -65506, 65513, 2, -196577, 65498, 1048582, -196577, 65499, 1048583, -196577, 65512, 7, -196577, 65513, 6, -65505, 65498, 655363, -65505, 65499, 655364, -65505, 65500, 0, -65505, 65501, 0, -65505, 65502, 0, -65505, 65503, 0, -65505, 65504, 0, -65505, 65505, 0, -65505, 65506, 0, -65505, 65507, 0, -65505, 65508, 0, -65505, 65509, 0, -65505, 65510, 0, -65505, 65511, 0, -65505, 65512, 1048580, -65505, 65513, 1048579, -196576, 65499, 1048582, -196576, 65500, 1048581, -196576, 65501, 1048581, -196576, 65502, 1048581, -196576, 65503, 1048581, -196576, 65504, 1048581, -196576, 65505, 1048581, -196576, 65506, 1048581, -196576, 65507, 1048581, -196576, 65508, 1048581, -196576, 65509, 1048581, -196576, 65510, 1048581, -196576, 65511, 1048581, -196576, 65512, 6, -65504, 65499, 655363, -65504, 65500, 1, -65504, 65501, 1, -65504, 65502, 1, -65504, 65503, 1, -65504, 65504, 1048578, -65504, 65505, 1048578, -65504, 65506, 1, -65504, 65507, 1048578, -65504, 65508, 1, -65504, 65509, 1, -65504, 65510, 1, -65504, 65511, 1048578, -65504, 65512, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Decoration" type="GridMap" parent="Level"]
+mesh_library = ExtResource("tiles")
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-6, 65518, 655371, -4, 65470, 1048585, -4, 65517, 655370, -4, 65518, 655368, -3, 65449, 1048586, -3, 65467, 1048585, -3, 65485, 655368, -3, 65487, 10, -3, 8, 10, -1, 65451, 10, -1, 65472, 655370, -1, 65476, 655368, -1, 65506, 1441801, -1, 65508, 1048587, -1, 65511, 1441803, -1, 65512, 11, -1, 65517, 1048585, -65536, 65461, 1441801, -65536, 65475, 1048587, -65536, 65485, 1441803, -65536, 65487, 1441802, -65536, 65490, 9, -65536, 65508, 1441800, -65536, 65518, 1048584, -65536, 0, 1048587, -65534, 65533, 8, -65533, 65449, 11, -65533, 65485, 655371, -65533, 65509, 11, -65533, 65533, 1441802, -65531, 65470, 655371, -65531, 65476, 655370, -65531, 65518, 655369, -65531, 6, 1048585, -65530, 65469, 1441802, -65522, 65487, 655370, -65521, 65508, 1441801, -65513, 65485, 1441800, -65513, 65488, 655370, -65512, 65487, 655370, -65504, 65488, 9, -65501, 65500, 9, -65500, 65497, 8, -65500, 65500, 1441802, -65494, 65500, 9, -65491, 65499, 1048586)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Water" parent="Level" instance=ExtResource("water")]
+transform = Transform3D(2.5, 0, 0, 0, 1, 0, 0, 0, 2.2, 28, -4.6065, -80)
+material_override = SubResource("ShaderMaterial_jade_water")
+
+[node name="JungleFireflies" parent="Level" instance=ExtResource("fireflies")]
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="RiverWalkways" type="Node3D" parent="Level"]
+
+[node name="NorthWalkway" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -1.275, -51.1335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/NorthWalkway"]
+mesh = SubResource("BoxMesh_NorthWalkway")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/NorthWalkway"]
+shape = SubResource("BoxShape3D_NorthWalkway")
+
+[node name="SouthWalkway" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -1.275, -47.8335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/SouthWalkway"]
+mesh = SubResource("BoxMesh_SouthWalkway")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/SouthWalkway"]
+shape = SubResource("BoxShape3D_SouthWalkway")
+
+[node name="NorthBay1" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, -1.275, -53.1335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/NorthBay1"]
+mesh = SubResource("BoxMesh_NorthBay1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/NorthBay1"]
+shape = SubResource("BoxShape3D_NorthBay1")
+
+[node name="SouthBay1" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, -1.275, -45.8335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/SouthBay1"]
+mesh = SubResource("BoxMesh_SouthBay1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/SouthBay1"]
+shape = SubResource("BoxShape3D_SouthBay1")
+
+[node name="NorthBay2" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, -1.275, -53.1335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/NorthBay2"]
+mesh = SubResource("BoxMesh_NorthBay2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/NorthBay2"]
+shape = SubResource("BoxShape3D_NorthBay2")
+
+[node name="SouthBay2" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, -1.275, -45.8335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/SouthBay2"]
+mesh = SubResource("BoxMesh_SouthBay2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/SouthBay2"]
+shape = SubResource("BoxShape3D_SouthBay2")
+
+[node name="NorthBay3" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -1.275, -53.1335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/NorthBay3"]
+mesh = SubResource("BoxMesh_NorthBay3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/NorthBay3"]
+shape = SubResource("BoxShape3D_NorthBay3")
+
+[node name="SouthBay3" type="StaticBody3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -1.275, -45.8335)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"wood"
+
+[node name="Mesh" type="MeshInstance3D" parent="Level/RiverWalkways/SouthBay3"]
+mesh = SubResource("BoxMesh_SouthBay3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/RiverWalkways/SouthBay3"]
+shape = SubResource("BoxShape3D_SouthBay3")
+
+[node name="PileN1" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.4855, -4.4, -51.1335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileS1" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.4855, -4.4, -47.8335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileN2" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, -4.4, -51.1335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileS2" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, -4.4, -47.8335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileN3" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -4.4, -51.1335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileS3" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -4.4, -47.8335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileN4" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, -4.4, -51.1335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileS4" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 61.4795, -4.4, -47.8335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileN5" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -4.4, -51.1335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="PileS5" type="MeshInstance3D" parent="Level/RiverWalkways"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -4.4, -47.8335)
+mesh = SubResource("CylinderMesh_river_pile")
+
+[node name="SpikeTrap" type="Node3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.4865, -1, -97.4675)
+script = ExtResource("spike_trap")
+start_half_gap = 7.6
+wall_width = 38.0
+wall_offset_x = -4.4985
+close_speed = 0.28
+slowed_speed = 0.09
+plate_spacing = 3.0
+
+[node name="Bridges" type="Node" parent="Level"]
+
+[node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -22.4925)
+
+[node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -22.4925)
+
+[node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, -22.4925)
+
+[node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -25.4915)
+
+[node name="BridgePlatform5" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -25.4915)
+
+[node name="BridgePlatform6" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, -25.4915)
+
+[node name="BridgePlatform7" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, -52.4825)
+
+[node name="BridgePlatform8" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, -49.4835)
+
+[node name="BridgePlatform9" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 19.4935, -3.9928, -46.4845)
+
+[node name="BridgePlatform10" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, -3.9928, -52.4825)
+
+[node name="BridgePlatform11" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, -3.9928, -49.4835)
+
+[node name="BridgePlatform12" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, -3.9928, -46.4845)
+
+[node name="BridgePlatform13" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.4745, -3.9928, -61.4795)
+
+[node name="BridgePlatform14" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, -3.9928, -61.4795)
+
+[node name="BridgePlatform15" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.4725, -3.9928, -61.4795)
+
+[node name="BridgePlatform16" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76.4745, -3.9928, -64.4785)
+
+[node name="BridgePlatform17" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, -3.9928, -64.4785)
+
+[node name="BridgePlatform18" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.4725, -3.9928, -64.4785)
+
+[node name="BridgePlatform19" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -3.9928, -100.4665)
+
+[node name="BridgePlatform20" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -3.9928, -97.4675)
+
+[node name="BridgePlatform21" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -3.9928, -94.4685)
+
+[node name="BridgePlatform22" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, -3.9928, -100.4665)
+
+[node name="BridgePlatform23" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, -3.9928, -97.4675)
+
+[node name="BridgePlatform24" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.4805, -3.9928, -94.4685)
+
+[node name="BridgePlatform25" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -3.9928, -100.4665)
+
+[node name="BridgePlatform26" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -3.9928, -97.4675)
+
+[node name="BridgePlatform27" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -3.9928, -94.4685)
+
+[node name="BridgePlatform28" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, -100.4665)
+
+[node name="BridgePlatform29" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, -97.4675)
+
+[node name="BridgePlatform30" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, -3.9928, -94.4685)
+
+[node name="BridgePlatform31" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -109.4635)
+start_at_bottom = false
+
+[node name="BridgePlatform32" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -109.4635)
+start_at_bottom = false
+
+[node name="BridgePlatform33" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, -109.4635)
+start_at_bottom = false
+
+[node name="BridgePlatform34" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -112.4625)
+start_at_bottom = false
+
+[node name="BridgePlatform35" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -112.4625)
+start_at_bottom = false
+
+[node name="BridgePlatform36" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, -112.4625)
+start_at_bottom = false
+
+[node name="BridgePlatform37" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -154.4485)
+
+[node name="BridgePlatform38" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -154.4485)
+
+[node name="BridgePlatform39" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, -154.4485)
+
+[node name="BridgePlatform40" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -157.4475)
+
+[node name="BridgePlatform41" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -3.9928, -157.4475)
+
+[node name="BridgePlatform42" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, -3.9928, -157.4475)
+
+[node name="SplitBridgeNorth" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.4865, -3.9928, -51.1835)
+start_at_bottom = false
+
+[node name="SplitBridgeSouth" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.4865, -3.9928, -47.7835)
+start_at_bottom = false
+
+[node name="Braziers" type="Node" parent="Level"]
+
+[node name="Brazier1" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -1, 16.4945)
+
+[node name="Brazier2" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -1, 16.4945)
+
+[node name="Brazier3" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -1, -19.4935)
+
+[node name="Brazier4" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -1, -19.4935)
+
+[node name="Brazier5" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -31.4895)
+
+[node name="Brazier6" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -31.4895)
+
+[node name="Brazier7" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -67.4775)
+
+[node name="Brazier8" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -67.4775)
+
+[node name="Brazier9" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -76.4745)
+
+[node name="Brazier10" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -76.4745)
+
+[node name="Brazier11" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4905, -1, -55.4815)
+
+[node name="Brazier12" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.4905, -1, -43.4855)
+
+[node name="Brazier13" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.4855, -1, -64.4785)
+
+[node name="Brazier14" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 52.4825, -1, -34.4885)
+
+[node name="Brazier15" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 55.4815, -1, -64.4785)
+
+[node name="Brazier16" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -1, -34.4885)
+
+[node name="Brazier17" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.4725, -1, -55.4815)
+
+[node name="Brazier18" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 82.4725, -1, -43.4855)
+
+[node name="Brazier19" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 73.4755, -1, -67.4775)
+
+[node name="Brazier20" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 85.4715, -1, -67.4775)
+
+[node name="Brazier21" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -1, -109.4635)
+
+[node name="Brazier22" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 94.4685, -1, -109.4635)
+
+[node name="Brazier23" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, -1, -103.4655)
+
+[node name="Brazier24" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 49.4835, -1, -91.4695)
+
+[node name="Brazier25" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, -1, -103.4655)
+
+[node name="Brazier26" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, -1, -91.4695)
+
+[node name="Brazier27" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -1, -103.4655)
+
+[node name="Brazier28" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -1, -103.4655)
+
+[node name="Brazier29" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -118.4605)
+
+[node name="Brazier30" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -118.4605)
+
+[node name="Brazier31" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.4965, -1, -148.4505)
+
+[node name="Brazier32" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.4955, -1, -148.4505)
+
+[node name="Brazier33" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -1, -142.4525)
+
+[node name="Brazier34" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, -1, -124.4585)
+
+[node name="Brazier35" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, -1, -142.4525)
+
+[node name="Brazier36" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, -1, -124.4585)
+
+[node name="Brazier37" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.4985, -1, -163.4455)
+
+[node name="Brazier38" parent="Level/Braziers" instance=ExtResource("brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4975, -1, -163.4455)
+
+[node name="Monuments" type="Node3D" parent="Level"]
+
+[node name="GrandZiggurat" parent="Level/Monuments" instance=ExtResource("ziggurat")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -1, -178.4405)
+
+[node name="SanctuaryAltarRing" type="MeshInstance3D" parent="Level/Monuments"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -0.96, -164.945)
+cast_shadow = 0
+mesh = SubResource("TorusMesh_sanctuary_ring")
+
+[node name="RuinArch1" parent="Level/Monuments" instance=ExtResource("ruin_arch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, -1, -77.2745)
+
+[node name="RuinArch2" parent="Level/Monuments" instance=ExtResource("ruin_arch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, -1, -113.2625)
+
+[node name="RuinArch3" parent="Level/Monuments" instance=ExtResource("ruin_arch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.4975, -1, -152.2495)
+
+[node name="RuinArch4" parent="Level/Monuments" instance=ExtResource("ruin_arch")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.4965, -1, -152.2495)
+
+[node name="JungleIsles" type="Node3D" parent="Level"]
+
+[node name="WestCanopySouth" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/WestCanopySouth"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131085, 65531, 655366, -131085, 65532, 1441797, -131085, 65533, 1441797, -131085, 65534, 1441797, -131085, 65535, 1441797, -131085, 0, 1441797, -131085, 1, 1441797, -131085, 2, 1441797, -131085, 3, 1441797, -131085, 4, 1441797, -131085, 5, 1441798, -13, 65531, 1441795, -13, 65532, 1441794, -13, 65533, 1441794, -13, 65534, 1441794, -13, 65535, 1441794, -13, 0, 655361, -13, 1, 1441794, -13, 2, 655361, -13, 3, 655361, -13, 4, 655361, -13, 5, 3, -131084, 65530, 655366, -131084, 65531, 655367, -131084, 5, 1441799, -131084, 6, 1441798, -12, 65530, 1441795, -12, 65531, 1441796, -12, 65532, 0, -12, 65533, 0, -12, 65534, 0, -12, 65535, 0, -12, 0, 0, -12, 1, 0, -12, 2, 0, -12, 3, 0, -12, 4, 0, -12, 5, 4, -12, 6, 3, -131083, 65530, 655365, -131083, 6, 5, -11, 65530, 1048577, -11, 65531, 0, -11, 65532, 0, -11, 65533, 0, -11, 65534, 0, -11, 65535, 0, -11, 0, 0, -11, 1, 0, -11, 2, 0, -11, 3, 0, -11, 4, 0, -11, 5, 0, -11, 6, 1441793, -131082, 65530, 655365, -131082, 6, 5, -10, 65530, 1048577, -10, 65531, 0, -10, 65532, 0, -10, 65533, 0, -10, 65534, 0, -10, 65535, 0, -10, 0, 0, -10, 1, 0, -10, 2, 0, -10, 3, 0, -10, 4, 0, -10, 5, 0, -10, 6, 1441793, -131081, 65530, 655365, -131081, 6, 5, -9, 65530, 1048577, -9, 65531, 0, -9, 65532, 0, -9, 65533, 0, -9, 65534, 0, -9, 65535, 0, -9, 0, 0, -9, 1, 0, -9, 2, 0, -9, 3, 0, -9, 4, 0, -9, 5, 0, -9, 6, 1441793, -131080, 65530, 1048582, -131080, 65531, 1048583, -131080, 5, 7, -131080, 6, 6, -8, 65530, 655363, -8, 65531, 655364, -8, 65532, 0, -8, 65533, 0, -8, 65534, 0, -8, 65535, 0, -8, 0, 0, -8, 1, 0, -8, 2, 0, -8, 3, 0, -8, 4, 0, -8, 5, 1048580, -8, 6, 1048579, -131079, 65531, 1048582, -131079, 65532, 1048581, -131079, 65533, 1048581, -131079, 65534, 1048581, -131079, 65535, 1048581, -131079, 0, 1048581, -131079, 1, 1048581, -131079, 2, 1048581, -131079, 3, 1048581, -131079, 4, 1048581, -131079, 5, 6, -7, 65531, 655363, -7, 65532, 1048578, -7, 65533, 1, -7, 65534, 1, -7, 65535, 1, -7, 0, 1048578, -7, 1, 1, -7, 2, 1048578, -7, 3, 1048578, -7, 4, 1, -7, 5, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/WestCanopySouth"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-12, 65534, 18, -12, 65535, 1441815, -12, 0, 1441818, -12, 2, 1441812, -12, 3, 1441814, -11, 65532, 19, -11, 65533, 655379, -11, 65534, 1048594, -11, 65535, 22, -11, 0, 1048593, -11, 1, 19, -11, 2, 1441811, -11, 3, 1441810, -11, 4, 655386, -11, 5, 655381, -10, 65531, 18, -10, 65532, 655378, -10, 65533, 655383, -10, 65535, 1441817, -10, 0, 1048596, -10, 3, 1048599, -10, 4, 23, -10, 5, 22, -9, 65531, 1441809, -9, 65532, 20, -9, 65534, 1441813, -9, 1, 655381, -9, 2, 1048598, -9, 4, 1048593, -9, 5, 1048595, -8, 65532, 1441809, -8, 65533, 1048601, -8, 65534, 1048595, -8, 0, 1441813, -8, 3, 1048601, -8, 4, 24)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="WestCanopyMid" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/WestCanopyMid"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131086, 65512, 655366, -131086, 65513, 1441797, -131086, 65514, 1441797, -131086, 65515, 1441797, -131086, 65516, 1441797, -131086, 65517, 1441797, -131086, 65518, 1441797, -131086, 65519, 1441797, -131086, 65520, 1441797, -131086, 65521, 1441797, -131086, 65522, 1441797, -131086, 65523, 1441797, -131086, 65524, 1441797, -131086, 65525, 1441798, -14, 65512, 1441795, -14, 65513, 1441794, -14, 65514, 1441794, -14, 65515, 1441794, -14, 65516, 1441794, -14, 65517, 655361, -14, 65518, 1441794, -14, 65519, 655361, -14, 65520, 655361, -14, 65521, 655361, -14, 65522, 655361, -14, 65523, 655361, -14, 65524, 655361, -14, 65525, 3, -131085, 65511, 655366, -131085, 65512, 655367, -131085, 65525, 1441799, -131085, 65526, 1441798, -13, 65511, 1441795, -13, 65512, 1441796, -13, 65513, 0, -13, 65514, 0, -13, 65515, 0, -13, 65516, 0, -13, 65517, 0, -13, 65518, 0, -13, 65519, 0, -13, 65520, 0, -13, 65521, 0, -13, 65522, 0, -13, 65523, 0, -13, 65524, 0, -13, 65525, 4, -13, 65526, 3, -131084, 65511, 655365, -131084, 65526, 5, -12, 65511, 1048577, -12, 65512, 0, -12, 65513, 0, -12, 65514, 0, -12, 65515, 0, -12, 65516, 0, -12, 65517, 0, -12, 65518, 0, -12, 65519, 0, -12, 65520, 0, -12, 65521, 0, -12, 65522, 0, -12, 65523, 0, -12, 65524, 0, -12, 65525, 0, -12, 65526, 1441793, -131083, 65511, 655365, -131083, 65526, 5, -11, 65511, 1048577, -11, 65512, 0, -11, 65513, 0, -11, 65514, 0, -11, 65515, 0, -11, 65516, 0, -11, 65517, 0, -11, 65518, 0, -11, 65519, 0, -11, 65520, 0, -11, 65521, 0, -11, 65522, 0, -11, 65523, 0, -11, 65524, 0, -11, 65525, 0, -11, 65526, 2, -131082, 65511, 655365, -131082, 65526, 5, -10, 65511, 1048577, -10, 65512, 0, -10, 65513, 0, -10, 65514, 0, -10, 65515, 0, -10, 65516, 0, -10, 65517, 0, -10, 65518, 0, -10, 65519, 0, -10, 65520, 0, -10, 65521, 0, -10, 65522, 0, -10, 65523, 0, -10, 65524, 0, -10, 65525, 0, -10, 65526, 1441793, -131081, 65511, 1048582, -131081, 65512, 1048583, -131081, 65525, 7, -131081, 65526, 6, -9, 65511, 655363, -9, 65512, 655364, -9, 65513, 0, -9, 65514, 0, -9, 65515, 0, -9, 65516, 0, -9, 65517, 0, -9, 65518, 0, -9, 65519, 0, -9, 65520, 0, -9, 65521, 0, -9, 65522, 0, -9, 65523, 0, -9, 65524, 0, -9, 65525, 1048580, -9, 65526, 1048579, -131080, 65512, 1048582, -131080, 65513, 1048581, -131080, 65514, 1048581, -131080, 65515, 1048581, -131080, 65516, 1048581, -131080, 65517, 1048581, -131080, 65518, 1048581, -131080, 65519, 1048581, -131080, 65520, 1048581, -131080, 65521, 1048581, -131080, 65522, 1048581, -131080, 65523, 1048581, -131080, 65524, 1048581, -131080, 65525, 6, -8, 65512, 655363, -8, 65513, 1, -8, 65514, 1048578, -8, 65515, 1, -8, 65516, 1048578, -8, 65517, 1048578, -8, 65518, 1, -8, 65519, 1, -8, 65520, 1048578, -8, 65521, 1048578, -8, 65522, 1, -8, 65523, 1048578, -8, 65524, 1, -8, 65525, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/WestCanopyMid"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-13, 65515, 25, -13, 65516, 17, -13, 65518, 655385, -13, 65519, 1441811, -13, 65520, 655378, -13, 65521, 1441818, -13, 65522, 1048598, -13, 65523, 1048597, -13, 65524, 1441811, -12, 65512, 655383, -12, 65513, 1048596, -12, 65514, 1441812, -12, 65515, 655384, -12, 65518, 1441817, -12, 65519, 1441812, -12, 65520, 20, -12, 65521, 655383, -12, 65524, 1048597, -12, 65525, 19, -11, 65513, 655383, -11, 65514, 655380, -11, 65516, 1441815, -11, 65517, 1441816, -11, 65518, 655379, -11, 65519, 655384, -11, 65520, 21, -11, 65521, 1048595, -11, 65522, 655380, -11, 65523, 1048601, -11, 65524, 1441813, -11, 65525, 655385, -10, 65513, 19, -10, 65514, 655386, -10, 65515, 18, -10, 65517, 1441818, -10, 65518, 23, -10, 65521, 1441813, -10, 65523, 1048596, -10, 65525, 655381, -9, 65514, 1441817, -9, 65516, 1441814, -9, 65517, 655379, -9, 65519, 1048599, -9, 65520, 1441812, -9, 65522, 655384, -9, 65523, 20, -9, 65524, 1441816)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="EastCausewayIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/EastCausewayIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196601, 65533, 655366, -196601, 65534, 1441797, -196601, 65535, 1441797, -196601, 0, 1441797, -196601, 1, 1441797, -196601, 2, 1441797, -196601, 3, 1441797, -196601, 4, 1441797, -196601, 5, 1441798, -65529, 65533, 1441795, -65529, 65534, 1441794, -65529, 65535, 1441794, -65529, 0, 1441794, -65529, 1, 1441794, -65529, 2, 655361, -65529, 3, 1441794, -65529, 4, 655361, -65529, 5, 3, -196600, 65532, 655366, -196600, 65533, 655367, -196600, 5, 1441799, -196600, 6, 1441798, -65528, 65532, 1441795, -65528, 65533, 1441796, -65528, 65534, 0, -65528, 65535, 0, -65528, 0, 0, -65528, 1, 0, -65528, 2, 0, -65528, 3, 0, -65528, 4, 0, -65528, 5, 4, -65528, 6, 3, -196599, 65532, 655365, -196599, 6, 5, -65527, 65532, 1048577, -65527, 65533, 0, -65527, 65534, 0, -65527, 65535, 0, -65527, 0, 0, -65527, 1, 0, -65527, 2, 0, -65527, 3, 0, -65527, 4, 0, -65527, 5, 0, -65527, 6, 1441793, -196598, 65532, 655365, -196598, 6, 5, -65526, 65532, 1048577, -65526, 65533, 0, -65526, 65534, 0, -65526, 65535, 0, -65526, 0, 0, -65526, 1, 0, -65526, 2, 0, -65526, 3, 0, -65526, 4, 0, -65526, 5, 0, -65526, 6, 1441793, -196597, 65532, 655365, -196597, 6, 5, -65525, 65532, 1048577, -65525, 65533, 0, -65525, 65534, 0, -65525, 65535, 0, -65525, 0, 0, -65525, 1, 0, -65525, 2, 0, -65525, 3, 0, -65525, 4, 0, -65525, 5, 0, -65525, 6, 1441793, -196596, 65532, 1048582, -196596, 65533, 1048583, -196596, 5, 7, -196596, 6, 6, -65524, 65532, 655363, -65524, 65533, 655364, -65524, 65534, 0, -65524, 65535, 0, -65524, 0, 0, -65524, 1, 0, -65524, 2, 0, -65524, 3, 0, -65524, 4, 0, -65524, 5, 1048580, -65524, 6, 1048579, -196595, 65533, 1048582, -196595, 65534, 1048581, -196595, 65535, 1048581, -196595, 0, 1048581, -196595, 1, 1048581, -196595, 2, 1048581, -196595, 3, 1048581, -196595, 4, 1048581, -196595, 5, 6, -65523, 65533, 655363, -65523, 65534, 1, -65523, 65535, 1, -65523, 0, 1048578, -65523, 1, 1, -65523, 2, 1, -65523, 3, 1, -65523, 4, 1048578, -65523, 5, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/EastCausewayIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-65528, 65534, 24, -65528, 65535, 26, -65528, 1, 1441809, -65528, 2, 655380, -65528, 3, 655379, -65527, 65533, 1441818, -65527, 65535, 1048593, -65527, 0, 19, -65527, 2, 1441812, -65527, 3, 1048594, -65526, 65533, 1441811, -65526, 65535, 22, -65526, 0, 21, -65526, 1, 655386, -65526, 2, 655385, -65526, 3, 1441818, -65526, 4, 655386, -65526, 5, 1048597, -65525, 65534, 1048594, -65525, 1, 655386, -65525, 2, 1441815, -65525, 3, 1441809, -65525, 4, 21, -65525, 5, 1441810, -65524, 65535, 1048599, -65524, 1, 1048601, -65524, 2, 1048599, -65524, 3, 655385, -65524, 4, 1441812)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="EastRiverIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/EastRiverIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196577, 65516, 655366, -196577, 65517, 1441797, -196577, 65518, 1441797, -196577, 65519, 1441797, -196577, 65520, 1441797, -196577, 65521, 1441797, -196577, 65522, 1441798, -65505, 65516, 1441795, -65505, 65517, 1441794, -65505, 65518, 1441794, -65505, 65519, 1441794, -65505, 65520, 1441794, -65505, 65521, 655361, -65505, 65522, 3, -196576, 65515, 655366, -196576, 65516, 655367, -196576, 65522, 1441799, -196576, 65523, 1441798, -65504, 65515, 1441795, -65504, 65516, 1441796, -65504, 65517, 0, -65504, 65518, 0, -65504, 65519, 0, -65504, 65520, 0, -65504, 65521, 0, -65504, 65522, 4, -65504, 65523, 3, -196575, 65515, 655365, -196575, 65523, 5, -65503, 65515, 655362, -65503, 65516, 0, -65503, 65517, 0, -65503, 65518, 0, -65503, 65519, 0, -65503, 65520, 0, -65503, 65521, 0, -65503, 65522, 0, -65503, 65523, 1441793, -196574, 65515, 655365, -196574, 65523, 5, -65502, 65515, 1048577, -65502, 65516, 0, -65502, 65517, 0, -65502, 65518, 0, -65502, 65519, 0, -65502, 65520, 0, -65502, 65521, 0, -65502, 65522, 0, -65502, 65523, 1441793, -196573, 65515, 655365, -196573, 65523, 5, -65501, 65515, 1048577, -65501, 65516, 0, -65501, 65517, 0, -65501, 65518, 0, -65501, 65519, 0, -65501, 65520, 0, -65501, 65521, 0, -65501, 65522, 0, -65501, 65523, 1441793, -196572, 65515, 1048582, -196572, 65516, 1048583, -196572, 65522, 7, -196572, 65523, 6, -65500, 65515, 655363, -65500, 65516, 655364, -65500, 65517, 0, -65500, 65518, 0, -65500, 65519, 0, -65500, 65520, 0, -65500, 65521, 0, -65500, 65522, 1048580, -65500, 65523, 1048579, -196571, 65516, 1048582, -196571, 65517, 1048581, -196571, 65518, 1048581, -196571, 65519, 1048581, -196571, 65520, 1048581, -196571, 65521, 1048581, -196571, 65522, 6, -65499, 65516, 655363, -65499, 65517, 1, -65499, 65518, 1, -65499, 65519, 1, -65499, 65520, 1, -65499, 65521, 1048578, -65499, 65522, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/EastRiverIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-65504, 65517, 1048599, -65504, 65518, 655379, -65504, 65520, 655382, -65504, 65521, 1048595, -65503, 65516, 22, -65503, 65517, 1441813, -65503, 65518, 655381, -65503, 65521, 18, -65503, 65522, 655377, -65502, 65516, 26, -65502, 65521, 1441816, -65502, 65522, 1441809, -65501, 65516, 655384, -65501, 65517, 18, -65501, 65518, 1441817, -65501, 65519, 655379, -65501, 65520, 1441809, -65501, 65521, 655384, -65500, 65517, 655385, -65500, 65518, 655386, -65500, 65520, 26, -65500, 65521, 1048596)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="EastLatticeIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/EastLatticeIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196573, 65499, 655366, -196573, 65500, 1441797, -196573, 65501, 1441797, -196573, 65502, 1441797, -196573, 65503, 1441797, -196573, 65504, 1441797, -196573, 65505, 1441797, -196573, 65506, 1441797, -196573, 65507, 1441797, -196573, 65508, 1441797, -196573, 65509, 1441797, -196573, 65510, 1441797, -196573, 65511, 1441798, -65501, 65499, 1441795, -65501, 65500, 1441794, -65501, 65501, 1441794, -65501, 65502, 1441794, -65501, 65503, 1441794, -65501, 65504, 655361, -65501, 65505, 1441794, -65501, 65506, 655361, -65501, 65507, 655361, -65501, 65508, 655361, -65501, 65509, 655361, -65501, 65510, 655361, -65501, 65511, 3, -196572, 65498, 655366, -196572, 65499, 655367, -196572, 65511, 1441799, -196572, 65512, 1441798, -65500, 65498, 1441795, -65500, 65499, 1441796, -65500, 65500, 0, -65500, 65501, 0, -65500, 65502, 0, -65500, 65503, 0, -65500, 65504, 0, -65500, 65505, 0, -65500, 65506, 0, -65500, 65507, 0, -65500, 65508, 0, -65500, 65509, 0, -65500, 65510, 0, -65500, 65511, 4, -65500, 65512, 3, -196571, 65498, 655365, -196571, 65512, 5, -65499, 65498, 1048577, -65499, 65499, 0, -65499, 65500, 0, -65499, 65501, 0, -65499, 65502, 0, -65499, 65503, 0, -65499, 65504, 0, -65499, 65505, 0, -65499, 65506, 0, -65499, 65507, 0, -65499, 65508, 0, -65499, 65509, 0, -65499, 65510, 0, -65499, 65511, 0, -65499, 65512, 1441793, -196570, 65498, 655365, -196570, 65512, 5, -65498, 65498, 1048577, -65498, 65499, 0, -65498, 65500, 0, -65498, 65501, 0, -65498, 65502, 0, -65498, 65503, 0, -65498, 65504, 0, -65498, 65505, 0, -65498, 65506, 0, -65498, 65507, 0, -65498, 65508, 0, -65498, 65509, 0, -65498, 65510, 0, -65498, 65511, 0, -65498, 65512, 1441793, -196569, 65498, 655365, -196569, 65512, 5, -65497, 65498, 655362, -65497, 65499, 0, -65497, 65500, 0, -65497, 65501, 0, -65497, 65502, 0, -65497, 65503, 0, -65497, 65504, 0, -65497, 65505, 0, -65497, 65506, 0, -65497, 65507, 0, -65497, 65508, 0, -65497, 65509, 0, -65497, 65510, 0, -65497, 65511, 0, -65497, 65512, 1441793, -196568, 65498, 1048582, -196568, 65499, 1048583, -196568, 65511, 7, -196568, 65512, 6, -65496, 65498, 655363, -65496, 65499, 655364, -65496, 65500, 0, -65496, 65501, 0, -65496, 65502, 0, -65496, 65503, 0, -65496, 65504, 0, -65496, 65505, 0, -65496, 65506, 0, -65496, 65507, 0, -65496, 65508, 0, -65496, 65509, 0, -65496, 65510, 0, -65496, 65511, 1048580, -65496, 65512, 1048579, -196567, 65499, 1048582, -196567, 65500, 1048581, -196567, 65501, 1048581, -196567, 65502, 1048581, -196567, 65503, 1048581, -196567, 65504, 1048581, -196567, 65505, 1048581, -196567, 65506, 1048581, -196567, 65507, 1048581, -196567, 65508, 1048581, -196567, 65509, 1048581, -196567, 65510, 1048581, -196567, 65511, 6, -65495, 65499, 655363, -65495, 65500, 1, -65495, 65501, 1, -65495, 65502, 1048578, -65495, 65503, 1, -65495, 65504, 1048578, -65495, 65505, 1048578, -65495, 65506, 1, -65495, 65507, 1, -65495, 65508, 1048578, -65495, 65509, 1048578, -65495, 65510, 1, -65495, 65511, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/EastLatticeIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-65500, 65500, 655381, -65500, 65501, 21, -65500, 65503, 1048600, -65500, 65505, 1441814, -65500, 65506, 1048598, -65500, 65509, 1048594, -65500, 65510, 1441814, -65499, 65499, 1048594, -65499, 65500, 22, -65499, 65502, 655380, -65499, 65504, 1048602, -65499, 65505, 655380, -65499, 65506, 655386, -65499, 65507, 1441810, -65499, 65509, 20, -65499, 65510, 1048602, -65499, 65511, 1048598, -65498, 65499, 1048599, -65498, 65500, 1441814, -65498, 65501, 655379, -65498, 65502, 655384, -65498, 65504, 655378, -65498, 65506, 1048593, -65498, 65507, 26, -65498, 65508, 1048599, -65498, 65510, 21, -65498, 65511, 655385, -65497, 65499, 1441818, -65497, 65501, 655377, -65497, 65504, 655381, -65497, 65507, 18, -65497, 65508, 21, -65497, 65509, 17, -65497, 65511, 26, -65496, 65500, 1441818, -65496, 65501, 655377, -65496, 65502, 1048596, -65496, 65503, 655379, -65496, 65505, 1048602, -65496, 65506, 1441818, -65496, 65508, 655384, -65496, 65509, 25, -65496, 65510, 1441816)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="NorthLatticeIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/NorthLatticeIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196586, 65491, 655366, -196586, 65492, 1441797, -196586, 65493, 1441797, -196586, 65494, 1441798, -65514, 65491, 1441795, -65514, 65492, 1441794, -65514, 65493, 1441794, -65514, 65494, 3, -196585, 65490, 655366, -196585, 65491, 655367, -196585, 65494, 1441799, -196585, 65495, 1441798, -65513, 65490, 1441795, -65513, 65491, 1441796, -65513, 65492, 0, -65513, 65493, 0, -65513, 65494, 4, -65513, 65495, 3, -196584, 65490, 655365, -196584, 65495, 5, -65512, 65490, 655362, -65512, 65491, 0, -65512, 65492, 0, -65512, 65493, 0, -65512, 65494, 0, -65512, 65495, 2, -196583, 65490, 655365, -196583, 65495, 5, -65511, 65490, 1048577, -65511, 65491, 0, -65511, 65492, 0, -65511, 65493, 0, -65511, 65494, 0, -65511, 65495, 2, -196582, 65490, 655365, -196582, 65495, 5, -65510, 65490, 1048577, -65510, 65491, 0, -65510, 65492, 0, -65510, 65493, 0, -65510, 65494, 0, -65510, 65495, 1441793, -196581, 65490, 655365, -196581, 65495, 5, -65509, 65490, 1048577, -65509, 65491, 0, -65509, 65492, 0, -65509, 65493, 0, -65509, 65494, 0, -65509, 65495, 1441793, -196580, 65490, 655365, -196580, 65495, 5, -65508, 65490, 1048577, -65508, 65491, 0, -65508, 65492, 0, -65508, 65493, 0, -65508, 65494, 0, -65508, 65495, 1441793, -196579, 65490, 655365, -196579, 65495, 5, -65507, 65490, 1048577, -65507, 65491, 0, -65507, 65492, 0, -65507, 65493, 0, -65507, 65494, 0, -65507, 65495, 1441793, -196578, 65490, 655365, -196578, 65495, 5, -65506, 65490, 1048577, -65506, 65491, 0, -65506, 65492, 0, -65506, 65493, 0, -65506, 65494, 0, -65506, 65495, 2, -196577, 65490, 655365, -196577, 65495, 5, -65505, 65490, 1048577, -65505, 65491, 0, -65505, 65492, 0, -65505, 65493, 0, -65505, 65494, 0, -65505, 65495, 1441793, -196576, 65490, 1048582, -196576, 65491, 1048583, -196576, 65494, 7, -196576, 65495, 6, -65504, 65490, 655363, -65504, 65491, 655364, -65504, 65492, 0, -65504, 65493, 0, -65504, 65494, 1048580, -65504, 65495, 1048579, -196575, 65491, 1048582, -196575, 65492, 1048581, -196575, 65493, 1048581, -196575, 65494, 6, -65503, 65491, 655363, -65503, 65492, 1, -65503, 65493, 1048578, -65503, 65494, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/NorthLatticeIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-65513, 65493, 22, -65512, 65491, 1048601, -65512, 65492, 1441811, -65512, 65493, 1048596, -65511, 65491, 1048602, -65511, 65492, 655386, -65511, 65493, 655378, -65511, 65494, 1048596, -65510, 65491, 1441817, -65510, 65492, 655383, -65510, 65494, 655379, -65509, 65491, 655384, -65509, 65492, 1441816, -65508, 65493, 655379, -65508, 65494, 1048595, -65507, 65491, 1441812, -65507, 65493, 1048602, -65507, 65494, 1048594, -65506, 65491, 1441817, -65506, 65493, 655381, -65506, 65494, 1441814, -65505, 65491, 1441814, -65505, 65493, 18, -65505, 65494, 1048597, -65504, 65493, 655382)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="NorthTrapIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/NorthTrapIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196596, 65492, 655366, -196596, 65493, 1441797, -196596, 65494, 1441797, -196596, 65495, 1441797, -196596, 65496, 1441798, -65524, 65492, 1441795, -65524, 65493, 1441794, -65524, 65494, 1441794, -65524, 65495, 1441794, -65524, 65496, 3, -196595, 65491, 655366, -196595, 65492, 655367, -196595, 65496, 1441799, -196595, 65497, 1441798, -65523, 65491, 1441795, -65523, 65492, 1441796, -65523, 65493, 0, -65523, 65494, 0, -65523, 65495, 0, -65523, 65496, 4, -65523, 65497, 3, -196594, 65491, 655365, -196594, 65497, 5, -65522, 65491, 655362, -65522, 65492, 0, -65522, 65493, 0, -65522, 65494, 0, -65522, 65495, 0, -65522, 65496, 0, -65522, 65497, 1441793, -196593, 65491, 655365, -196593, 65497, 5, -65521, 65491, 655362, -65521, 65492, 0, -65521, 65493, 0, -65521, 65494, 0, -65521, 65495, 0, -65521, 65496, 0, -65521, 65497, 1441793, -196592, 65491, 655365, -196592, 65497, 5, -65520, 65491, 1048577, -65520, 65492, 0, -65520, 65493, 0, -65520, 65494, 0, -65520, 65495, 0, -65520, 65496, 0, -65520, 65497, 1441793, -196591, 65491, 655365, -196591, 65497, 5, -65519, 65491, 1048577, -65519, 65492, 0, -65519, 65493, 0, -65519, 65494, 0, -65519, 65495, 0, -65519, 65496, 0, -65519, 65497, 1441793, -196590, 65491, 1048582, -196590, 65492, 1048583, -196590, 65496, 7, -196590, 65497, 6, -65518, 65491, 655363, -65518, 65492, 655364, -65518, 65493, 0, -65518, 65494, 0, -65518, 65495, 0, -65518, 65496, 1048580, -65518, 65497, 1048579, -196589, 65492, 1048582, -196589, 65493, 1048581, -196589, 65494, 1048581, -196589, 65495, 1048581, -196589, 65496, 6, -65517, 65492, 655363, -65517, 65493, 1, -65517, 65494, 1, -65517, 65495, 1, -65517, 65496, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/NorthTrapIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-65523, 65493, 1048599, -65522, 65492, 1048596, -65522, 65493, 1441811, -65522, 65494, 20, -65522, 65496, 655380, -65521, 65492, 1441815, -65521, 65493, 655384, -65521, 65494, 1048599, -65521, 65495, 21, -65520, 65492, 18, -65520, 65493, 655379, -65520, 65494, 19, -65519, 65492, 655379, -65519, 65493, 655386, -65519, 65495, 1048596, -65519, 65496, 21, -65518, 65493, 20, -65518, 65494, 1048602)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="WestZigguratIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/WestZigguratIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-131088, 65481, 655366, -131088, 65482, 1441797, -131088, 65483, 1441797, -131088, 65484, 1441797, -131088, 65485, 1441797, -131088, 65486, 1441797, -131088, 65487, 1441797, -131088, 65488, 1441797, -131088, 65489, 1441797, -131088, 65490, 1441797, -131088, 65491, 1441797, -131088, 65492, 1441797, -131088, 65493, 1441797, -131088, 65494, 1441797, -131088, 65495, 1441797, -131088, 65496, 1441797, -131088, 65497, 1441797, -131088, 65498, 1441797, -131088, 65499, 1441797, -131088, 65500, 1441797, -131088, 65501, 1441798, -16, 65481, 1441795, -16, 65482, 1441794, -16, 65483, 1441794, -16, 65484, 1441794, -16, 65485, 1441794, -16, 65486, 655361, -16, 65487, 1441794, -16, 65488, 655361, -16, 65489, 655361, -16, 65490, 655361, -16, 65491, 655361, -16, 65492, 655361, -16, 65493, 655361, -16, 65494, 655361, -16, 65495, 655361, -16, 65496, 655361, -16, 65497, 1441794, -16, 65498, 655361, -16, 65499, 655361, -16, 65500, 655361, -16, 65501, 3, -131087, 65480, 655366, -131087, 65481, 655367, -131087, 65501, 1441799, -131087, 65502, 1441798, -15, 65480, 1441795, -15, 65481, 1441796, -15, 65482, 0, -15, 65483, 0, -15, 65484, 0, -15, 65485, 0, -15, 65486, 0, -15, 65487, 0, -15, 65488, 0, -15, 65489, 0, -15, 65490, 0, -15, 65491, 0, -15, 65492, 0, -15, 65493, 0, -15, 65494, 0, -15, 65495, 0, -15, 65496, 0, -15, 65497, 0, -15, 65498, 0, -15, 65499, 0, -15, 65500, 0, -15, 65501, 4, -15, 65502, 3, -131086, 65480, 655365, -131086, 65502, 5, -14, 65480, 655362, -14, 65481, 0, -14, 65482, 0, -14, 65483, 0, -14, 65484, 0, -14, 65485, 0, -14, 65486, 0, -14, 65487, 0, -14, 65488, 0, -14, 65489, 0, -14, 65490, 0, -14, 65491, 0, -14, 65492, 0, -14, 65493, 0, -14, 65494, 0, -14, 65495, 0, -14, 65496, 0, -14, 65497, 0, -14, 65498, 0, -14, 65499, 0, -14, 65500, 0, -14, 65501, 0, -14, 65502, 1441793, -131085, 65480, 655365, -131085, 65502, 5, -13, 65480, 655362, -13, 65481, 0, -13, 65482, 0, -13, 65483, 0, -13, 65484, 0, -13, 65485, 0, -13, 65486, 0, -13, 65487, 0, -13, 65488, 0, -13, 65489, 0, -13, 65490, 0, -13, 65491, 0, -13, 65492, 0, -13, 65493, 0, -13, 65494, 0, -13, 65495, 0, -13, 65496, 0, -13, 65497, 0, -13, 65498, 0, -13, 65499, 0, -13, 65500, 0, -13, 65501, 0, -13, 65502, 2, -131084, 65480, 1048582, -131084, 65481, 1048583, -131084, 65501, 7, -131084, 65502, 6, -12, 65480, 655363, -12, 65481, 655364, -12, 65482, 0, -12, 65483, 0, -12, 65484, 0, -12, 65485, 0, -12, 65486, 0, -12, 65487, 0, -12, 65488, 0, -12, 65489, 0, -12, 65490, 0, -12, 65491, 0, -12, 65492, 0, -12, 65493, 0, -12, 65494, 0, -12, 65495, 0, -12, 65496, 0, -12, 65497, 0, -12, 65498, 0, -12, 65499, 0, -12, 65500, 0, -12, 65501, 1048580, -12, 65502, 1048579, -131083, 65481, 1048582, -131083, 65482, 1048581, -131083, 65483, 1048581, -131083, 65484, 1048581, -131083, 65485, 1048581, -131083, 65486, 1048581, -131083, 65487, 1048581, -131083, 65488, 1048581, -131083, 65489, 1048581, -131083, 65490, 1048581, -131083, 65491, 1048581, -131083, 65492, 1048581, -131083, 65493, 1048581, -131083, 65494, 1048581, -131083, 65495, 1048581, -131083, 65496, 1048581, -131083, 65497, 1048581, -131083, 65498, 1048581, -131083, 65499, 1048581, -131083, 65500, 1048581, -131083, 65501, 6, -11, 65481, 655363, -11, 65482, 1, -11, 65483, 1, -11, 65484, 1048578, -11, 65485, 1048578, -11, 65486, 1, -11, 65487, 1048578, -11, 65488, 1, -11, 65489, 1048578, -11, 65490, 1048578, -11, 65491, 1048578, -11, 65492, 1048578, -11, 65493, 1, -11, 65494, 1048578, -11, 65495, 1048578, -11, 65496, 1048578, -11, 65497, 1, -11, 65498, 1, -11, 65499, 1048578, -11, 65500, 1, -11, 65501, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/WestZigguratIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-15, 65482, 1048593, -15, 65483, 1441815, -15, 65484, 655386, -15, 65485, 18, -15, 65486, 25, -15, 65487, 655386, -15, 65488, 1441809, -15, 65489, 655385, -15, 65492, 655385, -15, 65493, 655378, -15, 65494, 1441817, -15, 65495, 1048594, -15, 65496, 1048598, -15, 65497, 26, -15, 65498, 1048596, -14, 65482, 655379, -14, 65483, 1441809, -14, 65484, 1441817, -14, 65485, 17, -14, 65486, 1441816, -14, 65487, 655378, -14, 65489, 1048598, -14, 65490, 22, -14, 65492, 1441815, -14, 65493, 655384, -14, 65494, 18, -14, 65496, 655384, -14, 65497, 1441818, -14, 65498, 1441815, -14, 65500, 655386, -14, 65501, 655385, -13, 65481, 23, -13, 65482, 19, -13, 65483, 655380, -13, 65485, 24, -13, 65486, 655385, -13, 65487, 1441816, -13, 65488, 1048594, -13, 65489, 655384, -13, 65490, 655377, -13, 65493, 1441811, -13, 65495, 1441817, -13, 65496, 655383, -13, 65497, 26, -13, 65499, 23, -13, 65501, 21, -12, 65482, 17, -12, 65484, 1441810, -12, 65486, 1048593, -12, 65487, 655383, -12, 65488, 1441817, -12, 65489, 23, -12, 65490, 1441817, -12, 65491, 17, -12, 65494, 1048594, -12, 65495, 655382, -12, 65499, 655377)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="EastZigguratIsle" type="Node3D" parent="Level/JungleIsles"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+
+[node name="Terrain" type="GridMap" parent="Level/JungleIsles/EastZigguratIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-196597, 65477, 655366, -196597, 65478, 1441797, -196597, 65479, 1441797, -196597, 65480, 1441797, -196597, 65481, 1441797, -196597, 65482, 1441797, -196597, 65483, 1441797, -196597, 65484, 1441797, -196597, 65485, 1441798, -65525, 65477, 1441795, -65525, 65478, 1441794, -65525, 65479, 1441794, -65525, 65480, 1441794, -65525, 65481, 1441794, -65525, 65482, 655361, -65525, 65483, 1441794, -65525, 65484, 655361, -65525, 65485, 3, -196596, 65476, 655366, -196596, 65477, 655367, -196596, 65485, 1441799, -196596, 65486, 1441798, -65524, 65476, 1441795, -65524, 65477, 1441796, -65524, 65478, 0, -65524, 65479, 0, -65524, 65480, 0, -65524, 65481, 0, -65524, 65482, 0, -65524, 65483, 0, -65524, 65484, 0, -65524, 65485, 4, -65524, 65486, 3, -196595, 65476, 655365, -196595, 65486, 5, -65523, 65476, 1048577, -65523, 65477, 0, -65523, 65478, 0, -65523, 65479, 0, -65523, 65480, 0, -65523, 65481, 0, -65523, 65482, 0, -65523, 65483, 0, -65523, 65484, 0, -65523, 65485, 0, -65523, 65486, 1441793, -196594, 65476, 655365, -196594, 65486, 5, -65522, 65476, 1048577, -65522, 65477, 0, -65522, 65478, 0, -65522, 65479, 0, -65522, 65480, 0, -65522, 65481, 0, -65522, 65482, 0, -65522, 65483, 0, -65522, 65484, 0, -65522, 65485, 0, -65522, 65486, 1441793, -196593, 65476, 655365, -196593, 65486, 5, -65521, 65476, 1048577, -65521, 65477, 0, -65521, 65478, 0, -65521, 65479, 0, -65521, 65480, 0, -65521, 65481, 0, -65521, 65482, 0, -65521, 65483, 0, -65521, 65484, 0, -65521, 65485, 0, -65521, 65486, 1441793, -196592, 65476, 1048582, -196592, 65477, 1048583, -196592, 65485, 7, -196592, 65486, 6, -65520, 65476, 655363, -65520, 65477, 655364, -65520, 65478, 0, -65520, 65479, 0, -65520, 65480, 0, -65520, 65481, 0, -65520, 65482, 0, -65520, 65483, 0, -65520, 65484, 0, -65520, 65485, 1048580, -65520, 65486, 1048579, -196591, 65477, 1048582, -196591, 65478, 1048581, -196591, 65479, 1048581, -196591, 65480, 1048581, -196591, 65481, 1048581, -196591, 65482, 1048581, -196591, 65483, 1048581, -196591, 65484, 1048581, -196591, 65485, 6, -65519, 65477, 655363, -65519, 65478, 1, -65519, 65479, 1, -65519, 65480, 1048578, -65519, 65481, 1, -65519, 65482, 1, -65519, 65483, 1, -65519, 65484, 1048578, -65519, 65485, 1048579)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="Flora" type="GridMap" parent="Level/JungleIsles/EastZigguratIsle"]
+mesh_library = ExtResource("tiles")
+cell_size = Vector3(2.999, 2, 2.999)
+collision_layer = 0
+collision_mask = 0
+data = {
+"cells": PackedInt32Array(-65524, 65479, 655378, -65524, 65480, 1441818, -65524, 65481, 655382, -65524, 65483, 24, -65524, 65484, 19, -65523, 65477, 23, -65523, 65478, 655383, -65523, 65479, 25, -65523, 65480, 22, -65523, 65483, 1048602, -65523, 65484, 655386, -65522, 65477, 1048600, -65522, 65478, 1048593, -65522, 65479, 1048593, -65522, 65482, 1048593, -65522, 65483, 25, -65521, 65477, 17, -65521, 65478, 655382, -65521, 65479, 1048596, -65521, 65480, 1441815, -65521, 65481, 655379, -65521, 65482, 1441812, -65521, 65483, 1048594, -65521, 65484, 1441815, -65521, 65485, 1048600, -65520, 65479, 1441811, -65520, 65482, 1441816, -65520, 65483, 1441809, -65520, 65484, 655381)
+}
+metadata/_editor_floor_ = Vector3(0, -1, 0)
+
+[node name="LilyPads" type="Node3D" parent="Level"]
+
+[node name="LilyPad1" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.523, 0, 1.012, 0, 1, 0, -1.012, 0, -0.523, 70.1132, -4.5565, -100.0149)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad2" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.755, 0, 0.114, 0, 1, 0, -0.114, 0, -0.755, 70.5576, -4.5565, -97.3116)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad3" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.532, 0, -0.571, 0, 1, 0, 0.571, 0, -0.532, 70.4774, -4.5565, -84.9799)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad4" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.690, 0, -0.190, 0, 1, 0, 0.190, 0, 0.690, 70.0183, -4.5565, -82.0338)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad5" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.502, 0, -0.841, 0, 1, 0, 0.841, 0, 0.502, 73.0315, -4.5565, -100.7164)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad6" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.134, 0, -0.736, 0, 1, 0, 0.736, 0, 0.134, 73.5231, -4.5565, -97.8805)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad7" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.703, 0, 0.392, 0, 1, 0, -0.392, 0, 0.703, 73.0557, -4.5565, -85.3874)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad8" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.267, 0, -0.902, 0, 1, 0, 0.902, 0, -0.267, 72.8823, -4.5565, -81.9972)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad9" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.080, 0, -1.238, 0, 1, 0, 1.238, 0, -0.080, 85.8119, -4.5565, -99.9769)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad10" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.730, 0, 0.181, 0, 1, 0, -0.181, 0, -0.730, 84.8826, -4.5565, -97.0733)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad11" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.781, 0, 0.618, 0, 1, 0, -0.618, 0, 0.781, 85.3942, -4.5565, -85.0839)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad12" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.725, 0, 0.694, 0, 1, 0, -0.694, 0, 0.725, 86.0831, -4.5565, -83.0935)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad13" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(1.148, 0, -0.189, 0, 1, 0, 0.189, 0, 1.148, 88.822, -4.5565, -99.8423)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad14" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.191, 0, 0.973, 0, 1, 0, -0.973, 0, 0.191, 88.4317, -4.5565, -97.1341)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad15" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.839, 0, 0.746, 0, 1, 0, -0.746, 0, -0.839, 89.0966, -4.5565, -86.1224)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad16" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.943, 0, 0.239, 0, 1, 0, -0.239, 0, 0.943, 88.2718, -4.5565, -81.7875)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad17" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.762, 0, -0.069, 0, 1, 0, 0.069, 0, 0.762, -12.9283, -4.5565, -22.2289)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad18" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.719, 0, 0.130, 0, 1, 0, -0.130, 0, -0.719, 13.7642, -4.5565, -26.0582)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad19" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.724, 0, 0.471, 0, 1, 0, -0.471, 0, 0.724, -7.0166, -4.5565, -69.8951)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad20" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.006, 0, -1.208, 0, 1, 0, 1.208, 0, 0.006, 10.6023, -4.5565, -71.0894)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad21" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.064, 0, -0.963, 0, 1, 0, 0.963, 0, 0.064, 19.8519, -4.5565, -59.1431)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad22" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.599, 0, 0.371, 0, 1, 0, -0.371, 0, 0.599, 23.0866, -4.5565, -41.0277)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad23" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.904, 0, 0.138, 0, 1, 0, -0.138, 0, -0.904, 47.0218, -4.5565, -55.9916)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad24" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.116, 0, -0.836, 0, 1, 0, 0.836, 0, 0.116, 54.9018, -4.5565, -43.9556)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad25" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.689, 0, -0.185, 0, 1, 0, 0.185, 0, 0.689, 64.1052, -4.5565, -55.4794)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad26" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.902, 0, -0.105, 0, 1, 0, 0.105, 0, 0.902, 70.7734, -4.5565, -64.3369)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad27" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.108, 0, 0.963, 0, 1, 0, -0.963, 0, -0.108, 88.9454, -4.5565, -65.0342)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad28" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.291, 0, 1.001, 0, 1, 0, -1.001, 0, -0.291, 55.1683, -4.5565, -106.5293)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad29" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.674, 0, -0.439, 0, 1, 0, 0.439, 0, -0.674, 57.8796, -4.5565, -89.1442)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad30" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.657, 0, 0.416, 0, 1, 0, -0.416, 0, 0.657, 14.025, -4.5565, -106.4499)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad31" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.195, 0, -1.055, 0, 1, 0, 1.055, 0, 0.195, -16.963, -4.5565, -132.8236)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad32" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(-0.883, 0, 0.225, 0, 1, 0, -0.225, 0, -0.883, 19.4771, -4.5565, -133.1821)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad33" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.387, 0, 1.054, 0, 1, 0, -1.054, 0, 0.387, -7.0379, -4.5565, -157.5481)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="LilyPad34" type="MeshInstance3D" parent="Level/LilyPads"]
+transform = Transform3D(0.551, 0, -0.631, 0, 1, 0, 0.631, 0, 0.551, 11.0173, -4.5565, -156.9463)
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_lily_pad")
+
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4"), NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8"), NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform13"), NodePath("../../Bridges/BridgePlatform14"), NodePath("../../Bridges/BridgePlatform15"), NodePath("../../Bridges/BridgePlatform16"), NodePath("../../Bridges/BridgePlatform17"), NodePath("../../Bridges/BridgePlatform18")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform19"), NodePath("../../Bridges/BridgePlatform20"), NodePath("../../Bridges/BridgePlatform21"), NodePath("../../Bridges/BridgePlatform22"), NodePath("../../Bridges/BridgePlatform23"), NodePath("../../Bridges/BridgePlatform24")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform25"), NodePath("../../Bridges/BridgePlatform26"), NodePath("../../Bridges/BridgePlatform27"), NodePath("../../Bridges/BridgePlatform28"), NodePath("../../Bridges/BridgePlatform29"), NodePath("../../Bridges/BridgePlatform30")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenBridge7" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform37"), NodePath("../../Bridges/BridgePlatform38"), NodePath("../../Bridges/BridgePlatform39"), NodePath("../../Bridges/BridgePlatform40"), NodePath("../../Bridges/BridgePlatform41"), NodePath("../../Bridges/BridgePlatform42")]
+platform_animation_stagger_seconds = 0.5
+
+[node name="OpenArenaGate" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform31"), NodePath("../../Bridges/BridgePlatform32"), NodePath("../../Bridges/BridgePlatform33"), NodePath("../../Bridges/BridgePlatform34"), NodePath("../../Bridges/BridgePlatform35"), NodePath("../../Bridges/BridgePlatform36")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+
+[node name="OpenSplitRails" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/SplitBridgeNorth"), NodePath("../../Bridges/SplitBridgeSouth")]
+use_camera_focus = false
+
+[node name="CloseSplitNorth" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/SplitBridgeNorth")]
+use_camera_focus = false
+event_type = 1
+
+[node name="CloseSplitSouth" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/SplitBridgeSouth")]
+use_camera_focus = false
+event_type = 1
+
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4"), NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="WakeCourtyardArchers" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/CourtyardArchers")
+next_event = NodePath("../WakeCourtyardRaiders")
+
+[node name="WakeCourtyardRaiders" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/CourtyardRaiders")
+
+[node name="CourtyardCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge2")
+groups = [NodePath("../../../Enemies/CourtyardArchers"), NodePath("../../../Enemies/CourtyardRaiders")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint3")
+also_trigger = [NodePath("../UnfocusCamera")]
+
+[node name="CloseBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8"), NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="WakeRiverIdolMages" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/RiverIdolMages")
+
+[node name="RiverCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge3")
+groups = [NodePath("../../../Enemies/RiverIdolMages")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint4")
+also_trigger = [NodePath("../UnfocusCamera")]
+
+[node name="CloseBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform13"), NodePath("../../Bridges/BridgePlatform14"), NodePath("../../Bridges/BridgePlatform15"), NodePath("../../Bridges/BridgePlatform16"), NodePath("../../Bridges/BridgePlatform17"), NodePath("../../Bridges/BridgePlatform18")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="WakeLatticeMages" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/LatticeMages")
+next_event = NodePath("../WakeLatticeSkulls")
+
+[node name="WakeLatticeSkulls" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/LatticeSkulls")
+
+[node name="LatticeCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge4")
+groups = [NodePath("../../../Enemies/LatticeMages"), NodePath("../../../Enemies/LatticeSkulls")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint5")
+
+[node name="CloseBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform19"), NodePath("../../Bridges/BridgePlatform20"), NodePath("../../Bridges/BridgePlatform21"), NodePath("../../Bridges/BridgePlatform22"), NodePath("../../Bridges/BridgePlatform23"), NodePath("../../Bridges/BridgePlatform24")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="StartTrap" type="Node" parent="Level/Events" node_paths=PackedStringArray("trap", "next_event")]
+script = ExtResource("spike_trap_event")
+trap = NodePath("../../SpikeTrap")
+next_event = NodePath("../WakeTrapHorde")
+
+[node name="WakeTrapHorde" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/SurvivalEnemyGroup")
+
+[node name="RetractTrap" type="Node" parent="Level/Events" node_paths=PackedStringArray("trap")]
+script = ExtResource("spike_trap_event")
+trap = NodePath("../../SpikeTrap")
+action = 1
+
+[node name="TrapCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge5")
+groups = [NodePath("../../../Enemies/SurvivalEnemyGroup")]
+also_trigger = [NodePath("../RetractTrap")]
+
+[node name="CloseBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform25"), NodePath("../../Bridges/BridgePlatform26"), NodePath("../../Bridges/BridgePlatform27"), NodePath("../../Bridges/BridgePlatform28"), NodePath("../../Bridges/BridgePlatform29"), NodePath("../../Bridges/BridgePlatform30")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="SetCheckpoint6" type="Node" parent="Level/Events" node_paths=PackedStringArray("checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint6")
+also_trigger = [NodePath("../CloseBridge5")]
+
+[node name="CloseArenaGate" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform31"), NodePath("../../Bridges/BridgePlatform32"), NodePath("../../Bridges/BridgePlatform33"), NodePath("../../Bridges/BridgePlatform34"), NodePath("../../Bridges/BridgePlatform35"), NodePath("../../Bridges/BridgePlatform36")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+
+[node name="WakeZigguratArchers" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/ZigguratShrineArchers")
+next_event = NodePath("../WakeZigguratHorde")
+
+[node name="WakeZigguratHorde" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/ZigguratHorde")
+
+[node name="StopZigguratHorde" type="Node" parent="Level/Events" node_paths=PackedStringArray("survival_group")]
+script = ExtResource("stop_survival")
+survival_group = NodePath("../../../Enemies/ZigguratHorde")
+
+[node name="ZigguratCleared" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event", "groups", "checkpoint", "also_trigger")]
+script = ExtResource("groups_gate")
+next_event = NodePath("../OpenBridge7")
+groups = [NodePath("../../../Enemies/ZigguratShrineArchers"), NodePath("../../../Enemies/ZigguratHorde")]
+checkpoint = NodePath("../../../CheckpointManager/Checkpoint7")
+also_trigger = [NodePath("../UnfocusCamera")]
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="FocusCourtyardSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCourtyardSW")
+
+[node name="FocusCourtyardSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCourtyardSE")
+
+[node name="FocusCourtyardNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCourtyardNW")
+
+[node name="FocusCourtyardNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusCourtyardNE")
+
+[node name="FocusRiverSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusRiverSW")
+
+[node name="FocusRiverSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusRiverSE")
+
+[node name="FocusRiverNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusRiverNW")
+
+[node name="FocusRiverNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusRiverNE")
+
+[node name="FocusZigguratSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusZigguratSW")
+
+[node name="FocusZigguratSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusZigguratSE")
+
+[node name="FocusZigguratNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusZigguratNW")
+
+[node name="FocusZigguratNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusZigguratNE")
+
+[node name="FocusSanctuarySW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSanctuarySW")
+
+[node name="FocusSanctuarySE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSanctuarySE")
+
+[node name="FocusSanctuaryNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSanctuaryNW")
+
+[node name="FocusSanctuaryNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusSanctuaryNE")
+
+[node name="UnfocusCamera" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="FocusPoints" type="Node3D" parent="Level"]
+
+[node name="FocusCourtyardSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, -52.4825)
+
+[node name="FocusCourtyardSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -52.4825)
+
+[node name="FocusCourtyardNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, -82.4725)
+
+[node name="FocusCourtyardNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -82.4725)
+
+[node name="FocusRiverSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, 0, -37.4875)
+
+[node name="FocusRiverSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, 0, -37.4875)
+
+[node name="FocusRiverNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 34.4885, 0, -61.4795)
+
+[node name="FocusRiverNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, 0, -61.4795)
+
+[node name="FocusZigguratSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, 0, -118.4605)
+
+[node name="FocusZigguratSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, -118.4605)
+
+[node name="FocusZigguratNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.4925, 0, -148.4505)
+
+[node name="FocusZigguratNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, -148.4505)
+
+[node name="FocusSanctuarySW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, -172.4425)
+
+[node name="FocusSanctuarySE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -172.4425)
+
+[node name="FocusSanctuaryNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.4955, 0, -196.4345)
+
+[node name="FocusSanctuaryNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 16.4945, 0, -196.4345)
+
+[node name="Areas" type="Node" parent="Level"]
+
+[node name="CourtyardTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -37.4875)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/CourtyardTrigger"]
+shape = SubResource("BoxShape3D_courtyard")
+
+[node name="RiverWestTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 31.4895, 0, -49.4835)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/RiverWestTrigger"]
+shape = SubResource("BoxShape3D_river_entry")
+
+[node name="LatticeTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 79.4735, 0, -76.4745)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/LatticeTrigger"]
+shape = SubResource("BoxShape3D_lattice")
+
+[node name="TrapTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 40.4865, 0, -97.4675)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/TrapTrigger"]
+shape = SubResource("BoxShape3D_trap")
+
+[node name="ApproachTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4985, 0, -97.4675)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/ApproachTrigger"]
+shape = SubResource("BoxShape3D_approach")
+
+[node name="ZigguratArenaTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -124.4585)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/ZigguratArenaTrigger"]
+shape = SubResource("BoxShape3D_arena")
+
+[node name="SanctuaryRevealTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -157.4475)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/SanctuaryRevealTrigger"]
+shape = SubResource("BoxShape3D_sanctuary_reveal")
+
+[node name="NorthRailTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -51.1335)
+script = ExtResource("single_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/NorthRailTrigger"]
+shape = SubResource("BoxShape3D_rail_single")
+
+[node name="SouthRailTrigger" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 46.4845, 0, -47.8335)
+script = ExtResource("single_player")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/SouthRailTrigger"]
+shape = SubResource("BoxShape3D_rail_single")
+
+[node name="EndLevelArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0, -164.945)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/EndLevelArea"]
+shape = SubResource("BoxShape3D_end")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="SiegeBow" parent="Weapon" instance=ExtResource("siege_bow")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.4995, 0.593, 10.4965)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("launch_message")
+message_string = "[color=#7ef2b5]Sunken Temple[/color]
+
+Stretch apart to draw power and pierce lines of foes.
+Step back together to nock the next arrow.
+Hit an enemy to charge [color=#ffd966]SHOCKWAVE[/color]."
+
+[connection signal="enemies_defeated" from="Enemies/CausewayGuard" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/CausewayGuard" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/CourtyardTrigger" to="Level/Events/CloseBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/CourtyardTrigger" to="Level/Events/WakeCourtyardArchers" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/CourtyardTrigger" to="Level/Events/FocusCourtyardSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/CourtyardTrigger" to="Level/Events/FocusCourtyardSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/CourtyardTrigger" to="Level/Events/FocusCourtyardNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/CourtyardTrigger" to="Level/Events/FocusCourtyardNE" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/CourtyardArchers" to="Level/Events/CourtyardCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/CourtyardRaiders" to="Level/Events/CourtyardCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/RiverWestTrigger" to="Level/Events/CloseBridge2" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/RiverWestTrigger" to="Level/Events/WakeRiverIdolMages" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/RiverWestTrigger" to="Level/Events/FocusRiverSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/RiverWestTrigger" to="Level/Events/FocusRiverSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/RiverWestTrigger" to="Level/Events/FocusRiverNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/RiverWestTrigger" to="Level/Events/FocusRiverNE" method="trigger"]
+[connection signal="player_inside" from="Level/Areas/NorthRailTrigger" to="Level/Events/CloseSplitNorth" method="trigger"]
+[connection signal="player_inside" from="Level/Areas/SouthRailTrigger" to="Level/Events/CloseSplitSouth" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/RiverIdolMages" to="Level/Events/RiverCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/LatticeTrigger" to="Level/Events/CloseBridge3" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/LatticeTrigger" to="Level/Events/WakeLatticeMages" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/LatticeMages" to="Level/Events/LatticeCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/LatticeSkulls" to="Level/Events/LatticeCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/TrapTrigger" to="Level/Events/CloseBridge4" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/TrapTrigger" to="Level/Events/StartTrap" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/SurvivalEnemyGroup" to="Level/Events/TrapCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ApproachTrigger" to="Level/Events/SetCheckpoint6" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ZigguratArenaTrigger" to="Level/Events/CloseArenaGate" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ZigguratArenaTrigger" to="Level/Events/WakeZigguratArchers" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ZigguratArenaTrigger" to="Level/Events/FocusZigguratSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ZigguratArenaTrigger" to="Level/Events/FocusZigguratSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ZigguratArenaTrigger" to="Level/Events/FocusZigguratNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/ZigguratArenaTrigger" to="Level/Events/FocusZigguratNE" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/ZigguratShrineArchers" to="Level/Events/StopZigguratHorde" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/ZigguratShrineArchers" to="Level/Events/ZigguratCleared" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/ZigguratHorde" to="Level/Events/ZigguratCleared" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SanctuaryRevealTrigger" to="Level/Events/FocusSanctuarySW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SanctuaryRevealTrigger" to="Level/Events/FocusSanctuarySE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SanctuaryRevealTrigger" to="Level/Events/FocusSanctuaryNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/SanctuaryRevealTrigger" to="Level/Events/FocusSanctuaryNE" method="trigger"]
+[connection signal="all_players_inside" from="Level/EndLevelArea" to="Level/Events/LevelSucceeded" method="trigger"]

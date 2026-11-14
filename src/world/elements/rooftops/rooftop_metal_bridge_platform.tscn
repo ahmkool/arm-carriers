@@ -1,0 +1,346 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cm5cxva7k4xex" path="res://src/world/elements/bridge_platform.gd" id="1_bridge"]
+[ext_resource type="Shader" path="res://src/world/elements/rooftops/rooftop_metal_bridge.gdshader" id="2_deck_shader"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_deck"]
+render_priority = 0
+shader = ExtResource("2_deck_shader")
+shader_parameter/local_space = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_girder"]
+albedo_color = Color(0.17, 0.20, 0.25, 1)
+metallic = 0.78
+roughness = 0.34
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rail"]
+albedo_color = Color(0.46, 0.51, 0.58, 1)
+metallic = 0.85
+roughness = 0.26
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_led"]
+shading_mode = 0
+albedo_color = Color(0.32, 1.35, 1.95, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_deck"]
+material = SubResource("ShaderMaterial_deck")
+size = Vector3(2.999, 0.18, 2.999)
+
+[sub_resource type="BoxMesh" id="BoxMesh_girder"]
+material = SubResource("StandardMaterial3D_girder")
+size = Vector3(0.18, 0.44, 2.999)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lower_chord"]
+material = SubResource("StandardMaterial3D_girder")
+size = Vector3(0.12, 0.10, 2.999)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crossbeam"]
+material = SubResource("StandardMaterial3D_girder")
+size = Vector3(2.98, 0.24, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rail_top"]
+material = SubResource("StandardMaterial3D_rail")
+size = Vector3(0.08, 0.06, 2.999)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rail_mid"]
+material = SubResource("StandardMaterial3D_rail")
+size = Vector3(0.045, 0.035, 2.999)
+
+[sub_resource type="BoxMesh" id="BoxMesh_post"]
+material = SubResource("StandardMaterial3D_girder")
+size = Vector3(0.09, 0.52, 0.10)
+
+[sub_resource type="BoxMesh" id="BoxMesh_brace"]
+material = SubResource("StandardMaterial3D_girder")
+size = Vector3(0.07, 0.07, 1.48)
+
+[sub_resource type="BoxMesh" id="BoxMesh_led"]
+material = SubResource("StandardMaterial3D_led")
+size = Vector3(0.035, 0.035, 2.86)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_slab"]
+size = Vector3(2.999, 0.72, 2.999)
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 3, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatableBody3D/Visual:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatableBody3D/CollisionShape3D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatableBody3D/Visual:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_animate"]
+resource_name = "animate"
+length = 1.4
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 1.4),
+"transitions": PackedFloat32Array(0.35, 1),
+"update": 0,
+"values": [Vector3(0, 0.5, 0), Vector3(0, 3, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatableBody3D/Visual:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.02),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatableBody3D/CollisionShape3D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 1.15),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatableBody3D/Visual:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 1.1, 1.4),
+"transitions": PackedFloat32Array(0.45, 1, 1),
+"update": 0,
+"values": [Vector3(1, 1, 0.05), Vector3(1, 1, 1.03), Vector3(1, 1, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_bottom"]
+resource_name = "bottom"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 0.5, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatableBody3D/Visual:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatableBody3D/CollisionShape3D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatableBody3D/Visual:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 0.05)]
+}
+
+[sub_resource type="Animation" id="Animation_complete"]
+resource_name = "complete"
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("AnimatableBody3D:position")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(0, 3, 0)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("AnimatableBody3D/Visual:visible")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [true]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("AnimatableBody3D/CollisionShape3D:disabled")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [false]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("AnimatableBody3D/Visual:scale")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector3(1, 1, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_metal"]
+_data = {
+&"RESET": SubResource("Animation_reset"),
+&"animate": SubResource("Animation_animate"),
+&"bottom": SubResource("Animation_bottom"),
+&"complete": SubResource("Animation_complete")
+}
+
+[node name="RooftopMetalBridgePlatform" type="Node3D"]
+script = ExtResource("1_bridge")
+
+[node name="AnimatableBody3D" type="AnimatableBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"metal"
+
+[node name="Visual" type="Node3D" parent="AnimatableBody3D"]
+
+[node name="Deck" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.09, 0)
+mesh = SubResource("BoxMesh_deck")
+
+[node name="OuterGirder" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.41, -0.08, 0)
+mesh = SubResource("BoxMesh_girder")
+
+[node name="LowerChord" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.41, -0.68, 0)
+mesh = SubResource("BoxMesh_lower_chord")
+
+[node name="TrussBrace1" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 0.9455186, -0.32556817, 0, 0.32556817, 0.9455186, -1.41, -0.45, -0.72)
+mesh = SubResource("BoxMesh_brace")
+
+[node name="TrussBrace2" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 0.9455186, 0.32556817, 0, -0.32556817, 0.9455186, -1.41, -0.45, 0.72)
+mesh = SubResource("BoxMesh_brace")
+
+[node name="CrossBeam1" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, -0.75)
+mesh = SubResource("BoxMesh_crossbeam")
+
+[node name="CrossBeam2" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.28, 0.75)
+mesh = SubResource("BoxMesh_crossbeam")
+
+[node name="HandrailTop" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.42, 0.50, 0)
+mesh = SubResource("BoxMesh_rail_top")
+
+[node name="HandrailMid" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.42, 0.30, 0)
+mesh = SubResource("BoxMesh_rail_mid")
+
+[node name="Stanchion1" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.42, 0.25, -0.75)
+mesh = SubResource("BoxMesh_post")
+
+[node name="Stanchion2" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.42, 0.25, 0.75)
+mesh = SubResource("BoxMesh_post")
+
+[node name="SafetyLedStrip" type="MeshInstance3D" parent="AnimatableBody3D/Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.30, 0.08, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_led")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AnimatableBody3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.36, 0)
+shape = SubResource("BoxShape3D_slab")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+&"": SubResource("AnimationLibrary_metal")
+}

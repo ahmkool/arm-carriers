@@ -1,0 +1,114 @@
+[gd_scene load_steps=15 format=3 uid="uid://c4ueq4jf35p6o"]
+
+[ext_resource type="Script" uid="uid://cs8gjj1fvcyld" path="res://src/world/elements/sky_decks/rotor_spin.gd" id="1_spin"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hvac"]
+size = Vector3(2.25, 1.35, 1.75)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dark"]
+albedo_color = Color(0.11, 0.13, 0.17, 1)
+metallic = 0.55
+roughness = 0.48
+
+[sub_resource type="BoxMesh" id="BoxMesh_plinth"]
+material = SubResource("StandardMaterial3D_dark")
+size = Vector3(2.36, 0.16, 1.86)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_casing"]
+albedo_color = Color(0.42, 0.46, 0.52, 1)
+metallic = 0.62
+roughness = 0.42
+
+[sub_resource type="BoxMesh" id="BoxMesh_body"]
+material = SubResource("StandardMaterial3D_casing")
+size = Vector3(2.2, 1.05, 1.7)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_shroud"]
+material = SubResource("StandardMaterial3D_dark")
+top_radius = 0.58
+bottom_radius = 0.62
+height = 0.16
+radial_segments = 16
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_well"]
+albedo_color = Color(0.04, 0.05, 0.07, 1)
+roughness = 0.9
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_well"]
+material = SubResource("StandardMaterial3D_well")
+height = 0.06
+radial_segments = 16
+
+[sub_resource type="BoxMesh" id="BoxMesh_blade"]
+material = SubResource("StandardMaterial3D_casing")
+size = Vector3(0.88, 0.03, 0.16)
+
+[sub_resource type="BoxMesh" id="BoxMesh_duct"]
+material = SubResource("StandardMaterial3D_casing")
+size = Vector3(0.42, 0.36, 0.52)
+
+[sub_resource type="BoxMesh" id="BoxMesh_louver"]
+material = SubResource("StandardMaterial3D_dark")
+size = Vector3(0.76, 0.62, 0.06)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_led"]
+shading_mode = 0
+albedo_color = Color(0.2, 1.8, 0.55, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_led"]
+material = SubResource("StandardMaterial3D_led")
+size = Vector3(0.08, 0.08, 0.04)
+
+[node name="RooftopHvac" type="StaticBody3D"]
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"metal"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.68, 0)
+shape = SubResource("BoxShape3D_hvac")
+
+[node name="Plinth" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.08, 0)
+mesh = SubResource("BoxMesh_plinth")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.68, 0)
+mesh = SubResource("BoxMesh_body")
+
+[node name="FanShroud" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.38, 1.25, 0)
+mesh = SubResource("CylinderMesh_shroud")
+
+[node name="FanWell" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.38, 1.305, 0)
+mesh = SubResource("CylinderMesh_well")
+
+[node name="FanRotor" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.38, 1.3592924, 0)
+script = ExtResource("1_spin")
+speed = 7.5
+
+[node name="Blade1" type="MeshInstance3D" parent="FanRotor"]
+mesh = SubResource("BoxMesh_blade")
+
+[node name="Blade2" type="MeshInstance3D" parent="FanRotor"]
+transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 0, 0, 0)
+mesh = SubResource("BoxMesh_blade")
+
+[node name="Duct" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.62, 1.28, -0.22)
+mesh = SubResource("BoxMesh_duct")
+
+[node name="LouverSouth1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.48, 0.68, 0.85)
+mesh = SubResource("BoxMesh_louver")
+
+[node name="LouverSouth2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.48, 0.68, 0.85)
+mesh = SubResource("BoxMesh_louver")
+
+[node name="StatusLed" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.94, 0.98, 0.85)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_led")

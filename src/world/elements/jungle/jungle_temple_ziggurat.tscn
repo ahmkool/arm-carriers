@@ -1,0 +1,112 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/jungle/jungle_ruin_stone.gdshader" id="1_stone"]
+[ext_resource type="PackedScene" path="res://src/world/elements/jungle/jungle_totem_brazier.tscn" id="2_brazier"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_temple"]
+render_priority = 0
+shader = ExtResource("1_stone")
+shader_parameter/flag_color = Color(0.38, 0.42, 0.34, 1)
+shader_parameter/wall_color = Color(0.32, 0.36, 0.29, 1)
+shader_parameter/course_height = 0.52
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jade"]
+shading_mode = 0
+albedo_color = Color(0.24, 1.45, 0.88, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_portal"]
+shading_mode = 0
+albedo_color = Color(0.08, 0.55, 0.38, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tier1"]
+material = SubResource("ShaderMaterial_temple")
+size = Vector3(15.5, 2.4, 9.5)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tier2"]
+material = SubResource("ShaderMaterial_temple")
+size = Vector3(11.5, 2.2, 7.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tier3"]
+material = SubResource("ShaderMaterial_temple")
+size = Vector3(7.6, 2.0, 5.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sanctum"]
+material = SubResource("ShaderMaterial_temple")
+size = Vector3(4.8, 2.6, 3.6)
+
+[sub_resource type="BoxMesh" id="BoxMesh_stair"]
+material = SubResource("ShaderMaterial_temple")
+size = Vector3(3.8, 4.2, 4.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cheek"]
+material = SubResource("ShaderMaterial_temple")
+size = Vector3(0.65, 4.6, 4.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_portal"]
+material = SubResource("StandardMaterial3D_portal")
+size = Vector3(2.2, 2.0, 0.3)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rune_band"]
+material = SubResource("StandardMaterial3D_jade")
+size = Vector3(11.7, 0.14, 7.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_crest_rune"]
+material = SubResource("StandardMaterial3D_jade")
+size = Vector3(3.2, 0.22, 0.22)
+
+[node name="JungleTempleZiggurat" type="Node3D"]
+
+[node name="Tier1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+mesh = SubResource("BoxMesh_tier1")
+
+[node name="Tier2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, -0.4)
+mesh = SubResource("BoxMesh_tier2")
+
+[node name="RuneBand" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, -0.4)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rune_band")
+
+[node name="Tier3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4.6, -0.8)
+mesh = SubResource("BoxMesh_tier3")
+
+[node name="Sanctum" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.9, -1.0)
+mesh = SubResource("BoxMesh_sanctum")
+
+[node name="PortalGlow" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.6, 0.72)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_portal")
+
+[node name="CrestRune" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 7.9, 0.82)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_crest_rune")
+
+[node name="Stairway" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 0, 2.2, 3.5)
+mesh = SubResource("BoxMesh_stair")
+
+[node name="CheekWest" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, -2.15, 2.4, 3.5)
+mesh = SubResource("BoxMesh_cheek")
+
+[node name="CheekEast" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.8660254, 0.5, 0, -0.5, 0.8660254, 2.15, 2.4, 3.5)
+mesh = SubResource("BoxMesh_cheek")
+
+[node name="BrazierWest" parent="." instance=ExtResource("2_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.6, 1.4, 3.4)
+
+[node name="BrazierEast" parent="." instance=ExtResource("2_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6, 1.4, 3.4)
+
+[node name="BrazierCrestWest" parent="." instance=ExtResource("2_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.9, 5.6, 1.1)
+
+[node name="BrazierCrestEast" parent="." instance=ExtResource("2_brazier")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9, 5.6, 1.1)
