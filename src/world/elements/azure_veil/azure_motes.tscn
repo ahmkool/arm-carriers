@@ -1,0 +1,113 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/jungle/jungle_fireflies.gd" id="1_follow"]
+
+[sub_resource type="Gradient" id="Gradient_pulse"]
+offsets = PackedFloat32Array(0, 0.22, 0.68, 1)
+colors = PackedColorArray(1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0.85, 1, 1, 1, 0)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_pulse"]
+gradient = SubResource("Gradient_pulse")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_cyan"]
+emission_shape = 3
+emission_box_extents = Vector3(28, 5.0, 24)
+direction = Vector3(0.18, 1, -0.06)
+spread = 42.0
+initial_velocity_min = 0.32
+initial_velocity_max = 0.95
+gravity = Vector3(0, 0.12, 0)
+scale_min = 0.6
+scale_max = 1.4
+color_ramp = SubResource("GradientTexture1D_pulse")
+turbulence_enabled = true
+turbulence_noise_strength = 1.15
+turbulence_noise_scale = 2.6
+
+[sub_resource type="Gradient" id="Gradient_orb"]
+offsets = PackedFloat32Array(0, 0.34, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0.55, 0.94, 1, 0.58, 0.18, 0.65, 1, 0)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_orb"]
+gradient = SubResource("Gradient_orb")
+width = 32
+height = 32
+fill = 1
+fill_from = Vector2(0.5, 0.5)
+fill_to = Vector2(1, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cyan"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.45, 1.38, 1.65, 0.92)
+albedo_texture = SubResource("GradientTexture2D_orb")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_cyan"]
+material = SubResource("StandardMaterial3D_cyan")
+size = Vector2(0.3, 0.3)
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_indigo"]
+emission_shape = 3
+emission_box_extents = Vector3(28, 4.5, 24)
+direction = Vector3(-0.14, 1, 0.08)
+spread = 52.0
+initial_velocity_min = 0.25
+initial_velocity_max = 0.78
+gravity = Vector3(0, 0.1, 0)
+scale_min = 0.5
+scale_max = 1.15
+color_ramp = SubResource("GradientTexture1D_pulse")
+turbulence_enabled = true
+turbulence_noise_strength = 0.95
+turbulence_noise_scale = 2.2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_indigo"]
+transparency = 1
+blend_mode = 1
+cull_mode = 2
+shading_mode = 0
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.75, 0.90, 1.60, 0.85)
+albedo_texture = SubResource("GradientTexture2D_orb")
+billboard_mode = 3
+billboard_keep_scale = true
+particles_anim_h_frames = 1
+particles_anim_v_frames = 1
+particles_anim_loop = false
+disable_receive_shadows = true
+
+[sub_resource type="QuadMesh" id="QuadMesh_indigo"]
+material = SubResource("StandardMaterial3D_indigo")
+size = Vector2(0.24, 0.24)
+
+[node name="AzureMotes" type="Node3D"]
+script = ExtResource("1_follow")
+
+[node name="Fireflies" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 100
+lifetime = 4.8
+preprocess = 2.5
+visibility_aabb = AABB(-38, -12, -38, 76, 26, 76)
+local_coords = false
+process_material = SubResource("ParticleProcessMaterial_cyan")
+draw_pass_1 = SubResource("QuadMesh_cyan")
+
+[node name="Spores" type="GPUParticles3D" parent="."]
+cast_shadow = 0
+amount = 65
+lifetime = 5.4
+preprocess = 2.5
+visibility_aabb = AABB(-38, -12, -38, 76, 26, 76)
+local_coords = false
+process_material = SubResource("ParticleProcessMaterial_indigo")
+draw_pass_1 = SubResource("QuadMesh_indigo")

@@ -1,0 +1,87 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/azure_veil/ancient_cube.gd" id="1_cube"]
+[ext_resource type="Shader" path="res://src/world/elements/azure_veil/ancient_cube.gdshader" id="2_shader"]
+
+[sub_resource type="ShaderMaterial" id="Mat_cube"]
+render_priority = 0
+shader = ExtResource("2_shader")
+
+[sub_resource type="BoxMesh" id="Mesh_core"]
+material = SubResource("Mat_cube")
+size = Vector3(2.4, 2.4, 2.4)
+
+[sub_resource type="StandardMaterial3D" id="Mat_cap"]
+albedo_color = Color(0.11, 0.24, 0.40, 1)
+metallic = 0.35
+roughness = 0.38
+
+[sub_resource type="BoxMesh" id="Mesh_corner"]
+material = SubResource("Mat_cap")
+size = Vector3(0.68, 0.68, 0.68)
+
+[sub_resource type="StandardMaterial3D" id="Mat_halo"]
+transparency = 1
+blend_mode = 1
+shading_mode = 0
+albedo_color = Color(0.45, 0.92, 1, 0.58)
+disable_receive_shadows = true
+
+[sub_resource type="TorusMesh" id="Mesh_halo"]
+material = SubResource("Mat_halo")
+inner_radius = 1.95
+outer_radius = 2.08
+rings = 32
+ring_segments = 10
+
+[node name="AncientCube" type="Node3D"]
+script = ExtResource("1_cube")
+
+[node name="Body" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("Mesh_core")
+
+[node name="Corner1" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 0.98, 0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner2" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, 0.98, 0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner3" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, -0.98, 0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner4" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, -0.98, 0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner5" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, 0.98, -0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner6" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, 0.98, -0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner7" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.98, -0.98, -0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="Corner8" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.98, -0.98, -0.98)
+cast_shadow = 0
+mesh = SubResource("Mesh_corner")
+
+[node name="ArcaneHalo" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.939693, 0.34202, 0, -0.34202, 0.939693, 0, 0, 0, 1, 0, 0, 0)
+cast_shadow = 0
+mesh = SubResource("Mesh_halo")

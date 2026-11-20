@@ -14,6 +14,7 @@ const WEAPONS: Array[Dictionary] = [
 	{"id": "fork_cannon", "name": "Fork Cannon", "ranged": true, "scene": "res://src/weapon/fork_cannon.tscn", "icon": "res://assets/sprites/ui/icons/weapons/fork_cannon.png", "setter_offset": Vector3(0.0, 0.0, -0.5083), "shooter_offset": Vector3(0.0, 0.0, 2.1002)},
 	{"id": "shuriken_launcher", "name": "Shuriken Launcher", "ranged": true, "scene": "res://src/weapon/shuriken_launcher.tscn", "icon": "res://assets/sprites/ui/icons/weapons/shuriken_launcher.png", "setter_offset": Vector3(0.0, 0.0, -0.5083), "shooter_offset": Vector3(0.0, 0.0, 2.1002)},
 	{"id": "shears", "name": "Shears", "ranged": false, "scene": "res://src/weapon/shears.tscn", "icon": "res://assets/sprites/ui/icons/weapons/shears.png", "setter_offset": Vector3(2.5, 0.0, 0.0), "shooter_offset": Vector3(-2.5, 0.0, 0.0)},
+	{"id": "mirror", "name": "Mirror", "ranged": true, "scene": "res://src/weapon/mirror.tscn", "icon": "res://assets/sprites/ui/icons/weapons/sword.png", "setter_offset": Vector3(2.0, 0.0, 0.0), "shooter_offset": Vector3(-2.0, 0.0, 0.0)},
 ]
 
 

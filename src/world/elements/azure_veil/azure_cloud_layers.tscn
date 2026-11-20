@@ -1,0 +1,93 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/memories/memories_clouds.gdshader" id="1_clouds"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_base"]
+render_priority = -5
+shader = ExtResource("1_clouds")
+shader_parameter/lit_color = Color(0.42, 0.82, 0.94, 1)
+shader_parameter/mid_color = Color(0.18, 0.49, 0.72, 1)
+shader_parameter/shade_color = Color(0.06, 0.18, 0.36, 1)
+shader_parameter/sky_color = Color(0.09, 0.28, 0.48, 1)
+shader_parameter/horizon_color = Color(0.58, 0.90, 0.96, 1)
+shader_parameter/sky_opacity = 1.0
+shader_parameter/coverage = 0.78
+shader_parameter/softness = 0.19
+shader_parameter/max_alpha = 1.0
+shader_parameter/uv_scale = Vector2(0.008, 0.017)
+shader_parameter/drift = Vector2(0.32, 0.06)
+shader_parameter/fade_radius = 480.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_deep"]
+render_priority = -4
+shader = ExtResource("1_clouds")
+shader_parameter/lit_color = Color(0.54, 0.88, 0.97, 1)
+shader_parameter/mid_color = Color(0.24, 0.58, 0.78, 1)
+shader_parameter/shade_color = Color(0.08, 0.24, 0.44, 1)
+shader_parameter/horizon_color = Color(0.62, 0.92, 0.98, 1)
+shader_parameter/sky_opacity = 0.0
+shader_parameter/coverage = 0.62
+shader_parameter/softness = 0.17
+shader_parameter/max_alpha = 0.88
+shader_parameter/uv_scale = Vector2(0.013, 0.028)
+shader_parameter/drift = Vector2(0.62, 0.12)
+shader_parameter/fade_radius = 440.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_billows"]
+render_priority = -3
+shader = ExtResource("1_clouds")
+shader_parameter/lit_color = Color(0.66, 0.94, 1, 1)
+shader_parameter/mid_color = Color(0.32, 0.68, 0.86, 1)
+shader_parameter/shade_color = Color(0.12, 0.32, 0.54, 1)
+shader_parameter/horizon_color = Color(0.68, 0.94, 0.99, 1)
+shader_parameter/sky_opacity = 0.0
+shader_parameter/coverage = 0.46
+shader_parameter/softness = 0.16
+shader_parameter/max_alpha = 0.80
+shader_parameter/uv_scale = Vector2(0.019, 0.042)
+shader_parameter/drift = Vector2(1.05, 0.22)
+shader_parameter/fade_radius = 420.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wisps"]
+render_priority = -2
+shader = ExtResource("1_clouds")
+shader_parameter/lit_color = Color(0.80, 0.97, 1, 1)
+shader_parameter/mid_color = Color(0.46, 0.78, 0.94, 1)
+shader_parameter/shade_color = Color(0.20, 0.44, 0.68, 1)
+shader_parameter/horizon_color = Color(0.72, 0.95, 1, 1)
+shader_parameter/sky_opacity = 0.0
+shader_parameter/coverage = 0.30
+shader_parameter/softness = 0.14
+shader_parameter/max_alpha = 0.52
+shader_parameter/uv_scale = Vector2(0.032, 0.064)
+shader_parameter/drift = Vector2(1.65, 0.32)
+shader_parameter/fade_radius = 380.0
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_layer"]
+size = Vector2(1100, 1100)
+
+[node name="AzureCloudLayers" type="Node3D"]
+
+[node name="Base" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -62, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_base")
+
+[node name="DeepGasBank" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -34, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_deep")
+
+[node name="CyanBillows" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -16.5, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_billows")
+
+[node name="UpperWisps" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -5.8, 0)
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_layer")
+material_override = SubResource("ShaderMaterial_wisps")

@@ -1,11 +1,17 @@
-[gd_resource type="MeshLibrary" load_steps=9 format=3]
+[gd_resource type="MeshLibrary" load_steps=9 format=3 uid="uid://pvds1dpkc4gt"]
 
-[ext_resource type="Shader" path="res://src/world/elements/memories/memories_floor.gdshader" id="1_floor"]
-[ext_resource type="Shader" path="res://src/world/elements/memories/memories_rim.gdshader" id="2_rim"]
+[ext_resource type="Shader" uid="uid://dadjnwg415hgc" path="res://src/world/elements/memories/memories_floor.gdshader" id="1_floor"]
+[ext_resource type="Shader" uid="uid://qksn3x06mwg4" path="res://src/world/elements/memories/memories_rim.gdshader" id="2_rim"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
 render_priority = -1
 shader = ExtResource("1_floor")
+shader_parameter/deep_teal = Color(0.055, 0.145, 0.215, 1)
+shader_parameter/crest_teal = Color(0.145, 0.285, 0.365, 1)
+shader_parameter/reflection_tint = Color(0.78, 0.69, 0.76, 1)
+shader_parameter/rune_line_color = Color(0.38, 0.66, 0.74, 1)
+shader_parameter/base_alpha = 0.62
+shader_parameter/tile_size = 2.999
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_slab"]
 material = SubResource("ShaderMaterial_floor")
@@ -17,6 +23,10 @@ size = Vector3(2.999, 1, 2.999)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rim"]
 render_priority = 0
 shader = ExtResource("2_rim")
+shader_parameter/body_color = Color(0.11, 0.2, 0.26, 1)
+shader_parameter/cap_color = Color(0.22, 0.35, 0.42, 1)
+shader_parameter/trim_glow = Color(0.58, 0.86, 0.92, 1)
+shader_parameter/trim_energy = 0.85
 
 [sub_resource type="BoxMesh" id="BoxMesh_rim_ew"]
 material = SubResource("ShaderMaterial_rim")

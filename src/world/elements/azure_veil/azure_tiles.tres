@@ -1,0 +1,74 @@
+[gd_resource type="MeshLibrary" load_steps=9 format=3 uid="uid://chb5xns6aay25"]
+
+[ext_resource type="Shader" uid="uid://d0144ne7yfft7" path="res://src/world/elements/azure_veil/azure_floor.gdshader" id="1_floor"]
+[ext_resource type="Shader" uid="uid://4p342h77owwk" path="res://src/world/elements/azure_veil/azure_rim.gdshader" id="2_rim"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_floor"]
+render_priority = -1
+shader = ExtResource("1_floor")
+shader_parameter/deep_sapphire = Color(0.05, 0.13, 0.26, 1)
+shader_parameter/mid_cerulean = Color(0.11, 0.26, 0.42, 1)
+shader_parameter/sky_reflection = Color(0.55, 0.86, 0.96, 1)
+shader_parameter/rune_color = Color(0.45, 0.88, 0.98, 1)
+shader_parameter/base_alpha = 0.78
+shader_parameter/tile_size = 2.999
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_slab"]
+material = SubResource("ShaderMaterial_floor")
+size = Vector2(2.999, 2.999)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_slab"]
+size = Vector3(2.999, 1, 2.999)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rim"]
+render_priority = 0
+shader = ExtResource("2_rim")
+shader_parameter/body_color = Color(0.06, 0.14, 0.27, 1)
+shader_parameter/cap_color = Color(0.14, 0.3, 0.48, 1)
+shader_parameter/trim_glow = Color(0.45, 0.9, 1, 1)
+shader_parameter/trim_energy = 1.05
+
+[sub_resource type="BoxMesh" id="BoxMesh_rim_ew"]
+material = SubResource("ShaderMaterial_rim")
+size = Vector3(3.019, 0.44, 0.26)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rim_ns"]
+material = SubResource("ShaderMaterial_rim")
+size = Vector3(0.26, 0.44, 3.019)
+
+[resource]
+item/0/name = "Slab"
+item/0/mesh = SubResource("PlaneMesh_slab")
+item/0/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/mesh_cast_shadow = 0
+item/0/shapes = [SubResource("BoxShape3D_slab"), Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)]
+item/0/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/0/navigation_layers = 1
+item/1/name = "EdgeN"
+item/1/mesh = SubResource("BoxMesh_rim_ew")
+item/1/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.84, -1.3695)
+item/1/mesh_cast_shadow = 1
+item/1/shapes = []
+item/1/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/1/navigation_layers = 1
+item/2/name = "EdgeS"
+item/2/mesh = SubResource("BoxMesh_rim_ew")
+item/2/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.84, 1.3695)
+item/2/mesh_cast_shadow = 1
+item/2/shapes = []
+item/2/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/2/navigation_layers = 1
+item/3/name = "EdgeW"
+item/3/mesh = SubResource("BoxMesh_rim_ns")
+item/3/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3695, 5.84, 0)
+item/3/mesh_cast_shadow = 1
+item/3/shapes = []
+item/3/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/3/navigation_layers = 1
+item/4/name = "EdgeE"
+item/4/mesh = SubResource("BoxMesh_rim_ns")
+item/4/mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3695, 7.84, 0)
+item/4/mesh_cast_shadow = 1
+item/4/shapes = []
+item/4/navigation_mesh_transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
+item/4/navigation_layers = 1

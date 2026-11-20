@@ -94,11 +94,18 @@ const DEV_GROUPS: Array[Dictionary] = [
 			{"title": "Rotor Decks II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_rotor_decks_2.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Space Station II", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_space_station_2.tscn", "weapon": "pulse_rifle", "requires": "ranged"},
 			{"title": "Storm Isles", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_storm_isles.tscn", "weapon": "saw"},
-			{"title": "Castle Siege", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_castle_siege.tscn", "weapon": "catapult", "requires": "ranged"},
-			{"title": "Mysterious Jungle", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_mysterious_jungle.tscn", "weapon": "siege_bow", "requires": "ranged"},
-			{"title": "Night Rooftops", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_night_rooftops.tscn", "weapon": "shuriken_launcher", "all_weapons": true},
-			{"title": "World of Memories", "difficulty": 3, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_local_world_of_memories.tscn", "weapon": "sword", "all_weapons": true},
 		],
+	},
+	{
+	"name": "Dev 2",
+	"dev": true,
+	"levels": [
+		{"title": "Castle Siege", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_castle_siege.tscn", "weapon": "catapult", "requires": "ranged"},
+		{"title": "Mysterious Jungle", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_mysterious_jungle.tscn", "weapon": "siege_bow", "requires": "ranged"},
+		{"title": "Night Rooftops", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_night_rooftops.tscn", "weapon": "shuriken_launcher", "all_weapons": true},
+		{"title": "World of Memories", "difficulty": 3, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_local_world_of_memories.tscn", "weapon": "sword", "all_weapons": true},
+		{"title": "Azure Veil", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_azure_veil.tscn", "weapon": "mirror", "all_weapons": true},
+	],
 	},
 ]
 

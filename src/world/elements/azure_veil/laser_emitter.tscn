@@ -1,0 +1,99 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/azure_veil/laser_emitter.gd" id="1_emitter"]
+[ext_resource type="Shader" path="res://src/world/elements/azure_veil/ancient_cube.gdshader" id="2_cube"]
+
+[sub_resource type="ShaderMaterial" id="Mat_monolith"]
+render_priority = 0
+shader = ExtResource("2_cube")
+shader_parameter/rune_energy = 1.65
+
+[sub_resource type="BoxMesh" id="Mesh_monolith"]
+material = SubResource("Mat_monolith")
+size = Vector3(2.2, 2.2, 2.2)
+
+[sub_resource type="StandardMaterial3D" id="Mat_frame"]
+albedo_color = Color(0.14, 0.28, 0.46, 1)
+metallic = 0.48
+roughness = 0.3
+
+[sub_resource type="BoxMesh" id="Mesh_cheek"]
+material = SubResource("Mat_frame")
+size = Vector3(0.42, 2.4, 0.55)
+
+[sub_resource type="StandardMaterial3D" id="Mat_prism"]
+albedo_color = Color(0.72, 0.96, 1, 1)
+metallic = 0.2
+roughness = 0.12
+emission_enabled = true
+emission = Color(0.45, 0.92, 1, 1)
+emission_energy_multiplier = 1.8
+
+[sub_resource type="PrismMesh" id="Mesh_prism"]
+material = SubResource("Mat_prism")
+size = Vector3(0.75, 0.95, 0.75)
+
+[sub_resource type="StandardMaterial3D" id="Mat_ring"]
+albedo_color = Color(0.68, 0.92, 1, 1)
+metallic = 0.55
+roughness = 0.22
+emission_enabled = true
+emission = Color(0.35, 0.85, 1, 1)
+emission_energy_multiplier = 1.4
+
+[sub_resource type="TorusMesh" id="Mesh_ring_outer"]
+material = SubResource("Mat_ring")
+inner_radius = 1.18
+outer_radius = 1.32
+rings = 28
+ring_segments = 10
+
+[sub_resource type="TorusMesh" id="Mesh_ring_inner"]
+material = SubResource("Mat_ring")
+inner_radius = 0.74
+outer_radius = 0.85
+rings = 24
+ring_segments = 10
+
+[node name="LaserEmitter" type="Node3D"]
+script = ExtResource("1_emitter")
+
+[node name="Visuals" type="Node3D" parent="."]
+
+[node name="MonolithCube" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.65)
+cast_shadow = 0
+mesh = SubResource("Mesh_monolith")
+
+[node name="CheekLeft" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.05, 0, -0.35)
+cast_shadow = 0
+mesh = SubResource("Mesh_cheek")
+
+[node name="CheekRight" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.05, 0, -0.35)
+cast_shadow = 0
+mesh = SubResource("Mesh_cheek")
+
+[node name="Prism" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 0, -0.82)
+cast_shadow = 0
+mesh = SubResource("Mesh_prism")
+
+[node name="RingOuter" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -0.92)
+cast_shadow = 0
+mesh = SubResource("Mesh_ring_outer")
+
+[node name="RingInner" type="MeshInstance3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, -1, 0, 1, -4.371139e-08, 0, 0, -1.16)
+cast_shadow = 0
+mesh = SubResource("Mesh_ring_inner")
+
+[node name="Muzzle" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1.35)
+
+[node name="MuzzleLight" type="OmniLight3D" parent="Muzzle"]
+light_color = Color(0.48, 0.94, 1, 1)
+light_energy = 1.6
+omni_range = 9.0
