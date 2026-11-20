@@ -9,7 +9,7 @@ var _mat: StandardMaterial3D
 
 
 func _ready() -> void:
-	_bulb = get_node_or_null("Bulb") as MeshInstance3D
+	_bulb = get_node_or_null("Model/Bulb") as MeshInstance3D
 	if _bulb == null:
 		return
 	_phase = global_position.x * 0.37 + global_position.z * 0.23

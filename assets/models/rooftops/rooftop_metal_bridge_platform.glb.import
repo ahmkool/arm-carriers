@@ -1,0 +1,65 @@
+[remap]
+
+importer="scene"
+importer_version=1
+type="PackedScene"
+uid="uid://coyhl1nv1yi7l"
+path="res://.godot/imported/rooftop_metal_bridge_platform.glb-1c89f3a1e8c1a61639cffbc8d0b68401.scn"
+
+[deps]
+
+source_file="res://assets/models/rooftops/rooftop_metal_bridge_platform.glb"
+dest_files=["res://.godot/imported/rooftop_metal_bridge_platform.glb-1c89f3a1e8c1a61639cffbc8d0b68401.scn"]
+
+[params]
+
+nodes/root_type=""
+nodes/root_name=""
+nodes/root_script=null
+nodes/apply_root_scale=true
+nodes/root_scale=1.0
+nodes/import_as_skeleton_bones=false
+nodes/use_name_suffixes=true
+nodes/use_node_type_suffixes=true
+meshes/ensure_tangents=true
+meshes/generate_lods=false
+meshes/create_shadow_meshes=true
+meshes/light_baking=1
+meshes/lightmap_texel_size=0.2
+meshes/force_disable_compression=false
+skins/use_named_skins=true
+animation/import=true
+animation/fps=30
+animation/trimming=false
+animation/remove_immutable_tracks=true
+animation/import_rest_as_RESET=false
+import_script/path=""
+materials/extract=0
+materials/extract_format=0
+materials/extract_path=""
+_subresources={
+"materials": {
+"bridge_deck": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/world/elements/rooftops/materials/bridge_deck.tres",
+"use_external/path": "res://src/world/elements/rooftops/materials/bridge_deck.tres"
+},
+"bridge_girder": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/world/elements/rooftops/materials/bridge_girder.tres",
+"use_external/path": "res://src/world/elements/rooftops/materials/bridge_girder.tres"
+},
+"bridge_led": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/world/elements/rooftops/materials/bridge_led.tres",
+"use_external/path": "res://src/world/elements/rooftops/materials/bridge_led.tres"
+},
+"bridge_rail": {
+"use_external/enabled": true,
+"use_external/fallback_path": "res://src/world/elements/rooftops/materials/bridge_rail.tres",
+"use_external/path": "res://src/world/elements/rooftops/materials/bridge_rail.tres"
+}
+}
+}
+gltf/naming_version=2
+gltf/embedded_image_handling=1

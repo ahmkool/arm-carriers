@@ -3,7 +3,7 @@ extends EnemyState
 ## its hand disappears when it lets go, and comes back as it walks off.
 
 ## When, into the throw, the shuriken leaves the hand.
-@export var release_sec := 0.45
+@export var release_sec := 1.0
 ## When the ninja may run again.
 @export var throw_sec := 1.0
 @export var shuriken_speed := 11.0

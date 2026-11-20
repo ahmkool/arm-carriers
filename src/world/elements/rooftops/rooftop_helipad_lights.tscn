@@ -1,0 +1,12 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://assets/models/rooftops/rooftop_helipad_lights.glb" id="1_model"]
+
+[node name="RooftopHelipadLights" type="Node3D"]
+
+[node name="Model" parent="." instance=ExtResource("1_model")]
+
+[node name="Glow" parent="Model"]
+cast_shadow = 0
+
+[editable path="Model"]

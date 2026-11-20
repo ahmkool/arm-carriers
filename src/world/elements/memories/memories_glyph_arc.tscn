@@ -1,0 +1,29 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/memories/memories_glyph_arc.gdshader" id="1_arc"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_arc"]
+render_priority = 1
+shader = ExtResource("1_arc")
+shader_parameter/arc_radius = 15.5
+shader_parameter/arc_angle_radians = 2.38
+shader_parameter/ribbon_tilt = 0.42
+shader_parameter/scroll_speed = 0.18
+shader_parameter/glyph_density = 19.0
+shader_parameter/ink_color = Color(0.06, 0.10, 0.21, 1)
+shader_parameter/glow_color = Color(0.84, 0.96, 1, 1)
+shader_parameter/glow_strength = 1.55
+shader_parameter/opacity = 0.94
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_arc"]
+custom_aabb = AABB(-28, -6, -12, 56, 32, 24)
+material = SubResource("ShaderMaterial_arc")
+size = Vector2(28, 2.15)
+subdivide_width = 64
+subdivide_depth = 2
+
+[node name="MemoriesGlyphArc" type="Node3D"]
+
+[node name="Ribbon" type="MeshInstance3D" parent="."]
+cast_shadow = 0
+mesh = SubResource("PlaneMesh_arc")

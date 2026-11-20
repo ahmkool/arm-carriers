@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/shot_cover.gd" id="1_cover"]
+[ext_resource type="PackedScene" path="res://assets/models/rooftops/rooftop_cover_panel.glb" id="2_model"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_panel"]
+size = Vector3(0.2, 2.52, 2.6)
+
+[node name="RooftopCoverPanel" type="StaticBody3D"]
+collision_layer = 68
+collision_mask = 0
+script = ExtResource("1_cover")
+metadata/footstep_surface = &"metal"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.26, 0)
+shape = SubResource("BoxShape3D_panel")
+
+[node name="Model" parent="." instance=ExtResource("2_model")]
+
+[node name="Glow" parent="Model"]
+cast_shadow = 0
+
+[editable path="Model"]

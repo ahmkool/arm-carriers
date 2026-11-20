@@ -38,7 +38,13 @@
 [ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_skylight.tscn" id="skylight"]
 [ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_beacon.tscn" id="beacon"]
 [ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_light_post.tscn" id="light_post"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_bridge_framing.tscn" id="bridge_framing"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_helipad_lights.tscn" id="helipad_lights"]
+[ext_resource type="PackedScene" path="res://assets/models/rooftops/rooftop_comms_mast.glb" id="comms_mast"]
+[ext_resource type="PackedScene" path="res://src/world/elements/rooftops/rooftop_cover_panel.tscn" id="cover_panel"]
 [ext_resource type="PackedScene" path="res://src/enemy/enemy_ninja.tscn" id="ninja"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_ninja_peeker.tscn" id="ninja_peeker"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_ninja_boss.tscn" id="ninja_boss"]
 
 [sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
 shader = ExtResource("rooftop_sky")
@@ -105,72 +111,12 @@ shader_parameter/drift = Vector2(0.45, 0.12)
 render_priority = 0
 shader = ExtResource("helipad_shader")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_steel_dark"]
-albedo_color = Color(0.16, 0.19, 0.24, 1)
-metallic = 0.80
-roughness = 0.34
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_steel_bright"]
-albedo_color = Color(0.38, 0.43, 0.50, 1)
-metallic = 0.84
-roughness = 0.28
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_amber_glow"]
-shading_mode = 0
-albedo_color = Color(2.0, 1.25, 0.35, 1)
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_heli_led"]
-shading_mode = 0
-albedo_color = Color(0.25, 1.85, 0.72, 1)
-
 [sub_resource type="PlaneMesh" id="PlaneMesh_city"]
 size = Vector2(540, 540)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_helipad"]
 material = SubResource("ShaderMaterial_helipad")
 size = Vector2(11.2, 11.2)
-
-[sub_resource type="BoxMesh" id="BoxMesh_threshold"]
-material = SubResource("StandardMaterial3D_steel_bright")
-size = Vector3(6.16, 0.04, 0.56)
-
-[sub_resource type="BoxMesh" id="BoxMesh_pylon"]
-material = SubResource("StandardMaterial3D_steel_dark")
-size = Vector3(0.36, 1.15, 0.36)
-
-[sub_resource type="BoxMesh" id="BoxMesh_pylon_lamp"]
-material = SubResource("StandardMaterial3D_amber_glow")
-size = Vector3(0.18, 0.12, 0.18)
-
-[sub_resource type="BoxMesh" id="BoxMesh_facade_strut"]
-material = SubResource("StandardMaterial3D_steel_dark")
-size = Vector3(0.20, 0.22, 2.75)
-
-[sub_resource type="BoxMesh" id="BoxMesh_gusset"]
-material = SubResource("StandardMaterial3D_steel_dark")
-size = Vector3(0.42, 0.90, 0.14)
-
-[sub_resource type="BoxMesh" id="BoxMesh_heli_light"]
-material = SubResource("StandardMaterial3D_heli_led")
-size = Vector3(0.22, 0.04, 0.22)
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_mast_lower"]
-material = SubResource("StandardMaterial3D_steel_dark")
-top_radius = 0.14
-bottom_radius = 0.28
-height = 3.6
-radial_segments = 8
-
-[sub_resource type="CylinderMesh" id="CylinderMesh_mast_upper"]
-material = SubResource("StandardMaterial3D_steel_bright")
-top_radius = 0.04
-bottom_radius = 0.12
-height = 3.2
-radial_segments = 8
-
-[sub_resource type="BoxMesh" id="BoxMesh_mast_arm"]
-material = SubResource("StandardMaterial3D_steel_bright")
-size = Vector3(1.65, 0.06, 0.06)
 
 [sub_resource type="BoxMesh" id="BoxMesh_B1MainHull"]
 material = SubResource("ShaderMaterial_facade_b1")
@@ -187,6 +133,14 @@ size = Vector3(35.908, 56, 26.911)
 [sub_resource type="BoxMesh" id="BoxMesh_B2WingHull"]
 material = SubResource("ShaderMaterial_facade_b2")
 size = Vector3(5.918, 56, 14.915)
+
+[sub_resource type="BoxMesh" id="BoxMesh_EastTowerHull"]
+material = SubResource("ShaderMaterial_facade_b1")
+size = Vector3(5.918, 56, 8.917)
+
+[sub_resource type="BoxMesh" id="BoxMesh_B3MainHull"]
+material = SubResource("ShaderMaterial_facade_b1")
+size = Vector3(29.91, 56, 17.914)
 
 [sub_resource type="BoxMesh" id="BoxMesh_DistantWest1"]
 material = SubResource("ShaderMaterial_facade_distant")
@@ -256,12 +210,12 @@ size = Vector3(280, 1, 280)
 [sub_resource type="BoxShape3D" id="BoxShape3D_landing"]
 size = Vector3(12, 3, 5)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_ninja_wake"]
-size = Vector3(30, 3, 3)
+[sub_resource type="BoxShape3D" id="BoxShape3D_peeker_approach"]
+size = Vector3(12, 3, 12)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_level"]
-vertices = PackedVector3Array(-17.743, -0.5, -45.483, -15.493, -0.5, -45.483, -15.243, -0.5, -46.983, -17.743, -0.5, -50.483, -11.743, -0.5, -47.733, -10.243, -0.5, -47.733, -10.243, -0.5, -50.483, -11.993, -0.5, -46.733, 9.757, -0.5, -48.733, 11.757, -0.5, -48.983, 11.757, -0.5, -50.483, -8.493, -0.5, -47.483, 13.507, -0.5, -24.483002, 13.507, -0.5, -26.483002, 11.757, -0.5, -26.733002, 2.757, -0.5, -24.483002, -15.243, -0.5, -43.983, -17.743, -0.5, -24.483002, 11.757, -0.5, -29.233002, 12.757, -0.5, -29.483002, 12.507, -0.5, -45.233, 9.757, -0.5, -45.483, -8.743, -0.5, -44.733, -11.993, -0.5, -44.983, -12.243, -0.5, -43.983, -2.993, -0.5, -24.483002, -2.743, -0.5, -22.483002, 2.507, -0.5, -22.483002, 13.757, -0.5, -48.733, 17.507, -0.5, -50.483, 15.257, -0.5, -26.733002, 17.507, -0.5, -24.483002, 17.757, -0.5, -44.733, 13.757, -0.5, -45.483, 15.257, -0.5, -29.233002, 17.757, -0.5, -30.483002, 23.507, -0.5, -30.483002, 23.507, -0.5, -44.733, 11.757, 2, -48.233, 11.757, 2, -47.233, 12.757, 2, -47.483, 12.757, 2, -48.233, 10.757, 2, -46.233, 12.007, 2, -46.233, 10.757, 2, -46.983, -10.993, 0.75, -46.733, -10.993, 0.75, -45.733, -9.493, 0.75, -45.733, -9.493, 0.75, -46.733, -14.493, 0.75, -45.983, -14.493, 0.75, -44.983, -12.993, 0.75, -44.983, -12.993, 0.75, -45.983, 12.757, 0.75, -28.483002, 12.757, 0.75, -27.483002, 14.257, 0.75, -27.483002, 14.257, 0.75, -28.483002, -2.743, -0.5, -13.733002, 2.507, -0.5, -13.733002, 14.507, -0.5, 3.2669983, 13.007, -0.5, 3.2669983, 12.757, -0.5, 4.7669983, 14.507, -0.5, 11.516998, -10.493, -0.5, -11.733002, -10.493, -0.5, -10.733002, -8.493, -0.5, -10.483002, -2.993, -0.5, -11.733002, -12.243, -0.5, -6.9830017, -12.493, -0.5, -8.983002, -14.743, -0.5, -8.483002, -14.993, -0.5, -5.7330017, -16.493, -0.5, 3.0169983, -19.493, -0.5, 3.0169983, -20.493, -0.5, 8.516998, -14.993, -0.5, 8.516998, 9.507, -0.5, 2.0169983, 11.507, -0.5, 1.7669983, 11.507, -0.5, -2.9830017, 9.507, -0.5, -3.2330017, -8.743, -0.5, -6.9830017, -14.743, -0.5, 11.516998, 9.507, -0.5, 4.5169983, 2.757, -0.5, -11.733002, 9.507, -0.5, -5.7330017, 11.257, -0.5, -5.9830017, 11.007, -0.5, -11.733002, -16.743, -0.5, -0.23300171, -20.493, -0.5, -5.7330017, -19.493, -0.5, 0.016998291, -12.243, -0.5, -10.733002, -14.743, -0.5, -11.733002, 12.757, -0.5, 1.7669983, 13.007, -0.5, -3.2330017, 13.007, -0.5, -5.7330017, 14.507, -0.5, -11.733002, -10.493, 2, -9.733002, -10.493, 2, -8.983002, -9.493, 2, -9.233002, -9.493, 2, -9.733002, -11.493, 2, -8.733002, -11.493, 2, -7.7330017, -10.243, 2, -7.7330017, 10.507, 0.75, -4.9830017, 10.507, 0.75, -3.9830017, 12.007, 0.75, -3.9830017, 12.007, 0.75, -4.9830017, -18.493, 0.75, 0.7669983, -18.493, 0.75, 2.2669983, -17.493, 0.75, 2.2669983, -17.493, 0.75, 0.7669983, 10.507, 0.75, 2.7669983, 10.507, 0.75, 3.7669983, 12.007, 0.75, 3.7669983, 12.007, 0.75, 2.7669983)
-polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(6, 5, 4), PackedInt32Array(4, 7, 2), PackedInt32Array(4, 2, 6), PackedInt32Array(6, 2, 3), PackedInt32Array(9, 8, 10), PackedInt32Array(10, 8, 11), PackedInt32Array(10, 11, 5), PackedInt32Array(10, 5, 6), PackedInt32Array(13, 12, 14), PackedInt32Array(14, 12, 15), PackedInt32Array(1, 16, 0), PackedInt32Array(0, 16, 17), PackedInt32Array(19, 18, 20), PackedInt32Array(20, 18, 21), PackedInt32Array(24, 23, 22), PackedInt32Array(26, 25, 27), PackedInt32Array(27, 25, 15), PackedInt32Array(22, 21, 24), PackedInt32Array(24, 21, 18), PackedInt32Array(24, 18, 25), PackedInt32Array(24, 25, 17), PackedInt32Array(17, 16, 24), PackedInt32Array(14, 15, 18), PackedInt32Array(18, 15, 25), PackedInt32Array(22, 11, 21), PackedInt32Array(21, 11, 8), PackedInt32Array(9, 10, 28), PackedInt32Array(28, 10, 29), PackedInt32Array(13, 30, 12), PackedInt32Array(12, 30, 31), PackedInt32Array(33, 28, 32), PackedInt32Array(32, 28, 29), PackedInt32Array(34, 19, 35), PackedInt32Array(35, 19, 32), PackedInt32Array(32, 19, 33), PackedInt32Array(33, 19, 20), PackedInt32Array(34, 35, 30), PackedInt32Array(30, 35, 31), PackedInt32Array(32, 37, 35), PackedInt32Array(35, 37, 36), PackedInt32Array(41, 40, 38), PackedInt32Array(38, 40, 39), PackedInt32Array(44, 39, 42), PackedInt32Array(42, 39, 43), PackedInt32Array(48, 47, 45), PackedInt32Array(45, 47, 46), PackedInt32Array(52, 51, 49), PackedInt32Array(49, 51, 50), PackedInt32Array(56, 55, 53), PackedInt32Array(53, 55, 54), PackedInt32Array(26, 27, 57), PackedInt32Array(57, 27, 58), PackedInt32Array(60, 59, 61), PackedInt32Array(61, 59, 62), PackedInt32Array(64, 63, 65), PackedInt32Array(65, 63, 66), PackedInt32Array(68, 67, 69), PackedInt32Array(69, 67, 70), PackedInt32Array(72, 71, 73), PackedInt32Array(73, 71, 74), PackedInt32Array(76, 75, 77), PackedInt32Array(77, 75, 78), PackedInt32Array(74, 79, 80), PackedInt32Array(80, 79, 81), PackedInt32Array(80, 81, 62), PackedInt32Array(82, 78, 75), PackedInt32Array(58, 82, 57), PackedInt32Array(57, 82, 66), PackedInt32Array(62, 81, 61), PackedInt32Array(84, 83, 85), PackedInt32Array(85, 83, 82), PackedInt32Array(67, 79, 70), PackedInt32Array(70, 79, 86), PackedInt32Array(86, 79, 71), PackedInt32Array(71, 79, 74), PackedInt32Array(88, 87, 86), PackedInt32Array(86, 87, 70), PackedInt32Array(82, 83, 78), PackedInt32Array(72, 73, 88), PackedInt32Array(88, 73, 87), PackedInt32Array(65, 66, 79), PackedInt32Array(79, 66, 82), PackedInt32Array(79, 82, 75), PackedInt32Array(79, 75, 81), PackedInt32Array(64, 89, 63), PackedInt32Array(63, 89, 90), PackedInt32Array(68, 69, 89), PackedInt32Array(89, 69, 90), PackedInt32Array(59, 60, 91), PackedInt32Array(91, 76, 77), PackedInt32Array(77, 92, 91), PackedInt32Array(91, 92, 59), PackedInt32Array(84, 85, 93), PackedInt32Array(93, 85, 94), PackedInt32Array(93, 94, 92), PackedInt32Array(92, 94, 59), PackedInt32Array(98, 97, 95), PackedInt32Array(95, 97, 96), PackedInt32Array(99, 96, 100), PackedInt32Array(100, 96, 101), PackedInt32Array(105, 104, 102), PackedInt32Array(102, 104, 103), PackedInt32Array(109, 108, 106), PackedInt32Array(106, 108, 107), PackedInt32Array(113, 112, 110), PackedInt32Array(110, 112, 111)]
+vertices = PackedVector3Array(-10.493, -0.5, -74.973, -10.243, -0.5, -76.223, -11.493, -0.5, -76.473, -12.743, -0.5, -74.973, -14.743, -0.5, -73.473, -11.493, -0.5, -79.723, -14.743, -0.5, -80.473, -9.493, -0.5, -79.973, -9.493, -0.5, -80.473, -12.993, -0.5, -73.473, -9.493, -0.5, -74.723, -7.493, -0.5, -76.473, -7.493, -0.5, -79.723, 9.507, -0.5, -77.723, 10.007, -0.5, -77.973, 10.007, -0.5, -80.473, 14.507, -0.5, -76.473, 13.007, -0.5, -76.473, 12.757, -0.5, -74.973, 14.507, -0.5, -63.473, -12.743, -0.5, -71.973, -14.743, -0.5, -63.473, 2.757, -0.5, -63.473, 9.757, -0.5, -74.973, -2.993, -0.5, -63.473, -9.743, -0.5, -71.973, -2.743, -0.5, -61.473, 2.507, -0.5, -61.473, 12.757, -0.5, -77.973, 14.507, -0.5, -80.473, -9.493, 2, -78.223, -8.493, 2, -78.473, -8.493, 2, -79.223, -9.493, 2, -79.223, -9.743, 2, -78.223, -10.493, 2, -78.223, -10.493, 2, -77.223, -9.243, 2, -77.223, 10.507, 0.75, -76.973, 10.507, 0.75, -75.973, 12.007, 0.75, -75.973, 12.007, 0.75, -76.973, -11.993, 0.75, -73.973, -11.993, 0.75, -72.973, -10.493, 0.75, -72.973, -10.493, 0.75, -73.973, -2.743, -0.5, -52.723, 2.507, -0.5, -52.723, 9.757, -0.5, -48.723, 11.757, -0.5, -48.973, 11.757, -0.5, -50.723, 2.757, -0.5, -50.723, 13.507, -0.5, -24.473, 13.507, -0.5, -26.473, 11.757, -0.5, -26.723, 2.757, -0.5, -24.473, -15.243, -0.5, -43.973, -15.493, -0.5, -45.473, -17.743, -0.5, -45.473, -17.743, -0.5, -24.473, -8.743, -0.5, -44.723, -11.993, -0.5, -44.973, -12.243, -0.5, -43.973, -10.243, -0.5, -50.723, -10.243, -0.5, -47.723, -8.493, -0.5, -47.473, -2.993, -0.5, -50.723, -2.993, -0.5, -24.473, -2.743, -0.5, -22.473, 2.507, -0.5, -22.473, 11.757, -0.5, -29.223, 12.757, -0.5, -29.473, 12.507, -0.5, -45.223, 9.757, -0.5, -45.473, -15.243, -0.5, -46.973, -17.743, -0.5, -50.723, -11.743, -0.5, -47.723, -11.993, -0.5, -46.723, 13.757, -0.5, -48.723, 17.507, -0.5, -50.723, 15.257, -0.5, -26.723, 17.507, -0.5, -24.473, 17.507, -0.5, -44.973, 13.757, -0.5, -45.473, 15.257, -0.5, -29.223, 17.757, -0.5, -30.473, 23.507, -0.5, -30.473, 23.507, -0.5, -44.723, 11.757, 2, -47.223, 12.757, 2, -47.473, 12.757, 2, -48.223, 11.757, 2, -48.223, 11.507, 2, -47.223, 10.757, 2, -47.223, 10.757, 2, -46.223, 12.007, 2, -46.223, -10.993, 0.75, -46.723, -10.993, 0.75, -45.723, -9.493, 0.75, -45.723, -9.493, 0.75, -46.723, -14.493, 0.75, -45.973, -14.493, 0.75, -44.973, -12.993, 0.75, -44.973, -12.993, 0.75, -45.973, 12.757, 0.75, -28.473, 12.757, 0.75, -27.473, 14.257, 0.75, -27.473, 14.257, 0.75, -28.473, -2.743, -0.5, -13.723, 2.507, -0.5, -13.723, 14.507, -0.5, 3.2770004, 13.007, -0.5, 3.2770004, 12.757, -0.5, 4.7770004, 14.507, -0.5, 11.527, -10.493, -0.5, -11.723, -10.493, -0.5, -10.723, -8.493, -0.5, -10.473, -2.993, -0.5, -11.723, -12.243, -0.5, -6.9729996, -12.493, -0.5, -8.973, -14.743, -0.5, -8.473, -14.993, -0.5, -5.7229996, -16.493, -0.5, 3.0270004, -19.493, -0.5, 3.0270004, -20.493, -0.5, 8.527, -14.993, -0.5, 8.527, 9.507, -0.5, 2.0270004, 11.507, -0.5, 1.7770004, 11.507, -0.5, -2.9729996, 9.507, -0.5, -3.2229996, -8.743, -0.5, -6.9729996, -14.743, -0.5, 11.527, 9.507, -0.5, 4.5270004, 2.757, -0.5, -11.723, 9.507, -0.5, -5.7229996, 11.257, -0.5, -5.9729996, 11.007, -0.5, -11.723, -16.743, -0.5, -0.22299957, -20.493, -0.5, -5.7229996, -19.493, -0.5, 0.027000427, -12.243, -0.5, -10.723, -14.743, -0.5, -11.723, 12.757, -0.5, 1.7770004, 13.007, -0.5, -3.2229996, 13.007, -0.5, -5.7229996, 14.507, -0.5, -11.723, -10.493, 2, -9.723, -10.493, 2, -8.973, -9.493, 2, -9.223, -9.493, 2, -9.723, -11.493, 2, -8.723, -11.493, 2, -7.9729996, -10.493, 2, -7.9729996, 10.507, 0.75, -4.9729996, 10.507, 0.75, -3.9729996, 12.007, 0.75, -3.9729996, 12.007, 0.75, -4.9729996, -18.493, 0.75, 0.7770004, -18.493, 0.75, 2.2770004, -17.493, 0.75, 2.2770004, -17.493, 0.75, 0.7770004, 10.507, 0.75, 2.7770004, 10.507, 0.75, 3.7770004, 12.007, 0.75, 3.7770004, 12.007, 0.75, 2.7770004, 23.257, -0.5, 7.0270004, 22.507, -0.5, 7.2770004, 22.507, -0.5, 7.7770004, 23.257, -0.5, 8.027, 23.257, -0.5, 8.777, 26.507, -0.5, 11.527, 22.257, -0.5, 9.527, 21.257, -0.5, 9.527, 21.257, -0.5, 11.527, 21.257, -0.5, 3.2770004, 21.257, -0.5, 5.5270004, 22.257, -0.5, 5.5270004, 23.257, -0.5, 6.2770004, 26.507, -0.5, 3.2770004)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(3, 4, 2), PackedInt32Array(2, 4, 5), PackedInt32Array(5, 4, 6), PackedInt32Array(7, 5, 8), PackedInt32Array(8, 5, 6), PackedInt32Array(3, 9, 4), PackedInt32Array(0, 1, 10), PackedInt32Array(10, 1, 11), PackedInt32Array(7, 8, 12), PackedInt32Array(12, 8, 13), PackedInt32Array(13, 8, 14), PackedInt32Array(14, 8, 15), PackedInt32Array(17, 16, 18), PackedInt32Array(18, 16, 19), PackedInt32Array(9, 20, 4), PackedInt32Array(4, 20, 21), PackedInt32Array(23, 22, 13), PackedInt32Array(13, 22, 24), PackedInt32Array(13, 24, 11), PackedInt32Array(13, 11, 12), PackedInt32Array(20, 25, 21), PackedInt32Array(21, 25, 24), PackedInt32Array(10, 11, 25), PackedInt32Array(25, 11, 24), PackedInt32Array(26, 24, 27), PackedInt32Array(27, 24, 22), PackedInt32Array(18, 19, 23), PackedInt32Array(23, 19, 22), PackedInt32Array(17, 28, 16), PackedInt32Array(16, 28, 29), PackedInt32Array(14, 15, 28), PackedInt32Array(28, 15, 29), PackedInt32Array(34, 33, 30), PackedInt32Array(30, 33, 31), PackedInt32Array(31, 33, 32), PackedInt32Array(35, 34, 36), PackedInt32Array(36, 34, 37), PackedInt32Array(34, 30, 37), PackedInt32Array(41, 40, 38), PackedInt32Array(38, 40, 39), PackedInt32Array(45, 44, 42), PackedInt32Array(42, 44, 43), PackedInt32Array(26, 27, 46), PackedInt32Array(46, 27, 47), PackedInt32Array(49, 48, 50), PackedInt32Array(50, 48, 51), PackedInt32Array(53, 52, 54), PackedInt32Array(54, 52, 55), PackedInt32Array(57, 56, 58), PackedInt32Array(58, 56, 59), PackedInt32Array(62, 61, 60), PackedInt32Array(64, 63, 65), PackedInt32Array(65, 63, 66), PackedInt32Array(68, 67, 69), PackedInt32Array(69, 67, 55), PackedInt32Array(71, 70, 72), PackedInt32Array(72, 70, 73), PackedInt32Array(47, 51, 46), PackedInt32Array(46, 51, 66), PackedInt32Array(54, 55, 70), PackedInt32Array(70, 55, 67), PackedInt32Array(59, 56, 62), PackedInt32Array(60, 73, 62), PackedInt32Array(62, 73, 70), PackedInt32Array(62, 70, 67), PackedInt32Array(62, 67, 59), PackedInt32Array(65, 66, 60), PackedInt32Array(60, 66, 51), PackedInt32Array(60, 51, 48), PackedInt32Array(60, 48, 73), PackedInt32Array(57, 58, 74), PackedInt32Array(74, 58, 75), PackedInt32Array(63, 64, 76), PackedInt32Array(76, 77, 74), PackedInt32Array(76, 74, 63), PackedInt32Array(63, 74, 75), PackedInt32Array(49, 50, 78), PackedInt32Array(78, 50, 79), PackedInt32Array(53, 80, 52), PackedInt32Array(52, 80, 81), PackedInt32Array(83, 78, 82), PackedInt32Array(82, 78, 79), PackedInt32Array(83, 82, 72), PackedInt32Array(72, 82, 85), PackedInt32Array(72, 85, 84), PackedInt32Array(72, 84, 71), PackedInt32Array(84, 85, 80), PackedInt32Array(80, 85, 81), PackedInt32Array(86, 85, 87), PackedInt32Array(87, 85, 82), PackedInt32Array(92, 91, 88), PackedInt32Array(88, 91, 89), PackedInt32Array(89, 91, 90), PackedInt32Array(93, 92, 94), PackedInt32Array(94, 92, 95), PackedInt32Array(92, 88, 95), PackedInt32Array(99, 98, 96), PackedInt32Array(96, 98, 97), PackedInt32Array(103, 102, 100), PackedInt32Array(100, 102, 101), PackedInt32Array(107, 106, 104), PackedInt32Array(104, 106, 105), PackedInt32Array(68, 69, 108), PackedInt32Array(108, 69, 109), PackedInt32Array(111, 110, 112), PackedInt32Array(112, 110, 113), PackedInt32Array(115, 114, 116), PackedInt32Array(116, 114, 117), PackedInt32Array(119, 118, 120), PackedInt32Array(120, 118, 121), PackedInt32Array(123, 122, 124), PackedInt32Array(124, 122, 125), PackedInt32Array(127, 126, 128), PackedInt32Array(128, 126, 129), PackedInt32Array(125, 130, 131), PackedInt32Array(131, 130, 132), PackedInt32Array(131, 132, 113), PackedInt32Array(133, 129, 126), PackedInt32Array(109, 133, 108), PackedInt32Array(108, 133, 117), PackedInt32Array(113, 132, 112), PackedInt32Array(135, 134, 136), PackedInt32Array(136, 134, 133), PackedInt32Array(118, 130, 121), PackedInt32Array(121, 130, 137), PackedInt32Array(137, 130, 122), PackedInt32Array(122, 130, 125), PackedInt32Array(139, 138, 137), PackedInt32Array(137, 138, 121), PackedInt32Array(133, 134, 129), PackedInt32Array(123, 124, 139), PackedInt32Array(139, 124, 138), PackedInt32Array(116, 117, 130), PackedInt32Array(130, 117, 133), PackedInt32Array(130, 133, 126), PackedInt32Array(130, 126, 132), PackedInt32Array(115, 140, 114), PackedInt32Array(114, 140, 141), PackedInt32Array(119, 120, 140), PackedInt32Array(140, 120, 141), PackedInt32Array(110, 111, 142), PackedInt32Array(142, 127, 128), PackedInt32Array(128, 143, 142), PackedInt32Array(142, 143, 110), PackedInt32Array(135, 136, 144), PackedInt32Array(144, 136, 145), PackedInt32Array(144, 145, 143), PackedInt32Array(143, 145, 110), PackedInt32Array(149, 148, 146), PackedInt32Array(146, 148, 147), PackedInt32Array(151, 150, 152), PackedInt32Array(152, 150, 147), PackedInt32Array(156, 155, 153), PackedInt32Array(153, 155, 154), PackedInt32Array(160, 159, 157), PackedInt32Array(157, 159, 158), PackedInt32Array(164, 163, 161), PackedInt32Array(161, 163, 162), PackedInt32Array(166, 165, 167), PackedInt32Array(167, 165, 168), PackedInt32Array(170, 169, 168), PackedInt32Array(173, 172, 171), PackedInt32Array(176, 175, 174), PackedInt32Array(171, 169, 173), PackedInt32Array(173, 169, 170), PackedInt32Array(176, 174, 177), PackedInt32Array(177, 174, 178), PackedInt32Array(165, 177, 178), PackedInt32Array(168, 165, 170), PackedInt32Array(170, 165, 178)]
 
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("world")
@@ -296,29 +250,64 @@ light_energy = 0.86
 
 [node name="Enemies" type="Node" parent="."]
 
-[node name="Ninjas" type="Node3D" parent="Enemies"]
+[node name="Building1" type="Node3D" parent="Enemies"]
 script = ExtResource("normal_group")
 
-[node name="InstancedEnemies" type="Node3D" parent="Enemies/Ninjas"]
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Building1"]
 
-[node name="Ninja1" parent="Enemies/Ninjas/InstancedEnemies" instance=ExtResource("ninja")]
+[node name="Ninja1" parent="Enemies/Building1/InstancedEnemies" instance=ExtResource("ninja")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -10.4965)
 is_offensive = false
 
-[node name="Ninja2" parent="Enemies/Ninjas/InstancedEnemies" instance=ExtResource("ninja")]
+[node name="Ninja2" parent="Enemies/Building1/InstancedEnemies" instance=ExtResource("ninja")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -10.4965)
+is_offensive = false
+
+[node name="BillboardNinja" parent="Enemies/Building1/InstancedEnemies" instance=ExtResource("ninja_peeker")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 23.6, 0, 7.5)
+is_offensive = false
+
+[node name="Building2" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Building2"]
+
+[node name="Ninja3" parent="Enemies/Building2/InstancedEnemies" instance=ExtResource("ninja")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -7.4975, 0, -37.4875)
+is_offensive = false
+
+[node name="Ninja4" parent="Enemies/Building2/InstancedEnemies" instance=ExtResource("ninja")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 7.4975, 0, -37.4875)
+is_offensive = false
+
+[node name="Ninja5" parent="Enemies/Building2/InstancedEnemies" instance=ExtResource("ninja")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, -1.4995, 0, -46.4845)
+is_offensive = false
+
+[node name="Ninja6" parent="Enemies/Building2/InstancedEnemies" instance=ExtResource("ninja")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 4.4985, 0, -46.4845)
+is_offensive = false
+
+[node name="Building3" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+spawn_on_trigger = true
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Building3"]
+
+[node name="ShurikenMaster" parent="Enemies/Building3/InstancedEnemies" instance=ExtResource("ninja_boss")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 0, 0, -76)
 is_offensive = false
 
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("cp_manager")
 current_checkpoint = NodePath("Checkpoint")
 
-[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
+[node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_reset", "areas_to_reactivate")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -1.4995)
 script = ExtResource("checkpoint")
-events_completed = [NodePath("../../Level/Events/OpenBridge1")]
-enemy_groups_reset = [NodePath("../../Enemies/Ninjas")]
-areas_to_reactivate = [NodePath("../../Level/Areas/NorthBuildingLanding"), NodePath("../../Level/Areas/NinjaWake")]
+enemy_groups_reset = [NodePath("../../Enemies/Building1"), NodePath("../../Enemies/Building2"), NodePath("../../Enemies/Building3")]
+areas_to_reactivate = [NodePath("../../Level/Areas/NorthBuildingLanding"), NodePath("../../Level/Areas/PeekerApproach"), NodePath("../../Level/Areas/Building3Landing")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
@@ -326,16 +315,46 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 
-[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "areas_already_activated")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -32.989)
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -5.998)
 script = ExtResource("checkpoint")
 events_completed = [NodePath("../../Level/Events/OpenBridge1")]
-areas_already_activated = [NodePath("../../Level/Areas/NorthBuildingLanding")]
+enemy_groups_reset = [NodePath("../../Enemies/Building2")]
+enemy_groups_defeated = [NodePath("../../Enemies/Building1")]
+areas_to_reactivate = [NodePath("../../Level/Areas/NorthBuildingLanding")]
+areas_already_activated = [NodePath("../../Level/Areas/PeekerApproach")]
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
 
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -43.4855)
+script = ExtResource("checkpoint")
+events_completed = [NodePath("../../Level/Events/OpenBridge2")]
+enemy_groups_reset = [NodePath("../../Enemies/Building3")]
+enemy_groups_defeated = [NodePath("../../Enemies/Building1"), NodePath("../../Enemies/Building2")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Building3Landing")]
+areas_already_activated = [NodePath("../../Level/Areas/NorthBuildingLanding"), NodePath("../../Level/Areas/PeekerApproach")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("enemy_groups_defeated", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -71.976)
+script = ExtResource("checkpoint")
+enemy_groups_defeated = [NodePath("../../Enemies/Building1"), NodePath("../../Enemies/Building2"), NodePath("../../Enemies/Building3")]
+areas_already_activated = [NodePath("../../Level/Areas/NorthBuildingLanding"), NodePath("../../Level/Areas/PeekerApproach"), NodePath("../../Level/Areas/Building3Landing")]
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
 
 [node name="Level" type="Node" parent="."]
@@ -357,7 +376,7 @@ cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 4
 collision_mask = 0
 data = {
-"cells": PackedInt32Array(-7, 65534, 0, -7, 65535, 0, -7, 0, 0, -7, 1, 0, -7, 2, 0, -6, 65519, 0, -6, 65520, 0, -6, 65521, 0, -6, 65522, 0, -6, 65523, 0, -6, 65524, 0, -6, 65525, 0, -6, 65526, 0, -6, 65527, 0, -6, 65534, 0, -6, 65535, 0, -6, 0, 0, -6, 1, 0, -6, 2, 0, -5, 65519, 0, -5, 65520, 0, -5, 65521, 0, -5, 65522, 0, -5, 65523, 0, -5, 65524, 0, -5, 65525, 0, -5, 65526, 0, -5, 65527, 0, -5, 65532, 0, -5, 65533, 0, -5, 65534, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -5, 2, 0, -5, 3, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65526, 0, -4, 65527, 0, -4, 65532, 0, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -4, 3, 0, -3, 65519, 0, -3, 65520, 0, -3, 65521, 0, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65526, 0, -3, 65527, 0, -3, 65532, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 0, -2, 65526, 0, -2, 65527, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65519, 0, -1, 65520, 0, -1, 65521, 0, -1, 65522, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65526, 0, -1, 65527, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65519, 0, -65536, 65520, 0, -65536, 65521, 0, -65536, 65522, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65526, 0, -65536, 65527, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65519, 0, -65535, 65520, 0, -65535, 65521, 0, -65535, 65522, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65526, 0, -65535, 65527, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 0, -65534, 65526, 0, -65534, 65527, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65519, 0, -65533, 65520, 0, -65533, 65521, 0, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65526, 0, -65533, 65527, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 0, -65532, 65525, 0, -65532, 65526, 0, -65532, 65527, 0, -65532, 65532, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0, -65532, 3, 0, -65531, 65519, 0, -65531, 65520, 0, -65531, 65521, 0, -65531, 65522, 0, -65531, 65523, 0, -65531, 65524, 0, -65531, 65525, 0, -65531, 65526, 0, -65531, 65527, 0, -65530, 65521, 0, -65530, 65522, 0, -65530, 65523, 0, -65530, 65524, 0, -65530, 65525, 0, -65529, 65521, 0, -65529, 65522, 0, -65529, 65523, 0, -65529, 65524, 0, -65529, 65525, 0)
+"cells": PackedInt32Array(-7, 65534, 0, -7, 65535, 0, -7, 0, 0, -7, 1, 0, -7, 2, 0, -6, 65519, 0, -6, 65520, 0, -6, 65521, 0, -6, 65522, 0, -6, 65523, 0, -6, 65524, 0, -6, 65525, 0, -6, 65526, 0, -6, 65527, 0, -6, 65534, 0, -6, 65535, 0, -6, 0, 0, -6, 1, 0, -6, 2, 0, -5, 65509, 0, -5, 65510, 0, -5, 65511, 0, -5, 65512, 0, -5, 65513, 0, -5, 65514, 0, -5, 65519, 0, -5, 65520, 0, -5, 65521, 0, -5, 65522, 0, -5, 65523, 0, -5, 65524, 0, -5, 65525, 0, -5, 65526, 0, -5, 65527, 0, -5, 65532, 0, -5, 65533, 0, -5, 65534, 0, -5, 65535, 0, -5, 0, 0, -5, 1, 0, -5, 2, 0, -5, 3, 0, -4, 65509, 0, -4, 65510, 0, -4, 65511, 0, -4, 65512, 0, -4, 65513, 0, -4, 65514, 0, -4, 65519, 0, -4, 65520, 0, -4, 65521, 0, -4, 65522, 0, -4, 65523, 0, -4, 65524, 0, -4, 65525, 0, -4, 65526, 0, -4, 65527, 0, -4, 65532, 0, -4, 65533, 0, -4, 65534, 0, -4, 65535, 0, -4, 0, 0, -4, 1, 0, -4, 2, 0, -4, 3, 0, -3, 65509, 0, -3, 65510, 0, -3, 65511, 0, -3, 65512, 0, -3, 65513, 0, -3, 65514, 0, -3, 65519, 0, -3, 65520, 0, -3, 65521, 0, -3, 65522, 0, -3, 65523, 0, -3, 65524, 0, -3, 65525, 0, -3, 65526, 0, -3, 65527, 0, -3, 65532, 0, -3, 65533, 0, -3, 65534, 0, -3, 65535, 0, -3, 0, 0, -3, 1, 0, -3, 2, 0, -3, 3, 0, -2, 65509, 0, -2, 65510, 0, -2, 65511, 0, -2, 65512, 0, -2, 65513, 0, -2, 65514, 0, -2, 65519, 0, -2, 65520, 0, -2, 65521, 0, -2, 65522, 0, -2, 65523, 0, -2, 65524, 0, -2, 65525, 0, -2, 65526, 0, -2, 65527, 0, -2, 65532, 0, -2, 65533, 0, -2, 65534, 0, -2, 65535, 0, -2, 0, 0, -2, 1, 0, -2, 2, 0, -2, 3, 0, -1, 65509, 0, -1, 65510, 0, -1, 65511, 0, -1, 65512, 0, -1, 65513, 0, -1, 65514, 0, -1, 65519, 0, -1, 65520, 0, -1, 65521, 0, -1, 65522, 0, -1, 65523, 0, -1, 65524, 0, -1, 65525, 0, -1, 65526, 0, -1, 65527, 0, -1, 65532, 0, -1, 65533, 0, -1, 65534, 0, -1, 65535, 0, -1, 0, 0, -1, 1, 0, -1, 2, 0, -1, 3, 0, -65536, 65509, 0, -65536, 65510, 0, -65536, 65511, 0, -65536, 65512, 0, -65536, 65513, 0, -65536, 65514, 0, -65536, 65519, 0, -65536, 65520, 0, -65536, 65521, 0, -65536, 65522, 0, -65536, 65523, 0, -65536, 65524, 0, -65536, 65525, 0, -65536, 65526, 0, -65536, 65527, 0, -65536, 65532, 0, -65536, 65533, 0, -65536, 65534, 0, -65536, 65535, 0, -65536, 0, 0, -65536, 1, 0, -65536, 2, 0, -65536, 3, 0, -65535, 65509, 0, -65535, 65510, 0, -65535, 65511, 0, -65535, 65512, 0, -65535, 65513, 0, -65535, 65514, 0, -65535, 65519, 0, -65535, 65520, 0, -65535, 65521, 0, -65535, 65522, 0, -65535, 65523, 0, -65535, 65524, 0, -65535, 65525, 0, -65535, 65526, 0, -65535, 65527, 0, -65535, 65532, 0, -65535, 65533, 0, -65535, 65534, 0, -65535, 65535, 0, -65535, 0, 0, -65535, 1, 0, -65535, 2, 0, -65535, 3, 0, -65534, 65509, 0, -65534, 65510, 0, -65534, 65511, 0, -65534, 65512, 0, -65534, 65513, 0, -65534, 65514, 0, -65534, 65519, 0, -65534, 65520, 0, -65534, 65521, 0, -65534, 65522, 0, -65534, 65523, 0, -65534, 65524, 0, -65534, 65525, 0, -65534, 65526, 0, -65534, 65527, 0, -65534, 65532, 0, -65534, 65533, 0, -65534, 65534, 0, -65534, 65535, 0, -65534, 0, 0, -65534, 1, 0, -65534, 2, 0, -65534, 3, 0, -65533, 65509, 0, -65533, 65510, 0, -65533, 65511, 0, -65533, 65512, 0, -65533, 65513, 0, -65533, 65514, 0, -65533, 65519, 0, -65533, 65520, 0, -65533, 65521, 0, -65533, 65522, 0, -65533, 65523, 0, -65533, 65524, 0, -65533, 65525, 0, -65533, 65526, 0, -65533, 65527, 0, -65533, 65532, 0, -65533, 65533, 0, -65533, 65534, 0, -65533, 65535, 0, -65533, 0, 0, -65533, 1, 0, -65533, 2, 0, -65533, 3, 0, -65532, 65509, 0, -65532, 65510, 0, -65532, 65511, 0, -65532, 65512, 0, -65532, 65513, 0, -65532, 65514, 0, -65532, 65519, 0, -65532, 65520, 0, -65532, 65521, 0, -65532, 65522, 0, -65532, 65523, 0, -65532, 65524, 0, -65532, 65525, 0, -65532, 65526, 0, -65532, 65527, 0, -65532, 65532, 0, -65532, 65533, 0, -65532, 65534, 0, -65532, 65535, 0, -65532, 0, 0, -65532, 1, 0, -65532, 2, 0, -65532, 3, 0, -65531, 65519, 0, -65531, 65520, 0, -65531, 65521, 0, -65531, 65522, 0, -65531, 65523, 0, -65531, 65524, 0, -65531, 65525, 0, -65531, 65526, 0, -65531, 65527, 0, -65530, 65521, 0, -65530, 65522, 0, -65530, 65523, 0, -65530, 65524, 0, -65530, 65525, 0, -65529, 65521, 0, -65529, 65522, 0, -65529, 65523, 0, -65529, 65524, 0, -65529, 65525, 0, -65529, 1, 0, -65529, 2, 0, -65529, 3, 0, -65528, 1, 0, -65528, 2, 0, -65528, 3, 0)
 }
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
@@ -367,7 +386,7 @@ cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 0
 collision_mask = 0
 data = {
-"cells": PackedInt32Array(-196615, 65534, 3, -196615, 65535, 3, -196615, 0, 3, -196615, 1, 3, -196615, 2, 3, -131079, 2, 2, -65543, 65534, 1, -196614, 65519, 3, -196614, 65520, 3, -196614, 65521, 3, -196614, 65522, 3, -196614, 65523, 3, -196614, 65524, 3, -196614, 65525, 3, -196614, 65526, 3, -196614, 65527, 3, -131078, 65527, 2, -131078, 2, 2, -65542, 65519, 1, -65542, 65534, 1, -196613, 65532, 3, -196613, 65533, 3, -196613, 3, 3, -131077, 65527, 2, -131077, 3, 2, -65541, 65519, 1, -65541, 65532, 1, -131076, 65527, 2, -131076, 3, 2, -65540, 65519, 1, -65540, 65532, 1, -131075, 65527, 2, -131075, 3, 2, -65539, 65519, 1, -65539, 65532, 1, -131074, 65527, 2, -131074, 3, 2, -65538, 65519, 1, -65538, 65532, 1, -131073, 3, 2, -65537, 65519, 1, -196608, 3, 2, -131072, 65519, 1, -196607, 65527, 2, -196607, 3, 2, -131071, 65519, 1, -131071, 65532, 1, -196606, 65527, 2, -196606, 3, 2, -131070, 65519, 1, -131070, 65532, 1, -196605, 65527, 2, -196605, 3, 2, -131069, 65519, 1, -131069, 65532, 1, -327676, 65532, 4, -327676, 65533, 4, -327676, 65534, 4, -327676, 65535, 4, -327676, 0, 4, -327676, 1, 4, -327676, 2, 4, -327676, 3, 4, -196604, 65527, 2, -196604, 3, 2, -131068, 65519, 1, -131068, 65532, 1, -327675, 65519, 4, -327675, 65520, 4, -327675, 65526, 4, -327675, 65527, 4, -196603, 65527, 2, -131067, 65519, 1, -196602, 65525, 2, -131066, 65521, 1, -327673, 65521, 4, -327673, 65522, 4, -327673, 65523, 4, -327673, 65524, 4, -327673, 65525, 4, -196601, 65525, 2, -131065, 65521, 1)
+"cells": PackedInt32Array(-196615, 65534, 3, -196615, 65535, 3, -196615, 0, 3, -196615, 1, 3, -196615, 2, 3, -131079, 2, 2, -65543, 65534, 1, -196614, 65519, 3, -196614, 65520, 3, -196614, 65521, 3, -196614, 65522, 3, -196614, 65523, 3, -196614, 65524, 3, -196614, 65525, 3, -196614, 65526, 3, -196614, 65527, 3, -131078, 65527, 2, -131078, 2, 2, -65542, 65519, 1, -65542, 65534, 1, -196613, 65509, 3, -196613, 65510, 3, -196613, 65511, 3, -196613, 65512, 3, -196613, 65513, 3, -196613, 65514, 3, -196613, 65532, 3, -196613, 65533, 3, -196613, 3, 3, -131077, 65514, 2, -131077, 65527, 2, -131077, 3, 2, -65541, 65509, 1, -65541, 65519, 1, -65541, 65532, 1, -131076, 65514, 2, -131076, 65527, 2, -131076, 3, 2, -65540, 65509, 1, -65540, 65519, 1, -65540, 65532, 1, -131075, 65514, 2, -131075, 65527, 2, -131075, 3, 2, -65539, 65509, 1, -65539, 65519, 1, -65539, 65532, 1, -131074, 65514, 2, -131074, 65527, 2, -131074, 3, 2, -65538, 65509, 1, -65538, 65519, 1, -65538, 65532, 1, -131073, 3, 2, -65537, 65509, 1, -196608, 3, 2, -131072, 65509, 1, -196607, 65514, 2, -196607, 65527, 2, -196607, 3, 2, -131071, 65509, 1, -131071, 65519, 1, -131071, 65532, 1, -196606, 65514, 2, -196606, 65527, 2, -196606, 3, 2, -131070, 65509, 1, -131070, 65519, 1, -131070, 65532, 1, -196605, 65514, 2, -196605, 65527, 2, -196605, 3, 2, -131069, 65509, 1, -131069, 65519, 1, -131069, 65532, 1, -327676, 65509, 4, -327676, 65510, 4, -327676, 65511, 4, -327676, 65512, 4, -327676, 65513, 4, -327676, 65514, 4, -327676, 65532, 4, -327676, 65533, 4, -327676, 65534, 4, -327676, 65535, 4, -327676, 0, 4, -327676, 1, 4, -327676, 2, 4, -327676, 3, 4, -196604, 65514, 2, -196604, 65527, 2, -196604, 3, 2, -131068, 65509, 1, -131068, 65519, 1, -131068, 65532, 1, -327675, 65519, 4, -327675, 65520, 4, -327675, 65526, 4, -327675, 65527, 4, -196603, 65527, 2, -131067, 65519, 1, -196602, 65525, 2, -131066, 65521, 1, -327673, 65521, 4, -327673, 65522, 4, -327673, 65523, 4, -327673, 65524, 4, -327673, 65525, 4, -262137, 1, 3, -262137, 2, 3, -262137, 3, 3, -196601, 65525, 2, -196601, 3, 2, -131065, 65521, 1, -131065, 1, 1, -327672, 1, 4, -327672, 2, 4, -327672, 3, 4, -196600, 3, 2, -131064, 1, 1)
 }
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
@@ -381,6 +400,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.5, -1, -8.8)
 
 [node name="PenthouseB2" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("penthouse")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.8, -1, -47.2)
+
+[node name="PenthouseB3" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("penthouse")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -1, -78.2)
 
 [node name="HvacB1West" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
 transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, -18, -1, 1.5)
@@ -399,6 +421,15 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2, -1, -46.2)
 
 [node name="HvacB2SouthEast" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.5, -1, -28)
+
+[node name="HvacB3West" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.2, -1, -73.5)
+
+[node name="HvacB3East" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("hvac")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.2, -1, -76.5)
+
+[node name="CoverPanel" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("cover_panel")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 21.8, -1, 7.5)
 
 [node name="SkylightB2East" parent="Level/NavigationRegion3D/RooftopProps" instance=ExtResource("skylight")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.6, -1, -37.5)
@@ -428,108 +459,44 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 20.993, -29.02, -37.4875)
 cast_shadow = 0
 mesh = SubResource("BoxMesh_B2WingHull")
 
+[node name="EastTowerHull" type="MeshInstance3D" parent="Level/SkyscraperHulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.992, -29.02, 7.4975)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_EastTowerHull")
+
+[node name="B3MainHull" type="MeshInstance3D" parent="Level/SkyscraperHulls"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -29.02, -71.976)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_B3MainHull")
+
 [node name="BridgeFraming" type="Node3D" parent="Level"]
 
-[node name="ThresholdSouth" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.985, -11.756)
-mesh = SubResource("BoxMesh_threshold")
-
-[node name="ThresholdNorth" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.985, -24.232)
-mesh = SubResource("BoxMesh_threshold")
-
-[node name="PylonSW" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, -0.425, -11.776)
-mesh = SubResource("BoxMesh_pylon")
-
-[node name="PylonSWLamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, 0.21, -11.776)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_pylon_lamp")
-
-[node name="PylonSE" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, -0.425, -11.776)
-mesh = SubResource("BoxMesh_pylon")
-
-[node name="PylonSELamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, 0.21, -11.776)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_pylon_lamp")
-
-[node name="PylonNW" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, -0.425, -24.212)
-mesh = SubResource("BoxMesh_pylon")
-
-[node name="PylonNWLamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.16, 0.21, -24.212)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_pylon_lamp")
-
-[node name="PylonNE" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, -0.425, -24.212)
-mesh = SubResource("BoxMesh_pylon")
-
-[node name="PylonNELamp" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.16, 0.21, -24.212)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_pylon_lamp")
-
-[node name="NorthStrut1" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, -2.75, -2.18, -23.012)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthGusset1" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.75, -3.05, -23.942)
-mesh = SubResource("BoxMesh_gusset")
-
-[node name="SouthStrut1" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, -2.75, -2.18, -12.976)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthStrut2" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, -0.95, -2.18, -23.012)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthGusset2" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.95, -3.05, -23.942)
-mesh = SubResource("BoxMesh_gusset")
-
-[node name="SouthStrut2" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, -0.95, -2.18, -12.976)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthStrut3" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, 0.95, -2.18, -23.012)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthGusset3" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.95, -3.05, -23.942)
-mesh = SubResource("BoxMesh_gusset")
-
-[node name="SouthStrut3" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, 0.95, -2.18, -12.976)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthStrut4" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, 0.6691306, 0, -0.6691306, 0.7431448, 2.75, -2.18, -23.012)
-mesh = SubResource("BoxMesh_facade_strut")
-
-[node name="NorthGusset4" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.75, -3.05, -23.942)
-mesh = SubResource("BoxMesh_gusset")
-
-[node name="SouthStrut4" type="MeshInstance3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 0.7431448, -0.6691306, 0, 0.6691306, 0.7431448, 2.75, -2.18, -12.976)
-mesh = SubResource("BoxMesh_facade_strut")
+[node name="Framing" parent="Level/BridgeFraming" instance=ExtResource("bridge_framing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -17.994)
 
 [node name="BridgeWashLight1" type="OmniLight3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -15)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -14.996)
 light_color = Color(0.66, 0.84, 1, 1)
 light_energy = 0.45
 omni_range = 8.5
 
 [node name="BridgeWashLight2" type="OmniLight3D" parent="Level/BridgeFraming"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -21)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -20.992)
+light_color = Color(0.66, 0.84, 1, 1)
+light_energy = 0.45
+omni_range = 8.5
+
+[node name="Framing2" parent="Level/BridgeFraming" instance=ExtResource("bridge_framing")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -56.981)
+
+[node name="BridgeWashLight3" type="OmniLight3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -53.983)
+light_color = Color(0.66, 0.84, 1, 1)
+light_energy = 0.45
+omni_range = 8.5
+
+[node name="BridgeWashLight4" type="OmniLight3D" parent="Level/BridgeFraming"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.2, -59.979)
 light_color = Color(0.66, 0.84, 1, 1)
 light_energy = 0.45
 omni_range = 8.5
@@ -541,25 +508,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.985, -37.5)
 cast_shadow = 0
 mesh = SubResource("PlaneMesh_helipad")
 
-[node name="HelipadLight1" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.2, -0.98, -37.5)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_heli_light")
-
-[node name="HelipadLight2" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2, -0.98, -37.5)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_heli_light")
-
-[node name="HelipadLight3" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.98, -42.7)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_heli_light")
-
-[node name="HelipadLight4" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.98, -32.3)
-cast_shadow = 0
-mesh = SubResource("BoxMesh_heli_light")
+[node name="HelipadLights" parent="Level/RooftopDetails" instance=ExtResource("helipad_lights")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, -37.5)
 
 [node name="BridgeLampB1W" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -10.8)
@@ -573,24 +523,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -25.2)
 [node name="BridgeLampB2E" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -1, -25.2)
 
-[node name="CommsMastLower" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 0.8, -50.2)
-mesh = SubResource("CylinderMesh_mast_lower")
+[node name="BridgeLampB2NW" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -49.8)
 
-[node name="CommsMastUpper" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 4.1, -50.2)
-mesh = SubResource("CylinderMesh_mast_upper")
+[node name="BridgeLampB2NE" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -1, -49.8)
 
-[node name="CommsMastArm1" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 3.1, -50.2)
-mesh = SubResource("BoxMesh_mast_arm")
+[node name="BridgeLampB3W" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, -1, -64.2)
 
-[node name="CommsMastArm2" type="MeshInstance3D" parent="Level/RooftopDetails"]
-transform = Transform3D(0.7, 0, 0.7, 0, 1, 0, -0.7, 0, 0.7, -3.8, 4.4, -50.2)
-mesh = SubResource("BoxMesh_mast_arm")
+[node name="BridgeLampB3E" parent="Level/RooftopDetails" instance=ExtResource("light_post")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4, -1, -64.2)
+
+[node name="CommsMast" parent="Level/RooftopDetails" instance=ExtResource("comms_mast")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, -1, -50.2)
 
 [node name="CommsMastBeacon" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.8, 5.65, -50.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9.5, 5.65, -50.2)
 
 [node name="CornerBeacon1" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.82, -0.66, -11.82)
@@ -627,6 +576,24 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.8, -0.66, -30.16)
 
 [node name="CornerBeacon12" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 23.8, -0.66, -44.8)
+
+[node name="CornerBeacon13" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.82, -0.66, 3.18)
+
+[node name="CornerBeacon14" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 26.82, -0.66, 11.82)
+
+[node name="CornerBeacon15" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.82, -0.66, -63.16)
+
+[node name="CornerBeacon16" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.82, -0.66, -63.16)
+
+[node name="CornerBeacon17" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -14.82, -0.66, -80.8)
+
+[node name="CornerBeacon18" parent="Level/RooftopDetails" instance=ExtResource("beacon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.82, -0.66, -80.8)
 
 [node name="NightCityscape" type="Node3D" parent="Level"]
 
@@ -681,28 +648,28 @@ mesh = SubResource("BoxMesh_DistantEast2")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 63.68, -24, -25.44)
 
 [node name="DistantNorth1" type="MeshInstance3D" parent="Level/NightCityscape"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, -48, -76)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -34, -48, -100)
 cast_shadow = 0
 mesh = SubResource("BoxMesh_DistantNorth1")
 
 [node name="DistantNorth1Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.32, -27, -67.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -24.32, -27, -91.2)
 
 [node name="DistantNorth2" type="MeshInstance3D" parent="Level/NightCityscape"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, -82)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -50, -106)
 cast_shadow = 0
 mesh = SubResource("BoxMesh_DistantNorth2")
 
 [node name="DistantNorth2Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.44, -31, -73.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 11.44, -31, -97.2)
 
 [node name="DistantNorth3" type="MeshInstance3D" parent="Level/NightCityscape"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, -47.5, -78)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 36, -47.5, -102)
 cast_shadow = 0
 mesh = SubResource("BoxMesh_DistantNorth3")
 
 [node name="DistantNorth3Beacon" parent="Level/NightCityscape" instance=ExtResource("beacon")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.68, -26, -69.2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45.68, -26, -93.2)
 
 [node name="DistantGapWest" type="MeshInstance3D" parent="Level/NightCityscape"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -48, -50.5, -22)
@@ -718,43 +685,118 @@ platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4"), NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6"), NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../WakeBuilding2")
+
+[node name="OpenBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12"), NodePath("../../Bridges/BridgePlatform13"), NodePath("../../Bridges/BridgePlatform14"), NodePath("../../Bridges/BridgePlatform15"), NodePath("../../Bridges/BridgePlatform16")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+
+[node name="CloseBridge2" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12"), NodePath("../../Bridges/BridgePlatform13"), NodePath("../../Bridges/BridgePlatform14"), NodePath("../../Bridges/BridgePlatform15"), NodePath("../../Bridges/BridgePlatform16")]
+platform_animation_stagger_seconds = 0.5
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../WakeBuilding3")
+
 [node name="Bridges" type="Node" parent="Level"]
 
 [node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -13.4955)
-start_at_bottom = false
 
 [node name="BridgePlatform2" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -13.4955)
-start_at_bottom = false
 
 [node name="BridgePlatform3" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -16.4945)
-start_at_bottom = false
 
 [node name="BridgePlatform4" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -16.4945)
-start_at_bottom = false
 
 [node name="BridgePlatform5" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -19.4935)
-start_at_bottom = false
 
 [node name="BridgePlatform6" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -19.4935)
-start_at_bottom = false
 
 [node name="BridgePlatform7" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -22.4925)
-start_at_bottom = false
 
 [node name="BridgePlatform8" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -22.4925)
-start_at_bottom = false
 
-[node name="WakeNinjas" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+[node name="BridgePlatform9" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -52.4825)
+
+[node name="BridgePlatform10" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -52.4825)
+
+[node name="BridgePlatform11" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -55.4815)
+
+[node name="BridgePlatform12" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -55.4815)
+
+[node name="BridgePlatform13" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -58.4805)
+
+[node name="BridgePlatform14" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -58.4805)
+
+[node name="BridgePlatform15" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4995, -3.9928, -61.4795)
+
+[node name="BridgePlatform16" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(-1, 0, 8.742278e-08, 0, 1, 0, -8.742278e-08, 0, -1, 1.4995, -3.9928, -61.4795)
+
+[node name="WakeBuilding2" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
 script = ExtResource("change_behavior")
-enemy_group = NodePath("../../../Enemies/Ninjas")
+enemy_group = NodePath("../../../Enemies/Building2")
+
+[node name="WakeBuilding3" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/Building3")
+
+[node name="FocusTowerSW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusTowerSW")
+
+[node name="FocusTowerSE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusTowerSE")
+
+[node name="FocusTowerNW" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusTowerNW")
+
+[node name="FocusTowerNE" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../FocusPoints/FocusTowerNE")
+
+[node name="UnfocusCamera" type="Node" parent="Level/Events"]
+script = ExtResource("camera_clear")
+
+[node name="FocusPoints" type="Node3D" parent="Level"]
+
+[node name="FocusTowerSW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, 10.4965)
+
+[node name="FocusTowerSE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, 10.4965)
+
+[node name="FocusTowerNW" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 22.4925, 0, 4.4985)
+
+[node name="FocusTowerNE" type="Node3D" parent="Level/FocusPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25.4915, 0, 4.4985)
 
 [node name="Areas" type="Node" parent="Level"]
 
@@ -765,12 +807,19 @@ script = ExtResource("all_players")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/NorthBuildingLanding"]
 shape = SubResource("BoxShape3D_landing")
 
-[node name="NinjaWake" type="Area3D" parent="Level/Areas"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -4.4985)
+[node name="PeekerApproach" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.997, 0, 5.998)
 script = ExtResource("all_players")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/NinjaWake"]
-shape = SubResource("BoxShape3D_ninja_wake")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/PeekerApproach"]
+shape = SubResource("BoxShape3D_peeker_approach")
+
+[node name="Building3Landing" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -66.8777)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/Building3Landing"]
+shape = SubResource("BoxShape3D_landing")
 
 [node name="Weapon" type="Node3D" parent="."]
 
@@ -784,5 +833,15 @@ autoplay = true
 bus = &"Music"
 parameters/looping = true
 
-[connection signal="all_players_inside" from="Level/Areas/NorthBuildingLanding" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
-[connection signal="all_players_inside" from="Level/Areas/NinjaWake" to="Level/Events/WakeNinjas" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/NorthBuildingLanding" to="Level/Events/CloseBridge1" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/PeekerApproach" to="Level/Events/FocusTowerSW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/PeekerApproach" to="Level/Events/FocusTowerSE" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/PeekerApproach" to="Level/Events/FocusTowerNW" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/PeekerApproach" to="Level/Events/FocusTowerNE" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Building1" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Building1" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Building1" to="Level/Events/UnfocusCamera" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Building2" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Building2" to="Level/Events/OpenBridge2" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/Building3Landing" to="Level/Events/CloseBridge2" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Building3" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]

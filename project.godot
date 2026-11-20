@@ -297,6 +297,7 @@ take_screenshot={
 3d_physics/layer_4="weapons"
 3d_physics/layer_5="weapon_blades"
 3d_physics/layer_6="bolt_mirror"
+3d_physics/layer_7="shot_cover"
 
 [rendering]
 

@@ -10,6 +10,10 @@ extends Node3D
 ##
 ## `set_slowed` eases the star into slow motion: its flight, spin and hang all slow down, and faint
 ## lines along the blades show where the kunai would fly, so the front carrier can line one up.
+##
+## It flies through terrain except `ShotCover`: running into cover ends its flight there, and it hangs
+## against the cover as it would at the end of its range. Its kunai stop on cover too. Enemies in
+## `STAR_PROOF_GROUP` shrug the star off; only its kunai hurt them.
 
 signal enemy_hit(enemy: EnemyLocal)
 signal scattered(kunais: Array[Kunai])
@@ -17,12 +21,18 @@ signal spent
 
 ## Every star in flight is in this group, so enemies can see one coming, such as a ninja that dodges.
 const GROUP := &"player_shurikens"
+## Enemies the star itself can't hurt, such as the ninja behind the billboard.
+const STAR_PROOF_GROUP := &"star_proof"
+## How close to cover the star's middle can come: its blades, a little inside their tips.
+const COVER_RADIUS := 1.0
+const COVER_PROBE_HEIGHT := 0.3
 ## Turns per second while flying. Fast enough to read as a buzz-saw, slow enough to see the kunai.
 const SPIN_HZ := 2.2
 const HIT_RADIUS := 1.2
 const HIT_HEIGHT := 2.4
 ## Enemies (layer 2) and enemy projectiles such as fireballs (layer 4).
-const HIT_MASK := 2 | 8
+## Also mirrors (layer 6), for the boss shurikens that knock it off course.
+const HIT_MASK := 2 | 8 | BoltMirror.LAYER
 ## Hanging at the end of the range: the front carrier's last window to scatter.
 const HOVER_SEC := 0.6
 const KUNAI_SPEED := 24.0
@@ -152,8 +162,33 @@ func _physics_process(delta: float) -> void:
 		_hover(star_delta)
 		return
 	var step := minf(_speed * star_delta, _range - _travelled)
-	global_position += _direction * step
-	_travelled += step
+	var free_step := _free_step_before_cover(step)
+	global_position += _direction * free_step
+	_travelled += free_step
+	if free_step < step:
+		_hit_cover()
+
+
+## How far it can move along `step` before its blades touch cover. A swept test, so it can't skip a thin panel.
+func _free_step_before_cover(step: float) -> float:
+	if step <= 0.0:
+		return step
+	var probe := CylinderShape3D.new()
+	probe.radius = COVER_RADIUS
+	probe.height = COVER_PROBE_HEIGHT
+	var query := PhysicsShapeQueryParameters3D.new()
+	query.shape = probe
+	query.transform = Transform3D(Basis(), global_position)
+	query.motion = _direction * step
+	query.collision_mask = ShotCover.LAYER
+	var fractions := get_world_3d().direct_space_state.cast_motion(query)
+	return step * fractions[0]
+
+
+## Ends the flight against cover: it hangs there, spinning, as at the end of its range.
+func _hit_cover() -> void:
+	_range = _travelled
+	ShotCover.play_hit(get_tree(), global_position + _direction * COVER_RADIUS, 0.6)
 
 
 func _hover(delta: float) -> void:
@@ -169,6 +204,9 @@ func _on_body_entered(body: Node3D) -> void:
 	if not body is EnemyLocal:
 		return
 	_already_hit.append(body)
+	if body.is_in_group(STAR_PROOF_GROUP):
+		ShotCover.play_hit(get_tree(), body.global_position + Vector3.UP * SLASH_HEIGHT, 0.3)
+		return
 	# Damage comes from just behind the enemy, so knockback pushes along the flight.
 	if not Health.apply_damage(body, _damage, body.global_position - _direction):
 		return
@@ -179,11 +217,26 @@ func _on_body_entered(body: Node3D) -> void:
 func _on_area_entered(area: Area3D) -> void:
 	if _is_spent:
 		return
+	if area is BoltMirror:
+		_glance_off(area as BoltMirror)
+		return
 	var fireball := area.get_parent() as Fireball
 	if fireball == null:
 		return
 	_spawn_effect(POP_SCENE, fireball.global_position)
 	fireball.queue_free()
+
+
+## A boss shuriken knocks the star off course: it flies on, mirrored off the line between their middles, with the
+## range it has left. Other mirrors, such as enemy shields, don't touch it.
+func _glance_off(mirror: BoltMirror) -> void:
+	if not mirror.get_parent() is BossShuriken:
+		return
+	if not is_flying():
+		return
+	var normal := global_position - mirror.global_position
+	_direction = BoltMirror.reflect(_direction, normal)
+	mirror.deflect(mirror.global_position + normal.normalized())
 
 
 func _play_hit_feedback(body: Node3D) -> void:

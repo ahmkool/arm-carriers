@@ -1,0 +1,395 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_rv3oy"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="3_6obaf"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="3_k0inv"]
+[ext_resource type="Animation" uid="uid://bb6rh8o22vtqk" path="res://assets/animations_source/animations/Death_A_Pose.res" id="4_6pgiq"]
+[ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="4_nqpn3"]
+[ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="5_ovf15"]
+[ext_resource type="Animation" uid="uid://qr28d1kys3cu" path="res://assets/animations_source/animations/Death_B.res" id="5_p1hda"]
+[ext_resource type="Script" uid="uid://bbgviimwhb8xd" path="res://src/enemy/state/falling.gd" id="6_2o1j5"]
+[ext_resource type="Animation" uid="uid://d4mqxy7yj4eeb" path="res://assets/animations_source/animations/Death_B_Pose.res" id="6_cd20w"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="7_4si6m"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="7_uqia1"]
+[ext_resource type="Animation" uid="uid://dgye3dqqmpauj" path="res://assets/animations_source/animations/Hit_B.res" id="8_qlwsw"]
+[ext_resource type="Script" uid="uid://cy3ru26cixx67" path="res://src/enemy/state/spawning.gd" id="8_spawn"]
+[ext_resource type="Animation" uid="uid://c3ppuhivk30bj" path="res://assets/animations_source/animations/Idle_A.res" id="9_08wyp"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="10_u2ycs"]
+[ext_resource type="Animation" uid="uid://bvdi208mt7bf3" path="res://assets/animations_source/animations/Interact.res" id="11_krgyo"]
+[ext_resource type="Animation" uid="uid://cvofd306jejsk" path="res://assets/animations_source/animations/Jump_Full_Long.res" id="12_8j5m8"]
+[ext_resource type="Animation" uid="uid://ch1jryo7lq8ll" path="res://assets/animations_source/animations/Jump_Full_Short.res" id="13_wpk31"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="14_423i2"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="15_41ldg"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="16_fo663"]
+[ext_resource type="Animation" uid="uid://ckorprw785c6n" path="res://assets/animations_source/animations/PickUp.res" id="17_y83rj"]
+[ext_resource type="Animation" uid="uid://5o0p7x5ts3yq" path="res://assets/animations_source/animations/Running_A.res" id="18_l8uud"]
+[ext_resource type="Animation" uid="uid://h8eb8s8erx3o" path="res://assets/animations_source/animations/Running_B.res" id="19_6wyxs"]
+[ext_resource type="Animation" uid="uid://4ddywlnww1vh" path="res://assets/animations_source/animations/Spawn_Air.res" id="20_m468x"]
+[ext_resource type="Animation" uid="uid://ce0wp8fauyjy7" path="res://assets/animations_source/animations/Spawn_Ground.res" id="21_16rfl"]
+[ext_resource type="Animation" uid="uid://cyc51jqqiv405" path="res://assets/animations_source/animations/T-Pose.res" id="22_j0ymw"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="23_y25gs"]
+[ext_resource type="Animation" uid="uid://dmeewkkixxoei" path="res://assets/animations_source/animations/Use_Item.res" id="24_x6ft7"]
+[ext_resource type="Animation" uid="uid://400p0viws1y" path="res://assets/animations_source/animations/Walking_A.res" id="25_vbxci"]
+[ext_resource type="Animation" uid="uid://b66k543srtgf6" path="res://assets/animations_source/animations/Walking_B.res" id="26_687tl"]
+[ext_resource type="Animation" uid="uid://blfigfpjocmqx" path="res://assets/animations_source/animations/Walking_C.res" id="27_43u0p"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="35_p1hda"]
+[ext_resource type="Script" uid="uid://c8k2hitdmg01" path="res://src/enemy/state/taking_damage.gd" id="36_hitdmg"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/ninja/Dodge_Left.res" id="dodge_left"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/ninja/Dodge_Right.res" id="dodge_right"]
+[ext_resource type="Script" path="res://src/enemy/ninja/shuriken_master_behavior.gd" id="g_behavior"]
+[ext_resource type="Script" path="res://src/enemy/ninja/ninja_boss_gesture.gd" id="g_gesture"]
+[ext_resource type="PackedScene" path="res://src/enemy/health_bar/enemy_health_bar_3d.tscn" id="health_bar"]
+[ext_resource type="PackedScene" uid="uid://cuvtya5qo4df4" path="res://assets/models/weapon/enemies/ninja/Ninja_Shuriken.gltf" id="hand_shuriken"]
+[ext_resource type="PackedScene" uid="uid://deudoy2my7nm7" path="res://assets/models/weapon/enemies/ninja/Ninja_Katana.gltf" id="katana"]
+[ext_resource type="PackedScene" uid="uid://cnkkn8xi842sl" path="res://assets/characters/ninja/Ninja.glb" id="ninja_glb"]
+
+[sub_resource type="Animation" id="Animation_k0inv"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_6pgiq"]
+_data = {
+&"RESET": SubResource("Animation_k0inv")
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_m0mtg"]
+_data = {
+&"Death_A": ExtResource("3_k0inv"),
+&"Death_A_Pose": ExtResource("4_6pgiq"),
+&"Death_B": ExtResource("5_p1hda"),
+&"Death_B_Pose": ExtResource("6_cd20w"),
+&"Dodge_Left": ExtResource("dodge_left"),
+&"Dodge_Right": ExtResource("dodge_right"),
+&"Hit_A": ExtResource("7_uqia1"),
+&"Hit_B": ExtResource("8_qlwsw"),
+&"Idle_A": ExtResource("9_08wyp"),
+&"Idle_B": ExtResource("10_u2ycs"),
+&"Interact": ExtResource("11_krgyo"),
+&"Jump_Full_Long": ExtResource("12_8j5m8"),
+&"Jump_Full_Short": ExtResource("13_wpk31"),
+&"Jump_Idle": ExtResource("14_423i2"),
+&"Jump_Land": ExtResource("15_41ldg"),
+&"Jump_Start": ExtResource("16_fo663"),
+&"PickUp": ExtResource("17_y83rj"),
+&"Running_A": ExtResource("18_l8uud"),
+&"Running_B": ExtResource("19_6wyxs"),
+&"Spawn_Air": ExtResource("20_m468x"),
+&"Spawn_Ground": ExtResource("21_16rfl"),
+&"T-Pose": ExtResource("22_j0ymw"),
+&"Throw": ExtResource("23_y25gs"),
+&"Use_Item": ExtResource("24_x6ft7"),
+&"Walking_A": ExtResource("25_vbxci"),
+&"Walking_B": ExtResource("26_687tl"),
+&"Walking_C": ExtResource("27_43u0p")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dl8mv"]
+animation = &"skeleton_warrior/Idle_B"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_okfnn"]
+animation = &"skeleton_warrior/Death_A"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dodge_left"]
+animation = &"skeleton_warrior/Dodge_Left"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dodge_right"]
+animation = &"skeleton_warrior/Dodge_Right"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_shoot"]
+animation = &"skeleton_warrior/Throw"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_spawn"]
+animation = &"skeleton_warrior/Spawn_Ground"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_awda7"]
+animation = &"skeleton_warrior/Running_A"
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_okfnn"]
+
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_df4md"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_dodge_left"]
+fadein_time = 0.05
+fadeout_time = 0.1
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_dodge_right"]
+fadein_time = 0.05
+fadeout_time = 0.1
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_shoot"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_a1vpm"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_spawn"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_pull"]
+animation = &"skeleton_warrior/Interact"
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_pull"]
+fadein_time = 0.08
+fadeout_time = 0.15
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_cd20w"]
+nodes/output/position = Vector2(1440, 180)
+nodes/Pull/node = SubResource("AnimationNodeOneShot_pull")
+nodes/Pull/position = Vector2(1190, 200)
+"nodes/Animation Pull/node" = SubResource("AnimationNodeAnimation_pull")
+"nodes/Animation Pull/position" = Vector2(950, 420)
+nodes/DodgeLeft/node = SubResource("AnimationNodeOneShot_dodge_left")
+nodes/DodgeLeft/position = Vector2(700, 200)
+nodes/DodgeRight/node = SubResource("AnimationNodeOneShot_dodge_right")
+nodes/DodgeRight/position = Vector2(950, 200)
+"nodes/Animation DodgeLeft/node" = SubResource("AnimationNodeAnimation_dodge_left")
+"nodes/Animation DodgeLeft/position" = Vector2(450, 420)
+"nodes/Animation DodgeRight/node" = SubResource("AnimationNodeAnimation_dodge_right")
+"nodes/Animation DodgeRight/position" = Vector2(700, 420)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_awda7")
+nodes/Animation/position = Vector2(-540, 360)
+nodes/BlendIdleRun/node = SubResource("AnimationNodeBlend2_okfnn")
+nodes/BlendIdleRun/position = Vector2(-60, 120)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_dl8mv")
+"nodes/Animation 2/position" = Vector2(-450, 70)
+nodes/DeadBlend/node = SubResource("AnimationNodeBlend2_df4md")
+nodes/DeadBlend/position = Vector2(450, 230)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_a1vpm")
+nodes/OneShot/position = Vector2(150, 430)
+nodes/OneShotSpawn/node = SubResource("AnimationNodeOneShot_spawn")
+nodes/OneShotSpawn/position = Vector2(200, 210)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_okfnn")
+"nodes/Animation 3/position" = Vector2(-350, 710)
+"nodes/Animation Spawn/node" = SubResource("AnimationNodeAnimation_spawn")
+"nodes/Animation Spawn/position" = Vector2(-300, 520)
+"nodes/OneShot 2/node" = SubResource("AnimationNodeOneShot_shoot")
+"nodes/OneShot 2/position" = Vector2(330, 60)
+"nodes/Animation Shoot/node" = SubResource("AnimationNodeAnimation_shoot")
+"nodes/Animation Shoot/position" = Vector2(100, -60)
+node_connections = [&"output", 0, &"Pull", &"Pull", 0, &"DodgeRight", &"Pull", 1, &"Animation Pull", &"DodgeLeft", 0, &"DeadBlend", &"DodgeLeft", 1, &"Animation DodgeLeft", &"DodgeRight", 0, &"DodgeLeft", &"DodgeRight", 1, &"Animation DodgeRight", &"BlendIdleRun", 0, &"Animation 2", &"BlendIdleRun", 1, &"Animation", &"DeadBlend", 0, &"OneShot 2", &"DeadBlend", 1, &"OneShot", &"OneShot", 0, &"Animation 3", &"OneShotSpawn", 0, &"BlendIdleRun", &"OneShotSpawn", 1, &"Animation Spawn", &"OneShot 2", 0, &"OneShotSpawn", &"OneShot 2", 1, &"Animation Shoot"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_65eof"]
+radius = 0.39160156
+height = 2.3062744
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_p5r7q"]
+radius = 0.7792969
+height = 2.3674316
+
+[sub_resource type="Curve" id="Curve_enemy_fs"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_enemy_fs"]
+curve = SubResource("Curve_enemy_fs")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_enemy_fs"]
+gravity = Vector3(0, 1, 0)
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_enemy_fs")
+
+[sub_resource type="SphereMesh" id="SphereMesh_enemy_fs"]
+
+[sub_resource type="Curve" id="Curve_6pgiq"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(0.7138554, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 3
+
+[sub_resource type="CurveTexture" id="CurveTexture_dvbte"]
+curve = SubResource("Curve_6pgiq")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_p1hda"]
+particle_flag_align_y = true
+emission_shape = 2
+emission_sphere_radius = 6.0
+radial_velocity_min = -2.0000224
+radial_velocity_max = -2.0000224
+gravity = Vector3(0, 0, 0)
+radial_accel_min = -1.0000023
+radial_accel_max = -1.0000023
+scale_min = 0.5
+scale_max = 1.5
+scale_curve = SubResource("CurveTexture_dvbte")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_10pld"]
+albedo_color = Color(0.9122237, 0.41413048, 9.62615e-07, 1)
+emission_enabled = true
+emission = Color(0.8459809, 0.4121156, 1.92523e-07, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_cd20w"]
+material = SubResource("StandardMaterial3D_10pld")
+top_radius = 0.04
+bottom_radius = 0.0
+height = 0.5
+
+[node name="EnemyNinjaBoss" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 20
+script = ExtResource("1_rv3oy")
+speed = 3.0
+holds_position = true
+
+[node name="Ninja" parent="." instance=ExtResource("ninja_glb")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Skeleton3D" parent="Ninja/Rig_Medium" index="0"]
+bones/1/position = Vector3(0, 0.39206383, 0)
+bones/1/rotation = Quaternion(-1.11122625e-10, 0.043157753, 2.5724098e-09, 0.9990683)
+bones/1/scale = Vector3(0.99999994, 1, 0.99999994)
+bones/2/rotation = Quaternion(-6.938893e-18, 7.1054274e-15, 4.93038e-32, 1)
+bones/2/scale = Vector3(1.0000001, 1, 1.0000001)
+bones/3/rotation = Quaternion(8.271806e-25, 3.7252903e-09, -2.75506e-40, 1)
+bones/3/scale = Vector3(1, 0.9999999, 1)
+bones/4/position = Vector3(0.21200736, 0.13413203, 7.9299625e-08)
+bones/4/rotation = Quaternion(-0.5599063, -0.060880348, -0.6439745, 0.5177794)
+bones/4/scale = Vector3(0.9999991, 0.9999986, 0.9999996)
+bones/5/rotation = Quaternion(3.7650654e-08, -5.1384802e-08, -0.4947193, 0.8690529)
+bones/6/rotation = Quaternion(7.250843e-09, 9.200791e-09, 0.026658095, 0.99964464)
+bones/7/rotation = Quaternion(-0.32106528, -0.32531866, 0.1457259, 0.8774103)
+bones/8/position = Vector3(-6.936717e-09, 0.096125185, -0.057500005)
+bones/8/rotation = Quaternion(6.9489685e-09, -3.587743e-09, -0.7071068, 0.7071067)
+bones/9/rotation = Quaternion(-5.8060785e-11, -0.031341746, -1.880125e-09, 0.99950874)
+bones/9/scale = Vector3(1, 0.99999994, 1)
+bones/10/position = Vector3(-0.21200737, 0.13413203, 8.6813984e-08)
+bones/10/rotation = Quaternion(-0.6182439, 0.08072865, 0.61801153, 0.47887278)
+bones/10/scale = Vector3(0.99999905, 0.9999985, 0.9999996)
+bones/11/rotation = Quaternion(2.1687793e-08, 6.223694e-08, 0.5179393, 0.85541743)
+bones/12/rotation = Quaternion(7.300499e-09, -7.3388096e-09, -0.0266581, 0.99964464)
+bones/13/rotation = Quaternion(-0.31929126, 0.30052418, -0.22734971, 0.8695116)
+bones/14/position = Vector3(-1.541501e-08, 0.096125126, -0.057499975)
+bones/14/rotation = Quaternion(-9.53579e-10, -4.3147743e-09, 0.7071068, 0.7071067)
+bones/14/scale = Vector3(1, 1.0000001, 1.0000001)
+bones/15/position = Vector3(-0.17094508, 0.11358732, 1.557549e-08)
+bones/15/rotation = Quaternion(0.9973222, -0.029457364, 0.03152927, 0.05904832)
+bones/15/scale = Vector3(0.9999999, 0.99999976, 1.0000008)
+bones/16/rotation = Quaternion(0.2740081, -6.3812955e-08, 1.927607e-07, 0.9617275)
+bones/17/rotation = Quaternion(-0.5590394, 0.11451276, -0.008627633, 0.82115)
+bones/18/rotation = Quaternion(-8.9348905e-05, 0.9202216, -0.39139763, 2.0290994e-05)
+bones/19/position = Vector3(0.17094508, 0.1135872, 1.5994095e-08)
+bones/19/rotation = Quaternion(0.9927243, -0.003953806, 0.04276561, 0.11248982)
+bones/19/scale = Vector3(0.9999999, 0.99999976, 1.0000008)
+bones/20/rotation = Quaternion(0.2954667, 6.279743e-08, -2.0384442e-07, 0.95535314)
+bones/21/rotation = Quaternion(-0.5400721, 4.1242718e-05, 0.0009099837, 0.8416183)
+bones/22/rotation = Quaternion(-2.203457e-06, 0.9202539, -0.391322, 5.6286586e-07)
+bones/22/scale = Vector3(1, 0.9999977, 1.0000024)
+
+[node name="ThrowHand" type="BoneAttachment3D" parent="Ninja/Rig_Medium/Skeleton3D" index="8"]
+transform = Transform3D(6.3308244e-07, -0.1498946, -0.988701, -0.99999875, 5.9604517e-08, 1.2396275e-07, -1.3616987e-07, 0.9887011, -0.14989436, -0.49106076, 0.64102995, 0.10659551)
+bone_name = "handslot.r"
+bone_idx = 14
+
+[node name="HandShuriken" parent="Ninja/Rig_Medium/Skeleton3D/ThrowHand" instance=ExtResource("hand_shuriken")]
+
+[node name="Back" type="BoneAttachment3D" parent="Ninja/Rig_Medium/Skeleton3D" index="9"]
+transform = Transform3D(0.9962749, -5.1496167e-09, 0.08623532, 5.1304343e-09, 0.9999999, 4.4407708e-10, -0.08623532, 1.8800718e-15, 0.9962749, -2.9196552e-09, 0.9590293, 1.0685902e-15)
+bone_name = "chest"
+bone_idx = 3
+
+[node name="Katana" parent="Ninja/Rig_Medium/Skeleton3D/Back" instance=ExtResource("katana")]
+transform = Transform3D(0.7071068, -0.7071068, 0, 0.7071068, 0.7071068, 0, 0, 0, 1, 0, 0.35, -0.32)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Ninja"]
+libraries = {
+&"": SubResource("AnimationLibrary_6pgiq"),
+&"skeleton_warrior": SubResource("AnimationLibrary_m0mtg")
+}
+autoplay = "skeleton_warrior/Idle_B"
+
+[node name="AnimationTree" type="AnimationTree" parent="Ninja"]
+active = false
+tree_root = SubResource("AnimationNodeBlendTree_cd20w")
+anim_player = NodePath("../AnimationPlayer")
+parameters/DodgeLeft/active = false
+parameters/DodgeLeft/internal_active = false
+parameters/DodgeLeft/request = 0
+parameters/DodgeRight/active = false
+parameters/DodgeRight/internal_active = false
+parameters/DodgeRight/request = 0
+parameters/BlendIdleRun/blend_amount = 0.0
+parameters/DeadBlend/blend_amount = 0.0
+parameters/OneShot/active = false
+parameters/OneShot/internal_active = false
+parameters/OneShot/request = 0
+parameters/OneShotSpawn/active = false
+parameters/OneShotSpawn/internal_active = false
+parameters/OneShotSpawn/request = 0
+"parameters/OneShot 2/active" = false
+"parameters/OneShot 2/internal_active" = false
+"parameters/OneShot 2/request" = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
+shape = SubResource("CapsuleShape3D_65eof")
+
+[node name="ShurikenMasterBehavior" type="Node" parent="."]
+script = ExtResource("g_behavior")
+orbit_radius = 6.5
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("3_6obaf")
+initial_state_path = NodePath("Spawning")
+
+[node name="Spawning" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("8_spawn")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("4_nqpn3")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("5_ovf15")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("6_2o1j5")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("7_4si6m")
+
+[node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("36_hitdmg")
+
+[node name="Launching" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("g_gesture")
+
+[node name="Pulling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("g_gesture")
+oneshot_request = &"parameters/Pull/request"
+behavior_method = &"release_pull"
+release_sec = 0.3
+end_sec = 0.7
+
+[node name="HitBox" type="Area3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="HitBox"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1779166, -0.77149844)
+shape = SubResource("CapsuleShape3D_p5r7q")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("ParticleProcessMaterial_enemy_fs")
+draw_pass_1 = SubResource("SphereMesh_enemy_fs")
+
+[node name="VFX" type="Node3D" parent="."]
+
+[node name="Focus" type="GPUParticles3D" parent="VFX"]
+cast_shadow = 0
+emitting = false
+amount = 24
+lifetime = 2.0
+one_shot = true
+explosiveness = 1.0
+fixed_fps = 60
+process_material = SubResource("ParticleProcessMaterial_p1hda")
+draw_pass_1 = SubResource("CylinderMesh_cd20w")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("35_p1hda")
+max_hp = 30
+
+[node name="EnemyHealthBar3D" parent="." instance=ExtResource("health_bar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.7, 0)
+always_visible = true
+
+[connection signal="body_entered" from="HitBox" to="." method="_on_hit_box_body_entered"]
+
+[editable path="Ninja"]

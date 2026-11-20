@@ -1,0 +1,16 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_ninja.tscn" id="1_ninja"]
+[ext_resource type="Script" path="res://src/enemy/ninja/ninja_peeker_behavior.gd" id="2_behavior"]
+[ext_resource type="Script" path="res://src/enemy/ninja/ninja_darting.gd" id="3_darting"]
+
+[node name="EnemyNinjaPeeker" instance=ExtResource("1_ninja")]
+
+[node name="NinjaBehavior" parent="."]
+script = ExtResource("2_behavior")
+
+[node name="Darting" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("3_darting")
+
+[node name="Health" parent="."]
+max_hp = 2

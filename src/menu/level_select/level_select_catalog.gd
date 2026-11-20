@@ -97,6 +97,7 @@ const DEV_GROUPS: Array[Dictionary] = [
 			{"title": "Castle Siege", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_castle_siege.tscn", "weapon": "catapult", "requires": "ranged"},
 			{"title": "Mysterious Jungle", "difficulty": 2, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_mysterious_jungle.tscn", "weapon": "siege_bow", "requires": "ranged"},
 			{"title": "Night Rooftops", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_night_rooftops.tscn", "weapon": "shuriken_launcher", "all_weapons": true},
+			{"title": "World of Memories", "difficulty": 3, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_local_world_of_memories.tscn", "weapon": "sword", "all_weapons": true},
 		],
 	},
 ]

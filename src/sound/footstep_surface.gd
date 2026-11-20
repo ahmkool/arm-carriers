@@ -20,6 +20,7 @@ const BY_MESH_LIBRARY := {
 	"res://src/world/elements/jungle/jungle_tiles.tres": STONE,
 	"res://src/world/elements/lava/lava_tiles.tres": STONE,
 	"res://src/world/elements/medieval/castle_tiles.tres": STONE,
+	"res://src/world/elements/memories/memories_tiles.tres": STONE,
 	"res://src/world/elements/rooftops/rooftop_tiles.tres": STONE,
 	"res://src/world/elements/sky_decks/deck_tiles.tres": WOOD,
 	"res://src/world/elements/space/space_tiles.tres": METAL,

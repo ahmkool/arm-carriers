@@ -34,6 +34,7 @@ LIBRARIES = {
     "canyon": ("src/world/elements/canyon/canyon_tiles.tres", None),  # sandstone; built by build_canyon_tiles.gd
     "jungle": ("src/world/elements/jungle/jungle_tiles.tres", None),  # mossy temple ruin stone & jungle flora; built by build_jungle_tiles.gd
     "rooftops": ("src/world/elements/rooftops/rooftop_tiles.tres", None),  # concrete skyscraper slabs & parapet coping
+    "memories": ("src/world/elements/memories/memories_tiles.tres", None),  # semi-transparent water-glass floor & stone sanctuary rims
 }
 WEAPONS = {
     "bazooka": ("uid://cq5v348mrgy7q", "res://src/weapon/bazooka.tscn"),
@@ -58,6 +59,8 @@ MUSIC = {
     "cyber_noir": ("uid://etr5pc8rj0ge", "res://assets/music/PerituneMaterial_Cyber_Noir.mp3"),
     "rainwalk": ("uid://tjy5vr01nwen", "res://assets/music/PeriTune_Rainwalk_loop.mp3"),
     "secret_corridor": ("uid://beixrhjbhtoq", "res://assets/music/PeriTune_Secret_Corridor.mp3"),
+    "broken": ("uid://btd78n4yaqlxo", "res://assets/music/PerituneMaterial_Broken.mp3"),
+    "deity": ("uid://cgv2m6nwg3niw", "res://assets/music/PerituneMaterial_EpicBattle_Deity.mp3"),
 }
 TRIGGER = "AllPlayersAreaTrigger"
 EVENTS = "Level/Events/"
@@ -193,6 +196,29 @@ fog_density = 0.0018
 fog_sky_affect = 0.12"""
 SKY_ROOFTOPS = """[sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
 shader = ExtResource("rooftop_sky")"""
+ENVIRONMENT_MEMORIES = """background_mode = 2
+sky = SubResource("Sky_level")
+reflected_light_source = 2
+ambient_light_source = 3
+ambient_light_color = Color(0.76, 0.72, 0.82, 1)
+ambient_light_sky_contribution = 0.45
+ambient_light_energy = 0.68
+tonemap_mode = 3
+tonemap_white = 6.0
+ssao_enabled = true
+ssao_radius = 1.1
+ssao_intensity = 1.2
+glow_enabled = true
+glow_intensity = 0.48
+glow_bloom = 0.04
+glow_hdr_threshold = 1.08
+fog_enabled = true
+fog_light_color = Color(0.84, 0.76, 0.81, 1)
+fog_density = 0.0016
+fog_aerial_perspective = 0.22
+fog_sky_affect = 0.15"""
+SKY_MEMORIES = """[sub_resource type="ShaderMaterial" id="PanoramaSkyMaterial_sky"]
+shader = ExtResource("memories_sky")"""
 WATER_Y = -4.6065345
 ROCK_SCALE = 6  # the hill rocks are 0.2 to 0.9 m across: this makes them sea stacks
 ROCK_SINK = 1.0  # how far a sea rock's base sits under the water
@@ -377,6 +403,16 @@ class Level:
         wx, wz = world(cx, cz)
         self.node(name, f"Enemies/{group}/InstancedEnemies", instance="ninja", props={
             "transform": tf(wx, 0, wz, FACE_SOUTH), "is_offensive": "false"})
+
+    def ninja_peeker(self, group, name, wx, wz, basis):
+        """A ninja holding cover (enemy_ninja_peeker.tscn) at world (wx, wz): it hides there, darts out past the
+        cover to throw a shuriken and darts back. Only the shuriken launcher's kunai hurt it. Its peek spots are
+        2.2 m either way along z from where it stands, so stand the cover across x, ending about 1 m short of them."""
+        ext = ("PackedScene", None, "res://src/enemy/enemy_ninja_peeker.tscn", "ninja_peeker")
+        if ext not in self.extra_ext:
+            self.extra_ext.append(ext)
+        self.node(name, f"Enemies/{group}/InstancedEnemies", instance="ninja_peeker", props={
+            "transform": tf(wx, 0, wz, basis), "is_offensive": "false"})
 
     def _add_shield(self, enemy_path, forces_vent_prompt=False):
         shield_ext = ("Script", None, "res://src/enemy/shield/enemy_shield.gd", "enemy_shield")
@@ -943,6 +979,10 @@ shader_parameter/rain_ripples = 0.12""")
             ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_skylight.tscn", "skylight"),
             ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_beacon.tscn", "beacon"),
             ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_light_post.tscn", "light_post"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_bridge_framing.tscn", "bridge_framing"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_helipad_lights.tscn", "helipad_lights"),
+            ("PackedScene", None, "res://assets/models/rooftops/rooftop_comms_mast.glb", "comms_mast"),
+            ("PackedScene", None, "res://src/world/elements/rooftops/rooftop_cover_panel.tscn", "cover_panel"),
         ]
 
     def add_rooftop_terrain(self, floor, open_edges, fall_z, fall_y=-17):
@@ -968,6 +1008,55 @@ shader_parameter/rain_ripples = 0.12""")
                     continue
                 cells[(x, -layer, z)] = (self.items[item_name], 0)
         return cells
+
+    def use_memories(self):
+        """Call before add_shell: rose-lavender FFX twilight sky, drifting cloud sea, and water-glass bridges."""
+        self.environment = ENVIRONMENT_MEMORIES
+        self.sky_material = SKY_MEMORIES
+        self.sun_extra = {
+            "transform": "Transform3D(-0.8178, 0.4491, -0.3601, 0, 0.6257, 0.7802, 0.5756, 0.638, -0.5116, 0, 8, -6)",
+            "light_color": "Color(0.98, 0.90, 0.89, 1)",
+            "light_energy": "1.05",
+            "light_specular": "0.28",
+        }
+        self.bridge_scene = (None, "res://src/world/elements/memories/memories_bridge_platform.tscn")
+        self.extra_ext += [
+            ("Shader", None, "res://src/world/elements/memories/memories_sky.gdshader", "memories_sky"),
+            ("PackedScene", None, "res://src/world/elements/memories/memories_cloud_layers.tscn", "memories_clouds"),
+            ("PackedScene", None, "res://src/world/elements/memories/memories_glyph_arc.tscn", "glyph_arc"),
+            ("PackedScene", None, "res://src/world/elements/memories/memories_pyreflies.tscn", "pyreflies"),
+            ("PackedScene", None, "res://src/world/elements/memories/memories_obelisk.tscn", "obelisk"),
+            ("PackedScene", None, "res://src/world/elements/memories/memories_ruin_echo.tscn", "ruin_echo"),
+        ]
+
+    def add_memories_terrain(self, floor, open_edges, fall_z, fall_y=-17):
+        """Semi-transparent water-glass sanctuary floor above fantasy clouds, framed by stone perimeter rims."""
+        cells = {(x, -1, z): (self.items["Slab"], 0) for x, z in floor}
+        rims = self._memories_rims(floor, open_edges)
+        self.node("Level", ".", "Node")
+        self.node("MemoriesCloudLayers", "Level", instance="memories_clouds")
+        self.node("MemoriesPyreflies", "Level", instance="pyreflies")
+        self.node("FallArea", "Level", "Area3D", props={"transform": tf(0, fall_y, 0), "script": 'ExtResource("fall")'})
+        self.node("CollisionShape3D", "Level/FallArea", "CollisionShape3D", props={
+            "transform": tf(0, 4.5282993, fall_z), "shape": 'SubResource("BoxShape3D_fall")'})
+        self.node("NavigationRegion3D", "Level", "NavigationRegion3D", props={"navigation_mesh": 'SubResource("NavigationMesh_level")'})
+        self.nodes.append(self._grid_map("GridMapFloor", "Level/NavigationRegion3D", cells, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 4\ncollision_mask = 0'))
+        self.nodes.append(self._grid_map("FloorRims", "Level", rims, 'cell_size = Vector3(2.999, 2, 2.999)\ncollision_layer = 0\ncollision_mask = 0'))
+        self.node("Events", "Level", "Node")
+
+    def _memories_rims(self, floor, open_edges):
+        cells = {}
+        sides = ((2, "N", "EdgeN", 0, -1), (3, "S", "EdgeS", 0, 1),
+                 (4, "W", "EdgeW", -1, 0), (5, "E", "EdgeE", 1, 0))
+        for layer, side, item_name, dx, dz in sides:
+            self._append_rim_side(cells, floor, open_edges, layer, side, self.items[item_name], dx, dz)
+        return cells
+
+    def _append_rim_side(self, cells, floor, open_edges, layer, side, item_id, dx, dz):
+        for x, z in floor:
+            if (x + dx, z + dz) in floor or (x, z, side) in open_edges:
+                continue
+            cells[(x, -layer, z)] = (item_id, 0)
 
     def add_braziers(self, cells):
         self.node("Braziers", "Level", "Node")

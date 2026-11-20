@@ -1,7 +1,9 @@
 extends Node
-## Test driver for the ninja in world_local_night_rooftops.tscn: the carriers walk in with real input to wake the two
-## ninjas on Building 1; they circle the carriers at a distance without closing in, throw shurikens, and stay on the
-## roof. A big shuriken flung straight at a ninja is dodged once; the second one hits.
+## Test driver for the ninja in world_local_night_rooftops.tscn: Building 1's ninjas are killed by script to raise
+## bridge 1, the carriers are put on bridge 1 and walk onto Building 2 with real input, which spawns its four ninjas;
+## they circle the
+## carriers at a distance without closing in, throw shurikens, and stay on the roof. A big shuriken flung straight at
+## a ninja is dodged once; the second one hits.
 ## Run: tools/level_gen/godot.sh test tools/level_gen/verify_ninja.gd res://src/world/levels/world_local_night_rooftops.tscn <out_dir> 150
 
 var out_dir: String
@@ -63,7 +65,19 @@ func protect_players() -> void:
 
 
 func ninjas() -> Array:
-	return world.get_node("Enemies/Ninjas/InstancedEnemies").get_children().filter(func(c): return c is EnemyLocal)
+	return world.get_node("Enemies/Building2/InstancedEnemies").get_children().filter(func(c): return c is EnemyLocal)
+
+
+## Puts the carriers on bridge 1, facing north, the way they walk onto Building 2.
+func put_on_bridge() -> void:
+	var carry_info: CarryInfo = world.get_active_weapon().get_node("PickAndDropHandler").get_carry_info()
+	var back := carry_info.main_carrier
+	var front := carry_info.secondary_carrier
+	for p in [back, front]:
+		p.velocity = Vector3.ZERO
+	front.global_position = Vector3(0.95, front.global_position.y, -20.0)
+	back.global_position = Vector3(0.95, back.global_position.y, -16.8)
+	await wait(1.0)
 
 
 func live_ninjas() -> Array:
@@ -92,14 +106,23 @@ func ninja_shurikens() -> Array:
 
 
 ## Walks both carriers north with real input until the ninjas wake.
+## Walks both carriers north off the bridge with real input until both stand on Building 2, then waits for the
+## round to start: the bridge closes behind them and the four ninjas spawn, awake.
 func walk_in() -> bool:
 	var list := players()
 	Input.action_press(list[0].action_up)
 	Input.action_press(list[1].action_up)
-	var woke: bool = await wait_until(func(): return ninjas().all(func(n): return n.is_offensive), 4.0)
+	await wait_until(func(): return list.all(func(p): return p.global_position.z < -26.5), 4.0)
 	Input.action_release(list[0].action_up)
 	Input.action_release(list[1].action_up)
-	return woke
+	var spawned: bool = await wait_until(func(): return ninjas().size() == 4 and ninjas().all(func(n): return n.is_offensive), 6.0)
+	# On to the helipad, the middle of the roof, so the ninjas have room to circle all the way round.
+	Input.action_press(list[0].action_up)
+	Input.action_press(list[1].action_up)
+	await wait_until(func(): return (list[0].global_position.z + list[1].global_position.z) / 2.0 < -37.0, 3.0)
+	Input.action_release(list[0].action_up)
+	Input.action_release(list[1].action_up)
+	return spawned
 
 
 ## Flings a big shuriken at the ninja from `metres` away, coming from the carriers' side.
@@ -121,17 +144,27 @@ func _run() -> void:
 	check("reaches Playing", ok, state())
 	protect_players()
 	await wait(1.0)
-	check("two ninjas wait on Building 1", ninjas().size() == 2 and ninjas().all(func(n): return not n.is_offensive))
+	for n in world.get_node("Enemies/Building1/InstancedEnemies").get_children():
+		Health.apply_damage(n, 9999, n.global_position)
+	# Bays rise one after another, 0.5 s apart; the last one (BridgePlatform8) is up once the whole bridge is.
+	var last_bay := world.get_node("Level/Bridges/BridgePlatform8/AnimatableBody3D/CollisionShape3D") as CollisionShape3D
+	await wait_until(func(): return not last_bay.disabled, 8.0)
+	await wait(0.4)
+	await put_on_bridge()
+	check("Building 2's ninjas don't exist before the carriers land", ninjas().is_empty())
+	check("real input: walking onto Building 2 spawns its four ninjas, awake", await walk_in())
+	if ninjas().size() < 4:
+		print("RESULT fails=%d" % (fails + 1))
+		get_tree().quit(1)
+		return
 	var anim: Animation = (ninjas()[0] as EnemyLocal).animation_player.get_animation(&"skeleton_warrior/Throw")
 	info("Throw clip %.2f s" % (anim.length if anim != null else -1.0))
 	await shot("01_spawn.png")
 
-	check("real input: walking in wakes the ninjas", await walk_in())
-
 	# ---- Circling: watch both for 9 s while the carriers stand still. ----
 	var closest := INF
-	var swept := [0.0, 0.0]
-	var last_angle := [NAN, NAN]
+	var swept := [0.0, 0.0, 0.0, 0.0]
+	var last_angle := [NAN, NAN, NAN, NAN]
 	var lowest_y := INF
 	var thrown_seen := 0
 	var seen := {}
@@ -141,7 +174,7 @@ func _run() -> void:
 	while Time.get_ticks_msec() < deadline:
 		await get_tree().physics_frame
 		var middle := players_middle()
-		for i in 2:
+		for i in 4:
 			var n: EnemyLocal = ninjas()[i]
 			closest = minf(closest, nearest_player_distance(n))
 			lowest_y = minf(lowest_y, n.global_position.y)
@@ -159,7 +192,7 @@ func _run() -> void:
 			await shot("02_circling_throw.png")
 	info("states seen: %s" % ", ".join(states.keys()))
 	check("ninjas keep their distance", closest > 3.5, "closest %.1f m" % closest)
-	check("both ninjas run round the carriers", swept[0] > deg_to_rad(60) and swept[1] > deg_to_rad(60), "swept %.0f and %.0f degrees" % [rad_to_deg(swept[0]), rad_to_deg(swept[1])])
+	check("all four ninjas run round the carriers", swept.all(func(a): return a > deg_to_rad(60)), "swept %s degrees" % str(swept.map(func(a): return roundi(rad_to_deg(a)))))
 	check("ninjas throw shurikens", thrown_seen >= 2, "%d thrown" % thrown_seen)
 	check("ninjas stay on the roof", lowest_y > -2.0, "lowest y %.2f" % lowest_y)
 	if not shot_taken:
@@ -194,9 +227,16 @@ func _run() -> void:
 
 	# ---- The other ninja still dodges: it has its own one. ----
 	var other: EnemyLocal = ninjas()[1]
-	await wait_until(func(): return not other.enemy_state_machine.is_in_state("throwing"), 2.0)
-	fling_at(other, 7.0)
-	var other_dodged: bool = await wait_until(func(): return other.enemy_state_machine.is_in_state("dodging"), 1.5)
+	var other_behavior := other.behavior as NinjaBehavior
+	var other_dodged := false
+	# It can't dodge mid-throw, by design, so a star that lands as it starts a throw gets one more go.
+	for attempt in 2:
+		await wait_until(func(): return not other.enemy_state_machine.is_in_state("throwing"), 2.0)
+		fling_at(other, 7.0)
+		other_dodged = await wait_until(func(): return other.enemy_state_machine.is_in_state("dodging"), 1.5)
+		if other_dodged or other_behavior.has_dodged or not other.is_alive():
+			break
+		await wait(1.0)
 	check("each ninja has its own dodge", other_dodged)
 	await wait(1.0)
 	_finish()

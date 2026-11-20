@@ -1,0 +1,77 @@
+[gd_scene format=3]
+
+[ext_resource type="Shader" path="res://src/world/elements/memories/memories_rim.gdshader" id="1_stone"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_stone"]
+render_priority = 0
+shader = ExtResource("1_stone")
+shader_parameter/body_color = Color(0.10, 0.19, 0.25, 1)
+shader_parameter/cap_color = Color(0.20, 0.33, 0.40, 1)
+shader_parameter/trim_glow = Color(0.62, 0.90, 0.96, 1)
+shader_parameter/trim_energy = 0.75
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_inlay"]
+shading_mode = 0
+albedo_color = Color(0.65, 1.35, 1.48, 1)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_obelisk"]
+size = Vector3(1.35, 2.5, 1.35)
+
+[sub_resource type="BoxMesh" id="BoxMesh_plinth"]
+material = SubResource("ShaderMaterial_stone")
+size = Vector3(1.42, 0.36, 1.42)
+
+[sub_resource type="BoxMesh" id="BoxMesh_shaft"]
+material = SubResource("ShaderMaterial_stone")
+size = Vector3(0.92, 1.65, 0.92)
+
+[sub_resource type="PrismMesh" id="PrismMesh_apex"]
+material = SubResource("ShaderMaterial_stone")
+size = Vector3(0.92, 0.62, 0.92)
+
+[sub_resource type="BoxMesh" id="BoxMesh_band"]
+material = SubResource("StandardMaterial3D_inlay")
+size = Vector3(0.96, 0.08, 0.96)
+
+[sub_resource type="TorusMesh" id="TorusMesh_halo"]
+material = SubResource("StandardMaterial3D_inlay")
+inner_radius = 0.46
+outer_radius = 0.52
+rings = 24
+ring_segments = 12
+
+[node name="MemoriesObelisk" type="StaticBody3D"]
+collision_layer = 4
+collision_mask = 0
+metadata/footstep_surface = &"stone"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.25, 0)
+shape = SubResource("BoxShape3D_obelisk")
+
+[node name="Plinth" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
+mesh = SubResource("BoxMesh_plinth")
+
+[node name="Shaft" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.18, 0)
+mesh = SubResource("BoxMesh_shaft")
+
+[node name="Apex" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.31, 0)
+mesh = SubResource("PrismMesh_apex")
+
+[node name="InlayLower" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.62, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_band")
+
+[node name="InlayUpper" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.78, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_band")
+
+[node name="MemoryHalo" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.965926, -0.258819, 0, 0.258819, 0.965926, 0, 2.02, 0)
+cast_shadow = 0
+mesh = SubResource("TorusMesh_halo")

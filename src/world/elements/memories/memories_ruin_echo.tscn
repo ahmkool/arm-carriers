@@ -1,0 +1,69 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://src/world/elements/sky/floating_bob.gd" id="1_bob"]
+[ext_resource type="Shader" path="res://src/world/elements/memories/memories_rim.gdshader" id="2_stone"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_echo"]
+render_priority = 0
+shader = ExtResource("2_stone")
+shader_parameter/body_color = Color(0.16, 0.24, 0.31, 1)
+shader_parameter/cap_color = Color(0.28, 0.39, 0.46, 1)
+shader_parameter/trim_glow = Color(0.72, 0.92, 0.98, 1)
+shader_parameter/trim_energy = 0.65
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_rune"]
+shading_mode = 0
+albedo_color = Color(0.68, 1.32, 1.45, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_slab"]
+material = SubResource("ShaderMaterial_echo")
+size = Vector3(8.5, 1.1, 5.2)
+
+[sub_resource type="BoxMesh" id="BoxMesh_under"]
+material = SubResource("ShaderMaterial_echo")
+size = Vector3(5.6, 1.8, 3.4)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pillar_tall"]
+material = SubResource("ShaderMaterial_echo")
+size = Vector3(1.15, 5.4, 1.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_pillar_broken"]
+material = SubResource("ShaderMaterial_echo")
+size = Vector3(1.15, 2.9, 1.15)
+
+[sub_resource type="BoxMesh" id="BoxMesh_lintel"]
+material = SubResource("ShaderMaterial_echo")
+size = Vector3(5.4, 0.85, 1.35)
+
+[sub_resource type="BoxMesh" id="BoxMesh_rune_strip"]
+material = SubResource("StandardMaterial3D_rune")
+size = Vector3(4.6, 0.14, 1.4)
+
+[node name="MemoriesRuinEcho" type="Node3D"]
+script = ExtResource("1_bob")
+amplitude = 0.85
+period_seconds = 9.5
+
+[node name="FloatingSlab" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_slab")
+
+[node name="UnderKeel" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.25, 0)
+mesh = SubResource("BoxMesh_under")
+
+[node name="PillarWest" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.7, 3.1, 0)
+mesh = SubResource("BoxMesh_pillar_tall")
+
+[node name="PillarEastBroken" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7, 1.85, 0)
+mesh = SubResource("BoxMesh_pillar_broken")
+
+[node name="CantileverLintel" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.992546, -0.121869, 0, 0.121869, 0.992546, 0, 0, 0, 1, -0.9, 5.65, 0)
+mesh = SubResource("BoxMesh_lintel")
+
+[node name="RuneStrip" type="MeshInstance3D" parent="."]
+transform = Transform3D(0.992546, -0.121869, 0, 0.121869, 0.992546, 0, 0, 0, 1, -0.9, 5.65, 0)
+cast_shadow = 0
+mesh = SubResource("BoxMesh_rune_strip")
