@@ -2,10 +2,10 @@ class_name MirrorSurface
 extends Area3D
 ## The reflective pane of the carried Mirror weapon.
 ## Sits on `BoltMirror.LAYER` so map lasers raycast against it cleanly, and monitors enemy
-## projectiles (`Fireball` areas on layer 4) to bounce them back at enemies.
-## Both broad faces (±local X) reflect according to the true 3D tilt of the mirror.
+## projectiles (`Fireball` areas on layer 4) to absorb them into the mirror pane.
+## Both broad faces (±local X) reflect lasers and absorb projectiles according to the 3D tilt.
 
-signal bullet_reflected(point: Vector3)
+signal fireball_absorbed(point: Vector3, face_sign: float)
 signal laser_reflected(point: Vector3)
 
 ## Layer 4 ("weapons"): Fireball / NinjaShuriken / LaserBolt Area3Ds live here.
@@ -30,6 +30,14 @@ func get_reflection_normal(incoming_dir: Vector3) -> Vector3:
 	return normal
 
 
+## +1.0 when `incoming_dir` enters the +local X face, -1.0 when it enters the -local X face.
+func get_entry_face_sign(incoming_dir: Vector3) -> float:
+	var face_x := global_basis.x.normalized()
+	if incoming_dir.dot(face_x) > 0.0:
+		return -1.0
+	return 1.0
+
+
 ## True when `incoming_dir` runs almost parallel to the glass face (grazing the edge).
 func is_grazing(incoming_dir: Vector3) -> bool:
 	if incoming_dir.length_squared() < 0.0001:
@@ -51,7 +59,8 @@ func _on_area_entered(area: Area3D) -> void:
 	var incoming := fireball.velocity.normalized()
 	if is_grazing(incoming):
 		return
-	var normal := get_reflection_normal(incoming)
-	if not fireball.reflect(normal, fireball.global_position):
+	var hit_point := fireball.global_position
+	var face_sign := get_entry_face_sign(incoming)
+	if not fireball.absorb():
 		return
-	bullet_reflected.emit(fireball.global_position)
+	fireball_absorbed.emit(hit_point, face_sign)

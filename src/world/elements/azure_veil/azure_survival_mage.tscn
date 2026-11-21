@@ -1,0 +1,98 @@
+[gd_scene load_steps=19 format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_enemy"]
+[ext_resource type="PackedScene" uid="uid://bhqxlng6fg4e5" path="res://src/enemy/mage/mage_warrior.tscn" id="2_mage_mesh"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="3_health"]
+[ext_resource type="Script" uid="uid://cy3ru26cixx67" path="res://src/enemy/state/spawning.gd" id="4_spawning"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="5_behavior"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="6_sm"]
+[ext_resource type="Script" uid="uid://bjfhnvpc3flr" path="res://src/enemy/state/idle.gd" id="7_idle"]
+[ext_resource type="Script" uid="uid://bf5tile1ap7b7" path="res://src/enemy/state/running.gd" id="8_running"]
+[ext_resource type="Script" uid="uid://bbgviimwhb8xd" path="res://src/enemy/state/falling.gd" id="9_falling"]
+[ext_resource type="Script" uid="uid://bxvve83vxg4tl" path="res://src/enemy/state/dead.gd" id="10_dead"]
+[ext_resource type="Script" uid="uid://81vjno7uh7i4" path="res://src/enemy/state/casting.gd" id="11_casting"]
+[ext_resource type="Script" uid="uid://0ntrlhws2o6g" path="res://src/enemy/mage/fireball_emitter.gd" id="12_emitter"]
+[ext_resource type="Script" uid="uid://c8k2hitdmg01" path="res://src/enemy/state/taking_damage.gd" id="13_hitdmg"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_mage"]
+radius = 0.39160156
+height = 2.3062744
+
+[sub_resource type="Curve" id="Curve_footsteps"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0.05), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_footsteps"]
+curve = SubResource("Curve_footsteps")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_footsteps"]
+resource_local_to_scene = true
+gravity = Vector3(0, 1, 0)
+scale_min = 0.29999998
+scale_max = 0.5
+scale_curve = SubResource("CurveTexture_footsteps")
+
+[sub_resource type="SphereMesh" id="SphereMesh_footsteps"]
+
+[node name="AzureSurvivalMage" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 4
+script = ExtResource("1_enemy")
+holds_position = true
+
+[node name="Mage_Warrior" parent="." instance=ExtResource("2_mage_mesh")]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1989136, 0)
+shape = SubResource("CapsuleShape3D_mage")
+
+[node name="MageBehavior" type="Node" parent="."]
+script = ExtResource("5_behavior")
+mobility = 1
+cast_max_distance = 38.0
+cast_cooldown = 3.2
+cast_cooldown_jitter = 0.6
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("6_sm")
+initial_state_path = NodePath("Spawning")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("7_idle")
+
+[node name="Running" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("8_running")
+
+[node name="Falling" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("9_falling")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("10_dead")
+
+[node name="Casting" type="Node" parent="EnemyStateMachine" node_paths=PackedStringArray("fireball_emitter")]
+script = ExtResource("11_casting")
+fireball_emitter = NodePath("../../FireballEmitter")
+
+[node name="TakingDamage" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("13_hitdmg")
+knockback_speed = 0.0
+
+[node name="Spawning" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("4_spawning")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+path_desired_distance = 0.5
+target_desired_distance = 0.5
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+process_material = SubResource("ParticleProcessMaterial_footsteps")
+draw_pass_1 = SubResource("SphereMesh_footsteps")
+
+[node name="FireballEmitter" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2430093, -1.111675)
+script = ExtResource("12_emitter")
+speed = 8.0
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")

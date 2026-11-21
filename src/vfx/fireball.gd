@@ -37,6 +37,16 @@ func is_reflected() -> bool:
 	return _reflected
 
 
+## Consumes this projectile into a mirror so the mirror can re-emit its energy as a laser.
+func absorb() -> bool:
+	if _spent or _reflected:
+		return false
+	_spent = true
+	set_physics_process(false)
+	queue_free()
+	return true
+
+
 ## Bounces this projectile off a mirror surface and turns it against enemies.
 func reflect(surface_normal: Vector3, hit_point: Vector3 = Vector3.ZERO) -> bool:
 	if _spent or _reflect_cooldown > 0.0:

@@ -5,11 +5,13 @@ extends Node3D
 ## pushing in opposite directions:
 ## - Shooter (player 0 / main carrier) tilts toward MAX_TILT_ANGLE (90 deg, parallel to the ground).
 ## - Direction setter (player 1 / secondary carrier) tilts toward MIN_TILT_ANGLE (0 deg, perpendicular to the ground).
-## Holding both cancels out. While vertical (0 deg), it reflects horizontal lasers and enemy bullets
-## horizontally; tilting raises the reflection angle up into the sky (or flattens it at 90 deg).
+## Holding both cancels out. While vertical (0 deg), it reflects horizontal lasers horizontally;
+## tilting raises the reflection angle up into the sky (or flattens it at 90 deg to bounce overhead
+## beams straight back up). Enemy fireballs that touch the glass are absorbed at the entry point,
+## charge for 1.0s, and then unleash a 2.0s red laser out of that exact spot on the mirror.
 
 signal tilt_changed(angle_radians: float)
-signal bullet_deflected(point: Vector3)
+signal fireball_absorbed(point: Vector3)
 
 const MIN_TILT_ANGLE := 0.0
 const MAX_TILT_ANGLE := PI * 0.5
@@ -17,13 +19,18 @@ const MAX_TILT_ANGLE := PI * 0.5
 const TILT_SPEED_RAD := deg_to_rad(75.0)
 const REST_GAP_SPEED := 8.0
 const PANE_HALF_WIDTH := 1.65
+const GLASS_MAX_HALF_Z := 1.46
+const GLASS_MAX_HALF_Y := 0.62
+const GLASS_FACE_OFFSET_X := 0.08
+const MAX_ABSORBED_BEAMS := 6
 const FLASH_DECAY_PER_SEC := 5.5
 const LASER_GLOW_DECAY_PER_SEC := 6.0
 const LASER_SPARK_INTERVAL_SEC := 0.09
 const LIMIT_CLICK_COOLDOWN_SEC := 0.25
 
 const MirrorSurfaceScript := preload("res://src/weapon/mirror/mirror_surface.gd")
-const DEFLECT_SOUND := preload("res://assets/sounds/metal/GridStep03.wav")
+const MirrorAbsorbedBeamScript := preload("res://src/weapon/mirror/mirror_absorbed_beam.gd")
+const ABSORB_SOUND := preload("res://assets/sounds/metal/GridStep03.wav")
 const LIMIT_SOUND := preload("res://assets/sounds/ammo/reload.wav")
 const SPARKS_SCENE := preload("res://src/vfx/saw_sparks.tscn")
 
@@ -43,10 +50,12 @@ var _rest_gap := 0.0
 var _visual_gap := 0.0
 var _flash := 0.0
 var _laser_glow := 0.0
+var _fire_charge := 0.0
 var _laser_spark_cooldown := 0.0
 var _limit_click_cooldown := 0.0
 var _was_at_limit := true
 var _glass_material: ShaderMaterial
+var _absorbed_beams: Array[Node] = []
 
 
 func _ready() -> void:
@@ -59,15 +68,17 @@ func _ready() -> void:
 	if _glass_material != null:
 		_glass_material = _glass_material.duplicate() as ShaderMaterial
 		_glass_mesh.material_override = _glass_material
-	_mirror_surface.bullet_reflected.connect(_on_bullet_reflected)
+	_mirror_surface.fireball_absorbed.connect(_on_fireball_absorbed)
 	_mirror_surface.laser_reflected.connect(_on_laser_reflected)
 	_apply_pose()
 
 
 func reset_to_checkpoint() -> void:
 	set_tilt_angle(MIN_TILT_ANGLE)
+	_clear_absorbed_beams()
 	_flash = 0.0
 	_laser_glow = 0.0
+	_fire_charge = 0.0
 	_update_shader_glow()
 
 
@@ -92,6 +103,7 @@ func _physics_process(delta: float) -> void:
 	_laser_spark_cooldown = maxf(0.0, _laser_spark_cooldown - delta)
 	_limit_click_cooldown = maxf(0.0, _limit_click_cooldown - delta)
 	_decay_glow(delta)
+	_sync_fire_charge_glow()
 
 	var carry_info := pick_and_drop_handler.get_carry_info()
 	if not _is_carried_by_both(carry_info):
@@ -159,14 +171,35 @@ func _pose_handle(handle: Node3D, from_z: float, to_z: float) -> void:
 	handle.scale = Vector3(1.0, 1.0, span)
 
 
-func _on_bullet_reflected(point: Vector3) -> void:
-	_flash = 1.35
-	_update_shader_glow()
-	ImpactFeedback.play_sfx(DEFLECT_SOUND, point, randf_range(1.7, 2.0), -4.0)
+func _on_fireball_absorbed(point: Vector3, face_sign: float) -> void:
+	_prune_absorbed_beams()
+	if _absorbed_beams.size() >= MAX_ABSORBED_BEAMS:
+		var oldest: Node = _absorbed_beams.pop_front() as Node
+		if is_instance_valid(oldest):
+			oldest.queue_free()
+
+	var local_entry := _mirror_pivot.to_local(point)
+	local_entry.x = face_sign * GLASS_FACE_OFFSET_X
+	local_entry.y = clampf(local_entry.y, -GLASS_MAX_HALF_Y, GLASS_MAX_HALF_Y)
+	local_entry.z = clampf(local_entry.z, -GLASS_MAX_HALF_Z, GLASS_MAX_HALF_Z)
+
+	var beam := MirrorAbsorbedBeamScript.new()
+	beam.setup(local_entry, face_sign, _mirror_surface.get_rid())
+	beam.beam_fired.connect(_on_absorbed_beam_fired)
+	_mirror_pivot.add_child(beam)
+	_absorbed_beams.append(beam)
+
+	_flash = 1.2
+	_sync_fire_charge_glow()
+	ImpactFeedback.play_sfx(ABSORB_SOUND, point, randf_range(1.6, 1.9), -5.0)
 	_spawn_sparks(point, 0.85)
-	CameraFeedback.add_trauma(0.24)
-	_rumble_carriers(0.55, 0.35, 0.14)
-	bullet_deflected.emit(point)
+	CameraFeedback.add_trauma(0.18)
+	_rumble_carriers(0.45, 0.25, 0.12)
+	fireball_absorbed.emit(point)
+
+
+func _on_absorbed_beam_fired(_origin: Vector3) -> void:
+	_rumble_carriers(0.6, 0.4, 0.2)
 
 
 func _on_laser_reflected(point: Vector3) -> void:
@@ -196,11 +229,39 @@ func _decay_glow(delta: float) -> void:
 	_update_shader_glow()
 
 
+func _sync_fire_charge_glow() -> void:
+	_prune_absorbed_beams()
+	var peak := 0.0
+	for node in _absorbed_beams:
+		var beam := node as MirrorAbsorbedBeamScript
+		if beam != null:
+			peak = maxf(peak, beam.get_charge_intensity())
+	if not is_equal_approx(peak, _fire_charge):
+		_fire_charge = peak
+		_update_shader_glow()
+
+
+func _prune_absorbed_beams() -> void:
+	var alive: Array[Node] = []
+	for node in _absorbed_beams:
+		if is_instance_valid(node) and not node.is_queued_for_deletion():
+			alive.append(node)
+	_absorbed_beams = alive
+
+
+func _clear_absorbed_beams() -> void:
+	for node in _absorbed_beams:
+		if is_instance_valid(node):
+			node.queue_free()
+	_absorbed_beams.clear()
+
+
 func _update_shader_glow() -> void:
 	if _glass_material == null:
 		return
 	_glass_material.set_shader_parameter("flash", _flash)
 	_glass_material.set_shader_parameter("laser_glow", _laser_glow)
+	_glass_material.set_shader_parameter("fire_charge", _fire_charge)
 
 
 func _spawn_sparks(at_position: Vector3, density: float) -> void:

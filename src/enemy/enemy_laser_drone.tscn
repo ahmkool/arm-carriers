@@ -1,0 +1,71 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="enemy_local"]
+[ext_resource type="PackedScene" path="res://assets/models/enemies/laser_drone/laser_drone.glb" id="model"]
+[ext_resource type="Script" path="res://src/enemy/laser_drone/laser_drone_cannon.gd" id="cannon"]
+[ext_resource type="Script" path="res://src/enemy/laser_drone/laser_drone_behavior.gd" id="behavior"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="state_machine"]
+[ext_resource type="Script" path="res://src/enemy/laser_drone/drone_hovering.gd" id="hovering"]
+[ext_resource type="Script" path="res://src/enemy/laser_drone/drone_dead.gd" id="dead"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="health"]
+[ext_resource type="PackedScene" path="res://src/enemy/health_bar/enemy_health_bar_3d.tscn" id="health_bar"]
+
+[sub_resource type="SphereShape3D" id="Shape_drone"]
+radius = 1.05
+
+[sub_resource type="SphereMesh" id="Mesh_footsteps"]
+radius = 0.08
+height = 0.16
+
+[node name="EnemyLaserDrone" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("enemy_local")
+speed = 2.1
+hitbox_damage = 0
+can_fall_off_ledges = false
+
+[node name="Visual" type="Node3D" parent="."]
+
+[node name="Model" parent="Visual" instance=ExtResource("model")]
+
+[node name="ThrusterLight" type="OmniLight3D" parent="Visual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.65, 0)
+light_color = Color(0.32, 0.88, 1, 1)
+light_energy = 1.4
+omni_range = 7.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05, 0)
+shape = SubResource("Shape_drone")
+
+[node name="LaserDroneCannon" type="Node3D" parent="."]
+script = ExtResource("cannon")
+
+[node name="LaserDroneBehavior" type="Node" parent="."]
+script = ExtResource("behavior")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("state_machine")
+initial_state_path = NodePath("Hovering")
+
+[node name="Hovering" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("hovering")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("dead")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+draw_pass_1 = SubResource("Mesh_footsteps")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("health")
+max_hp = 10
+
+[node name="EnemyHealthBar3D" parent="." instance=ExtResource("health_bar")]
+transform = Transform3D(1.5, 0, 0, 0, 1.5, 0, 0, 0, 1.5, 0, 1.25, 0)
+always_visible = true
