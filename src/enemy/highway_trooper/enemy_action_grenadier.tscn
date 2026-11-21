@@ -1,0 +1,90 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="2_esm"]
+[ext_resource type="Script" path="res://src/enemy/boss/agent_richard/agent_richard_idle.gd" id="3_idle"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="4_health"]
+[ext_resource type="Script" path="res://src/enemy/highway_trooper/highway_trooper_controller.gd" id="5_ctrl"]
+[ext_resource type="PackedScene" path="res://assets/characters/action_figure/ActionFigure.glb" id="6_model"]
+[ext_resource type="PackedScene" path="res://src/enemy/health_bar/enemy_health_bar_3d.tscn" id="7_hpbar"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="anim_idle"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="anim_throw"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="anim_hit"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="anim_death"]
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
+_data = {
+&"RESET": SubResource("Animation_reset")
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_trooper"]
+_data = {
+&"Death_A": ExtResource("anim_death"),
+&"Hit_A": ExtResource("anim_hit"),
+&"Idle_B": ExtResource("anim_idle"),
+&"Throw": ExtResource("anim_throw")
+}
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_trooper"]
+radius = 0.58
+height = 2.35
+
+[sub_resource type="SphereMesh" id="SphereMesh_fs"]
+radius = 0.1
+height = 0.2
+
+[node name="EnemyActionGrenadier" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_enemy")
+speed = 2.0
+is_offensive = false
+hitbox_damage = 0
+can_fall_off_ledges = false
+holds_position = true
+
+[node name="ActionFigure" parent="." instance=ExtResource("6_model")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="ActionFigure"]
+libraries = {
+&"": SubResource("AnimationLibrary_default"),
+&"trooper": SubResource("AnimationLibrary_trooper")
+}
+autoplay = "trooper/Idle_B"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.15, 0)
+shape = SubResource("CapsuleShape3D_trooper")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("2_esm")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("3_idle")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("3_idle")
+
+[node name="HighwayTrooperController" type="Node" parent="."]
+script = ExtResource("5_ctrl")
+role = 1
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+draw_pass_1 = SubResource("SphereMesh_fs")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("4_health")
+max_hp = 8
+
+[node name="EnemyHealthBar3D" parent="." instance=ExtResource("7_hpbar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)
+always_visible = true

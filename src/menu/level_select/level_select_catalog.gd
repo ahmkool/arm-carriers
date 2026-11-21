@@ -105,6 +105,7 @@ const DEV_GROUPS: Array[Dictionary] = [
 		{"title": "Night Rooftops", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_night_rooftops.tscn", "weapon": "shuriken_launcher", "all_weapons": true},
 		{"title": "World of Memories", "difficulty": 3, "label": "Dev", "art": Art.HORDE, "scene": "res://src/world/levels/world_local_world_of_memories.tscn", "weapon": "sword", "all_weapons": true},
 		{"title": "Azure Veil", "difficulty": 1, "label": "Dev", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_azure_veil.tscn", "weapon": "mirror", "all_weapons": true},
+		{"title": "Highway Convoy", "difficulty": 3, "label": "Dev", "art": Art.BOSS, "scene": "res://src/world/levels/world_local_highway_boss.tscn", "weapon": "fork_cannon", "requires": "ranged"},
 	],
 	},
 ]

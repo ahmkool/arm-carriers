@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://bepj5mk6bi26i"]
+[gd_scene load_steps=58 format=3 uid="uid://bepj5mk6bi26i"]
 
 [ext_resource type="Script" uid="uid://dm0qyuvkt2r20" path="res://src/world/elements/all_players_area_trigger.gd" id="all_players"]
 [ext_resource type="PackedScene" path="res://src/world/elements/azure_veil/ancient_cube.tscn" id="ancient_cube"]
@@ -8,29 +8,33 @@
 [ext_resource type="PackedScene" path="res://src/world/elements/azure_veil/azure_bridge_platform.tscn" id="bridge"]
 [ext_resource type="Script" uid="uid://caypfr8giu78a" path="res://src/events/camera_clear_focal_points_event.gd" id="camera_clear"]
 [ext_resource type="Script" uid="uid://b330nc18vwhrr" path="res://src/events/camera_add_focal_point_event.gd" id="camera_focus"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_skeleton_catapult.tscn" id="catapult"]
 [ext_resource type="Script" uid="uid://d2pnle1sbun8v" path="res://src/events/change_enemies_behavior.gd" id="change_behavior"]
 [ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
 [ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
 [ext_resource type="PackedScene" uid="uid://cif7328pvepge" path="res://src/enemy/enemy_local.tscn" id="enemy"]
 [ext_resource type="PackedScene" path="res://src/world/elements/azure_veil/azure_survival_mage.tscn" id="enemy_mage"]
-[ext_resource type="PackedScene" path="res://src/enemy/enemy_laser_drone.tscn" id="laser_drone"]
-[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
-[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
 [ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
 [ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
 [ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" path="res://src/enemy/enemy_laser_drone.tscn" id="laser_drone"]
 [ext_resource type="PackedScene" path="res://src/world/elements/azure_veil/laser_emitter.tscn" id="laser_emitter"]
 [ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://cj1jiphwktvpn" path="res://src/enemy/enemy_mage_no_behavior.tscn" id="mage"]
+[ext_resource type="Script" uid="uid://s3p4luca33c7" path="res://src/enemy/behavior/mage_behavior.gd" id="mage_behavior"]
 [ext_resource type="PackedScene" path="res://src/weapon/mirror.tscn" id="mirror"]
 [ext_resource type="AudioStream" uid="uid://btd78n4yaqlxo" path="res://assets/music/PerituneMaterial_Broken.mp3" id="music"]
 [ext_resource type="Script" uid="uid://bk8xqm3nw2h4r" path="res://src/enemy/normal_enemy_group.gd" id="normal_group"]
-[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
 [ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
 [ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="PackedScene" path="res://src/world/elements/azure_veil/standalone_mirror.tscn" id="standalone_mirror"]
+[ext_resource type="Shader" uid="uid://b153k8x58wrmc" path="res://src/world/elements/storm_isles/isle_stone.gdshader" id="stone_shader"]
 [ext_resource type="MeshLibrary" path="res://src/world/elements/azure_veil/azure_stone_tiles.tres" id="stone_tiles"]
+[ext_resource type="Script" uid="uid://bdpj71ixudbfs" path="res://src/events/stop_survival_event.gd" id="stop_survival"]
+[ext_resource type="Script" uid="uid://bvpjcgrdkl4we" path="res://src/enemy/survival_enemy_group.gd" id="survival_group"]
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
-[ext_resource type="MeshLibrary" path="res://src/world/elements/azure_veil/azure_tiles.tres" id="tiles"]
+[ext_resource type="MeshLibrary" uid="uid://chb5xns6aay25" path="res://src/world/elements/azure_veil/azure_tiles.tres" id="tiles"]
 [ext_resource type="Script" uid="uid://craclr3fqyunt" path="res://src/events/toggle_bridge_event.gd" id="toggle_bridge"]
 [ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
@@ -71,17 +75,54 @@ fog_density = 0.0022
 fog_aerial_perspective = 0.25
 fog_sky_affect = 0.16
 
+[sub_resource type="Curve" id="Curve_survival_mages"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, -1.0, 0, 1, Vector2(1, 2), -1.0, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_survival_melee"]
+_limits = [0.0, 3.0, 0.0, 1.0]
+_data = [Vector2(0, 3), 0.0, -1.2, 0, 1, Vector2(1, 1.8), -1.2, 0.0, 1, 0]
+point_count = 2
+
+[sub_resource type="Curve" id="Curve_drone_respawn"]
+_limits = [0.0, 2.0, 0.0, 1.0]
+_data = [Vector2(0, 1.5), 0.0, 0.0, 0, 0, Vector2(1, 1.5), 0.0, 0.0, 0, 0]
+point_count = 2
+
 [sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
 size = Vector3(260, 1, 260)
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_level"]
-vertices = PackedVector3Array(-11.5, -0.5, -5.5, 11.5, -0.5, -5.5, 11.5, -0.5, 8.5, -11.5, -0.5, 8.5, -5.5, -0.5, -17.5, 5.5, -0.5, -17.5, 5.5, -0.5, -12.5, -5.5, -0.5, -12.5, -11.5, -0.5, -44.5, 11.5, -0.5, -44.5, 11.5, -0.5, -24.5, -11.5, -0.5, -24.5, 15.5, 7.5, -38.5, 20.5, 7.5, -38.5, 20.5, 7.5, -27.5, 15.5, 7.5, -27.5, 24.5, -0.5, -47.5, 47.5, -0.5, -47.5, 47.5, -0.5, -27.5, 24.5, -0.5, -27.5, 54.5, -0.5, -47.5, 77.5, -0.5, -47.5, 77.5, -0.5, -27.5, 54.5, -0.5, -27.5, 84.5, -0.5, -44.5, 89.5, -0.5, -44.5, 89.5, -0.5, -33.5, 84.5, -0.5, -33.5, 54.5, -0.5, -20.5, 77.5, -0.5, -20.5, 77.5, -0.5, -0.5, 54.5, -0.5, -0.5, 42.5, -0.5, -17.5, 47.5, -0.5, -17.5, 47.5, -0.5, -3.5, 42.5, -0.5, -3.5, 84.5, -0.5, -17.5, 89.5, -0.5, -17.5, 89.5, -0.5, -3.5, 84.5, -0.5, -3.5)
-polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3), PackedInt32Array(4, 5, 6), PackedInt32Array(4, 6, 7), PackedInt32Array(8, 9, 10), PackedInt32Array(8, 10, 11), PackedInt32Array(12, 13, 14), PackedInt32Array(12, 14, 15), PackedInt32Array(16, 17, 18), PackedInt32Array(16, 18, 19), PackedInt32Array(20, 21, 22), PackedInt32Array(20, 22, 23), PackedInt32Array(24, 25, 26), PackedInt32Array(24, 26, 27), PackedInt32Array(28, 29, 30), PackedInt32Array(28, 30, 31), PackedInt32Array(32, 33, 34), PackedInt32Array(32, 34, 35), PackedInt32Array(36, 37, 38), PackedInt32Array(36, 38, 39)]
+vertices = PackedVector3Array(-11.5, -0.5, -5.5, 11.5, -0.5, -5.5, 11.5, -0.5, 8.5, -11.5, -0.5, 8.5, -5.5, -0.5, -17.5, 5.5, -0.5, -17.5, 5.5, -0.5, -12.5, -5.5, -0.5, -12.5, -11.5, -0.5, -44.5, 11.5, -0.5, -44.5, 11.5, -0.5, -24.5, -11.5, -0.5, -24.5, 15.5, 7.5, -38.5, 20.5, 7.5, -38.5, 20.5, 7.5, -27.5, 15.5, 7.5, -27.5, 24.5, -0.5, -47.5, 47.5, -0.5, -47.5, 47.5, -0.5, -27.5, 24.5, -0.5, -27.5, 54.5, -0.5, -47.5, 77.5, -0.5, -47.5, 77.5, -0.5, -27.5, 54.5, -0.5, -27.5, 84.5, -0.5, -44.5, 89.5, -0.5, -44.5, 89.5, -0.5, -33.5, 84.5, -0.5, -33.5, 54.5, -0.5, -20.5, 77.5, -0.5, -20.5, 77.5, -0.5, -0.5, 54.5, -0.5, -0.5, 42.5, -0.5, -17.5, 47.5, -0.5, -17.5, 47.5, -0.5, -3.5, 42.5, -0.5, -3.5, 84.5, -0.5, -17.5, 89.5, -0.5, -17.5, 89.5, -0.5, -3.5, 84.5, -0.5, -3.5, 54.5, -0.5, 6.5, 77.5, -0.5, 6.5, 77.5, -0.5, 26.5, 54.5, -0.5, 26.5, 39.5, -0.5, 33.5, 52.8, -0.5, 33.5, 52.8, -0.5, 53.5, 39.5, -0.5, 53.5, 55.2, -0.5, 33.5, 77.5, -0.5, 33.5, 77.5, -0.5, 53.5, 55.2, -0.5, 53.5)
+polygons = [PackedInt32Array(0, 1, 2), PackedInt32Array(0, 2, 3), PackedInt32Array(4, 5, 6), PackedInt32Array(4, 6, 7), PackedInt32Array(8, 9, 10), PackedInt32Array(8, 10, 11), PackedInt32Array(12, 13, 14), PackedInt32Array(12, 14, 15), PackedInt32Array(16, 17, 18), PackedInt32Array(16, 18, 19), PackedInt32Array(20, 21, 22), PackedInt32Array(20, 22, 23), PackedInt32Array(24, 25, 26), PackedInt32Array(24, 26, 27), PackedInt32Array(28, 29, 30), PackedInt32Array(28, 30, 31), PackedInt32Array(32, 33, 34), PackedInt32Array(32, 34, 35), PackedInt32Array(36, 37, 38), PackedInt32Array(36, 38, 39), PackedInt32Array(40, 41, 42), PackedInt32Array(40, 42, 43), PackedInt32Array(44, 45, 46), PackedInt32Array(44, 46, 47), PackedInt32Array(48, 49, 50), PackedInt32Array(48, 50, 51)]
 
-[sub_resource type="Curve" id="Curve_survival_mages"]
-_limits = [0.0, 3.0, 0.0, 1.0]
-_data = [Vector2(0, 3.0), 0.0, -1.0, 0, 1, Vector2(1, 2.0), -1.0, 0.0, 1, 0]
-point_count = 2
+[sub_resource type="BoxShape3D" id="BoxShape3D_catcher"]
+size = Vector3(1.8, 1.8, 1.8)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_section7_wall"]
+size = Vector3(1.3, 4, 21)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_section7_wall"]
+render_priority = 0
+shader = ExtResource("stone_shader")
+shader_parameter/stone_color = Color(0.36, 0.39, 0.45, 1)
+shader_parameter/grout_color = Color(0.06, 0.08, 0.11, 1)
+shader_parameter/top_color = Color(0.42, 0.45, 0.51, 1)
+shader_parameter/weed_color = Color(0.11, 0.22, 0.28, 1)
+shader_parameter/block_size = 1.4
+shader_parameter/grout_width = 0.05
+shader_parameter/water_y = -6.2
+shader_parameter/weed_height = 1.0
+shader_parameter/wet_roughness = 0.52
+
+[sub_resource type="BoxMesh" id="BoxMesh_section7_wall"]
+material = SubResource("ShaderMaterial_section7_wall")
+size = Vector3(1.3, 4, 21)
+
+[sub_resource type="BoxMesh" id="BoxMesh_section7_merlon"]
+material = SubResource("ShaderMaterial_section7_wall")
+size = Vector3(1.5, 0.75, 1.8)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_section2_landing"]
 size = Vector3(22, 4, 19)
@@ -95,8 +136,11 @@ size = Vector3(22, 4, 19)
 [sub_resource type="BoxShape3D" id="BoxShape3D_section5_landing"]
 size = Vector3(22, 4, 19)
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_catcher"]
-size = Vector3(1.8, 1.8, 1.8)
+[sub_resource type="BoxShape3D" id="BoxShape3D_section6_landing"]
+size = Vector3(22, 4, 19)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_section7_landing"]
+size = Vector3(22, 4, 19)
 
 [node name="WorldLocal" type="Node3D"]
 script = ExtResource("world")
@@ -256,7 +300,6 @@ cast_cooldown_jitter = 0.6
 script = ExtResource("survival_group")
 enemy_scene = ExtResource("enemy_mage")
 spawn_interval_curve = SubResource("Curve_survival_mages")
-fight_duration = 60.0
 
 [node name="Enemies" type="Node3D" parent="Enemies/Section5SurvivalMages"]
 
@@ -292,6 +335,67 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, 1.6)
 [node name="V3" type="Node3D" parent="Enemies/Section5SurvivalMages/SpawnPolygons/RightMagePlatformPolygon"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.2, 0, -1.6)
 
+[node name="Section6SurvivalMelee" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+spawn_interval_curve = SubResource("Curve_survival_melee")
+
+[node name="Enemies" type="Node3D" parent="Enemies/Section6SurvivalMelee"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/Section6SurvivalMelee"]
+
+[node name="SpawnNW" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56.5, 0, 9.5)
+
+[node name="SpawnNE" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75.5, 0, 9.5)
+
+[node name="SpawnWest" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0, 16.5)
+
+[node name="SpawnEast" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 76, 0, 16.5)
+
+[node name="SpawnSW" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56.5, 0, 24.5)
+
+[node name="SpawnSouth" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0, 25)
+
+[node name="SpawnSE" type="Node3D" parent="Enemies/Section6SurvivalMelee/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 75.5, 0, 24.5)
+
+[node name="Section6DroneSupport" type="Node3D" parent="Enemies"]
+script = ExtResource("survival_group")
+enemy_scene = ExtResource("laser_drone")
+spawn_interval_curve = SubResource("Curve_drone_respawn")
+show_timer_ui = false
+endless = true
+max_alive = 1
+
+[node name="Enemies" type="Node3D" parent="Enemies/Section6DroneSupport"]
+
+[node name="SpawnPoints" type="Node3D" parent="Enemies/Section6DroneSupport"]
+
+[node name="DroneSpawn" type="Node3D" parent="Enemies/Section6DroneSupport/SpawnPoints"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 4.6, 16.5)
+
+[node name="Section7Catapults" type="Node3D" parent="Enemies"]
+script = ExtResource("normal_group")
+
+[node name="InstancedEnemies" type="Node3D" parent="Enemies/Section7Catapults"]
+
+[node name="CatapultNorth" parent="Enemies/Section7Catapults/InstancedEnemies" instance=ExtResource("catapult")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 46, 0, 36.5)
+is_offensive = false
+
+[node name="CatapultCenter" parent="Enemies/Section7Catapults/InstancedEnemies" instance=ExtResource("catapult")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 46, 0, 43.5)
+is_offensive = false
+
+[node name="CatapultSouth" parent="Enemies/Section7Catapults/InstancedEnemies" instance=ExtResource("catapult")]
+transform = Transform3D(0, 0, -1, 0, 1, 0, 1, 0, 0, 46, 0, 50.5)
+is_offensive = false
+
 [node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
 script = ExtResource("cp_manager")
 current_checkpoint = NodePath("Checkpoint")
@@ -299,9 +403,9 @@ current_checkpoint = NodePath("Checkpoint")
 [node name="Checkpoint" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "areas_to_reactivate")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, 4.5)
 script = ExtResource("checkpoint")
-events_completed = [NodePath("../../Level/Events/FocusNorthWest"), NodePath("../../Level/Events/FocusNorthEast")]
-enemy_groups_reset = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages")]
-areas_to_reactivate = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing")]
+events_completed = [NodePath("../../Level/Events/FocusNorthWest"), NodePath("../../Level/Events/FocusNorthEast"), NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/CloseBridge5"), NodePath("../../Level/Events/CloseBridge6"), NodePath("../../Level/Events/CloseBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages"), NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport"), NodePath("../../Enemies/Section7Catapults")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing"), NodePath("../../Level/Areas/Section6Landing"), NodePath("../../Level/Areas/Section7Landing")]
 
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
@@ -309,15 +413,14 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
-[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.5, 1.8026, -28)
+[node name="Checkpoint2" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.8026, -15)
 script = ExtResource("checkpoint")
 order = 1
-events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/FocusHighRightNE"), NodePath("../../Level/Events/FocusHighRightSE")]
-enemy_groups_reset = [NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages")]
+events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/CloseBridge5"), NodePath("../../Level/Events/CloseBridge6"), NodePath("../../Level/Events/CloseBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages"), NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport"), NodePath("../../Enemies/Section7Catapults")]
 enemy_groups_defeated = [NodePath("../../Enemies/NorthTargets")]
-areas_to_reactivate = [NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing")]
-areas_already_activated = [NodePath("../../Level/Areas/Section2Landing")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing"), NodePath("../../Level/Areas/Section6Landing"), NodePath("../../Level/Areas/Section7Landing")]
 
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint2"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
@@ -326,13 +429,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
 [node name="Checkpoint3" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 28.5, 1.8026, -42)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10.2, 1.8026, -41.5)
 script = ExtResource("checkpoint")
 order = 2
-events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/OpenBridge3")]
-enemy_groups_reset = [NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages")]
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/OpenBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/CloseBridge5"), NodePath("../../Level/Events/CloseBridge6"), NodePath("../../Level/Events/CloseBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages"), NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport"), NodePath("../../Enemies/Section7Catapults")]
 enemy_groups_defeated = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets")]
-areas_to_reactivate = [NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing"), NodePath("../../Level/Areas/Section6Landing"), NodePath("../../Level/Areas/Section7Landing")]
 areas_already_activated = [NodePath("../../Level/Areas/Section2Landing")]
 
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint3"]
@@ -342,13 +445,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 
 [node name="Checkpoint4" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 58.5, 1.8026, -39)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 43.5, 1.8026, -39)
 script = ExtResource("checkpoint")
 order = 3
-events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/OpenBridge3"), NodePath("../../Level/Events/OpenBridge4"), NodePath("../../Level/Events/FocusMageIslandNE"), NodePath("../../Level/Events/FocusMageIslandSE")]
-enemy_groups_reset = [NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages")]
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/OpenBridge4"), NodePath("../../Level/Events/CloseBridge5"), NodePath("../../Level/Events/CloseBridge6"), NodePath("../../Level/Events/CloseBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages"), NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport"), NodePath("../../Enemies/Section7Catapults")]
 enemy_groups_defeated = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone")]
-areas_to_reactivate = [NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing"), NodePath("../../Level/Areas/Section6Landing"), NodePath("../../Level/Areas/Section7Landing")]
 areas_already_activated = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing")]
 
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint4"]
@@ -358,19 +461,51 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2)
 
 [node name="Checkpoint5" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 1.8026, -15.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 1.8026, -31.5)
 script = ExtResource("checkpoint")
 order = 4
-events_completed = [NodePath("../../Level/Events/OpenBridge1"), NodePath("../../Level/Events/OpenBridge3"), NodePath("../../Level/Events/OpenBridge4"), NodePath("../../Level/Events/OpenBridge5"), NodePath("../../Level/Events/FocusSurvivalLeft"), NodePath("../../Level/Events/FocusSurvivalRight")]
-enemy_groups_reset = [NodePath("../../Enemies/Section5SurvivalMages")]
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/OpenBridge5"), NodePath("../../Level/Events/CloseBridge6"), NodePath("../../Level/Events/CloseBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/Section5SurvivalMages"), NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport"), NodePath("../../Enemies/Section7Catapults")]
 enemy_groups_defeated = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages")]
-areas_to_reactivate = [NodePath("../../Level/Areas/Section5Landing")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section5Landing"), NodePath("../../Level/Areas/Section6Landing"), NodePath("../../Level/Areas/Section7Landing")]
 areas_already_activated = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing")]
 
 [node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
 
 [node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint5"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="Checkpoint6" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 1.8026, -4.5)
+script = ExtResource("checkpoint")
+order = 5
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/CloseBridge5"), NodePath("../../Level/Events/OpenBridge6"), NodePath("../../Level/Events/CloseBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport"), NodePath("../../Enemies/Section7Catapults")]
+enemy_groups_defeated = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section6Landing"), NodePath("../../Level/Areas/Section7Landing")]
+areas_already_activated = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing")]
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint6"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
+
+[node name="Checkpoint7" type="Node3D" parent="CheckpointManager" node_paths=PackedStringArray("events_completed", "enemy_groups_reset", "enemy_groups_defeated", "areas_to_reactivate", "areas_already_activated")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 1.8026, 22.5)
+script = ExtResource("checkpoint")
+order = 6
+events_completed = [NodePath("../../Level/Events/CloseBridge1"), NodePath("../../Level/Events/CloseBridge3"), NodePath("../../Level/Events/CloseBridge4"), NodePath("../../Level/Events/CloseBridge5"), NodePath("../../Level/Events/CloseBridge6"), NodePath("../../Level/Events/OpenBridge7")]
+enemy_groups_reset = [NodePath("../../Enemies/Section7Catapults")]
+enemy_groups_defeated = [NodePath("../../Enemies/NorthTargets"), NodePath("../../Enemies/HighRightTargets"), NodePath("../../Enemies/Section3Drone"), NodePath("../../Enemies/Section4Mages"), NodePath("../../Enemies/Section5SurvivalMages"), NodePath("../../Enemies/Section6SurvivalMelee"), NodePath("../../Enemies/Section6DroneSupport")]
+areas_to_reactivate = [NodePath("../../Level/Areas/Section7Landing")]
+areas_already_activated = [NodePath("../../Level/Areas/Section2Landing"), NodePath("../../Level/Areas/Section3Landing"), NodePath("../../Level/Areas/Section4Landing"), NodePath("../../Level/Areas/Section5Landing"), NodePath("../../Level/Areas/Section6Landing")]
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Checkpoint7"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 0)
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Checkpoint7"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, 0, 0)
 
 [node name="Level" type="Node" parent="."]
@@ -406,7 +541,7 @@ cell_size = Vector3(2.999, 2, 2.999)
 collision_layer = 4
 collision_mask = 0
 data = {
-"cells": PackedInt32Array(-65518, 65520, 0, -65518, 65521, 0, -65518, 65522, 0, -65518, 65523, 0, -65518, 65524, 0, -65518, 65525, 0, -65518, 65526, 0, -65517, 65520, 0, -65517, 65521, 0, -65517, 65522, 0, -65517, 65523, 0, -65517, 65524, 0, -65517, 65525, 0, -65517, 65526, 0, -65516, 65520, 0, -65516, 65521, 0, -65516, 65522, 0, -65516, 65523, 0, -65516, 65524, 0, -65516, 65525, 0, -65516, 65526, 0, -65515, 65520, 0, -65515, 65521, 0, -65515, 65522, 0, -65515, 65523, 0, -65515, 65524, 0, -65515, 65525, 0, -65515, 65526, 0, -65514, 65520, 0, -65514, 65521, 0, -65514, 65522, 0, -65514, 65523, 0, -65514, 65524, 0, -65514, 65525, 0, -65514, 65526, 0, -65513, 65520, 0, -65513, 65521, 0, -65513, 65522, 0, -65513, 65523, 0, -65513, 65524, 0, -65513, 65525, 0, -65513, 65526, 0, -65512, 65520, 0, -65512, 65521, 0, -65512, 65522, 0, -65512, 65523, 0, -65512, 65524, 0, -65512, 65525, 0, -65512, 65526, 0, -65511, 65520, 0, -65511, 65521, 0, -65511, 65522, 0, -65511, 65523, 0, -65511, 65524, 0, -65511, 65525, 0, -65511, 65526, 0, -65508, 65521, 0, -65508, 65522, 0, -65508, 65523, 0, -65508, 65524, 0, -65507, 65521, 0, -65507, 65522, 0, -65507, 65523, 0, -65507, 65524, 0, -65518, 65529, 0, -65518, 65530, 0, -65518, 65531, 0, -65518, 65532, 0, -65518, 65533, 0, -65518, 65534, 0, -65518, 65535, 0, -65517, 65529, 0, -65517, 65530, 0, -65517, 65531, 0, -65517, 65532, 0, -65517, 65533, 0, -65517, 65534, 0, -65517, 65535, 0, -65516, 65529, 0, -65516, 65530, 0, -65516, 65531, 0, -65516, 65532, 0, -65516, 65533, 0, -65516, 65534, 0, -65516, 65535, 0, -65515, 65529, 0, -65515, 65530, 0, -65515, 65531, 0, -65515, 65532, 0, -65515, 65533, 0, -65515, 65534, 0, -65515, 65535, 0, -65514, 65529, 0, -65514, 65530, 0, -65514, 65531, 0, -65514, 65532, 0, -65514, 65533, 0, -65514, 65534, 0, -65514, 65535, 0, -65513, 65529, 0, -65513, 65530, 0, -65513, 65531, 0, -65513, 65532, 0, -65513, 65533, 0, -65513, 65534, 0, -65513, 65535, 0, -65512, 65529, 0, -65512, 65530, 0, -65512, 65531, 0, -65512, 65532, 0, -65512, 65533, 0, -65512, 65534, 0, -65512, 65535, 0, -65511, 65529, 0, -65511, 65530, 0, -65511, 65531, 0, -65511, 65532, 0, -65511, 65533, 0, -65511, 65534, 0, -65511, 65535, 0, -65522, 65530, 0, -65522, 65531, 0, -65522, 65532, 0, -65522, 65533, 0, -65522, 65534, 0, -65521, 65530, 0, -65521, 65531, 0, -65521, 65532, 0, -65521, 65533, 0, -65521, 65534, 0, -65508, 65530, 0, -65508, 65531, 0, -65508, 65532, 0, -65508, 65533, 0, -65508, 65534, 0, -65507, 65530, 0, -65507, 65531, 0, -65507, 65532, 0, -65507, 65533, 0, -65507, 65534, 0)
+"cells": PackedInt32Array(-65518, 65520, 0, -65518, 65521, 0, -65518, 65522, 0, -65518, 65523, 0, -65518, 65524, 0, -65518, 65525, 0, -65518, 65526, 0, -65517, 65520, 0, -65517, 65521, 0, -65517, 65522, 0, -65517, 65523, 0, -65517, 65524, 0, -65517, 65525, 0, -65517, 65526, 0, -65516, 65520, 0, -65516, 65521, 0, -65516, 65522, 0, -65516, 65523, 0, -65516, 65524, 0, -65516, 65525, 0, -65516, 65526, 0, -65515, 65520, 0, -65515, 65521, 0, -65515, 65522, 0, -65515, 65523, 0, -65515, 65524, 0, -65515, 65525, 0, -65515, 65526, 0, -65514, 65520, 0, -65514, 65521, 0, -65514, 65522, 0, -65514, 65523, 0, -65514, 65524, 0, -65514, 65525, 0, -65514, 65526, 0, -65513, 65520, 0, -65513, 65521, 0, -65513, 65522, 0, -65513, 65523, 0, -65513, 65524, 0, -65513, 65525, 0, -65513, 65526, 0, -65512, 65520, 0, -65512, 65521, 0, -65512, 65522, 0, -65512, 65523, 0, -65512, 65524, 0, -65512, 65525, 0, -65512, 65526, 0, -65511, 65520, 0, -65511, 65521, 0, -65511, 65522, 0, -65511, 65523, 0, -65511, 65524, 0, -65511, 65525, 0, -65511, 65526, 0, -65508, 65521, 0, -65508, 65522, 0, -65508, 65523, 0, -65508, 65524, 0, -65507, 65521, 0, -65507, 65522, 0, -65507, 65523, 0, -65507, 65524, 0, -65518, 65529, 0, -65518, 65530, 0, -65518, 65531, 0, -65518, 65532, 0, -65518, 65533, 0, -65518, 65534, 0, -65518, 65535, 0, -65517, 65529, 0, -65517, 65530, 0, -65517, 65531, 0, -65517, 65532, 0, -65517, 65533, 0, -65517, 65534, 0, -65517, 65535, 0, -65516, 65529, 0, -65516, 65530, 0, -65516, 65531, 0, -65516, 65532, 0, -65516, 65533, 0, -65516, 65534, 0, -65516, 65535, 0, -65515, 65529, 0, -65515, 65530, 0, -65515, 65531, 0, -65515, 65532, 0, -65515, 65533, 0, -65515, 65534, 0, -65515, 65535, 0, -65514, 65529, 0, -65514, 65530, 0, -65514, 65531, 0, -65514, 65532, 0, -65514, 65533, 0, -65514, 65534, 0, -65514, 65535, 0, -65513, 65529, 0, -65513, 65530, 0, -65513, 65531, 0, -65513, 65532, 0, -65513, 65533, 0, -65513, 65534, 0, -65513, 65535, 0, -65512, 65529, 0, -65512, 65530, 0, -65512, 65531, 0, -65512, 65532, 0, -65512, 65533, 0, -65512, 65534, 0, -65512, 65535, 0, -65511, 65529, 0, -65511, 65530, 0, -65511, 65531, 0, -65511, 65532, 0, -65511, 65533, 0, -65511, 65534, 0, -65511, 65535, 0, -65522, 65530, 0, -65522, 65531, 0, -65522, 65532, 0, -65522, 65533, 0, -65522, 65534, 0, -65521, 65530, 0, -65521, 65531, 0, -65521, 65532, 0, -65521, 65533, 0, -65521, 65534, 0, -65508, 65530, 0, -65508, 65531, 0, -65508, 65532, 0, -65508, 65533, 0, -65508, 65534, 0, -65507, 65530, 0, -65507, 65531, 0, -65507, 65532, 0, -65507, 65533, 0, -65507, 65534, 0, -65518, 2, 0, -65518, 3, 0, -65518, 4, 0, -65518, 5, 0, -65518, 6, 0, -65518, 7, 0, -65518, 8, 0, -65517, 2, 0, -65517, 3, 0, -65517, 4, 0, -65517, 5, 0, -65517, 6, 0, -65517, 7, 0, -65517, 8, 0, -65516, 2, 0, -65516, 3, 0, -65516, 4, 0, -65516, 5, 0, -65516, 6, 0, -65516, 7, 0, -65516, 8, 0, -65515, 2, 0, -65515, 3, 0, -65515, 4, 0, -65515, 5, 0, -65515, 6, 0, -65515, 7, 0, -65515, 8, 0, -65514, 2, 0, -65514, 3, 0, -65514, 4, 0, -65514, 5, 0, -65514, 6, 0, -65514, 7, 0, -65514, 8, 0, -65513, 2, 0, -65513, 3, 0, -65513, 4, 0, -65513, 5, 0, -65513, 6, 0, -65513, 7, 0, -65513, 8, 0, -65512, 2, 0, -65512, 3, 0, -65512, 4, 0, -65512, 5, 0, -65512, 6, 0, -65512, 7, 0, -65512, 8, 0, -65511, 2, 0, -65511, 3, 0, -65511, 4, 0, -65511, 5, 0, -65511, 6, 0, -65511, 7, 0, -65511, 8, 0, -65523, 11, 0, -65523, 12, 0, -65523, 13, 0, -65523, 14, 0, -65523, 15, 0, -65523, 16, 0, -65523, 17, 0, -65522, 11, 0, -65522, 12, 0, -65522, 13, 0, -65522, 14, 0, -65522, 15, 0, -65522, 16, 0, -65522, 17, 0, -65521, 11, 0, -65521, 12, 0, -65521, 13, 0, -65521, 14, 0, -65521, 15, 0, -65521, 16, 0, -65521, 17, 0, -65520, 11, 0, -65520, 12, 0, -65520, 13, 0, -65520, 14, 0, -65520, 15, 0, -65520, 16, 0, -65520, 17, 0, -65519, 11, 0, -65519, 12, 0, -65519, 13, 0, -65519, 14, 0, -65519, 15, 0, -65519, 16, 0, -65519, 17, 0, -65518, 11, 0, -65518, 12, 0, -65518, 13, 0, -65518, 14, 0, -65518, 15, 0, -65518, 16, 0, -65518, 17, 0, -65517, 11, 0, -65517, 12, 0, -65517, 13, 0, -65517, 14, 0, -65517, 15, 0, -65517, 16, 0, -65517, 17, 0, -65516, 11, 0, -65516, 12, 0, -65516, 13, 0, -65516, 14, 0, -65516, 15, 0, -65516, 16, 0, -65516, 17, 0, -65515, 11, 0, -65515, 12, 0, -65515, 13, 0, -65515, 14, 0, -65515, 15, 0, -65515, 16, 0, -65515, 17, 0, -65514, 11, 0, -65514, 12, 0, -65514, 13, 0, -65514, 14, 0, -65514, 15, 0, -65514, 16, 0, -65514, 17, 0, -65513, 11, 0, -65513, 12, 0, -65513, 13, 0, -65513, 14, 0, -65513, 15, 0, -65513, 16, 0, -65513, 17, 0, -65512, 11, 0, -65512, 12, 0, -65512, 13, 0, -65512, 14, 0, -65512, 15, 0, -65512, 16, 0, -65512, 17, 0, -65511, 11, 0, -65511, 12, 0, -65511, 13, 0, -65511, 14, 0, -65511, 15, 0, -65511, 16, 0, -65511, 17, 0)
 }
 metadata/_editor_floor_ = Vector3(0, -1, 0)
 
@@ -441,6 +576,57 @@ transform = Transform3D(0.62, 0, 0, 0, 0.62, 0, 0, 0, 0.62, 0, 0, 0)
 bob_amplitude = 0.0
 spin_degrees_per_second = 0.0
 show_halo = false
+
+[node name="Section7LaserEmitter" parent="Level/LaserEmitters" instance=ExtResource("laser_emitter")]
+transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 80.2, 0.35, 43.5)
+max_range = 110.0
+
+[node name="Section7Wall" type="StaticBody3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 54, 1, 43.5)
+collision_layer = 4
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Section7Wall"]
+shape = SubResource("BoxShape3D_section7_wall")
+
+[node name="WallMesh" type="MeshInstance3D" parent="Level/Section7Wall"]
+mesh = SubResource("BoxMesh_section7_wall")
+
+[node name="Merlon1" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, -9)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="Merlon2" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, -6)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="Merlon3" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, -3)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="Merlon4" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, 0)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="Merlon5" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, 3)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="Merlon6" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, 6)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="Merlon7" type="MeshInstance3D" parent="Level/Section7Wall"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.35, 9)
+mesh = SubResource("BoxMesh_section7_merlon")
+
+[node name="StandaloneMirrors" type="Node3D" parent="Level"]
+
+[node name="MirrorSouthEast" parent="Level/StandaloneMirrors" instance=ExtResource("standalone_mirror")]
+transform = Transform3D(0.70710677, 0, -0.70710677, 0, 1, 0, 0.70710677, 0, 0.70710677, 66, 0.35, 60.5)
+
+[node name="MirrorSouthWest" parent="Level/StandaloneMirrors" instance=ExtResource("standalone_mirror")]
+transform = Transform3D(0.70710677, 0, 0.70710677, 0, 1, 0, -0.70710677, 0, 0.70710677, 46, 0.35, 60.5)
 
 [node name="AncientCubes" type="Node3D" parent="Level"]
 
@@ -487,7 +673,6 @@ spin_degrees_per_second = 3.1
 
 [node name="CubeSection2EastHigh" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
 transform = Transform3D(1.5, -0.18, -0.38, 0.18, 1.55, 0.12, 0.38, -0.12, 1.5, 97.5, -1, -39)
-bob_amplitude = 0.75
 bob_period_seconds = 9.6
 spin_degrees_per_second = 3.4
 
@@ -498,7 +683,7 @@ bob_period_seconds = 10.6
 spin_degrees_per_second = 3.0
 
 [node name="CubeSection4South" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
-transform = Transform3D(1.4, 0.16, -0.32, -0.16, 1.45, 0.15, 0.32, -0.15, 1.4, 66, -3.2, 9.5)
+transform = Transform3D(1.4, 0.16, -0.32, -0.16, 1.45, 0.15, 0.32, -0.15, 1.4, 56, -3.5, 72)
 bob_amplitude = 0.68
 bob_period_seconds = 9.4
 spin_degrees_per_second = 3.6
@@ -515,11 +700,31 @@ bob_amplitude = 0.74
 bob_period_seconds = 10.1
 spin_degrees_per_second = 3.5
 
+[node name="CubeSection6West" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
+transform = Transform3D(1.6, 0.18, -0.34, -0.18, 1.65, 0.15, 0.34, -0.15, 1.6, 45.5, -2, 16.5)
+bob_period_seconds = 10.0
+
+[node name="CubeSection6East" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
+transform = Transform3D(1.5, -0.2, 0.38, 0.2, 1.55, -0.12, -0.38, 0.12, 1.5, 86.5, -1.5, 16.5)
+bob_amplitude = 0.7
+spin_degrees_per_second = 3.7
+
+[node name="CubeSection7West" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
+transform = Transform3D(1.7, -0.22, 0.4, 0.22, 1.75, -0.14, -0.4, 0.14, 1.7, 31, -1.8, 43.5)
+bob_amplitude = 0.8
+bob_period_seconds = 10.4
+spin_degrees_per_second = 3.1
+
+[node name="CubeSection7East" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
+transform = Transform3D(1.45, 0.16, -0.34, -0.16, 1.5, 0.15, 0.34, -0.15, 1.45, 87, -1.5, 49)
+bob_amplitude = 0.72
+bob_period_seconds = 9.6
+spin_degrees_per_second = 3.5
+
 [node name="CubeSection3North" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
 transform = Transform3D(1.8, 0.25, -0.4, -0.25, 1.85, 0.15, 0.4, -0.15, 1.8, 38, 1.4, -56.5)
 bob_amplitude = 0.8
 bob_period_seconds = 10.4
-spin_degrees_per_second = 3.2
 
 [node name="CubeSection3South" parent="Level/AncientCubes" instance=ExtResource("ancient_cube")]
 transform = Transform3D(1.45, -0.15, 0.35, 0.15, 1.5, -0.18, -0.35, 0.18, 1.45, 36.5, -3.2, -19.5)
@@ -640,6 +845,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 42, 0, -10.5)
 [node name="SurvivalRightFocus" type="Marker3D" parent="Level"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 90, 0, -10.5)
 
+[node name="Section7FocusCatapults" type="Marker3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 45, 0, 43.5)
+
+[node name="Section7FocusMirrors" type="Marker3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 56, 0, 61)
+
 [node name="Bridges" type="Node" parent="Level"]
 
 [node name="BridgePlatform1" parent="Level/Bridges" instance=ExtResource("bridge")]
@@ -714,6 +925,30 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -3.9928, -22.4925)
 [node name="BridgePlatform24" parent="Level/Bridges" instance=ExtResource("bridge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -3.9928, -22.4925)
 
+[node name="BridgePlatform25" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -3.9928, 1.4995)
+
+[node name="BridgePlatform26" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -3.9928, 1.4995)
+
+[node name="BridgePlatform27" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -3.9928, 4.4985)
+
+[node name="BridgePlatform28" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -3.9928, 4.4985)
+
+[node name="BridgePlatform29" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -3.9928, 28.4905)
+
+[node name="BridgePlatform30" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -3.9928, 28.4905)
+
+[node name="BridgePlatform31" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 64.4785, -3.9928, 31.4895)
+
+[node name="BridgePlatform32" parent="Level/Bridges" instance=ExtResource("bridge")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 67.4775, -3.9928, 31.4895)
+
 [node name="Areas" type="Node" parent="Level"]
 
 [node name="Section2Landing" type="Area3D" parent="Level/Areas"]
@@ -744,6 +979,20 @@ script = ExtResource("all_players")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/Section5Landing"]
 shape = SubResource("BoxShape3D_section5_landing")
 
+[node name="Section6Landing" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0.5, 16.5)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/Section6Landing"]
+shape = SubResource("BoxShape3D_section6_landing")
+
+[node name="Section7Landing" type="Area3D" parent="Level/Areas"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 66, 0.5, 43.5)
+script = ExtResource("all_players")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/Areas/Section7Landing"]
+shape = SubResource("BoxShape3D_section7_landing")
+
 [node name="Events" type="Node" parent="Level"]
 
 [node name="FocusNorthWest" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
@@ -754,32 +1003,100 @@ focal_point = NodePath("../../NorthPlatformFocusNW")
 script = ExtResource("camera_focus")
 focal_point = NodePath("../../NorthPlatformFocusNE")
 
-[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="OpenBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4"), NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6"), NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
-platform_animation_stagger_seconds = 0.16
-use_camera_focus = false
-next_event = NodePath("../ClearFocus")
+focus_move_in_seconds = 0.7
+focus_hold_seconds = 1.6
+focus_move_out_seconds = 0.8
+platform_animation_stagger_seconds = 0.1
 
-[node name="OpenBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseBridge1" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform1"), NodePath("../../Bridges/BridgePlatform2"), NodePath("../../Bridges/BridgePlatform3"), NodePath("../../Bridges/BridgePlatform4"), NodePath("../../Bridges/BridgePlatform5"), NodePath("../../Bridges/BridgePlatform6"), NodePath("../../Bridges/BridgePlatform7"), NodePath("../../Bridges/BridgePlatform8")]
+platform_animation_stagger_seconds = 0.1
+use_camera_focus = false
+event_type = 1
+
+[node name="OpenBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12"), NodePath("../../Bridges/BridgePlatform13"), NodePath("../../Bridges/BridgePlatform14"), NodePath("../../Bridges/BridgePlatform15"), NodePath("../../Bridges/BridgePlatform16")]
-platform_animation_stagger_seconds = 0.14
+focus_move_in_seconds = 0.7
+focus_hold_seconds = 1.6
+focus_move_out_seconds = 0.8
+platform_animation_stagger_seconds = 0.1
+
+[node name="CloseBridge3" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform9"), NodePath("../../Bridges/BridgePlatform10"), NodePath("../../Bridges/BridgePlatform11"), NodePath("../../Bridges/BridgePlatform12"), NodePath("../../Bridges/BridgePlatform13"), NodePath("../../Bridges/BridgePlatform14"), NodePath("../../Bridges/BridgePlatform15"), NodePath("../../Bridges/BridgePlatform16")]
+platform_animation_stagger_seconds = 0.1
 use_camera_focus = false
-next_event = NodePath("../ClearFocus")
+event_type = 1
+next_event = NodePath("../WakeSection3Drone")
 
 [node name="OpenBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform17"), NodePath("../../Bridges/BridgePlatform18"), NodePath("../../Bridges/BridgePlatform19"), NodePath("../../Bridges/BridgePlatform20")]
-platform_animation_stagger_seconds = 0.18
-use_camera_focus = false
+focus_move_in_seconds = 0.7
+focus_hold_seconds = 1.5
+focus_move_out_seconds = 0.8
+platform_animation_stagger_seconds = 0.14
 
-[node name="OpenBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+[node name="CloseBridge4" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform17"), NodePath("../../Bridges/BridgePlatform18"), NodePath("../../Bridges/BridgePlatform19"), NodePath("../../Bridges/BridgePlatform20")]
+platform_animation_stagger_seconds = 0.14
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../WakeSection4Mages")
+
+[node name="OpenBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("toggle_bridge")
 platforms = [NodePath("../../Bridges/BridgePlatform21"), NodePath("../../Bridges/BridgePlatform22"), NodePath("../../Bridges/BridgePlatform23"), NodePath("../../Bridges/BridgePlatform24")]
-platform_animation_stagger_seconds = 0.18
+focus_move_in_seconds = 0.7
+focus_hold_seconds = 1.5
+focus_move_out_seconds = 0.8
+platform_animation_stagger_seconds = 0.14
+
+[node name="CloseBridge5" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform21"), NodePath("../../Bridges/BridgePlatform22"), NodePath("../../Bridges/BridgePlatform23"), NodePath("../../Bridges/BridgePlatform24")]
+platform_animation_stagger_seconds = 0.14
 use_camera_focus = false
-next_event = NodePath("../ClearFocus")
+event_type = 1
+next_event = NodePath("../StartSection5Survival")
+
+[node name="OpenBridge6" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform25"), NodePath("../../Bridges/BridgePlatform26"), NodePath("../../Bridges/BridgePlatform27"), NodePath("../../Bridges/BridgePlatform28")]
+focus_move_in_seconds = 0.7
+focus_hold_seconds = 1.5
+focus_move_out_seconds = 0.8
+platform_animation_stagger_seconds = 0.14
+
+[node name="CloseBridge6" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform25"), NodePath("../../Bridges/BridgePlatform26"), NodePath("../../Bridges/BridgePlatform27"), NodePath("../../Bridges/BridgePlatform28")]
+platform_animation_stagger_seconds = 0.14
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../StartSection6Survival")
+
+[node name="OpenBridge7" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform29"), NodePath("../../Bridges/BridgePlatform30"), NodePath("../../Bridges/BridgePlatform31"), NodePath("../../Bridges/BridgePlatform32")]
+focus_move_in_seconds = 0.7
+focus_hold_seconds = 1.5
+focus_move_out_seconds = 0.8
+platform_animation_stagger_seconds = 0.14
+
+[node name="CloseBridge7" type="Node" parent="Level/Events" node_paths=PackedStringArray("platforms", "next_event")]
+script = ExtResource("toggle_bridge")
+platforms = [NodePath("../../Bridges/BridgePlatform29"), NodePath("../../Bridges/BridgePlatform30"), NodePath("../../Bridges/BridgePlatform31"), NodePath("../../Bridges/BridgePlatform32")]
+platform_animation_stagger_seconds = 0.14
+use_camera_focus = false
+event_type = 1
+next_event = NodePath("../WakeSection7Catapults")
 
 [node name="ClearFocus" type="Node" parent="Level/Events"]
 script = ExtResource("camera_clear")
@@ -835,6 +1152,38 @@ focal_point = NodePath("../../SurvivalRightFocus")
 script = ExtResource("change_behavior")
 enemy_group = NodePath("../../../Enemies/Section5SurvivalMages")
 
+[node name="StartSection6Survival" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group", "next_event")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/Section6SurvivalMelee")
+next_event = NodePath("../StartSection6Drone")
+
+[node name="StartSection6Drone" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/Section6DroneSupport")
+
+[node name="StopSection6Drone" type="Node" parent="Level/Events" node_paths=PackedStringArray("survival_group", "next_event")]
+script = ExtResource("stop_survival")
+survival_group = NodePath("../../../Enemies/Section6DroneSupport")
+clear_remaining = true
+next_event = NodePath("../OpenBridge7")
+
+[node name="EnterSection7Focus" type="Node" parent="Level/Events" node_paths=PackedStringArray("next_event")]
+script = ExtResource("camera_clear")
+next_event = NodePath("../FocusSection7Catapults")
+
+[node name="FocusSection7Catapults" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point", "next_event")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../Section7FocusCatapults")
+next_event = NodePath("../FocusSection7Mirrors")
+
+[node name="FocusSection7Mirrors" type="Node" parent="Level/Events" node_paths=PackedStringArray("focal_point")]
+script = ExtResource("camera_focus")
+focal_point = NodePath("../../Section7FocusMirrors")
+
+[node name="WakeSection7Catapults" type="Node" parent="Level/Events" node_paths=PackedStringArray("enemy_group")]
+script = ExtResource("change_behavior")
+enemy_group = NodePath("../../../Enemies/Section7Catapults")
+
 [node name="LevelSucceeded" type="Node" parent="Level/Events"]
 script = ExtResource("finished")
 
@@ -858,18 +1207,32 @@ message_string = "[color=#88f0ff]Azure Veil[/color]
 Reflect the arcane beam into the foes to the north.
 Hold Shoot to tilt the mirror between vertical and flat."
 
+[connection signal="enemies_defeated" from="Enemies/NorthTargets" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/NorthTargets" to="Level/Events/OpenBridge1" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/NorthTargets" to="Level/Events/ClearFocus" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/HighRightTargets" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/HighRightTargets" to="Level/Events/OpenBridge3" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/HighRightTargets" to="Level/Events/ClearFocus" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section3Drone" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/Section3Drone" to="Level/Events/OpenBridge4" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section3Drone" to="Level/Events/ClearFocus" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section4Mages" to="CheckpointManager/Checkpoint5" method="_trigger_checkpoint"]
 [connection signal="enemies_defeated" from="Enemies/Section4Mages" to="Level/Events/OpenBridge5" method="trigger"]
-[connection signal="enemies_defeated" from="Enemies/Section5SurvivalMages" to="Level/Events/LevelSucceeded" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/Section2Landing" to="CheckpointManager/Checkpoint2" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Section4Mages" to="Level/Events/ClearFocus" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section5SurvivalMages" to="CheckpointManager/Checkpoint6" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Section5SurvivalMages" to="Level/Events/OpenBridge6" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section5SurvivalMages" to="Level/Events/ClearFocus" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section6SurvivalMelee" to="CheckpointManager/Checkpoint7" method="_trigger_checkpoint"]
+[connection signal="enemies_defeated" from="Enemies/Section6SurvivalMelee" to="Level/Events/ClearFocus" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section6SurvivalMelee" to="Level/Events/StopSection6Drone" method="trigger"]
+[connection signal="enemies_defeated" from="Enemies/Section7Catapults" to="Level/Events/LevelSucceeded" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/Section2Landing" to="Level/Events/CloseBridge1" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/Section2Landing" to="Level/Events/EnterSection2Focus" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/Section3Landing" to="CheckpointManager/Checkpoint3" method="_trigger_checkpoint"]
-[connection signal="all_players_inside" from="Level/Areas/Section3Landing" to="Level/Events/WakeSection3Drone" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/Section4Landing" to="CheckpointManager/Checkpoint4" method="_trigger_checkpoint"]
+[connection signal="all_players_inside" from="Level/Areas/Section3Landing" to="Level/Events/CloseBridge3" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/Section4Landing" to="Level/Events/CloseBridge4" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/Section4Landing" to="Level/Events/EnterSection4Focus" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/Section4Landing" to="Level/Events/WakeSection4Mages" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/Section5Landing" to="CheckpointManager/Checkpoint5" method="_trigger_checkpoint"]
+[connection signal="all_players_inside" from="Level/Areas/Section5Landing" to="Level/Events/CloseBridge5" method="trigger"]
 [connection signal="all_players_inside" from="Level/Areas/Section5Landing" to="Level/Events/EnterSection5Focus" method="trigger"]
-[connection signal="all_players_inside" from="Level/Areas/Section5Landing" to="Level/Events/StartSection5Survival" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/Section6Landing" to="Level/Events/CloseBridge6" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/Section7Landing" to="Level/Events/CloseBridge7" method="trigger"]
+[connection signal="all_players_inside" from="Level/Areas/Section7Landing" to="Level/Events/EnterSection7Focus" method="trigger"]

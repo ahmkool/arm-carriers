@@ -1,0 +1,359 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="world"]
+[ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="rig"]
+[ext_resource type="Script" uid="uid://cqwm8n5kpivt1" path="res://src/world/camera_shake_pivot.gd" id="shake"]
+[ext_resource type="Shader" path="res://src/world/elements/highway/highway_sky.gdshader" id="highway_sky"]
+[ext_resource type="PackedScene" uid="uid://ddmgied4vtriv" path="res://src/world/ui/ui.tscn" id="ui"]
+[ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="theme"]
+[ext_resource type="Script" uid="uid://css2lrdcxlitf" path="res://src/world/ui/show_message_at_launch.gd" id="launch_message"]
+[ext_resource type="PackedScene" uid="uid://l3q0p7d7n4fk" path="res://src/game/states/game_state_machine.tscn" id="gsm"]
+[ext_resource type="PackedScene" uid="uid://d2bo2n33sqvci" path="res://src/world/levels/players.tscn" id="players"]
+[ext_resource type="Script" uid="uid://bx3gk3t68de8s" path="res://src/world/checkpoints/checkpoint_manager.gd" id="cp_manager"]
+[ext_resource type="Script" uid="uid://c3uca7pxa3ofw" path="res://src/world/checkpoints/checkpoint.gd" id="checkpoint"]
+[ext_resource type="Script" uid="uid://dgghjmfpume34" path="res://src/world/fall_area.gd" id="fall"]
+[ext_resource type="Script" uid="uid://cpybi6smjnan5" path="res://src/events/level_finished_event.gd" id="finished"]
+[ext_resource type="PackedScene" path="res://src/weapon/fork_cannon.tscn" id="fork_cannon"]
+[ext_resource type="PackedScene" path="res://src/enemy/boss/agent_richard/enemy_agent_richard.tscn" id="agent_richard"]
+[ext_resource type="AudioStream" uid="uid://etr5pc8rj0ge" path="res://assets/music/PerituneMaterial_Cyber_Noir.mp3" id="music"]
+[ext_resource type="Script" path="res://src/world/elements/highway/highway_scenery.gd" id="highway_scenery"]
+[ext_resource type="Script" path="res://src/world/elements/highway/highway_convoy_controller.gd" id="convoy_controller"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_sky"]
+shader = ExtResource("highway_sky")
+
+[sub_resource type="Sky" id="Sky_highway"]
+sky_material = SubResource("ShaderMaterial_sky")
+
+[sub_resource type="Environment" id="Environment_highway"]
+background_mode = 2
+sky = SubResource("Sky_highway")
+ambient_light_source = 3
+ambient_light_color = Color(0.45, 0.42, 0.58, 1)
+ambient_light_sky_contribution = 0.55
+ambient_light_energy = 0.55
+tonemap_mode = 3
+tonemap_white = 6.0
+glow_enabled = true
+glow_intensity = 0.52
+glow_bloom = 0.06
+glow_hdr_threshold = 1.05
+fog_enabled = true
+fog_light_color = Color(0.58, 0.34, 0.32, 1)
+fog_density = 0.0042
+fog_aerial_perspective = 0.28
+fog_sky_affect = 0.18
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fall"]
+size = Vector3(240, 1.5, 600)
+
+[node name="WorldLocal" type="Node3D"]
+script = ExtResource("world")
+skip_save = true
+
+[node name="CameraFollowRig" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.438371, 0.898794, 0, -0.898794, 0.438371, -4, 12.2, 7.2)
+script = ExtResource("rig")
+follow_offset = Vector3(0, 11.8, 6.8)
+zoom_per_unit = 0.65
+max_zoom_out = 18.0
+
+[node name="ShakePivot" type="Node3D" parent="CameraFollowRig"]
+script = ExtResource("shake")
+
+[node name="Camera3D" type="Camera3D" parent="CameraFollowRig/ShakePivot"]
+far = 360.0
+
+[node name="UI" parent="." instance=ExtResource("ui")]
+
+[node name="InfoMessageBottomRight" type="MarginContainer" parent="UI"]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -778.0
+offset_top = -338.0
+grow_horizontal = 0
+grow_vertical = 0
+theme = ExtResource("theme")
+
+[node name="PanelContainer" type="PanelContainer" parent="UI/InfoMessageBottomRight"]
+layout_mode = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="UI/InfoMessageBottomRight/PanelContainer"]
+layout_mode = 2
+
+[node name="InfoLabel" type="RichTextLabel" parent="UI/InfoMessageBottomRight/PanelContainer/MarginContainer"]
+layout_mode = 2
+bbcode_enabled = true
+text = "[color=#ffcc66]Highway Convoy — Agent Richard[/color]
+
+Hop from car to car along the glowing chevrons to reach
+the Heavy Convoy Carrier where Agent Richard awaits!"
+fit_content = true
+scroll_active = false
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_highway")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.92388, -0.22806, 0.30728, 0, 0.80296, 0.59603, -0.38268, -0.55066, 0.74184, 0, 18, -14)
+light_color = Color(1, 0.88, 0.74, 1)
+light_energy = 1.25
+shadow_enabled = true
+shadow_normal_bias = 3.0
+shadow_blur = 1.8
+
+[node name="GameStateMachine" parent="." instance=ExtResource("gsm")]
+
+[node name="Players" parent="." instance=ExtResource("players")]
+
+[node name="Enemies" type="Node" parent="."]
+
+[node name="EnemyAgentRichard" parent="Enemies" instance=ExtResource("agent_richard")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 14.8, 48, -40)
+
+[node name="CheckpointManager" type="Node" parent="." node_paths=PackedStringArray("current_checkpoint")]
+script = ExtResource("cp_manager")
+current_checkpoint = NodePath("Intro1Checkpoint")
+
+[node name="Intro1Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.35, 0)
+script = ExtResource("checkpoint")
+checkpoint_id = "Intro 1: Box Truck"
+order = 1
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Intro1Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Intro1Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Intro2Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.48, 0.35, -1)
+script = ExtResource("checkpoint")
+checkpoint_id = "Intro 2: Express Bus"
+order = 2
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Intro2Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Intro2Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Intro3Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.98, 0.35, -19)
+script = ExtResource("checkpoint")
+checkpoint_id = "Intro 3: Semi-Trailer"
+order = 3
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Intro3Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Intro3Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="BossPhase1Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -38)
+script = ExtResource("checkpoint")
+checkpoint_id = "Boss Phase 1: Agent Richard"
+order = 4
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/BossPhase1Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/BossPhase1Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Phase1ClearedCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -38)
+script = ExtResource("checkpoint")
+checkpoint_id = "Phase 1 Cleared (75%)"
+order = 5
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Phase1ClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Phase1ClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="ShootersWaveCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.35, -76)
+script = ExtResource("checkpoint")
+checkpoint_id = "Ambush 1: 3 Shooters"
+order = 6
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/ShootersWaveCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/ShootersWaveCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="ShootersClearedCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5, 0.35, -76)
+script = ExtResource("checkpoint")
+checkpoint_id = "Ambush 1 Cleared"
+order = 7
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/ShootersClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/ShootersClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="GrenadiersWaveCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.5, 0.35, -108)
+script = ExtResource("checkpoint")
+checkpoint_id = "Ambush 2: 2 Grenadiers"
+order = 8
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/GrenadiersWaveCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/GrenadiersWaveCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="BossPhase2Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.64, 0.35, -124)
+script = ExtResource("checkpoint")
+checkpoint_id = "Boss Phase 2: Agent Richard (75%)"
+order = 9
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/BossPhase2Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/BossPhase2Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Phase2ClearedCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.64, 0.35, -124)
+script = ExtResource("checkpoint")
+checkpoint_id = "Phase 2 Cleared (50%)"
+order = 10
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Phase2ClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Phase2ClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="WingedMechCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -152)
+script = ExtResource("checkpoint")
+checkpoint_id = "Winged Mech Intercept"
+order = 11
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/WingedMechCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/WingedMechCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="WingedMechClearedCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -152)
+script = ExtResource("checkpoint")
+checkpoint_id = "Winged Mech Cleared"
+order = 12
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/WingedMechClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/WingedMechClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="BossPhase3Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -166)
+script = ExtResource("checkpoint")
+checkpoint_id = "Boss Phase 3: Mega Platform (50%)"
+order = 13
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/BossPhase3Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/BossPhase3Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Phase3ClearedCheckpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.35, -166)
+script = ExtResource("checkpoint")
+checkpoint_id = "Phase 3 Cleared (25%)"
+order = 14
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/Phase3ClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/Phase3ClearedCheckpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="BossPhase4Checkpoint" type="Node3D" parent="CheckpointManager"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.94, 0.35, -206)
+script = ExtResource("checkpoint")
+checkpoint_id = "Boss Phase 4: Final Convoy (25%)"
+order = 15
+
+[node name="PositionDirectionSetter" type="Marker3D" parent="CheckpointManager/BossPhase4Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5083)
+
+[node name="PositionShooter" type="Marker3D" parent="CheckpointManager/BossPhase4Checkpoint"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 2.1002)
+
+[node name="Level" type="Node" parent="."]
+
+[node name="FallArea" type="Area3D" parent="Level"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -2.2, -90)
+script = ExtResource("fall")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Level/FallArea"]
+shape = SubResource("BoxShape3D_fall")
+
+[node name="HighwayScenery" type="Node3D" parent="Level"]
+script = ExtResource("highway_scenery")
+highway_speed = 38.0
+road_half_width = 21.5
+
+[node name="HighwayConvoyController" type="Node3D" parent="Level" node_paths=PackedStringArray("checkpoint_intro_1", "checkpoint_intro_2", "checkpoint_intro_3", "checkpoint_boss_phase_1", "checkpoint_phase_1_cleared", "checkpoint_shooters_wave", "checkpoint_shooters_cleared", "checkpoint_grenadiers_wave", "checkpoint_boss_phase_2", "checkpoint_phase_2_cleared", "checkpoint_winged_mech", "checkpoint_winged_mech_cleared", "checkpoint_boss_phase_3", "checkpoint_phase_3_cleared", "checkpoint_boss_phase_4", "agent_richard_boss", "level_finished_event")]
+script = ExtResource("convoy_controller")
+checkpoint_intro_1 = NodePath("../../CheckpointManager/Intro1Checkpoint")
+checkpoint_intro_2 = NodePath("../../CheckpointManager/Intro2Checkpoint")
+checkpoint_intro_3 = NodePath("../../CheckpointManager/Intro3Checkpoint")
+checkpoint_boss_phase_1 = NodePath("../../CheckpointManager/BossPhase1Checkpoint")
+checkpoint_phase_1_cleared = NodePath("../../CheckpointManager/Phase1ClearedCheckpoint")
+checkpoint_shooters_wave = NodePath("../../CheckpointManager/ShootersWaveCheckpoint")
+checkpoint_shooters_cleared = NodePath("../../CheckpointManager/ShootersClearedCheckpoint")
+checkpoint_grenadiers_wave = NodePath("../../CheckpointManager/GrenadiersWaveCheckpoint")
+checkpoint_boss_phase_2 = NodePath("../../CheckpointManager/BossPhase2Checkpoint")
+checkpoint_phase_2_cleared = NodePath("../../CheckpointManager/Phase2ClearedCheckpoint")
+checkpoint_winged_mech = NodePath("../../CheckpointManager/WingedMechCheckpoint")
+checkpoint_winged_mech_cleared = NodePath("../../CheckpointManager/WingedMechClearedCheckpoint")
+checkpoint_boss_phase_3 = NodePath("../../CheckpointManager/BossPhase3Checkpoint")
+checkpoint_phase_3_cleared = NodePath("../../CheckpointManager/Phase3ClearedCheckpoint")
+checkpoint_boss_phase_4 = NodePath("../../CheckpointManager/BossPhase4Checkpoint")
+agent_richard_boss = NodePath("../../Enemies/EnemyAgentRichard")
+level_finished_event = NodePath("../Events/LevelSucceeded")
+highway_speed = 38.0
+
+[node name="Events" type="Node" parent="Level"]
+
+[node name="LevelSucceeded" type="Node" parent="Level/Events"]
+script = ExtResource("finished")
+
+[node name="Weapon" type="Node3D" parent="."]
+
+[node name="ForkCannon" parent="Weapon" instance=ExtResource("fork_cannon")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4, 0.593, 0)
+
+[node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("music")
+volume_db = -20.14
+autoplay = true
+bus = &"Music"
+parameters/looping = true
+
+[node name="ShowMessageAtLaunch" type="Node" parent="."]
+script = ExtResource("launch_message")
+duration_in_seconds = 6.5
+message_string = "[color=#ffcc66]Highway Convoy — Agent Richard[/color]
+
+Hop from car to car along the glowing chevrons to reach
+the Heavy Convoy Carrier where Agent Richard awaits!"

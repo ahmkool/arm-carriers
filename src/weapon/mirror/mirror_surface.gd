@@ -13,13 +13,17 @@ const ENEMY_PROJECTILE_LAYER := 8
 ## Rays nearly parallel to the mirror pane (e.g. horizontal beam against a flat 90° mirror) graze past.
 const GRAZE_DOT_THRESHOLD := 0.12
 
+## When false (e.g. standalone level mirrors), only laser rays bounce and fireballs are ignored.
+@export var absorb_fireballs := true
+
 
 func _ready() -> void:
 	collision_layer = BoltMirror.LAYER
-	collision_mask = ENEMY_PROJECTILE_LAYER
-	monitoring = true
+	collision_mask = ENEMY_PROJECTILE_LAYER if absorb_fireballs else 0
+	monitoring = absorb_fireballs
 	monitorable = true
-	area_entered.connect(_on_area_entered)
+	if absorb_fireballs:
+		area_entered.connect(_on_area_entered)
 
 
 ## The broad-face normal opposing `incoming_dir`, so both sides of the mirror reflect cleanly.

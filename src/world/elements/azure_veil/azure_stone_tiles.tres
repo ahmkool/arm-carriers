@@ -1,4 +1,4 @@
-[gd_resource type="MeshLibrary" format=3]
+[gd_resource type="MeshLibrary" load_steps=8 format=3 uid="uid://f2y4fmu6lamv"]
 
 [ext_resource type="Shader" uid="uid://b153k8x58wrmc" path="res://src/world/elements/storm_isles/isle_stone.gdshader" id="1_stone"]
 

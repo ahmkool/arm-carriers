@@ -1,0 +1,98 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" uid="uid://cqqsjxsht4jl6" path="res://src/enemy/enemy_local.gd" id="1_enemy"]
+[ext_resource type="Script" uid="uid://dpvji71k7bnbn" path="res://src/enemy/state/enemy_state_machine.gd" id="2_esm"]
+[ext_resource type="Script" path="res://src/enemy/boss/agent_richard/agent_richard_idle.gd" id="3_idle"]
+[ext_resource type="Script" uid="uid://caogda0airmh2" path="res://src/components/health.gd" id="4_health"]
+[ext_resource type="Script" path="res://src/enemy/boss/agent_richard/agent_richard_controller.gd" id="5_ctrl"]
+[ext_resource type="PackedScene" path="res://assets/characters/survivalist/Survivalist.glb" id="6_model"]
+[ext_resource type="Animation" uid="uid://ckmd7fuuwqnct" path="res://assets/animations_source/animations/Idle_B.res" id="anim_idle"]
+[ext_resource type="Animation" uid="uid://x2uikkqxu3gg" path="res://assets/animations_source/animations/Throw.res" id="anim_throw"]
+[ext_resource type="Animation" uid="uid://c535gewj4qra2" path="res://assets/animations_source/animations/Jump_Start.res" id="anim_jump_start"]
+[ext_resource type="Animation" uid="uid://ddpwwymxoyctd" path="res://assets/animations_source/animations/Jump_Idle.res" id="anim_jump_idle"]
+[ext_resource type="Animation" uid="uid://bn6kia78gp0et" path="res://assets/animations_source/animations/Jump_Land.res" id="anim_jump_land"]
+[ext_resource type="Animation" uid="uid://d2mmjgiq38xdq" path="res://assets/animations_source/animations/Hit_A.res" id="anim_hit"]
+[ext_resource type="Animation" uid="uid://y4be06bw4mh6" path="res://assets/animations_source/animations/Death_A.res" id="anim_death"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/Running_A.res" id="anim_run"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Ranged_2H_Aiming.res" id="anim_aim"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Ranged_2H_Shoot.res" id="anim_shoot"]
+[ext_resource type="Animation" path="res://assets/animations_source/animations/robot_gunner/Running_HoldingRifle.res" id="anim_run_rifle"]
+
+[sub_resource type="Animation" id="Animation_reset"]
+length = 0.001
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_default"]
+_data = {
+&"RESET": SubResource("Animation_reset")
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_survivalist"]
+_data = {
+&"Death_A": ExtResource("anim_death"),
+&"Hit_A": ExtResource("anim_hit"),
+&"Idle_B": ExtResource("anim_idle"),
+&"Jump_Idle": ExtResource("anim_jump_idle"),
+&"Jump_Land": ExtResource("anim_jump_land"),
+&"Jump_Start": ExtResource("anim_jump_start"),
+&"Ranged_2H_Aiming": ExtResource("anim_aim"),
+&"Ranged_2H_Shoot": ExtResource("anim_shoot"),
+&"Running_A": ExtResource("anim_run"),
+&"Running_HoldingRifle": ExtResource("anim_run_rifle"),
+&"Throw": ExtResource("anim_throw")
+}
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_boss"]
+radius = 0.82
+height = 3.1
+
+[sub_resource type="SphereMesh" id="SphereMesh_fs"]
+radius = 0.1
+height = 0.2
+
+[node name="EnemyAgentRichard" type="CharacterBody3D"]
+collision_layer = 2
+collision_mask = 0
+motion_mode = 1
+script = ExtResource("1_enemy")
+speed = 3.0
+is_offensive = false
+hitbox_damage = 0
+can_fall_off_ledges = false
+holds_position = true
+
+[node name="Survivalist" parent="." instance=ExtResource("6_model")]
+transform = Transform3D(-1.35, 0, -1.1802075e-07, 0, 1.35, 0, 1.1802075e-07, 0, -1.35, 0, 0, 0)
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Survivalist"]
+libraries = {
+&"": SubResource("AnimationLibrary_default"),
+&"survivalist": SubResource("AnimationLibrary_survivalist")
+}
+autoplay = "survivalist/Ranged_2H_Aiming"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("CapsuleShape3D_boss")
+
+[node name="EnemyStateMachine" type="Node" parent="."]
+script = ExtResource("2_esm")
+initial_state_path = NodePath("Idle")
+
+[node name="Idle" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("3_idle")
+
+[node name="Dead" type="Node" parent="EnemyStateMachine"]
+script = ExtResource("3_idle")
+
+[node name="AgentRichardController" type="Node" parent="."]
+script = ExtResource("5_ctrl")
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
+
+[node name="FootstepsParticles" type="GPUParticles3D" parent="."]
+emitting = false
+draw_pass_1 = SubResource("SphereMesh_fs")
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("4_health")
+max_hp = 160
