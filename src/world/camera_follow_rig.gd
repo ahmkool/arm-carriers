@@ -11,6 +11,7 @@ var players: Node
 var big_weapon: BigWeapon
 
 var _cutscene_active: bool = false
+var _focus_generation: int = 0
 var _extra_focal_nodes: Array[Node3D] = []
 
 
@@ -55,6 +56,58 @@ func run_focus_on_point(world_focal_point: Vector3, hold_sec: float, move_in_sec
 		)
 
 	_cutscene_active = false
+
+
+## Moves the camera to frame `world_focal_point` and holds until [method end_focus] or [method cancel_focus].
+func begin_focus_on_point(world_focal_point: Vector3, move_in_sec: float = 0.8, zoom_offset: float = 0.0) -> void:
+	_focus_generation += 1
+	var generation := _focus_generation
+	_cutscene_active = true
+	var start_pos := global_position
+	var dest := _compute_focus_destination(world_focal_point, zoom_offset)
+	if move_in_sec <= 0.0:
+		global_position = dest
+		return
+	var elapsed := 0.0
+	while elapsed < move_in_sec:
+		await get_tree().process_frame
+		if not is_inside_tree() or generation != _focus_generation:
+			return
+		elapsed += get_process_delta_time()
+		var t := clampf(elapsed / move_in_sec, 0.0, 1.0)
+		var eased := 1.0 - pow(1.0 - t, 3.0)
+		global_position = start_pos.lerp(dest, eased)
+
+
+## Smoothly returns the camera to normal player follow after [method begin_focus_on_point].
+func end_focus(move_out_sec: float = 0.7) -> void:
+	if not _cutscene_active:
+		return
+	var generation := _focus_generation
+	var elapsed_out := 0.0
+	while elapsed_out < move_out_sec:
+		await get_tree().process_frame
+		if not is_inside_tree() or generation != _focus_generation:
+			return
+		elapsed_out += get_process_delta_time()
+		global_position = global_position.lerp(
+			compute_desired_follow_position(),
+			clampf(follow_smooth_speed * get_process_delta_time(), 0.0, 1.0)
+		)
+	_cutscene_active = false
+
+
+## Immediately releases cutscene focus and aborts any in-flight focus transition.
+func cancel_focus() -> void:
+	_focus_generation += 1
+	_cutscene_active = false
+
+
+func _compute_focus_destination(world_focal_point: Vector3, zoom_offset: float) -> Vector3:
+	var dest := world_focal_point + follow_offset
+	if follow_offset.length_squared() <= 0.0001:
+		return dest
+	return dest + follow_offset.normalized() * zoom_offset
 
 
 func add_focal_point(node: Node3D) -> void:

@@ -4,6 +4,9 @@ const CARRIER_SHOULDER_HEIGHT := 1.35
 const RESET_CHECKPOINT_DELAY := 0.5
 const CHECKPOINT_FADE_DURATION := 0.15
 const BOSS_HEALTH_BAR_PATH := "UI/BossHealthBar"
+const DIALOG_BOX_PATH := "UI/DialogBox"
+const DialogBoxScript := preload("res://src/world/ui/dialog_box.gd")
+const DialogEventScript := preload("res://src/events/dialog_event.gd")
 
 var _checkpoint_reset_timer: float = 0.0
 var _world_reset_timer: float = 0.0
@@ -13,6 +16,7 @@ var _warmup_done: bool = false
 
 func enter():
 	ScreenFade.fade_to_black(CHECKPOINT_FADE_DURATION)
+	_cancel_active_dialog()
 	_hide_boss_health_bar()
 	_checkpoint_reset_timer = CHECKPOINT_FADE_DURATION
 	_world_reset_timer = CHECKPOINT_FADE_DURATION + RESET_CHECKPOINT_DELAY
@@ -57,6 +61,16 @@ func _run_vfx_warmup() -> void:
 	if not is_inside_tree():
 		return
 	_warmup_done = true
+
+
+func _cancel_active_dialog() -> void:
+	var tree := world.get_tree()
+	if tree != null:
+		tree.call_group(DialogEventScript.ACTIVE_DIALOG_GROUP, "cancel")
+	var dialog_box := world.get_node_or_null(DIALOG_BOX_PATH) as DialogBoxScript
+	if dialog_box == null:
+		return
+	dialog_box.cancel()
 
 
 func _hide_boss_health_bar() -> void:

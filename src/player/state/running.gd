@@ -24,12 +24,7 @@ func physics_update(delta: float) -> void:
 	if not player.is_on_floor():
 		player_state_machine.transition_to("falling")
 		return
-	if Input.is_action_just_pressed(player.action_dash):
-		player_state_machine.transition_to("dashing")
-		return
-	if Input.is_action_just_pressed(player.action_accept):
-		player.velocity.y = player.JUMP_VELOCITY
-		player_state_machine.transition_to("falling")
+	if _try_action_transitions():
 		return
 	var direction := player.get_move_direction()
 	if direction.length_squared() < 0.0001:
@@ -76,3 +71,16 @@ func _remember_base_step_volume() -> void:
 		return
 	_base_step_volume_db = player.footsteps_sound.volume_db
 	_has_base_step_volume = true
+
+
+func _try_action_transitions() -> bool:
+	if GameplayInput.is_locked():
+		return false
+	if Input.is_action_just_pressed(player.action_dash):
+		player_state_machine.transition_to("dashing")
+		return true
+	if Input.is_action_just_pressed(player.action_accept):
+		player.velocity.y = player.JUMP_VELOCITY
+		player_state_machine.transition_to("falling")
+		return true
+	return false

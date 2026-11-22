@@ -3,6 +3,9 @@ extends Node
 const BOSS_HEALTH_BAR_PATH := "UI/BossHealthBar"
 
 @export var fight_trigger: AllPlayersAreaTrigger
+## Optional event whose completion starts the health bar (e.g. a boss intro dialog).
+## Takes precedence over [member fight_trigger] when set.
+@export var start_event: LevelEvent
 @export var enemy_group: EnemyGroup
 @export var boss_icon: Texture2D
 ## Shown above the boss health bar; leave empty to show no name.
@@ -10,9 +13,16 @@ const BOSS_HEALTH_BAR_PATH := "UI/BossHealthBar"
 
 
 func _ready() -> void:
+	if start_event != null:
+		start_event.completed.connect(_on_start_event_completed)
+		return
 	if fight_trigger == null:
 		return
 	fight_trigger.all_players_inside.connect(_on_fight_started)
+
+
+func _on_start_event_completed(_event: LevelEvent) -> void:
+	_on_fight_started()
 
 
 func _on_fight_started() -> void:

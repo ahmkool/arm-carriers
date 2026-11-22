@@ -5,13 +5,17 @@ extends Node
 signal completed(event: LevelEvent)
 
 var _is_triggering := false
+var _aborted := false
 
 func trigger() -> void:
 	if _is_triggering:
 		return
 	_is_triggering = true
+	_aborted = false
 	await _trigger_event()
 	_is_triggering = false
+	if _aborted:
+		return
 	completed.emit(self)
 	execute_next_event()
 

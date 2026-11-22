@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://dymeqs381w0fb"]
+[gd_scene load_steps=42 format=3 uid="uid://dymeqs381w0fb"]
 
 [ext_resource type="Script" uid="uid://bj06i7pt2w2l7" path="res://src/world/world_local.gd" id="1_5ydlk"]
 [ext_resource type="Script" uid="uid://dqtkaa0x7s0pv" path="res://src/world/camera_follow_rig.gd" id="2_nr5h7"]
@@ -35,6 +35,7 @@
 [ext_resource type="PackedScene" uid="uid://det1nlqshcx21" path="res://src/vfx/enemy/skeleton_boss/step.tscn" id="32_warm7"]
 
 [ext_resource type="Script" path="res://src/world/elements/ground/ground_variation.gd" id="ground_variation"]
+[ext_resource type="Script" path="res://src/events/dialog_event.gd" id="dialog_event"]
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_j5fge"]
 panorama = ExtResource("6_rddsj")
 
@@ -220,13 +221,21 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.324318, 2.3595505, 0)
 script = ExtResource("16_iw7r2")
 enemy_group = NodePath("../../Enemies/EnemyGroup")
 
+[node name="BossIntroDialog" type="Node" parent="Events" node_paths=PackedStringArray("focus_enemy_group", "next_event")]
+script = ExtResource("dialog_event")
+speaker_name = "Bond Breaker"
+portrait = ExtResource("25_bossicon")
+lines = PackedStringArray("Oh you made it here...", "This means your friendship must be strong...", "But is your bond strong enough ? I will be the one to test it !")
+focus_enemy_group = NodePath("../../Enemies/EnemyGroup")
+next_event = NodePath("../MakeEnemiesGroup2Offensive")
+
 [node name="CloseBridge1" type="Node" parent="Events" node_paths=PackedStringArray("platforms", "next_event")]
 script = ExtResource("17_0sgwl")
 platforms = [NodePath("../../Level/BridgePlatform"), NodePath("../../Level/BridgePlatform2")]
 platform_animation_stagger_seconds = 0.5
 use_camera_focus = false
 event_type = 1
-next_event = NodePath("../MakeEnemiesGroup2Offensive")
+next_event = NodePath("../BossIntroDialog")
 
 [node name="OpenBridge1" type="Node" parent="Events" node_paths=PackedStringArray("platforms")]
 script = ExtResource("17_0sgwl")
@@ -243,15 +252,17 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1276536, 0)
 
 [node name="ShowMessageAtLaunch" type="Node" parent="."]
 script = ExtResource("21_v2ylt")
-message_string = "[color=#ff8888]Boss level[/color]
+message_string = "[color=#ff8888]Bond Breaker[/color]
 
-In this level you will fight against a boss. Good luck !"
+In this level you will fight against Bond Breaker. Good luck !"
 
-[node name="ShowBossHealthBar" type="Node" parent="." node_paths=PackedStringArray("fight_trigger", "enemy_group")]
+[node name="ShowBossHealthBar" type="Node" parent="." node_paths=PackedStringArray("fight_trigger", "start_event", "enemy_group")]
 script = ExtResource("24_bhpbind")
 fight_trigger = NodePath("../Level/AllPlayersAreaTrigger")
+start_event = NodePath("../Events/BossIntroDialog")
 enemy_group = NodePath("../Enemies/EnemyGroup")
 boss_icon = ExtResource("25_bossicon")
+boss_name = "Bond Breaker"
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("22_6t3nx")

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ddmgied4vtriv"]
+[gd_scene load_steps=14 format=3 uid="uid://ddmgied4vtriv"]
 
 [ext_resource type="Theme" uid="uid://cqojbbcsl6jfh" path="res://assets/theme/ui_theme.tres" id="1_q2a7b"]
 [ext_resource type="Script" uid="uid://bjmy8jam5crg0" path="res://src/player/debug/debug_info.gd" id="2_xvh14"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://xhd3xnbkaki" path="res://src/world/ui/player_health_bars.tscn" id="6_phpbars"]
 [ext_resource type="PackedScene" uid="uid://y0u243s3sir1" path="res://src/world/ui/dead/you_died_screen.tscn" id="7_you_died"]
 [ext_resource type="PackedScene" path="res://src/world/ui/survival_timer.tscn" id="8_survtimer"]
+[ext_resource type="PackedScene" path="res://src/world/ui/dialog_box.tscn" id="9_dialog"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_discord_normal"]
 bg_color = Color(0.345098, 0.396078, 0.94902, 1)
@@ -125,6 +126,8 @@ offset_right = 81.0
 offset_bottom = 77.0
 grow_horizontal = 1
 grow_vertical = 1
+
+[node name="DialogBox" parent="." instance=ExtResource("9_dialog")]
 
 [node name="YouDiedScreen" parent="." instance=ExtResource("7_you_died")]
 visible = false

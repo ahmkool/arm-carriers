@@ -32,7 +32,7 @@ const GROUPS: Array[Dictionary] = [
 			{"title": "Level 1", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local.tscn", "weapon": "bazooka", "requires": "ranged"},
 			{"title": "Level 2", "difficulty": 1, "label": "Easy", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_level_2_medieval.tscn", "weapon": "siege_bow", "requires": "ranged"},
 			{"title": "Level 3", "difficulty": 2, "label": "Medium", "art": Art.SKELETON, "scene": "res://src/world/levels/world_local_02_medieval.tscn", "weapon": "sword"},
-			{"title": "Skeleton Boss", "difficulty": 2, "label": "Boss", "art": Art.BOSS, "scene": DUNGEON_BOSS, "weapon": "bazooka"},
+			{"title": "Bond Breaker", "difficulty": 2, "label": "Boss", "art": Art.BOSS, "scene": DUNGEON_BOSS, "weapon": "bazooka"},
 		],
 	},
 	{

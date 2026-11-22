@@ -5,12 +5,7 @@ func physics_update(delta: float) -> void:
 	if not player.is_on_floor():
 		player_state_machine.transition_to("falling")
 		return
-	if Input.is_action_just_pressed(player.action_dash):
-		player_state_machine.transition_to("dashing")
-		return
-	if Input.is_action_just_pressed(player.action_accept):
-		player.velocity.y = player.JUMP_VELOCITY
-		player_state_machine.transition_to("falling")
+	if _try_action_transitions():
 		return
 	var direction := player.get_move_direction()
 	if direction.length_squared() > 0.0001:
@@ -26,3 +21,16 @@ func physics_update(delta: float) -> void:
 			var carry_direction := pick_and_drop_handler.get_carry_direction_flat()
 			if carry_direction.length_squared() > 0.0001:
 				player.look_at(player.global_position + carry_direction, Vector3.UP)
+
+
+func _try_action_transitions() -> bool:
+	if GameplayInput.is_locked():
+		return false
+	if Input.is_action_just_pressed(player.action_dash):
+		player_state_machine.transition_to("dashing")
+		return true
+	if Input.is_action_just_pressed(player.action_accept):
+		player.velocity.y = player.JUMP_VELOCITY
+		player_state_machine.transition_to("falling")
+		return true
+	return false
